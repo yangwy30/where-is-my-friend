@@ -26,18 +26,35 @@
 
 ## 当前状态
 
-仓库现在包含第一版静态 SwiftUI 原型：
+仓库现在包含可完整操作的 SwiftUI 离线 MVP：
 
 - iOS 18+ SwiftUI App
 - Small、Medium、Large WidgetKit 小组件
 - Onboarding、朋友、好友详情、邀请、共享和隐私设置页面
 - App 与 Widget 共用的 Codable Mock Data 和 App Group 快照存储
 - Light/Dark Mode、Dynamic Type 友好的语义化设计系统
-- 单元测试和 UI smoke test targets
+- 单元测试和 UI 交互测试 targets
 
-原型不会请求真实账号、位置、通知或网络权限，也不会上传任何数据。
+- 本地持久化 Demo Repository 与可替换的 `AppRepository` 边界
+- Demo 登录、Sign in with Apple 客户端授权与远端 token 交换接口
+- 好友邀请、接受、拒绝、移除、收藏与逐好友共享设置
+- 手动测试城市、前台定位、Visits、Significant Location Change
+- 同城事件去重、本地通知预览与通知历史
+- App Group Widget 快照、登出清除和真实更新时间
+- Demo Lab 场景模拟、REST API adapter、Keychain session token
+
+没有真实 Server 时，App 默认使用 Local Demo Repository。所有业务交互都会本地保存；选择 Server 后只需实现 [API contract](./docs/API_CONTRACT.md)，无需重写 SwiftUI 页面。
+
+App 只会在用户主动点击相关控制后请求位置或通知权限。本地 Demo 模式不会上传任何数据；Sign in with Apple 的真实 token 交换与网络请求仅在配置 Remote API 后启用。
 
 完整产品路线图见 [PLAN.md](./PLAN.md)，视觉与交互规范见 [docs/DESIGN_SPEC.md](./docs/DESIGN_SPEC.md)。
+
+生产接入资料：
+
+- [客户端架构决策](./docs/ADR-001-CLIENT-BOUNDARY.md)
+- [REST API 合同](./docs/API_CONTRACT.md)
+- [PostgreSQL 参考 schema](./docs/DATABASE_SCHEMA.sql)
+- [真实后端接入清单](./docs/REAL_BACKEND_CHECKLIST.md)
 
 ## 运行原型
 

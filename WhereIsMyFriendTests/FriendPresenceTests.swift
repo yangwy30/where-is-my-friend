@@ -63,3 +63,85 @@ final class FriendPresenceTests: XCTestCase {
         )
     }
 }
+
+final class LocalDemoRepositoryTests: XCTestCase {
+    func testAcceptingIncomingRequestCreatesFriendAndPreferences() async throws {
+        let initial = DemoData.initialSnapshot()
+        let request = try XCTUnwrap(initial.incomingRequests.first)
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+
+        let updated = try await repository.respond(to: request.id, response: .accept)
+
+        XCTAssertTrue(updated.friends.contains(where: { $0.id == request.userID }))
+        XCTAssertFalse(updated.friendRequests.contains(where: { $0.id == request.id }))
+        XCTAssertTrue(updated.preference(for: request.userID).sharesMyCity)
+    }
+
+    func testSendingKnownUsernameCreatesOutgoingRequest() async throws {
+        var initial = DemoData.initialSnapshot()
+        initial.friendRequests.removeAll { $0.username == "leo" }
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+
+        let updated = try await repository.sendFriendRequest(username: "@leo")
+
+        XCTAssertTrue(updated.outgoingRequests.contains(where: { $0.username == "leo" }))
+    }
+
+    func testDuplicateAndUnknownInvitesAreRejected() async throws {
+        let repository = LocalDemoRepository(snapshot: DemoData.initialSnapshot(), persistsChanges: false)
+
+        do {
+            _ = try await repository.sendFriendRequest(username: "mia")
+            XCTFail("Expected an already-friends error")
+        } catch {
+            XCTAssertEqual(error as? RepositoryError, .alreadyFriends)
+        }
+
+        do {
+            _ = try await repository.sendFriendRequest(username: "nobody")
+            XCTFail("Expected a user-not-found error")
+        } catch {
+            XCTAssertEqual(error as? RepositoryError, .userNotFound)
+        }
+    }
+
+    func testSameCityEventIsIdempotentForRepeatedPresenceUpload() async throws {
+        var initial = DemoData.initialSnapshot()
+        initial.colocationEvents = []
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+
+        let first = try await repository.updateCurrentCity(city: "New York", countryCode: "US", source: .manual)
+        let second = try await repository.updateCurrentCity(city: "New York", countryCode: "US", source: .manual)
+
+        XCTAssertEqual(first.colocationEvents.count, 1)
+        XCTAssertEqual(second.colocationEvents.count, 1)
+        XCTAssertEqual(first.colocationEvents.first?.deduplicationKey, second.colocationEvents.first?.deduplicationKey)
+    }
+
+    func testSignOutClearsSensitiveWidgetSnapshotData() async throws {
+        let repository = LocalDemoRepository(snapshot: DemoData.initialSnapshot(), persistsChanges: false)
+
+        let signedOut = try await repository.signOut()
+
+        XCTAssertFalse(signedOut.isAuthenticated)
+        XCTAssertTrue(signedOut.friends.isEmpty)
+        XCTAssertNil(signedOut.currentPresence.city)
+        XCTAssertTrue(signedOut.colocationEvents.isEmpty)
+    }
+
+    func testFriendPreferencesAreIndependent() async throws {
+        let initial = DemoData.initialSnapshot()
+        let firstFriend = try XCTUnwrap(initial.friends.first)
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+        let changed = FriendAccessPreference(
+            friendID: firstFriend.id,
+            sharesMyCity: false,
+            sameCityAlertEnabled: false
+        )
+
+        let updated = try await repository.setFriendPreference(changed)
+
+        XCTAssertEqual(updated.preference(for: firstFriend.id), changed)
+        XCTAssertTrue(updated.friendPreferences.filter { $0.friendID != firstFriend.id }.allSatisfy(\.sharesMyCity))
+    }
+}

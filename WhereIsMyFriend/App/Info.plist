@@ -35,6 +35,15 @@
 	<string>public.app-category.social-networking</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Where Is My Friend uses meaningful city changes to keep the city you share with accepted friends current, even when you are not using the app.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Where Is My Friend uses your location on-device to determine the city you choose to share. Precise coordinates are not uploaded.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -48,5 +57,7 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>WIFAPIBaseURL</key>
+	<string>https://api.example.invalid</string>
 </dict>
 </plist>

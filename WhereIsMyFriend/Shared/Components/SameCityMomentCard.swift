@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SameCityMomentCard: View {
     let friends: [FriendPresence]
+    let city: String
     let referenceDate: Date
 
     private var names: String {
@@ -20,7 +21,7 @@ struct SameCityMomentCard: View {
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Together in \(MockFriendData.currentUserCity)")
+                Text("Together in \(city)")
                     .font(.headline)
                     .foregroundStyle(WIFTheme.primaryText)
 

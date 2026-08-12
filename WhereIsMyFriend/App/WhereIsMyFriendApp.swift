@@ -2,9 +2,7 @@ import SwiftUI
 
 @main
 struct WhereIsMyFriendApp: App {
-    init() {
-        SharedPresenceStore.seedIfNeeded()
-    }
+    @UIApplicationDelegateAdaptor(PushRegistrationDelegate.self) private var pushDelegate
 
     var body: some Scene {
         WindowGroup {
