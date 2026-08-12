@@ -14,7 +14,12 @@ struct FriendsView: View {
 
     private var sameCityFriends: [FriendPresence] {
         guard let city = store.currentCity else { return [] }
-        return MockFriendData.sameCityFriends(from: friends, currentCity: city, now: referenceDate)
+        return MockFriendData.sameCityFriends(
+            from: friends,
+            currentCity: city,
+            currentCountryCode: store.snapshot.currentPresence.countryCode,
+            now: referenceDate
+        )
     }
 
     var body: some View {

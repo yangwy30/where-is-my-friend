@@ -91,12 +91,12 @@ struct AppShellView: View {
     }
 
     private func openDeepLink(_ url: URL) {
-        if url.scheme == "whereismyfriend", url.host == "sharing" {
+        if url.scheme == SharedAppLink.urlScheme, url.host == "sharing" {
             selection = .sharing
             return
         }
 
-        if url.scheme == "whereismyfriend", url.host == "events" {
+        if url.scheme == SharedAppLink.urlScheme, url.host == "events" {
             selection = .profile
             profilePath = NavigationPath()
             profilePath.append(ProfileRoute.events)
@@ -104,7 +104,7 @@ struct AppShellView: View {
         }
 
         guard
-            url.scheme == "whereismyfriend",
+            url.scheme == SharedAppLink.urlScheme,
             url.host == "friend",
             let idText = url.pathComponents.dropFirst().first,
             let id = UUID(uuidString: idText),

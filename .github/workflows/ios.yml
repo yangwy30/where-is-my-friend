@@ -30,6 +30,28 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
+      - name: Build Staging
+        run: |
+          xcodebuild \
+            -project WhereIsMyFriend.xcodeproj \
+            -scheme WhereIsMyFriend \
+            -configuration Staging \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Build Release
+        run: |
+          xcodebuild \
+            -project WhereIsMyFriend.xcodeproj \
+            -scheme WhereIsMyFriend \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
       - name: Run tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | ruby -rjson -e '

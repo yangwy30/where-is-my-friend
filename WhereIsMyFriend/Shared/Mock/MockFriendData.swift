@@ -82,6 +82,7 @@ enum MockFriendData {
     static func sameCityFriends(
         from friends: [FriendPresence],
         currentCity: String = currentUserCity,
+        currentCountryCode: String? = nil,
         now: Date = Date()
     ) -> [FriendPresence] {
         friends.filter { friend in
@@ -89,7 +90,7 @@ enum MockFriendData {
                 city: friend.city,
                 countryCode: friend.countryCode,
                 otherCity: currentCity,
-                otherCountryCode: nil
+                otherCountryCode: currentCountryCode
             )
                 && friend.isSameCityEligible(at: now)
         }

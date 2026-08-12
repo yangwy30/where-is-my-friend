@@ -66,6 +66,7 @@ struct SharingView: View {
             }
             .tint(WIFTheme.fresh)
             .padding(15)
+            .disabled(store.isWorking)
             .accessibilityIdentifier("citySharingToggle")
 
             Divider().overlay(WIFTheme.border).padding(.leading, 15)
@@ -75,6 +76,7 @@ struct SharingView: View {
             }
             .tint(WIFTheme.fresh)
             .padding(15)
+            .disabled(store.isWorking)
             .accessibilityIdentifier("backgroundUpdatesToggle")
 
             Divider().overlay(WIFTheme.border).padding(.leading, 15)
@@ -84,6 +86,7 @@ struct SharingView: View {
             }
             .tint(WIFTheme.fresh)
             .padding(15)
+            .disabled(store.isWorking)
         }
         .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
         .overlay {
@@ -257,11 +260,16 @@ struct SharingView: View {
         } set: { newValue in
             var preferences = store.snapshot.sharingPreferences
             preferences.backgroundUpdatesEnabled = newValue
-            Task { await store.setSharingPreferences(preferences) }
-            if newValue {
-                locationService.requestBackgroundUpdates()
-            } else {
+            if !newValue {
                 locationService.stopBackgroundUpdates()
+            }
+            Task {
+                let saved = await store.setSharingPreferences(preferences)
+                if saved, newValue {
+                    locationService.requestBackgroundUpdates()
+                } else if !saved {
+                    locationService.stopBackgroundUpdates()
+                }
             }
         }
     }

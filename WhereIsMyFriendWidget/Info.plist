@@ -23,5 +23,9 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
+	<key>WIFAppGroupIdentifier</key>
+	<string>$(WIF_APP_GROUP)</string>
+	<key>WIFURLScheme</key>
+	<string>$(WIF_URL_SCHEME)</string>
 </dict>
 </plist>

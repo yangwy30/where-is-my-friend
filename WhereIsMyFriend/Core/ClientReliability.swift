@@ -1,4 +1,6 @@
+import CryptoKit
 import Foundation
+import Security
 
 struct PendingInvite: Identifiable, Codable, Equatable, Sendable {
     var id: String { username }
@@ -7,12 +9,19 @@ struct PendingInvite: Identifiable, Codable, Equatable, Sendable {
 }
 
 enum InviteLinkParser {
-    static func parse(_ url: URL, now: Date = Date()) -> PendingInvite? {
+    static func parse(
+        _ url: URL,
+        appScheme: String = SharedAppLink.urlScheme,
+        trustedInviteHosts: Set<String> = InviteLinkConfiguration.trustedHosts(),
+        now: Date = Date()
+    ) -> PendingInvite? {
         let components = url.pathComponents.filter { $0 != "/" }
         let rawUsername: String?
-        if url.scheme == "whereismyfriend", url.host == "invite" {
+        if url.scheme?.lowercased() == appScheme.lowercased(), url.host == "invite" {
             rawUsername = components.first
         } else if url.scheme == "https",
+                  let host = url.host?.lowercased(),
+                  trustedInviteHosts.contains(host),
                   let inviteIndex = components.firstIndex(of: "invite"),
                   components.indices.contains(inviteIndex + 1) {
             rawUsername = components[inviteIndex + 1]
@@ -32,6 +41,19 @@ enum InviteLinkParser {
     }
 }
 
+enum InviteLinkConfiguration {
+    static func trustedHosts(bundle: Bundle = .main) -> Set<String> {
+        guard let raw = bundle.object(forInfoDictionaryKey: "WIFInviteBaseURL") as? String,
+              let url = URL(string: raw),
+              url.scheme?.lowercased() == "https",
+              let host = url.host?.lowercased(),
+              !host.hasSuffix(".invalid") else {
+            return []
+        }
+        return [host]
+    }
+}
+
 enum InviteURLFactory {
     static func make(username: String, bundle: Bundle = .main) -> URL {
         let normalized = username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? username
@@ -39,7 +61,40 @@ enum InviteURLFactory {
            let baseURL = URL(string: base), baseURL.scheme == "https" {
             return baseURL.appending(path: "invite").appending(path: normalized)
         }
-        return URL(string: "whereismyfriend://invite/\(normalized)")!
+        return SharedAppLink.make(host: "invite", path: normalized)
+    }
+}
+
+enum AppleSignInNonce {
+    enum NonceError: LocalizedError {
+        case randomGenerationFailed(OSStatus)
+
+        var errorDescription: String? {
+            switch self {
+            case .randomGenerationFailed:
+                "A secure Apple sign-in request could not be created. Please try again."
+            }
+        }
+    }
+
+    static func make(length: Int = 32) throws -> String {
+        precondition(length > 0)
+        let alphabet = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        result.reserveCapacity(length)
+        while result.count < length {
+            var random: UInt8 = 0
+            let status = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+            guard status == errSecSuccess else { throw NonceError.randomGenerationFailed(status) }
+            if random < alphabet.count {
+                result.append(alphabet[Int(random)])
+            }
+        }
+        return result
+    }
+
+    static func sha256(_ value: String) -> String {
+        SHA256.hash(data: Data(value.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 }
 
@@ -72,17 +127,20 @@ struct PendingPresenceUpload: Codable, Equatable, Sendable {
 enum PendingRemoteMutationPayload: Codable, Equatable, Sendable {
     case presence(PendingPresenceUpload)
     case pushToken(String)
+    case sharingPreferences(SharingPreferences)
 
     var coalescingKey: String {
         switch self {
         case .presence: "presence"
         case .pushToken: "push-token"
+        case .sharingPreferences: "sharing-preferences"
         }
     }
 }
 
 struct QueuedRemoteMutation: Identifiable, Codable, Equatable, Sendable {
     let id: UUID
+    let ownerID: UUID
     var payload: PendingRemoteMutationPayload
     var createdAt: Date
     var attempts: Int
@@ -110,11 +168,14 @@ actor OfflineMutationQueue {
         }
     }
 
-    func enqueue(_ payload: PendingRemoteMutationPayload, now: Date = Date()) {
-        mutations.removeAll { $0.payload.coalescingKey == payload.coalescingKey }
+    func enqueue(_ payload: PendingRemoteMutationPayload, ownerID: UUID, now: Date = Date()) {
+        mutations.removeAll {
+            $0.ownerID == ownerID && $0.payload.coalescingKey == payload.coalescingKey
+        }
         mutations.append(
             QueuedRemoteMutation(
                 id: UUID(),
+                ownerID: ownerID,
                 payload: payload,
                 createdAt: now,
                 attempts: 0,
@@ -124,12 +185,14 @@ actor OfflineMutationQueue {
         persist()
     }
 
-    func due(at date: Date = Date()) -> [QueuedRemoteMutation] {
-        mutations.filter { $0.nextAttemptAt <= date }.sorted { $0.createdAt < $1.createdAt }
+    func due(ownerID: UUID, at date: Date = Date()) -> [QueuedRemoteMutation] {
+        mutations
+            .filter { $0.ownerID == ownerID && $0.nextAttemptAt <= date }
+            .sorted { $0.createdAt < $1.createdAt }
     }
 
-    func all() -> [QueuedRemoteMutation] {
-        mutations.sorted { $0.createdAt < $1.createdAt }
+    func all(ownerID: UUID) -> [QueuedRemoteMutation] {
+        mutations.filter { $0.ownerID == ownerID }.sorted { $0.createdAt < $1.createdAt }
     }
 
     func remove(id: UUID) {
@@ -146,10 +209,14 @@ actor OfflineMutationQueue {
         persist()
     }
 
-    func count() -> Int { mutations.count }
+    func count(ownerID: UUID) -> Int { mutations.count { $0.ownerID == ownerID } }
 
-    func reset() {
-        mutations = []
+    func reset(ownerID: UUID? = nil) {
+        if let ownerID {
+            mutations.removeAll { $0.ownerID == ownerID }
+        } else {
+            mutations = []
+        }
         persist()
     }
 

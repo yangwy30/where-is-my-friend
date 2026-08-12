@@ -1,0 +1,18 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "TEAMID.com.yangwy30.whereismyfriend",
+          "TEAMID.com.yangwy30.whereismyfriend.staging"
+        ],
+        "components": [
+          {
+            "/": "/invite/*",
+            "comment": "Trusted friend invitation links"
+          }
+        ]
+      }
+    ]
+  }
+}

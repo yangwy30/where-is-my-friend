@@ -48,18 +48,18 @@
 - Widget 三档隐私模式：完整、隐藏姓名、全部隐藏
 - Debug、Staging、Release 分离；非 Debug 构建在无真实 API 时安全关闭
 
-没有真实 Server 时，Debug App 默认使用 Local Demo Repository。所有业务交互都会本地保存；选择 Server 后只需实现 [API contract](./Docs/API_CONTRACT.md)，无需重写 SwiftUI 页面。Staging 和 Release 不允许回退到 Demo 数据。
+没有真实 Server 时，Debug App 默认使用 Local Demo Repository。所有业务交互都会本地保存；选择 Server 后只需实现 [API contract](./docs/API_CONTRACT.md)，无需重写 SwiftUI 页面。Staging 和 Release 不允许回退到 Demo 数据。
 
 App 只会在用户主动点击相关控制后请求位置或通知权限。本地 Demo 模式不会上传任何数据；Sign in with Apple 的真实 token 交换与网络请求仅在配置 Remote API 后启用。
 
-完整产品路线图见 [PLAN.md](./PLAN.md)，视觉与交互规范见 [Docs/DESIGN_SPEC.md](./Docs/DESIGN_SPEC.md)。
+完整产品路线图见 [PLAN.md](./PLAN.md)，视觉与交互规范见 [docs/DESIGN_SPEC.md](./docs/DESIGN_SPEC.md)。
 
 生产接入资料：
 
-- [客户端架构决策](./Docs/ADR-001-CLIENT-BOUNDARY.md)
-- [REST API 合同](./Docs/API_CONTRACT.md)
-- [PostgreSQL 参考 schema](./Docs/DATABASE_SCHEMA.sql)
-- [真实后端接入清单](./Docs/REAL_BACKEND_CHECKLIST.md)
+- [客户端架构决策](./docs/ADR-001-CLIENT-BOUNDARY.md)
+- [REST API 合同](./docs/API_CONTRACT.md)
+- [PostgreSQL 参考 schema](./docs/DATABASE_SCHEMA.sql)
+- [真实后端接入清单](./docs/REAL_BACKEND_CHECKLIST.md)
 
 ## 运行原型
 

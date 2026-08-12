@@ -7,6 +7,12 @@ struct AppNotice: Identifiable, Equatable {
     let message: String
 }
 
+private struct PendingCityUpdate: Sendable {
+    let city: String
+    let countryCode: String?
+    let source: PresenceSource
+}
+
 @MainActor
 final class AppStore: ObservableObject {
     @Published private(set) var snapshot: AppSnapshot
@@ -20,6 +26,7 @@ final class AppStore: ObservableObject {
     let notificationService: LocalNotificationService
 
     private let repository: any AppRepository
+    private var pendingCityUpdate: PendingCityUpdate?
 
     init(repository: (any AppRepository)? = nil) {
         if ProcessInfo.processInfo.arguments.contains("-resetDemoData") {
@@ -29,7 +36,7 @@ final class AppStore: ObservableObject {
         self.repository = selectedRepository
         repositoryMode = selectedRepository.mode
         notificationService = LocalNotificationService()
-        snapshot = SharedAppStateStore.load(expectedOrigin: selectedRepository.mode.rawValue)
+        snapshot = SharedAppStateStore.load(expectedOrigin: selectedRepository.storageScope)
             ?? (selectedRepository.mode == .localDemo ? DemoData.initialSnapshot() : DemoData.signedOutSnapshot())
         pendingInvite = PendingInviteStore.load()
         widgetPrivacyMode = SharedWidgetPreferences.privacyMode()
@@ -128,14 +135,19 @@ final class AppStore: ObservableObject {
         }
     }
 
-    func setSharingPreferences(_ preferences: SharingPreferences) async {
+    @discardableResult
+    func setSharingPreferences(_ preferences: SharingPreferences) async -> Bool {
         await perform(successMessage: nil) {
             try await self.repository.setSharingPreferences(preferences)
         }
     }
 
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async {
-        await perform(successMessage: "Your shared city is now \(city).") {
+        if isWorking {
+            pendingCityUpdate = PendingCityUpdate(city: city, countryCode: countryCode, source: source)
+            return
+        }
+        await perform(successMessage: source == .manual ? "Your shared city is now \(city)." : nil) {
             try await self.repository.updateCurrentCity(
                 city: city,
                 countryCode: countryCode,
@@ -162,6 +174,8 @@ final class AppStore: ObservableObject {
             try await repository.registerPushToken(token)
             await refreshPendingOperationCount()
         } catch {
+            applySessionExpirationIfNeeded(error)
+            await refreshPendingOperationCount()
             notice = AppNotice(title: "Push registration", message: error.localizedDescription)
         }
     }
@@ -209,30 +223,50 @@ final class AppStore: ObservableObject {
         if repositoryMode == .remote, snapshot.isAuthenticated {
             snapshot.syncState = .syncing
         }
-        defer { isWorking = false }
-
+        let result: Bool
         do {
             var updated = try await operation()
             if repositoryMode == .remote, updated.syncState != .offline {
                 updated.syncState = .synced
             }
             snapshot = updated
-            SharedAppStateStore.save(updated, origin: repositoryMode.rawValue)
+            SharedAppStateStore.save(updated, origin: repository.storageScope)
             synchronizeWidget()
             await deliverNewNotifications(excluding: existingEventIDs)
             await refreshPendingOperationCount()
             if let successMessage {
                 notice = AppNotice(title: "Done", message: successMessage)
             }
-            return true
+            result = true
         } catch {
+            applySessionExpirationIfNeeded(error)
             if repositoryMode == .remote, snapshot.isAuthenticated {
                 snapshot.syncState = .failed
             }
             await refreshPendingOperationCount()
             notice = AppNotice(title: "Couldn’t complete that", message: error.localizedDescription)
-            return false
+            result = false
         }
+        isWorking = false
+        await flushPendingCityUpdateIfNeeded()
+        return result
+    }
+
+    private func flushPendingCityUpdateIfNeeded() async {
+        guard !isWorking, snapshot.isAuthenticated, let pending = pendingCityUpdate else { return }
+        pendingCityUpdate = nil
+        await updateCurrentCity(
+            city: pending.city,
+            countryCode: pending.countryCode,
+            source: pending.source
+        )
+    }
+
+    private func applySessionExpirationIfNeeded(_ error: Error) {
+        guard error as? RepositoryError == .sessionExpired else { return }
+        snapshot = DemoData.signedOutSnapshot()
+        SharedAppStateStore.save(snapshot, origin: repository.storageScope)
+        synchronizeWidget()
     }
 
     private func refreshPendingOperationCount() async {
@@ -250,6 +284,7 @@ final class AppStore: ObservableObject {
         SharedPresenceStore.save(
             snapshot.isAuthenticated ? snapshot.friends : [],
             currentCity: snapshot.isAuthenticated ? snapshot.currentPresence.city : nil,
+            currentCountryCode: snapshot.isAuthenticated ? snapshot.currentPresence.countryCode : nil,
             updatedAt: snapshot.lastSyncedAt ?? Date()
         )
         WidgetCenter.shared.reloadAllTimelines()

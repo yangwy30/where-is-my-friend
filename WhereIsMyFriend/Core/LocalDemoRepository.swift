@@ -2,6 +2,7 @@ import Foundation
 
 actor LocalDemoRepository: AppRepository {
     nonisolated let mode: RepositoryMode = .localDemo
+    nonisolated let storageScope = RepositoryMode.localDemo.rawValue
 
     private var snapshot: AppSnapshot
     private let persistsChanges: Bool
@@ -11,7 +12,7 @@ actor LocalDemoRepository: AppRepository {
         if let snapshot {
             self.snapshot = snapshot
         } else {
-            self.snapshot = SharedAppStateStore.load(expectedOrigin: RepositoryMode.localDemo.rawValue)
+            self.snapshot = SharedAppStateStore.load(expectedOrigin: storageScope)
                 ?? DemoData.initialSnapshot()
         }
     }
