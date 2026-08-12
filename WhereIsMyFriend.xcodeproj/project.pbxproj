@@ -441,8 +441,12 @@
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = YES;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "https://api.example.invalid";
+			WIF_APS_ENVIRONMENT = development;
 			WIF_INVITE_BASE_URL = "";
+			WIF_INVITE_HOST = invite.example.invalid;
+			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Debug; };
 		800000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -466,8 +470,12 @@
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "https://api.example.invalid";
+			WIF_APS_ENVIRONMENT = production;
 			WIF_INVITE_BASE_URL = "";
+			WIF_INVITE_HOST = invite.example.invalid;
+			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Release; };
 		800000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
@@ -485,6 +493,8 @@
 			SWIFT_EMIT_LOC_STRINGS = YES;
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
+			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Debug; };
 		800000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
@@ -502,6 +512,8 @@
 			SWIFT_EMIT_LOC_STRINGS = YES;
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
+			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Release; };
 		800000000000000000000007 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
 			BUNDLE_LOADER = "$(TEST_HOST)";
@@ -582,8 +594,12 @@
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
 			WIF_API_BASE_URL = "https://staging-api.example.invalid";
+			WIF_APS_ENVIRONMENT = development;
 			WIF_INVITE_BASE_URL = "";
+			WIF_INVITE_HOST = staging-invite.example.invalid;
+			WIF_URL_SCHEME = whereismyfriend-staging;
 		}; name = Staging; };
 		800000000000000000000013 /* Staging */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
@@ -601,6 +617,8 @@
 			SWIFT_EMIT_LOC_STRINGS = YES;
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
+			WIF_URL_SCHEME = whereismyfriend-staging;
 		}; name = Staging; };
 		800000000000000000000014 /* Staging */ = {isa = XCBuildConfiguration; buildSettings = {
 			BUNDLE_LOADER = "$(TEST_HOST)";

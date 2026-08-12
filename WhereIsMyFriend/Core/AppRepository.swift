@@ -22,6 +22,7 @@ enum DemoScenario: String, CaseIterable, Identifiable, Sendable {
 struct AppleSignInPayload: Codable, Sendable {
     let appleUserID: String
     let identityToken: String
+    let nonce: String
     let displayName: String?
 }
 
@@ -40,6 +41,7 @@ enum RepositoryError: LocalizedError, Equatable {
     case invalidServerResponse
     case networkUnavailable
     case serverTemporarilyUnavailable
+    case sessionExpired
     case message(String)
 
     var errorDescription: String? {
@@ -58,6 +60,7 @@ enum RepositoryError: LocalizedError, Equatable {
         case .invalidServerResponse: "The server returned an invalid response."
         case .networkUnavailable: "You appear to be offline. The city update was saved and will retry automatically."
         case .serverTemporarilyUnavailable: "The server is temporarily unavailable. Please try again shortly."
+        case .sessionExpired: "Your session expired. Please sign in again."
         case .message(let message): message
         }
     }
@@ -65,6 +68,7 @@ enum RepositoryError: LocalizedError, Equatable {
 
 protocol AppRepository: Sendable {
     var mode: RepositoryMode { get }
+    var storageScope: String { get }
 
     func loadSnapshot() async throws -> AppSnapshot
     func signInDemo() async throws -> AppSnapshot
@@ -105,6 +109,7 @@ enum AppEnvironment {
 
 actor UnavailableAppRepository: AppRepository {
     nonisolated let mode: RepositoryMode = .remote
+    nonisolated let storageScope = "remote:unconfigured"
 
     private func unavailable() throws -> Never { throw RepositoryError.serverNotConfigured }
     func loadSnapshot() async throws -> AppSnapshot { try unavailable() }

@@ -25,7 +25,7 @@
 			<string>Friend Detail</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>whereismyfriend</string>
+				<string>$(WIF_URL_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
@@ -59,9 +59,13 @@
 	</array>
 	<key>WIFAPIBaseURL</key>
 	<string>$(WIF_API_BASE_URL)</string>
+	<key>WIFAppGroupIdentifier</key>
+	<string>$(WIF_APP_GROUP)</string>
 	<key>WIFAllowsLocalDemo</key>
 	<string>$(WIF_ALLOWS_LOCAL_DEMO)</string>
 	<key>WIFInviteBaseURL</key>
 	<string>$(WIF_INVITE_BASE_URL)</string>
+	<key>WIFURLScheme</key>
+	<string>$(WIF_URL_SCHEME)</string>
 </dict>
 </plist>

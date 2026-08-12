@@ -1,17 +1,32 @@
 import Foundation
 import Security
 
-struct APIConfiguration: Sendable {
+struct APIConfiguration: Equatable, Sendable {
     let baseURL: URL
 
-    static func fromBundle() -> APIConfiguration? {
+    var originKey: String {
+        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
+        components?.query = nil
+        components?.fragment = nil
+        return components?.url?.absoluteString.lowercased() ?? baseURL.absoluteString.lowercased()
+    }
+
+    static func validated(rawValue: String) -> APIConfiguration? {
         guard
-            let rawValue = Bundle.main.object(forInfoDictionaryKey: "WIFAPIBaseURL") as? String,
             let url = URL(string: rawValue),
-            url.scheme == "https",
-            url.host != "api.example.invalid"
+            url.scheme?.lowercased() == "https",
+            let host = url.host?.lowercased(),
+            !host.isEmpty,
+            !host.hasSuffix(".invalid")
         else { return nil }
         return APIConfiguration(baseURL: url)
+    }
+
+    static func fromBundle(bundle: Bundle = .main) -> APIConfiguration? {
+        guard let rawValue = bundle.object(forInfoDictionaryKey: "WIFAPIBaseURL") as? String else {
+            return nil
+        }
+        return validated(rawValue: rawValue)
     }
 }
 
@@ -30,14 +45,26 @@ private struct AuthenticationEnvelope: Decodable { let accessToken: String; let 
 
 actor RemoteAppRepository: AppRepository {
     nonisolated let mode: RepositoryMode = .remote
+    nonisolated let storageScope: String
 
     private let client: RESTClient
-    private let tokenStore = KeychainSessionTokenStore()
+    private let tokenStore: any SessionTokenStoring
     private let mutationQueue: OfflineMutationQueue
 
-    init(configuration: APIConfiguration, mutationQueue: OfflineMutationQueue = .shared) {
-        client = RESTClient(baseURL: configuration.baseURL)
-        self.mutationQueue = mutationQueue
+    init(
+        configuration: APIConfiguration,
+        mutationQueue: OfflineMutationQueue? = nil,
+        session: URLSession = .shared,
+        tokenStore: (any SessionTokenStoring)? = nil
+    ) {
+        storageScope = "remote:\(configuration.originKey)"
+        client = RESTClient(baseURL: configuration.baseURL, session: session)
+        self.mutationQueue = mutationQueue ?? OfflineMutationQueue(
+            storageKey: "remote-mutation-queue.v2.\(configuration.originKey)"
+        )
+        self.tokenStore = tokenStore ?? KeychainSessionTokenStore(
+            service: "com.yangwy30.whereismyfriend.session.\(configuration.originKey)"
+        )
     }
 
     func loadSnapshot() async throws -> AppSnapshot {
@@ -45,7 +72,7 @@ actor RemoteAppRepository: AppRepository {
             try await flushPendingOperations()
             return try await requestSnapshot(path: "/v1/bootstrap", method: "GET", body: Optional<EmptyBody>.none)
         } catch where isRetryable(error) {
-            guard var cached = SharedAppStateStore.load(expectedOrigin: RepositoryMode.remote.rawValue),
+            guard var cached = SharedAppStateStore.load(expectedOrigin: storageScope),
                   cached.isAuthenticated else { throw error }
             cached.syncState = .offline
             return cached
@@ -63,27 +90,32 @@ actor RemoteAppRepository: AppRepository {
             body: payload,
             bearerToken: nil
         )
+        let previousUserID = cachedSnapshot()?.currentUser.id
+        if previousUserID != envelope.snapshot.currentUser.id {
+            await mutationQueue.reset()
+        }
         tokenStore.save(envelope.accessToken)
         return envelope.snapshot
     }
 
     func signOut() async throws -> AppSnapshot {
+        let ownerID = cachedSnapshot()?.currentUser.id
+        let result: AppSnapshot
         do {
-            let snapshot = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody())
-            tokenStore.clear()
-            await mutationQueue.reset()
-            return snapshot
-        } catch where isRetryable(error) {
-            tokenStore.clear()
-            await mutationQueue.reset()
-            return DemoData.signedOutSnapshot()
+            result = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody())
+        } catch {
+            result = DemoData.signedOutSnapshot()
         }
+        tokenStore.clear()
+        await mutationQueue.reset(ownerID: ownerID)
+        return result
     }
 
     func deleteAccount() async throws -> AppSnapshot {
+        let ownerID = try activeUserID()
         let snapshot = try await requestSnapshot(path: "/v1/account", method: "DELETE", body: EmptyBody())
         tokenStore.clear()
-        await mutationQueue.reset()
+        await mutationQueue.reset(ownerID: ownerID)
         return snapshot
     }
 
@@ -148,7 +180,19 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func setSharingPreferences(_ preferences: SharingPreferences) async throws -> AppSnapshot {
-        try await requestSnapshot(path: "/v1/sharing", method: "PATCH", body: preferences)
+        do {
+            return try await requestSnapshot(path: "/v1/sharing", method: "PATCH", body: preferences)
+        } catch where isRetryable(error) {
+            let ownerID = try activeUserID()
+            await mutationQueue.enqueue(.sharingPreferences(preferences), ownerID: ownerID)
+            var cached = try authenticatedCachedSnapshot()
+            cached.sharingPreferences = preferences
+            if !preferences.citySharingEnabled {
+                ColocationEvaluator.evaluate(snapshot: &cached)
+            }
+            cached.syncState = .offline
+            return cached
+        }
     }
 
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot {
@@ -170,9 +214,9 @@ actor RemoteAppRepository: AppRepository {
                 )
             )
         } catch where isRetryable(error) {
-            await mutationQueue.enqueue(.presence(upload))
-            var cached = SharedAppStateStore.load(expectedOrigin: RepositoryMode.remote.rawValue)
-                ?? DemoData.signedOutSnapshot()
+            let ownerID = try activeUserID()
+            await mutationQueue.enqueue(.presence(upload), ownerID: ownerID)
+            var cached = try authenticatedCachedSnapshot()
             cached.currentPresence = CurrentUserPresence(
                 city: upload.city,
                 countryCode: upload.countryCode,
@@ -192,8 +236,11 @@ actor RemoteAppRepository: AppRepository {
                 body: PushTokenBody(token: pushToken),
                 bearerToken: try token()
             )
+        } catch RepositoryError.sessionExpired {
+            tokenStore.clear()
+            throw RepositoryError.sessionExpired
         } catch where isRetryable(error) {
-            await mutationQueue.enqueue(.pushToken(pushToken))
+            await mutationQueue.enqueue(.pushToken(pushToken), ownerID: try activeUserID())
         }
     }
 
@@ -202,7 +249,10 @@ actor RemoteAppRepository: AppRepository {
         return try await requestSnapshot(path: "/v1/bootstrap", method: "GET", body: Optional<EmptyBody>.none)
     }
 
-    func pendingOperationCount() async -> Int { await mutationQueue.count() }
+    func pendingOperationCount() async -> Int {
+        guard let ownerID = try? activeUserID() else { return 0 }
+        return await mutationQueue.count(ownerID: ownerID)
+    }
 
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot {
         throw RepositoryError.unsupportedInCurrentMode
@@ -218,12 +268,20 @@ actor RemoteAppRepository: AppRepository {
         method: String,
         body: Body?
     ) async throws -> AppSnapshot {
-        try await client.request(path: path, method: method, body: body, bearerToken: try token())
+        do {
+            return try await client.request(path: path, method: method, body: body, bearerToken: try token())
+        } catch RepositoryError.sessionExpired {
+            tokenStore.clear()
+            throw RepositoryError.sessionExpired
+        }
     }
 
     private func flushPendingOperations(force: Bool = false) async throws {
-        guard tokenStore.load() != nil else { return }
-        let pending = force ? await mutationQueue.all() : await mutationQueue.due()
+        guard tokenStore.load() != nil, let ownerID = try? activeUserID() else { return }
+        let pending = force
+            ? await mutationQueue.all(ownerID: ownerID)
+            : await mutationQueue.due(ownerID: ownerID)
+        var terminalError: Error?
         for mutation in pending {
             do {
                 switch mutation.payload {
@@ -246,13 +304,43 @@ actor RemoteAppRepository: AppRepository {
                         body: PushTokenBody(token: pushToken),
                         bearerToken: try token()
                     )
+                case .sharingPreferences(let preferences):
+                    let _: AppSnapshot = try await client.request(
+                        path: "/v1/sharing",
+                        method: "PATCH",
+                        body: preferences,
+                        bearerToken: try token()
+                    )
                 }
                 await mutationQueue.remove(id: mutation.id)
+            } catch RepositoryError.sessionExpired {
+                tokenStore.clear()
+                throw RepositoryError.sessionExpired
             } catch {
-                await mutationQueue.markFailed(id: mutation.id)
-                throw error
+                if isRetryable(error) {
+                    await mutationQueue.markFailed(id: mutation.id)
+                    throw error
+                }
+                await mutationQueue.remove(id: mutation.id)
+                terminalError = terminalError ?? error
             }
         }
+        if let terminalError { throw terminalError }
+    }
+
+    private func activeUserID() throws -> UUID {
+        try authenticatedCachedSnapshot().currentUser.id
+    }
+
+    private func cachedSnapshot() -> AppSnapshot? {
+        SharedAppStateStore.load(expectedOrigin: storageScope)
+    }
+
+    private func authenticatedCachedSnapshot() throws -> AppSnapshot {
+        guard let cached = cachedSnapshot(), cached.isAuthenticated else {
+            throw RepositoryError.notAuthenticated
+        }
+        return cached
     }
 
     private func isRetryable(_ error: Error) -> Bool {
@@ -262,9 +350,9 @@ actor RemoteAppRepository: AppRepository {
     }
 }
 
-private struct EmptyResponse: Decodable {}
+struct EmptyResponse: Decodable {}
 
-private actor RESTClient {
+actor RESTClient {
     private let baseURL: URL
     private let session: URLSession
     private let encoder: JSONEncoder
@@ -316,6 +404,9 @@ private actor RESTClient {
             throw RepositoryError.invalidServerResponse
         }
         guard (200..<300).contains(http.statusCode) else {
+            if http.statusCode == 401 || http.statusCode == 403 {
+                throw RepositoryError.sessionExpired
+            }
             if http.statusCode == 408 || http.statusCode == 429 || (500..<600).contains(http.statusCode) {
                 throw RepositoryError.serverTemporarilyUnavailable
             }
@@ -332,9 +423,19 @@ private actor RESTClient {
 
 private struct ServerErrorEnvelope: Decodable { let message: String }
 
-private final class KeychainSessionTokenStore: @unchecked Sendable {
-    private let service = "com.yangwy30.whereismyfriend.session"
+protocol SessionTokenStoring: Sendable {
+    func save(_ token: String)
+    func load() -> String?
+    func clear()
+}
+
+private final class KeychainSessionTokenStore: SessionTokenStoring, @unchecked Sendable {
+    private let service: String
     private let account = "access-token"
+
+    init(service: String) {
+        self.service = service
+    }
 
     func save(_ token: String) {
         clear()

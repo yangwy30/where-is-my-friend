@@ -32,9 +32,13 @@ The iOS app includes a complete `RemoteAppRepository`. Set `WIFAPIBaseURL` to an
 | PUT | `/v1/presence/current` | `{ city, countryCode, source, clientUpdatedAt }` | `AppSnapshot` |
 | PUT | `/v1/devices/push-token` | `{ token, platform: ios }` | empty 2xx |
 
+`AppleSignInPayload` contains the raw nonce used to create the hashed nonce in the Apple authorization request. The server must require the value and verify the hash against the identity token before creating a session.
+
 `ProfileUpdate` contains `displayName`, `username`, and `avatarPalette`. The server must repeat the client validation, enforce username uniqueness, and return a stable conflict error when a handle is unavailable.
 
-The client persistently coalesces offline presence and push-token writes. A later write of the same kind replaces the earlier queued value, and retries use exponential backoff. Therefore both `PUT` endpoints must be idempotent and accept a repeated payload safely.
+The client persistently coalesces offline presence, sharing-preference and push-token writes per signed-in account. A later write of the same kind replaces the earlier queued value, and retries use exponential backoff. Therefore these write endpoints must be idempotent and accept a repeated payload safely.
+
+Return `401` or `403` for an invalid or revoked session. The client clears the local token, cached friend data and Widget snapshot, then requires authentication again.
 
 ## Authorization invariant
 

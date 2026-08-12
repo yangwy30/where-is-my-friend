@@ -1,9 +1,36 @@
 import Foundation
 
+enum SharedAppLink {
+    static var urlScheme: String {
+        guard let configured = Bundle.main.object(forInfoDictionaryKey: "WIFURLScheme") as? String,
+              !configured.isEmpty,
+              !configured.contains("$(") else {
+            return "whereismyfriend"
+        }
+        return configured.lowercased()
+    }
+
+    static func make(host: String, path: String? = nil) -> URL {
+        var value = "\(urlScheme)://\(host)"
+        if let path { value += "/\(path)" }
+        return URL(string: value)!
+    }
+}
+
 enum SharedPresenceStore {
-    static let appGroupIdentifier = "group.com.yangwy30.whereismyfriend"
+    static var appGroupIdentifier: String {
+        if let configured = Bundle.main.object(forInfoDictionaryKey: "WIFAppGroupIdentifier") as? String,
+           !configured.isEmpty,
+           !configured.contains("$(") {
+            return configured
+        }
+        return Bundle.main.bundleIdentifier?.contains(".staging") == true
+            ? "group.com.yangwy30.whereismyfriend.staging"
+            : "group.com.yangwy30.whereismyfriend"
+    }
     private static let friendsKey = "prototype.friend-presence.snapshot"
     private static let currentCityKey = "widget.current-user-city"
+    private static let currentCountryCodeKey = "widget.current-user-country-code"
     private static let lastUpdatedKey = "widget.snapshot-updated-at"
 
     private static var defaults: UserDefaults {
@@ -29,6 +56,10 @@ enum SharedPresenceStore {
         defaults.string(forKey: currentCityKey) ?? ""
     }
 
+    static func loadCurrentCountryCode() -> String? {
+        defaults.string(forKey: currentCountryCodeKey)
+    }
+
     static func loadLastUpdatedAt() -> Date? {
         defaults.object(forKey: lastUpdatedKey) as? Date
     }
@@ -38,12 +69,22 @@ enum SharedPresenceStore {
         defaults.set(data, forKey: friendsKey)
     }
 
-    static func save(_ friends: [FriendPresence], currentCity: String?, updatedAt: Date = Date()) {
+    static func save(
+        _ friends: [FriendPresence],
+        currentCity: String?,
+        currentCountryCode: String? = nil,
+        updatedAt: Date = Date()
+    ) {
         save(friends)
         if let currentCity {
             defaults.set(currentCity, forKey: currentCityKey)
         } else {
             defaults.removeObject(forKey: currentCityKey)
+        }
+        if let currentCountryCode {
+            defaults.set(currentCountryCode, forKey: currentCountryCodeKey)
+        } else {
+            defaults.removeObject(forKey: currentCountryCodeKey)
         }
         defaults.set(updatedAt, forKey: lastUpdatedKey)
     }
@@ -51,6 +92,7 @@ enum SharedPresenceStore {
     static func resetPrototypeData() {
         defaults.removeObject(forKey: friendsKey)
         defaults.removeObject(forKey: currentCityKey)
+        defaults.removeObject(forKey: currentCountryCodeKey)
         defaults.removeObject(forKey: lastUpdatedKey)
     }
 }
@@ -82,6 +124,7 @@ enum SharedAppStateStore {
         SharedPresenceStore.save(
             snapshot.isAuthenticated ? snapshot.friends : [],
             currentCity: snapshot.isAuthenticated ? snapshot.currentPresence.city : nil,
+            currentCountryCode: snapshot.isAuthenticated ? snapshot.currentPresence.countryCode : nil,
             updatedAt: snapshot.lastSyncedAt ?? Date()
         )
     }
@@ -102,7 +145,7 @@ enum SharedWidgetPreferences {
 
     static func privacyMode() -> WidgetPrivacyMode {
         guard let rawValue = defaults.string(forKey: privacyModeKey),
-              let mode = WidgetPrivacyMode(rawValue: rawValue) else { return .full }
+              let mode = WidgetPrivacyMode(rawValue: rawValue) else { return .hideAll }
         return mode
     }
 

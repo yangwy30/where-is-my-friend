@@ -364,7 +364,11 @@ enum DemoData {
                 avatarPalette: person.avatarPalette
             )
         }
-        let sameCity = MockFriendData.sameCityFriends(from: friends, now: now)
+        let sameCity = MockFriendData.sameCityFriends(
+            from: friends,
+            currentCountryCode: "US",
+            now: now
+        )
         let initialEvent = ColocationEvent(
             id: UUID(),
             deduplicationKey: "seed-new-york",

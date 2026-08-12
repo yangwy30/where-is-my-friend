@@ -4,6 +4,7 @@ import SwiftUI
 struct AuthenticationView: View {
     @EnvironmentObject private var store: AppStore
     @State private var isProcessingAppleSignIn = false
+    @State private var currentNonce: String?
 
     var body: some View {
         ZStack {
@@ -33,8 +34,18 @@ struct AuthenticationView: View {
                 Spacer()
 
                 SignInWithAppleButton(.continue) { request in
-                    request.requestedScopes = [.fullName]
-                    isProcessingAppleSignIn = true
+                    do {
+                        let nonce = try AppleSignInNonce.make()
+                        currentNonce = nonce
+                        request.nonce = AppleSignInNonce.sha256(nonce)
+                        request.requestedScopes = [.fullName]
+                        isProcessingAppleSignIn = true
+                    } catch {
+                        store.notice = AppNotice(
+                            title: "Apple sign-in failed",
+                            message: error.localizedDescription
+                        )
+                    }
                 } onCompletion: { result in
                     handleAppleResult(result)
                 }
@@ -81,12 +92,15 @@ struct AuthenticationView: View {
 
     private func handleAppleResult(_ result: Result<ASAuthorization, Error>) {
         isProcessingAppleSignIn = false
+        let nonce = currentNonce
+        currentNonce = nil
         switch result {
         case .success(let authorization):
             guard
                 let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                 let tokenData = credential.identityToken,
-                let identityToken = String(data: tokenData, encoding: .utf8)
+                let identityToken = String(data: tokenData, encoding: .utf8),
+                let nonce
             else {
                 store.notice = AppNotice(
                     title: "Apple sign-in failed",
@@ -100,6 +114,7 @@ struct AuthenticationView: View {
                     AppleSignInPayload(
                         appleUserID: credential.user,
                         identityToken: identityToken,
+                        nonce: nonce,
                         displayName: name.isEmpty ? nil : name
                     )
                 )

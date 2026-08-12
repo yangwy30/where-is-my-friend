@@ -5,6 +5,7 @@ struct FriendWidgetEntry: TimelineEntry {
     let date: Date
     let friends: [FriendPresence]
     let currentCity: String
+    let currentCountryCode: String?
     let snapshotUpdatedAt: Date?
     let privacyMode: WidgetPrivacyMode
 }
@@ -15,6 +16,7 @@ struct FriendTimelineProvider: TimelineProvider {
             date: Date(),
             friends: MockFriendData.friends,
             currentCity: MockFriendData.currentUserCity,
+            currentCountryCode: "US",
             snapshotUpdatedAt: Date(),
             privacyMode: .full
         )
@@ -26,6 +28,7 @@ struct FriendTimelineProvider: TimelineProvider {
                 date: Date(),
                 friends: SharedPresenceStore.load(),
                 currentCity: SharedPresenceStore.loadCurrentCity(),
+                currentCountryCode: SharedPresenceStore.loadCurrentCountryCode(),
                 snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt(),
                 privacyMode: SharedWidgetPreferences.privacyMode()
             )
@@ -38,6 +41,7 @@ struct FriendTimelineProvider: TimelineProvider {
             date: now,
             friends: SharedPresenceStore.load(),
             currentCity: SharedPresenceStore.loadCurrentCity(),
+            currentCountryCode: SharedPresenceStore.loadCurrentCountryCode(),
             snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt(),
             privacyMode: SharedWidgetPreferences.privacyMode()
         )
@@ -69,6 +73,7 @@ struct FriendWidget: Widget {
         date: .now,
         friends: MockFriendData.friends,
         currentCity: MockFriendData.currentUserCity,
+        currentCountryCode: "US",
         snapshotUpdatedAt: .now,
         privacyMode: .full
     )

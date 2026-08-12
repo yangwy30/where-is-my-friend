@@ -35,7 +35,7 @@ private struct SmallFriendWidget: View {
     }
 
     var body: some View {
-        Link(destination: URL(string: "whereismyfriend://friend/\(friend.id.uuidString)")!) {
+        Link(destination: SharedAppLink.make(host: "friend", path: friend.id.uuidString)) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Label("Friends", systemImage: "location.circle.fill")
@@ -94,7 +94,7 @@ private struct MediumFriendWidget: View {
             }
 
             ForEach(visibleFriends) { friend in
-                Link(destination: URL(string: "whereismyfriend://friend/\(friend.id.uuidString)")!) {
+                Link(destination: SharedAppLink.make(host: "friend", path: friend.id.uuidString)) {
                     WidgetFriendRow(friend: friend, referenceDate: entry.date, privacyMode: entry.privacyMode)
                 }
             }
@@ -116,6 +116,7 @@ private struct LargeFriendWidget: View {
         MockFriendData.sameCityFriends(
             from: entry.friends,
             currentCity: entry.currentCity,
+            currentCountryCode: entry.currentCountryCode,
             now: entry.date
         )
     }
@@ -148,7 +149,7 @@ private struct LargeFriendWidget: View {
 
             VStack(spacing: 10) {
                 ForEach(otherFriends) { friend in
-                    Link(destination: URL(string: "whereismyfriend://friend/\(friend.id.uuidString)")!) {
+                    Link(destination: SharedAppLink.make(host: "friend", path: friend.id.uuidString)) {
                         WidgetFriendRow(friend: friend, referenceDate: entry.date, privacyMode: entry.privacyMode)
                     }
                 }
@@ -269,7 +270,7 @@ private struct WidgetAvatar: View {
 
 private struct WidgetPrivateState: View {
     var body: some View {
-        Link(destination: URL(string: "whereismyfriend://sharing")!) {
+        Link(destination: SharedAppLink.make(host: "sharing")) {
             VStack(spacing: 8) {
                 Image(systemName: "eye.slash.fill")
                     .font(.title)
@@ -290,7 +291,7 @@ private struct WidgetPrivateState: View {
 
 private struct WidgetEmptyState: View {
     var body: some View {
-        Link(destination: URL(string: "whereismyfriend://home")!) {
+        Link(destination: SharedAppLink.make(host: "home")) {
             VStack(spacing: 8) {
                 Image(systemName: "person.2.circle")
                     .font(.title)

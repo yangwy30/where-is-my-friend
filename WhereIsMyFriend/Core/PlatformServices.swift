@@ -79,11 +79,6 @@ final class CityLocationService: NSObject, ObservableObject {
         backgroundUpdatesEnabled = isEnabled
         if isEnabled, manager.authorizationStatus == .authorizedAlways {
             startBackgroundMonitoring()
-        } else if isEnabled,
-                  manager.authorizationStatus == .authorizedWhenInUse,
-                  !requestedAlwaysUpgrade {
-            requestedAlwaysUpgrade = true
-            manager.requestAlwaysAuthorization()
         } else if !isEnabled {
             requestedAlwaysUpgrade = false
             manager.stopMonitoringVisits()
@@ -198,7 +193,7 @@ final class LocalNotificationService: NSObject, ObservableObject {
         content.body = event.message
         content.sound = .default
         content.threadIdentifier = "colocation"
-        content.userInfo = ["deepLink": "whereismyfriend://events/\(event.id.uuidString)"]
+        content.userInfo = ["deepLink": SharedAppLink.make(host: "events", path: event.id.uuidString).absoluteString]
         let request = UNNotificationRequest(
             identifier: event.deduplicationKey,
             content: content,
