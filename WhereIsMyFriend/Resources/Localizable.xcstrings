@@ -1,141 +1,1461 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "@%@" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "@%@" } } } },
-    "%@ can see your latest city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%@ 可以看到你最近的城市" } } } },
-    "%@, %@, %@" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%1$@、%2$@、%3$@" } } } },
-    "%lld" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld" } } } },
-    "%lld cities" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%lld 个城市" } } } },
-    "%lld friends · %lld cities" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%1$lld 位朋友 · %2$lld 个城市" } } } },
-    "A moment appears after an eligible friend enters your current city." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当符合条件的朋友进入你当前所在城市后，这里会出现一条记录。" } } } },
-    "Accept" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "接受" } } } },
-    "Accept a request or invite a demo user by username." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "接受好友申请，或通过用户名邀请演示用户。" } } } },
-    "Accepted friends" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已接受的朋友" } } } },
-    "Account" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "账号" } } } },
-    "Add a friend" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加朋友" } } } },
-    "Add favorite" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加到收藏" } } } },
-    "Add friends" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加朋友" } } } },
-    "Add incoming request" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加收到的申请" } } } },
-    "Adds another request to the Add Friends screen." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在“添加朋友”页面增加一条好友申请。" } } } },
-    "Allow notifications" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "允许通知" } } } },
-    "Apple authorization is wired, but server verification is replaced by the local repository in this build." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已接入 Apple 授权；当前构建使用本地数据层代替服务器验证。" } } } },
-    "Around the world" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "世界各地" } } } },
-    "Authorization" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "授权" } } } },
-    "Background location lets the app notice meaningful city changes. You can pause sharing at any time." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后台位置让 App 能发现重要的城市变化。你随时都可以暂停共享。" } } } },
-    "Background updates" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "后台更新" } } } },
-    "Between you two" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仅限你们两人" } } } },
-    "Blocked people" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已屏蔽的人" } } } },
-    "Blocked users cannot invite you or access your presence." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "被屏蔽的用户无法邀请你，也无法查看你的城市状态。" } } } },
-    "Cached friend data will be removed from the App and Widget." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "App 和小组件中的好友缓存数据将被移除。" } } } },
-    "Cancel" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } } } },
-    "Choose a test city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择测试城市" } } } },
-    "City changes only" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只关注城市变化" } } } },
-    "City sharing" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "城市共享" } } } },
-    "City-level by design" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "天生只到城市级" } } } },
-    "City-level presence only" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只共享城市级状态" } } } },
-    "Continue" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "继续" } } } },
-    "Continue with Apple" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用 Apple 继续" } } } },
-    "Continue with local demo" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用本地演示继续" } } } },
-    "Decline" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "拒绝" } } } },
-    "Delete account" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除账号" } } } },
-    "Delete your account?" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除你的账号？" } } } },
-    "Demo Lab" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "演示实验室" } } } },
-    "Demo Lab never contacts a server or requests precise location." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "演示实验室不会连接服务器，也不会请求精确位置。" } } } },
-    "Demo usernames: jamie, priya, leo, emma" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "演示用户名：jamie、priya、leo、emma" } } } },
-    "Development" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开发" } } } },
-    "Done" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "完成" } } } },
-    "Enable background city changes" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启用后台城市变化" } } } },
-    "Enable to request Always access" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启用后请求“始终”访问权限" } } } },
-    "Find your people" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "找到你的朋友" } } } },
-    "Foreground and background controls" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "前台与后台控制" } } } },
-    "Friend arrives in my city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "朋友来到我的城市" } } } },
-    "Friend requests" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好友申请" } } } },
-    "Friends" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "朋友" } } } },
-    "Friends see a city and an update time. Precise coordinates and route history are not part of this experience." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "朋友只会看到城市和更新时间。精确坐标与路线历史不属于本产品体验。" } } } },
-    "Friends see your latest city and update time. Precise coordinates and route history stay out of the product." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "朋友会看到你最近的城市与更新时间。产品不会保存精确坐标或路线历史。" } } } },
-    "Friend’s username" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "朋友的用户名" } } } },
-    "Global sharing" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全局共享" } } } },
-    "History retention" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "历史记录保留" } } } },
-    "Invite" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "邀请" } } } },
-    "Invite by username" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "通过用户名邀请" } } } },
-    "Keep your city current" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "让你的城市保持最新" } } } },
-    "Location access" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "位置访问" } } } },
-    "Location permission is off" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "位置权限已关闭" } } } },
-    "Location permission unavailable" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "位置权限不可用" } } } },
-    "Location unavailable" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "位置暂时不可用" } } } },
-    "Make locations stale" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "让位置数据过期" } } } },
-    "Moves active updates past the 24-hour freshness limit." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "把活跃更新移到 24 小时的新鲜度限制之外。" } } } },
-    "Moves one friend here and evaluates a same-city alert." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "把一位朋友移动到这里，并触发同城提醒判断。" } } } },
-    "No blocked people" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有已屏蔽的人" } } } },
-    "No friends yet" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "还没有朋友" } } } },
-    "No precise location or route history is shared." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "不会共享精确位置或路线历史。" } } } },
-    "No same-city moments yet" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "还没有同城时刻" } } } },
-    "Notifications" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "通知" } } } },
-    "Notify me when your cities overlap" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你们出现在同一城市时通知我" } } } },
-    "Now" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "刚刚" } } } },
-    "OK" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好" } } } },
-    "Open Friends" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开朋友" } } } },
-    "Open Where Is My Friend" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 Where Is My Friend" } } } },
-    "Open iOS Settings" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开 iOS 设置" } } } },
-    "Or share your invite link" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "或者分享你的邀请链接" } } } },
-    "Paused" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已暂停" } } } },
-    "Pending" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "等待中" } } } },
-    "Pending invitations" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "待处理邀请" } } } },
-    "Permission will be requested when enabled" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启用时将请求权限" } } } },
-    "Permissions and moment history" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "权限与同城记录" } } } },
-    "Preview onboarding" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "预览引导页" } } } },
-    "Privacy" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "隐私" } } } },
-    "Privacy & data" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "隐私与数据" } } } },
-    "Prototype sign-in — no account is created" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "原型登录——不会创建真实账号" } } } },
-    "Remove %@?" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要移除 %@ 吗？" } } } },
-    "Remove favorite" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消收藏" } } } },
-    "Remove friend" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "移除朋友" } } } },
-    "Request current city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "获取当前城市" } } } },
-    "Resets only local demo data." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只重置本地演示数据。" } } } },
-    "Respects each friend’s alert preference" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尊重每位朋友的提醒设置" } } } },
-    "Restore demo defaults" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "恢复演示默认值" } } } },
-    "Same-city alert" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同城提醒" } } } },
-    "Same-city moments" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同城时刻" } } } },
-    "Same-city notifications" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同城通知" } } } },
-    "Scenarios" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "场景" } } } },
-    "See the latest city your closest friends have chosen to share — without starting another group chat." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "不用再开一个群聊，也能看到亲近朋友选择共享的最新城市。" } } } },
-    "See the latest city your friends have chosen to share." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "查看朋友选择共享的最新城市。" } } } },
-    "Share invite link" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "分享邀请链接" } } } },
-    "Share my city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享我的城市" } } } },
-    "Shared city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享的城市" } } } },
-    "Sharing" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享" } } } },
-    "Sharing is on" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享已开启" } } } },
-    "Sharing is paused" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享已暂停" } } } },
-    "Sharing paused" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已暂停共享" } } } },
-    "Sign in to refresh" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "登录后刷新" } } } },
-    "Sign in to restore your accepted friends and city-sharing preferences." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "登录以恢复已接受的朋友和城市共享偏好。" } } } },
-    "Sign out" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "退出登录" } } } },
-    "Sign out?" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "退出登录？" } } } },
-    "Simulate invites, stale data and alerts" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "模拟邀请、过期数据和提醒" } } } },
-    "Step %lld of %lld" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "第 %1$lld 步，共 %2$lld 步" } } } },
-    "Stops sharing both ways" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "双向停止共享" } } } },
-    "Stored precision" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "存储精度" } } } },
-    "The app requests coarse, city-level use. iOS controls when background Visits and significant changes arrive." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "App 只使用城市级粗略位置。后台到访与重要位置变化的触发时机由 iOS 控制。" } } } },
-    "The friendship and per-friend sharing preferences will be removed." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好友关系和针对该朋友的共享偏好将被移除。" } } } },
-    "The local demo schedules a real local notification. Production will create the same idempotent event on the server and deliver it through APNs." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "本地演示会安排真实的本地通知。生产环境会在服务器创建同样可去重的事件，并通过 APNs 发送。" } } } },
-    "The server will delete your account, friendships, preferences and current city presence." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "服务器将删除你的账号、好友关系、偏好和当前城市状态。" } } } },
-    "This location is too old for same-city alerts" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此位置过旧，无法用于同城提醒" } } } },
-    "This removes the local demo account and cached Widget data." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "这会移除本地演示账号和小组件缓存数据。" } } } },
-    "Together in %@" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同在 %@" } } } },
-    "Updated %@" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "更新于 %@" } } } },
-    "Use my current city" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用我当前的城市" } } } },
-    "View same-city history" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "查看同城记录" } } } },
-    "Visible only to accepted friends you allow" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仅你允许的已接受朋友可见" } } } },
-    "Visible to accepted friends" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已接受的朋友可见" } } } },
-    "Visits and significant changes enabled" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已启用到访与重要位置变化" } } } },
-    "Where they are" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "他们在哪里" } } } },
-    "You" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你" } } } },
-    "You and %@" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你和 %@" } } } },
-    "You and %@ are now in the same city." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你和 %@ 现在在同一个城市。" } } } },
-    "You can pause sharing at any time." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你可以随时暂停共享。" } } } },
-    "You stay in control of sharing" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "共享始终由你掌控" } } } },
-    "Your Apple identity token is sent only to the configured API over HTTPS." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你的 Apple 身份令牌只会通过 HTTPS 发送到已配置的 API。" } } } },
-    "Your people, around the world" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "你的朋友，散落世界各地" } } } }
+    "@%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "@%@"
+          }
+        }
+      }
+    },
+    "%@ can see your latest city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 可以看到你最近的城市"
+          }
+        }
+      }
+    },
+    "%@, %@, %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@、%2$@、%3$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld cities" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个城市"
+          }
+        }
+      }
+    },
+    "%lld friends · %lld cities" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld 位朋友 · %2$lld 个城市"
+          }
+        }
+      }
+    },
+    "%lld update(s) waiting" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "有 %lld 项更新等待同步" } } }
+    },
+    "A moment appears after an eligible friend enters your current city." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当符合条件的朋友进入你当前所在城市后，这里会出现一条记录。"
+          }
+        }
+      }
+    },
+    "Accept" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接受"
+          }
+        }
+      }
+    },
+    "Accept a request or invite a demo user by username." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接受好友申请，或通过用户名邀请演示用户。"
+          }
+        }
+      }
+    },
+    "Accepted friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已接受的朋友"
+          }
+        }
+      }
+    },
+    "Account" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "账号"
+          }
+        }
+      }
+    },
+    "Add a friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加朋友"
+          }
+        }
+      }
+    },
+    "Add favorite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加到收藏"
+          }
+        }
+      }
+    },
+    "Add friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加朋友"
+          }
+        }
+      }
+    },
+    "Add incoming request" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加收到的申请"
+          }
+        }
+      }
+    },
+    "Adds another request to the Add Friends screen." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在“添加朋友”页面增加一条好友申请。"
+          }
+        }
+      }
+    },
+    "Allow notifications" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允许通知"
+          }
+        }
+      }
+    },
+    "Also removes the friendship and pending requests" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同时移除好友关系和待处理请求" } } }
+    },
+    "Apple authorization is wired, but server verification is replaced by the local repository in this build." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已接入 Apple 授权；当前构建使用本地数据层代替服务器验证。"
+          }
+        }
+      }
+    },
+    "Around the world" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "世界各地"
+          }
+        }
+      }
+    },
+    "Authorization" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "授权"
+          }
+        }
+      }
+    },
+    "Avatar color" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "头像颜色" } } }
+    },
+    "Avatar color %lld" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "头像颜色 %lld" } } }
+    },
+    "Background location lets the app notice meaningful city changes. You can pause sharing at any time." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后台位置让 App 能发现重要的城市变化。你随时都可以暂停共享。"
+          }
+        }
+      }
+    },
+    "Background updates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后台更新"
+          }
+        }
+      }
+    },
+    "Between you two" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅限你们两人"
+          }
+        }
+      }
+    },
+    "Block %@?" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "屏蔽%@？" } } }
+    },
+    "Block person" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "屏蔽此人" } } }
+    },
+    "Blocked people" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已屏蔽的人"
+          }
+        }
+      }
+    },
+    "Blocked users cannot invite you or access your presence." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被屏蔽的用户无法邀请你，也无法查看你的城市状态。"
+          }
+        }
+      }
+    },
+    "Cached friend data will be removed from the App and Widget." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App 和小组件中的好友缓存数据将被移除。"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
+    },
+    "Change Widget privacy in the App" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请在 App 中更改小组件隐私设置" } } }
+    },
+    "Choose a test city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择测试城市"
+          }
+        }
+      }
+    },
+    "Cities remain visible, but friend names and initials are hidden." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仍显示城市，但隐藏好友姓名和首字母。" } } }
+    },
+    "City changes only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只关注城市变化"
+          }
+        }
+      }
+    },
+    "City sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "城市共享"
+          }
+        }
+      }
+    },
+    "City-level by design" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天生只到城市级"
+          }
+        }
+      }
+    },
+    "City-level presence only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只共享城市级状态"
+          }
+        }
+      }
+    },
+    "Connect with @%@?" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要添加 @%@ 吗？" } } }
+    },
+    "Continue" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
+        }
+      }
+    },
+    "Continue with Apple" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 Apple 继续"
+          }
+        }
+      }
+    },
+    "Continue with local demo" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用本地演示继续"
+          }
+        }
+      }
+    },
+    "Decline" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拒绝"
+          }
+        }
+      }
+    },
+    "Delete account" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除账号"
+          }
+        }
+      }
+    },
+    "Delete your account?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除你的账号？"
+          }
+        }
+      }
+    },
+    "Demo Lab" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示实验室"
+          }
+        }
+      }
+    },
+    "Demo Lab never contacts a server or requests precise location." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示实验室不会连接服务器，也不会请求精确位置。"
+          }
+        }
+      }
+    },
+    "Demo usernames: jamie, priya, leo, emma" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示用户名：jamie、priya、leo、emma"
+          }
+        }
+      }
+    },
+    "Development" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开发"
+          }
+        }
+      }
+    },
+    "Display name" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "显示名称" } } }
+    },
+    "Done" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑" } } }
+    },
+    "Edit profile" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "编辑个人资料" } } }
+    },
+    "Enable background city changes" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用后台城市变化"
+          }
+        }
+      }
+    },
+    "Enable to request Always access" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用后请求“始终”访问权限"
+          }
+        }
+      }
+    },
+    "Find your people" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到你的朋友"
+          }
+        }
+      }
+    },
+    "Foreground and background controls" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前台与后台控制"
+          }
+        }
+      }
+    },
+    "Friend arrives in my city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友来到我的城市"
+          }
+        }
+      }
+    },
+    "Friend invite" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好友邀请" } } }
+    },
+    "Friend locations hidden" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好友位置已隐藏" } } }
+    },
+    "Friend names and shared cities appear on the Home Screen." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好友姓名和共享城市会显示在主屏幕上。" } } }
+    },
+    "Friend requests" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好友申请"
+          }
+        }
+      }
+    },
+    "Friend’s username" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友的用户名"
+          }
+        }
+      }
+    },
+    "Friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友"
+          }
+        }
+      }
+    },
+    "Friends nearby" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "附近的好友" } } }
+    },
+    "Friends see a city and an update time. Precise coordinates and route history are not part of this experience." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友只会看到城市和更新时间。精确坐标与路线历史不属于本产品体验。"
+          }
+        }
+      }
+    },
+    "Friends see your latest city and update time. Precise coordinates and route history stay out of the product." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友会看到你最近的城市与更新时间。产品不会保存精确坐标或路线历史。"
+          }
+        }
+      }
+    },
+    "Global sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局共享"
+          }
+        }
+      }
+    },
+    "Hide everything" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全部隐藏" } } }
+    },
+    "Hide names" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "隐藏姓名" } } }
+    },
+    "History retention" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "历史记录保留"
+          }
+        }
+      }
+    },
+    "Invite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "邀请"
+          }
+        }
+      }
+    },
+    "Invite by username" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过用户名邀请"
+          }
+        }
+      }
+    },
+    "Keep your city current" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让你的城市保持最新"
+          }
+        }
+      }
+    },
+    "Location access" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置访问"
+          }
+        }
+      }
+    },
+    "Location permission is off" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置权限已关闭"
+          }
+        }
+      }
+    },
+    "Location permission unavailable" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置权限不可用"
+          }
+        }
+      }
+    },
+    "Location unavailable" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置暂时不可用"
+          }
+        }
+      }
+    },
+    "Lock Screen & Widget privacy" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "锁定屏幕与小组件隐私" } } }
+    },
+    "Make locations stale" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让位置数据过期"
+          }
+        }
+      }
+    },
+    "Moves active updates past the 24-hour freshness limit." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把活跃更新移到 24 小时的新鲜度限制之外。"
+          }
+        }
+      }
+    },
+    "Moves one friend here and evaluates a same-city alert." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把一位朋友移动到这里，并触发同城提醒判断。"
+          }
+        }
+      }
+    },
+    "No blocked people" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有已屏蔽的人"
+          }
+        }
+      }
+    },
+    "No friends yet" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有朋友"
+          }
+        }
+      }
+    },
+    "No precise location or route history is shared." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不会共享精确位置或路线历史。"
+          }
+        }
+      }
+    },
+    "No same-city moments yet" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "还没有同城时刻"
+          }
+        }
+      }
+    },
+    "Not now" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂时不要" } } }
+    },
+    "Notifications" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
+          }
+        }
+      }
+    },
+    "Notify me when your cities overlap" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你们出现在同一城市时通知我"
+          }
+        }
+      }
+    },
+    "Now" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刚刚"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好"
+          }
+        }
+      }
+    },
+    "Open Friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开朋友"
+          }
+        }
+      }
+    },
+    "Open iOS Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 iOS 设置"
+          }
+        }
+      }
+    },
+    "Open Where Is My Friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 Where Is My Friend"
+          }
+        }
+      }
+    },
+    "Or share your invite link" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "或者分享你的邀请链接"
+          }
+        }
+      }
+    },
+    "Paused" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停"
+          }
+        }
+      }
+    },
+    "Pending" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待中"
+          }
+        }
+      }
+    },
+    "Pending invitations" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待处理邀请"
+          }
+        }
+      }
+    },
+    "Permission will be requested when enabled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用时将请求权限"
+          }
+        }
+      }
+    },
+    "Permissions and moment history" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "权限与同城记录"
+          }
+        }
+      }
+    },
+    "Preview onboarding" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "预览引导页"
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私"
+          }
+        }
+      }
+    },
+    "Privacy & data" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私与数据"
+          }
+        }
+      }
+    },
+    "Profile" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "个人资料" } } }
+    },
+    "Prototype sign-in — no account is created" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原型登录——不会创建真实账号"
+          }
+        }
+      }
+    },
+    "Remove %@?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要移除 %@ 吗？"
+          }
+        }
+      }
+    },
+    "Remove favorite" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消收藏"
+          }
+        }
+      }
+    },
+    "Remove friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除朋友"
+          }
+        }
+      }
+    },
+    "Request current city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "获取当前城市"
+          }
+        }
+      }
+    },
+    "Resets only local demo data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只重置本地演示数据。"
+          }
+        }
+      }
+    },
+    "Respects each friend’s alert preference" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尊重每位朋友的提醒设置"
+          }
+        }
+      }
+    },
+    "Restore demo defaults" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复演示默认值"
+          }
+        }
+      }
+    },
+    "Retry" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重试" } } }
+    },
+    "Same-city alert" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城提醒"
+          }
+        }
+      }
+    },
+    "Same-city moments" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城时刻"
+          }
+        }
+      }
+    },
+    "Same-city notifications" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城通知"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "保存" } } }
+    },
+    "Scenarios" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "场景"
+          }
+        }
+      }
+    },
+    "See the latest city your closest friends have chosen to share — without starting another group chat." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不用再开一个群聊，也能看到亲近朋友选择共享的最新城市。"
+          }
+        }
+      }
+    },
+    "See the latest city your friends have chosen to share." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看朋友选择共享的最新城市。"
+          }
+        }
+      }
+    },
+    "Send friend request" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发送好友请求" } } }
+    },
+    "Share invite link" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享邀请链接"
+          }
+        }
+      }
+    },
+    "Share my city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享我的城市"
+          }
+        }
+      }
+    },
+    "Shared city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享的城市"
+          }
+        }
+      }
+    },
+    "Sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享"
+          }
+        }
+      }
+    },
+    "Sharing is on" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享已开启"
+          }
+        }
+      }
+    },
+    "Sharing is paused" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享已暂停"
+          }
+        }
+      }
+    },
+    "Sharing paused" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已暂停共享"
+          }
+        }
+      }
+    },
+    "Show names and cities" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "显示姓名和城市" } } }
+    },
+    "Showing the last saved update" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在显示上次保存的更新" } } }
+    },
+    "Sign in to refresh" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录后刷新"
+          }
+        }
+      }
+    },
+    "Sign in to restore your accepted friends and city-sharing preferences." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录以恢复已接受的朋友和城市共享偏好。"
+          }
+        }
+      }
+    },
+    "Sign out" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出登录"
+          }
+        }
+      }
+    },
+    "Sign out?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出登录？"
+          }
+        }
+      }
+    },
+    "Simulate invites, stale data and alerts" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模拟邀请、过期数据和提醒"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第 %1$lld 步，共 %2$lld 步"
+          }
+        }
+      }
+    },
+    "Stops sharing both ways" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "双向停止共享"
+          }
+        }
+      }
+    },
+    "Stored precision" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "存储精度"
+          }
+        }
+      }
+    },
+    "Sync needs attention" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步需要处理" } } }
+    },
+    "The app requests coarse, city-level use. iOS controls when background Visits and significant changes arrive." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App 只使用城市级粗略位置。后台到访与重要位置变化的触发时机由 iOS 控制。"
+          }
+        }
+      }
+    },
+    "The friendship and per-friend sharing preferences will be removed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好友关系和针对该朋友的共享偏好将被移除。"
+          }
+        }
+      }
+    },
+    "The local demo schedules a real local notification. Production will create the same idempotent event on the server and deliver it through APNs." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地演示会安排真实的本地通知。生产环境会在服务器创建同样可去重的事件，并通过 APNs 发送。"
+          }
+        }
+      }
+    },
+    "The server will delete your account, friendships, preferences and current city presence." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器将删除你的账号、好友关系、偏好和当前城市状态。"
+          }
+        }
+      }
+    },
+    "The Widget shows only a private placeholder until you change this setting." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "更改此设置之前，小组件只显示隐私占位内容。" } } }
+    },
+    "They will not be able to invite you or see your city. You can unblock them later in Privacy settings." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "对方将无法邀请你或查看你的城市。你可以稍后在隐私设置中解除屏蔽。" } } }
+    },
+    "This invite link will send a friend request. Your city stays private until both people accept and sharing is enabled." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此邀请链接会发送好友请求。在双方接受并启用共享之前，你的城市会保持私密。" } } }
+    },
+    "This location is too old for same-city alerts" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此位置过旧，无法用于同城提醒"
+          }
+        }
+      }
+    },
+    "This removes the local demo account and cached Widget data." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这会移除本地演示账号和小组件缓存数据。"
+          }
+        }
+      }
+    },
+    "Together in %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同在 %@"
+          }
+        }
+      }
+    },
+    "Unblock" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "解除屏蔽" } } }
+    },
+    "Updated %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新于 %@"
+          }
+        }
+      }
+    },
+    "Use my current city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用我当前的城市"
+          }
+        }
+      }
+    },
+    "Username" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "用户名" } } }
+    },
+    "Usernames use 3–20 lowercase letters, numbers, or underscores." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "用户名需使用 3–20 个小写字母、数字或下划线。" } } }
+    },
+    "View same-city history" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看同城记录"
+          }
+        }
+      }
+    },
+    "Visible only to accepted friends you allow" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅你允许的已接受朋友可见"
+          }
+        }
+      }
+    },
+    "Visible to accepted friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已接受的朋友可见"
+          }
+        }
+      }
+    },
+    "Visits and significant changes enabled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已启用到访与重要位置变化"
+          }
+        }
+      }
+    },
+    "Where they are" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他们在哪里"
+          }
+        }
+      }
+    },
+    "Widget details" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "小组件详情" } } }
+    },
+    "Working offline" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在离线工作" } } }
+    },
+    "You" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你"
+          }
+        }
+      }
+    },
+    "You and %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你和 %@"
+          }
+        }
+      }
+    },
+    "You and %@ are now in the same city." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你和 %@ 现在在同一个城市。"
+          }
+        }
+      }
+    },
+    "You can pause sharing at any time." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你可以随时暂停共享。"
+          }
+        }
+      }
+    },
+    "You stay in control of sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享始终由你掌控"
+          }
+        }
+      }
+    },
+    "Your Apple identity token is sent only to the configured API over HTTPS." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的 Apple 身份令牌只会通过 HTTPS 发送到已配置的 API。"
+          }
+        }
+      }
+    },
+    "Your people, around the world" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的朋友，散落世界各地"
+          }
+        }
+      }
+    }
   },
   "version" : "1.0"
 }

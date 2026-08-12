@@ -27,6 +27,59 @@ struct AppUser: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
+struct ProfileUpdate: Codable, Hashable, Sendable {
+    var displayName: String
+    var username: String
+    var avatarPalette: Int
+
+    func validated() throws -> ProfileUpdate {
+        let name = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let handle = username
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "@"))
+            .lowercased()
+        let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz0123456789_")
+        guard (1...40).contains(name.count) else { throw ProfileValidationError.invalidDisplayName }
+        guard (3...20).contains(handle.count),
+              handle.unicodeScalars.allSatisfy(allowed.contains) else {
+            throw ProfileValidationError.invalidUsername
+        }
+        return ProfileUpdate(
+            displayName: name,
+            username: handle,
+            avatarPalette: max(0, min(6, avatarPalette))
+        )
+    }
+}
+
+enum ProfileValidationError: LocalizedError, Equatable {
+    case invalidDisplayName
+    case invalidUsername
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidDisplayName: "Display name must contain 1–40 characters."
+        case .invalidUsername: "Username must contain 3–20 lowercase letters, numbers, or underscores."
+        }
+    }
+}
+
+struct BlockedPerson: Identifiable, Codable, Hashable, Sendable {
+    let id: UUID
+    var displayName: String
+    var username: String
+    var avatarPalette: Int
+    var blockedAt: Date
+}
+
+enum WidgetPrivacyMode: String, Codable, CaseIterable, Identifiable, Sendable {
+    case full
+    case hideNames
+    case hideAll
+
+    var id: String { rawValue }
+}
+
 enum PresenceSource: String, Codable, Hashable, Sendable {
     case demo
     case manual
@@ -93,6 +146,16 @@ struct ColocationEvent: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
+struct ColocationSession: Identifiable, Codable, Hashable, Sendable {
+    let id: UUID
+    let friendID: UUID
+    let cityKey: String
+    var enteredAt: Date
+    var leftAt: Date?
+
+    var isActive: Bool { leftAt == nil }
+}
+
 enum SyncState: String, Codable, Hashable, Sendable {
     case synced
     case syncing
@@ -110,9 +173,89 @@ struct AppSnapshot: Codable, Hashable, Sendable {
     var friendRequests: [FriendRequest]
     var friendPreferences: [FriendAccessPreference]
     var colocationEvents: [ColocationEvent]
-    var blockedUserIDs: [UUID]
+    var colocationSessions: [ColocationSession]
+    var blockedPeople: [BlockedPerson]
     var lastSyncedAt: Date?
     var syncState: SyncState
+
+    var blockedUserIDs: [UUID] { blockedPeople.map(\.id) }
+
+    init(
+        schemaVersion: Int,
+        isAuthenticated: Bool,
+        currentUser: AppUser,
+        currentPresence: CurrentUserPresence,
+        sharingPreferences: SharingPreferences,
+        friends: [FriendPresence],
+        friendRequests: [FriendRequest],
+        friendPreferences: [FriendAccessPreference],
+        colocationEvents: [ColocationEvent],
+        colocationSessions: [ColocationSession] = [],
+        blockedPeople: [BlockedPerson] = [],
+        lastSyncedAt: Date?,
+        syncState: SyncState
+    ) {
+        self.schemaVersion = schemaVersion
+        self.isAuthenticated = isAuthenticated
+        self.currentUser = currentUser
+        self.currentPresence = currentPresence
+        self.sharingPreferences = sharingPreferences
+        self.friends = friends
+        self.friendRequests = friendRequests
+        self.friendPreferences = friendPreferences
+        self.colocationEvents = colocationEvents
+        self.colocationSessions = colocationSessions
+        self.blockedPeople = blockedPeople
+        self.lastSyncedAt = lastSyncedAt
+        self.syncState = syncState
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, isAuthenticated, currentUser, currentPresence, sharingPreferences
+        case friends, friendRequests, friendPreferences, colocationEvents, colocationSessions
+        case blockedPeople, blockedUserIDs, lastSyncedAt, syncState
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        schemaVersion = try values.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
+        isAuthenticated = try values.decode(Bool.self, forKey: .isAuthenticated)
+        currentUser = try values.decode(AppUser.self, forKey: .currentUser)
+        currentPresence = try values.decode(CurrentUserPresence.self, forKey: .currentPresence)
+        sharingPreferences = try values.decode(SharingPreferences.self, forKey: .sharingPreferences)
+        friends = try values.decodeIfPresent([FriendPresence].self, forKey: .friends) ?? []
+        friendRequests = try values.decodeIfPresent([FriendRequest].self, forKey: .friendRequests) ?? []
+        friendPreferences = try values.decodeIfPresent([FriendAccessPreference].self, forKey: .friendPreferences) ?? []
+        colocationEvents = try values.decodeIfPresent([ColocationEvent].self, forKey: .colocationEvents) ?? []
+        colocationSessions = try values.decodeIfPresent([ColocationSession].self, forKey: .colocationSessions) ?? []
+        if let decodedPeople = try values.decodeIfPresent([BlockedPerson].self, forKey: .blockedPeople) {
+            blockedPeople = decodedPeople
+        } else {
+            let legacyIDs = try values.decodeIfPresent([UUID].self, forKey: .blockedUserIDs) ?? []
+            blockedPeople = legacyIDs.map {
+                BlockedPerson(id: $0, displayName: "Blocked user", username: "blocked", avatarPalette: 4, blockedAt: Date())
+            }
+        }
+        lastSyncedAt = try values.decodeIfPresent(Date.self, forKey: .lastSyncedAt)
+        syncState = try values.decodeIfPresent(SyncState.self, forKey: .syncState) ?? .synced
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(max(schemaVersion, 2), forKey: .schemaVersion)
+        try values.encode(isAuthenticated, forKey: .isAuthenticated)
+        try values.encode(currentUser, forKey: .currentUser)
+        try values.encode(currentPresence, forKey: .currentPresence)
+        try values.encode(sharingPreferences, forKey: .sharingPreferences)
+        try values.encode(friends, forKey: .friends)
+        try values.encode(friendRequests, forKey: .friendRequests)
+        try values.encode(friendPreferences, forKey: .friendPreferences)
+        try values.encode(colocationEvents, forKey: .colocationEvents)
+        try values.encode(colocationSessions, forKey: .colocationSessions)
+        try values.encode(blockedPeople, forKey: .blockedPeople)
+        try values.encodeIfPresent(lastSyncedAt, forKey: .lastSyncedAt)
+        try values.encode(syncState, forKey: .syncState)
+    }
 
     func preference(for friendID: UUID) -> FriendAccessPreference {
         friendPreferences.first(where: { $0.friendID == friendID })
@@ -231,9 +374,18 @@ enum DemoData {
             createdAt: now,
             wasNotified: true
         )
+        let initialSessions = sameCity.map { friend in
+            ColocationSession(
+                id: UUID(),
+                friendID: friend.id,
+                cityKey: CityIdentity.key(city: MockFriendData.currentUserCity, countryCode: "US"),
+                enteredAt: now,
+                leftAt: nil
+            )
+        }
 
         return AppSnapshot(
-            schemaVersion: 1,
+            schemaVersion: 2,
             isAuthenticated: true,
             currentUser: currentUser,
             currentPresence: CurrentUserPresence(
@@ -251,10 +403,156 @@ enum DemoData {
             friendRequests: incoming,
             friendPreferences: preferences,
             colocationEvents: sameCity.isEmpty ? [] : [initialEvent],
-            blockedUserIDs: [],
+            colocationSessions: initialSessions,
+            blockedPeople: [],
             lastSyncedAt: now,
             syncState: .synced
         )
+    }
+
+    static func signedOutSnapshot() -> AppSnapshot {
+        var snapshot = initialSnapshot()
+        snapshot.isAuthenticated = false
+        snapshot.friends = []
+        snapshot.friendRequests = []
+        snapshot.friendPreferences = []
+        snapshot.colocationEvents = []
+        snapshot.colocationSessions = []
+        snapshot.blockedPeople = []
+        snapshot.sharingPreferences = SharingPreferences(
+            citySharingEnabled: false,
+            backgroundUpdatesEnabled: false,
+            notificationPreviewEnabled: false
+        )
+        snapshot.currentPresence = CurrentUserPresence(city: nil, countryCode: nil, updatedAt: nil, source: .demo)
+        return snapshot
+    }
+}
+
+enum CityIdentity {
+    static func canonicalCity(_ city: String) -> String {
+        city.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+    }
+
+    static func key(city: String, countryCode: String?) -> String {
+        let country = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? "--"
+        return "\(country)|\(cityNameKey(city))"
+    }
+
+    static func matches(
+        city: String?,
+        countryCode: String?,
+        otherCity: String?,
+        otherCountryCode: String?
+    ) -> Bool {
+        guard let city, let otherCity else { return false }
+        let firstCountry = countryCode?.uppercased()
+        let secondCountry = otherCountryCode?.uppercased()
+        if let firstCountry, let secondCountry, firstCountry != secondCountry { return false }
+        return cityNameKey(city) == cityNameKey(otherCity)
+    }
+
+    private static func cityNameKey(_ city: String) -> String {
+        canonicalCity(city)
+            .folding(
+                options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive],
+                locale: Locale(identifier: "en_US_POSIX")
+            )
+            .lowercased()
+    }
+}
+
+enum ColocationEvaluator {
+    static let defaultCooldown: TimeInterval = 6 * 60 * 60
+
+    static func evaluate(
+        snapshot: inout AppSnapshot,
+        now: Date = Date(),
+        cooldown: TimeInterval = defaultCooldown
+    ) {
+        guard snapshot.sharingPreferences.citySharingEnabled,
+              let currentCity = snapshot.currentPresence.city,
+              let currentUpdatedAt = snapshot.currentPresence.updatedAt,
+              max(0, now.timeIntervalSince(currentUpdatedAt)) < 2 * 60 * 60 else {
+            closeActiveSessions(snapshot: &snapshot, now: now)
+            return
+        }
+
+        let cityKey = CityIdentity.key(
+            city: currentCity,
+            countryCode: snapshot.currentPresence.countryCode
+        )
+        let matches = snapshot.friends.filter { friend in
+            snapshot.preference(for: friend.id).sharesMyCity
+                && snapshot.preference(for: friend.id).sameCityAlertEnabled
+                && friend.isSameCityEligible(at: now)
+                && CityIdentity.matches(
+                    city: friend.city,
+                    countryCode: friend.countryCode,
+                    otherCity: currentCity,
+                    otherCountryCode: snapshot.currentPresence.countryCode
+                )
+        }
+        let matchingIDs = Set(matches.map(\.id))
+
+        for index in snapshot.colocationSessions.indices
+        where snapshot.colocationSessions[index].isActive
+            && (!matchingIDs.contains(snapshot.colocationSessions[index].friendID)
+                || snapshot.colocationSessions[index].cityKey != cityKey) {
+            snapshot.colocationSessions[index].leftAt = now
+        }
+
+        var enteredFriends: [FriendPresence] = []
+        var enteredSessionIDs: [UUID] = []
+        for friend in matches {
+            let isAlreadyActive = snapshot.colocationSessions.contains {
+                $0.friendID == friend.id && $0.cityKey == cityKey && $0.isActive
+            }
+            guard !isAlreadyActive else { continue }
+
+            let lastExit = snapshot.colocationSessions
+                .filter { $0.friendID == friend.id && $0.cityKey == cityKey }
+                .compactMap(\.leftAt)
+                .max()
+            if let lastExit, now.timeIntervalSince(lastExit) < cooldown { continue }
+
+            let session = ColocationSession(
+                id: UUID(),
+                friendID: friend.id,
+                cityKey: cityKey,
+                enteredAt: now,
+                leftAt: nil
+            )
+            snapshot.colocationSessions.append(session)
+            enteredFriends.append(friend)
+            enteredSessionIDs.append(session.id)
+        }
+
+        snapshot.colocationSessions.removeAll { session in
+            guard let leftAt = session.leftAt else { return false }
+            return now.timeIntervalSince(leftAt) > 30 * 24 * 60 * 60
+        }
+
+        guard !enteredFriends.isEmpty else { return }
+        let key = ([cityKey] + enteredSessionIDs.map(\.uuidString).sorted()).joined(separator: "|")
+        snapshot.colocationEvents.insert(
+            ColocationEvent(
+                id: UUID(),
+                deduplicationKey: key,
+                city: CityIdentity.canonicalCity(currentCity),
+                friendIDs: enteredFriends.map(\.id),
+                friendNames: enteredFriends.map(\.displayName),
+                createdAt: now,
+                wasNotified: false
+            ),
+            at: 0
+        )
+    }
+
+    private static func closeActiveSessions(snapshot: inout AppSnapshot, now: Date) {
+        for index in snapshot.colocationSessions.indices where snapshot.colocationSessions[index].isActive {
+            snapshot.colocationSessions[index].leftAt = now
+        }
     }
 }
 

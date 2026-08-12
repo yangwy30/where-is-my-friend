@@ -29,6 +29,7 @@ struct SharingView: View {
                 statusCard.padding(.top, 24)
                 controls.padding(.top, 16)
                 locationActions.padding(.top, 16)
+                widgetPrivacy.padding(.top, 16)
 
                 if let errorMessage = locationService.errorMessage {
                     Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
@@ -115,6 +116,59 @@ struct SharingView: View {
             .tint(WIFTheme.fresh)
             .disabled(locationService.isResolving)
             .accessibilityIdentifier("useCurrentCityButton")
+        }
+    }
+
+    private var widgetPrivacy: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Lock Screen & Widget privacy", systemImage: "rectangle.3.group.bubble.left.fill")
+                .font(.headline)
+                .foregroundStyle(WIFTheme.primaryText)
+            Menu {
+                Button("Show names and cities") { store.setWidgetPrivacyMode(.full) }
+                    .accessibilityIdentifier("widgetPrivacyFull")
+                Button("Hide names") { store.setWidgetPrivacyMode(.hideNames) }
+                    .accessibilityIdentifier("widgetPrivacyHideNames")
+                Button("Hide everything") { store.setWidgetPrivacyMode(.hideAll) }
+                    .accessibilityIdentifier("widgetPrivacyHideAll")
+            } label: {
+                HStack {
+                    Text("Widget details")
+                    Spacer()
+                    Text(widgetPrivacyModeTitle)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption2)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+            }
+            .accessibilityIdentifier("widgetPrivacyPicker")
+            .accessibilityValue(store.widgetPrivacyMode.rawValue)
+            Text(widgetPrivacyDescription)
+                .font(.caption)
+                .foregroundStyle(WIFTheme.secondaryText)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(15)
+        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
+        .overlay {
+            RoundedRectangle(cornerRadius: WIFTheme.mediumRadius).stroke(WIFTheme.border, lineWidth: 1)
+        }
+    }
+
+    private var widgetPrivacyModeTitle: LocalizedStringKey {
+        switch store.widgetPrivacyMode {
+        case .full: "Show names and cities"
+        case .hideNames: "Hide names"
+        case .hideAll: "Hide everything"
+        }
+    }
+
+    private var widgetPrivacyDescription: LocalizedStringKey {
+        switch store.widgetPrivacyMode {
+        case .full: "Friend names and shared cities appear on the Home Screen."
+        case .hideNames: "Cities remain visible, but friend names and initials are hidden."
+        case .hideAll: "The Widget shows only a private placeholder until you change this setting."
         }
     }
 

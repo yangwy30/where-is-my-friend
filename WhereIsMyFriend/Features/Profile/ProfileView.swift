@@ -8,6 +8,7 @@ struct ProfileView: View {
     let onReplayOnboarding: () -> Void
     @State private var showsDeleteConfirmation = false
     @State private var showsSignOutConfirmation = false
+    @State private var showsEditProfile = false
 
     var body: some View {
         ScrollView {
@@ -91,6 +92,15 @@ struct ProfileView: View {
         .background(WIFTheme.canvas)
         .navigationTitle("You")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Edit") { showsEditProfile = true }
+                    .accessibilityIdentifier("editProfileButton")
+            }
+        }
+        .sheet(isPresented: $showsEditProfile) {
+            EditProfileView()
+        }
         .confirmationDialog("Sign out?", isPresented: $showsSignOutConfirmation, titleVisibility: .visible) {
             Button("Sign out", role: .destructive) { Task { await store.signOut() } }
             Button("Cancel", role: .cancel) {}
@@ -286,13 +296,47 @@ private struct BlockedPeopleView: View {
     @EnvironmentObject private var store: AppStore
 
     var body: some View {
-        ContentUnavailableView {
-            Label("No blocked people", systemImage: "person.crop.circle.badge.checkmark")
-        } description: {
-            Text("Blocked users cannot invite you or access your presence.")
+        Group {
+            if store.snapshot.blockedPeople.isEmpty {
+                ContentUnavailableView {
+                    Label("No blocked people", systemImage: "person.crop.circle.badge.checkmark")
+                } description: {
+                    Text("Blocked users cannot invite you or access your presence.")
+                }
+            } else {
+                List(store.snapshot.blockedPeople) { person in
+                    HStack(spacing: 12) {
+                        Circle()
+                            .fill(WIFTheme.fresh.opacity(0.16))
+                            .frame(width: 42, height: 42)
+                            .overlay {
+                                Text(initials(for: person.displayName))
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(WIFTheme.fresh)
+                            }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(person.displayName).font(.body.weight(.semibold))
+                            Text("@\(person.username)")
+                                .font(.caption)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        Spacer()
+                        Button("Unblock") {
+                            Task { await store.unblockUser(id: person.id) }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(store.isWorking)
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
         }
         .navigationTitle("Blocked people")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func initials(for name: String) -> String {
+        String(name.split(separator: " ").prefix(2).compactMap(\.first))
     }
 }
 
@@ -314,6 +358,103 @@ private struct PrivacyDataView: View {
             Text(detail).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
         }
         .padding(.vertical, 5)
+    }
+}
+
+private struct EditProfileView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: AppStore
+    @State private var displayName = ""
+    @State private var username = ""
+    @State private var avatarPalette = 1
+    @State private var validationMessage: String?
+
+    private let paletteColors: [Color] = [.pink, .mint, .purple, .orange, .gray, .blue, .teal]
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Display name", text: $displayName)
+                        .textContentType(.name)
+                        .accessibilityIdentifier("displayNameField")
+                    TextField("Username", text: $username)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .textContentType(.username)
+                        .accessibilityIdentifier("profileUsernameField")
+                } header: {
+                    Text("Profile")
+                } footer: {
+                    Text("Usernames use 3–20 lowercase letters, numbers, or underscores.")
+                }
+
+                Section("Avatar color") {
+                    HStack {
+                        ForEach(paletteColors.indices, id: \.self) { index in
+                            Button {
+                                avatarPalette = index
+                            } label: {
+                                Circle()
+                                    .fill(paletteColors[index].gradient)
+                                    .frame(width: 34, height: 34)
+                                    .overlay {
+                                        if avatarPalette == index {
+                                            Image(systemName: "checkmark")
+                                                .font(.caption.bold())
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Avatar color \(index + 1)")
+                        }
+                    }
+                }
+
+                if let validationMessage {
+                    Section {
+                        Label(validationMessage, systemImage: "exclamationmark.triangle.fill")
+                            .font(.footnote)
+                            .foregroundStyle(WIFTheme.destructive)
+                    }
+                }
+            }
+            .navigationTitle("Edit profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { save() }
+                        .disabled(store.isWorking)
+                        .accessibilityIdentifier("saveProfileButton")
+                }
+            }
+            .onAppear {
+                displayName = store.snapshot.currentUser.displayName
+                username = store.snapshot.currentUser.username
+                avatarPalette = store.snapshot.currentUser.avatarPalette
+            }
+        }
+    }
+
+    private func save() {
+        let update = ProfileUpdate(
+            displayName: displayName,
+            username: username,
+            avatarPalette: avatarPalette
+        )
+        do {
+            let validated = try update.validated()
+            validationMessage = nil
+            Task {
+                if await store.updateProfile(validated) { dismiss() }
+            }
+        } catch {
+            validationMessage = error.localizedDescription
+        }
     }
 }
 

@@ -6,7 +6,9 @@ struct FriendWidgetEntryView: View {
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        if entry.friends.isEmpty {
+        if entry.privacyMode == .hideAll {
+            WidgetPrivateState()
+        } else if entry.friends.isEmpty {
             WidgetEmptyState()
         } else {
             switch family {
@@ -46,8 +48,10 @@ private struct SmallFriendWidget: View {
                 Spacer()
 
                 HStack(spacing: 8) {
-                    WidgetAvatar(friend: friend, size: 30)
-                    Text(friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
+                    WidgetAvatar(friend: friend, size: 30, showsInitials: entry.privacyMode == .full)
+                    Text(entry.privacyMode == .full
+                         ? (friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
+                         : "Friend")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
@@ -91,7 +95,7 @@ private struct MediumFriendWidget: View {
 
             ForEach(visibleFriends) { friend in
                 Link(destination: URL(string: "whereismyfriend://friend/\(friend.id.uuidString)")!) {
-                    WidgetFriendRow(friend: friend, referenceDate: entry.date)
+                    WidgetFriendRow(friend: friend, referenceDate: entry.date, privacyMode: entry.privacyMode)
                 }
             }
         }
@@ -135,13 +139,17 @@ private struct LargeFriendWidget: View {
             }
 
             if !sameCityFriends.isEmpty {
-                WidgetSameCityMoment(friends: sameCityFriends, city: entry.currentCity)
+                WidgetSameCityMoment(
+                    friends: sameCityFriends,
+                    city: entry.currentCity,
+                    privacyMode: entry.privacyMode
+                )
             }
 
             VStack(spacing: 10) {
                 ForEach(otherFriends) { friend in
                     Link(destination: URL(string: "whereismyfriend://friend/\(friend.id.uuidString)")!) {
-                        WidgetFriendRow(friend: friend, referenceDate: entry.date)
+                        WidgetFriendRow(friend: friend, referenceDate: entry.date, privacyMode: entry.privacyMode)
                     }
                 }
             }
@@ -154,13 +162,16 @@ private struct LargeFriendWidget: View {
 private struct WidgetFriendRow: View {
     let friend: FriendPresence
     let referenceDate: Date
+    let privacyMode: WidgetPrivacyMode
 
     var body: some View {
         HStack(spacing: 9) {
-            WidgetAvatar(friend: friend, size: 31)
+            WidgetAvatar(friend: friend, size: 31, showsInitials: privacyMode == .full)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text(friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
+                Text(privacyMode == .full
+                     ? (friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
+                     : "Friend")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
@@ -181,19 +192,20 @@ private struct WidgetFriendRow: View {
                 )
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(friend.displayName), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))")
+        .accessibilityLabel("\(privacyMode == .full ? friend.displayName : "Friend"), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))")
     }
 }
 
 private struct WidgetSameCityMoment: View {
     let friends: [FriendPresence]
     let city: String
+    let privacyMode: WidgetPrivacyMode
 
     var body: some View {
         HStack(spacing: 11) {
             HStack(spacing: -9) {
                 ForEach(friends.prefix(3)) { friend in
-                    WidgetAvatar(friend: friend, size: 34)
+                    WidgetAvatar(friend: friend, size: 34, showsInitials: privacyMode == .full)
                         .overlay { Circle().stroke(WIFTheme.freshSurface, lineWidth: 2) }
                 }
             }
@@ -202,7 +214,9 @@ private struct WidgetSameCityMoment: View {
                 Text("Together in \(city)")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("You and \(friends.prefix(3).map(\.displayName).joined(separator: ", "))")
+                Text(privacyMode == .full
+                     ? "You and \(friends.prefix(3).map(\.displayName).joined(separator: ", "))"
+                     : "Friends nearby")
                     .font(.caption2)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(1)
@@ -213,11 +227,13 @@ private struct WidgetSameCityMoment: View {
         .padding(12)
         .background(WIFTheme.eventGradient, in: RoundedRectangle(cornerRadius: 16))
     }
+
 }
 
 private struct WidgetAvatar: View {
     let friend: FriendPresence
     let size: CGFloat
+    var showsInitials = true
 
     private var colors: [Color] {
         let palettes: [[Color]] = [
@@ -237,11 +253,38 @@ private struct WidgetAvatar: View {
             .fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
             .frame(width: size, height: size)
             .overlay {
-                Text(friend.initials)
-                    .font(.system(size: size * 0.34, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
+                if showsInitials {
+                    Text(friend.initials)
+                        .font(.system(size: size * 0.34, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                } else {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: size * 0.34, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
             }
             .accessibilityHidden(true)
+    }
+}
+
+private struct WidgetPrivateState: View {
+    var body: some View {
+        Link(destination: URL(string: "whereismyfriend://sharing")!) {
+            VStack(spacing: 8) {
+                Image(systemName: "eye.slash.fill")
+                    .font(.title)
+                    .foregroundStyle(WIFTheme.fresh)
+                Text("Friend locations hidden")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .multilineTextAlignment(.center)
+                Text("Change Widget privacy in the App")
+                    .font(.caption2)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }
 

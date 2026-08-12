@@ -11,6 +11,9 @@ struct AppNotice: Identifiable, Equatable {
 final class AppStore: ObservableObject {
     @Published private(set) var snapshot: AppSnapshot
     @Published private(set) var isWorking = false
+    @Published private(set) var pendingOperationCount = 0
+    @Published var pendingInvite: PendingInvite?
+    @Published private(set) var widgetPrivacyMode: WidgetPrivacyMode
     @Published var notice: AppNotice?
 
     let repositoryMode: RepositoryMode
@@ -26,7 +29,10 @@ final class AppStore: ObservableObject {
         self.repository = selectedRepository
         repositoryMode = selectedRepository.mode
         notificationService = LocalNotificationService()
-        snapshot = SharedAppStateStore.load() ?? DemoData.initialSnapshot()
+        snapshot = SharedAppStateStore.load(expectedOrigin: selectedRepository.mode.rawValue)
+            ?? (selectedRepository.mode == .localDemo ? DemoData.initialSnapshot() : DemoData.signedOutSnapshot())
+        pendingInvite = PendingInviteStore.load()
+        widgetPrivacyMode = SharedWidgetPreferences.privacyMode()
         synchronizeWidget()
     }
 
@@ -45,6 +51,12 @@ final class AppStore: ObservableObject {
     func refresh() async {
         await perform(successMessage: nil) {
             try await self.repository.loadSnapshot()
+        }
+    }
+
+    func updateProfile(_ update: ProfileUpdate) async -> Bool {
+        await perform(successMessage: "Profile updated.") {
+            try await self.repository.updateProfile(update)
         }
     }
 
@@ -92,6 +104,18 @@ final class AppStore: ObservableObject {
         }
     }
 
+    func blockUser(id: UUID) async {
+        await perform(successMessage: "Person blocked. Sharing stopped both ways.") {
+            try await self.repository.blockUser(id: id)
+        }
+    }
+
+    func unblockUser(id: UUID) async {
+        await perform(successMessage: "Person unblocked.") {
+            try await self.repository.unblockUser(id: id)
+        }
+    }
+
     func setFavorite(friendID: UUID, isFavorite: Bool) async {
         await perform(successMessage: nil) {
             try await self.repository.setFavorite(friendID: friendID, isFavorite: isFavorite)
@@ -136,9 +160,42 @@ final class AppStore: ObservableObject {
     func registerPushToken(_ token: String) async {
         do {
             try await repository.registerPushToken(token)
+            await refreshPendingOperationCount()
         } catch {
             notice = AppNotice(title: "Push registration", message: error.localizedDescription)
         }
+    }
+
+    func retryPendingOperations() async {
+        await perform(successMessage: "Sync completed.") {
+            try await self.repository.retryPendingOperations()
+        }
+    }
+
+    @discardableResult
+    func handleIncomingURL(_ url: URL) -> Bool {
+        guard let invite = InviteLinkParser.parse(url) else { return false }
+        PendingInviteStore.save(invite)
+        pendingInvite = invite
+        return true
+    }
+
+    func acceptPendingInvite() async {
+        guard let invite = pendingInvite else { return }
+        if await sendFriendRequest(username: invite.username) {
+            discardPendingInvite()
+        }
+    }
+
+    func discardPendingInvite() {
+        PendingInviteStore.clear()
+        pendingInvite = nil
+    }
+
+    func setWidgetPrivacyMode(_ mode: WidgetPrivacyMode) {
+        widgetPrivacyMode = mode
+        SharedWidgetPreferences.setPrivacyMode(mode)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     @discardableResult
@@ -149,22 +206,37 @@ final class AppStore: ObservableObject {
         guard !isWorking else { return false }
         isWorking = true
         let existingEventIDs = Set(snapshot.colocationEvents.map(\.id))
+        if repositoryMode == .remote, snapshot.isAuthenticated {
+            snapshot.syncState = .syncing
+        }
         defer { isWorking = false }
 
         do {
-            let updated = try await operation()
+            var updated = try await operation()
+            if repositoryMode == .remote, updated.syncState != .offline {
+                updated.syncState = .synced
+            }
             snapshot = updated
-            SharedAppStateStore.save(updated)
+            SharedAppStateStore.save(updated, origin: repositoryMode.rawValue)
             synchronizeWidget()
             await deliverNewNotifications(excluding: existingEventIDs)
+            await refreshPendingOperationCount()
             if let successMessage {
                 notice = AppNotice(title: "Done", message: successMessage)
             }
             return true
         } catch {
+            if repositoryMode == .remote, snapshot.isAuthenticated {
+                snapshot.syncState = .failed
+            }
+            await refreshPendingOperationCount()
             notice = AppNotice(title: "Couldn’t complete that", message: error.localizedDescription)
             return false
         }
+    }
+
+    private func refreshPendingOperationCount() async {
+        pendingOperationCount = await repository.pendingOperationCount()
     }
 
     private func deliverNewNotifications(excluding existingEventIDs: Set<UUID>) async {

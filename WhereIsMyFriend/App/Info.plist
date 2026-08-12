@@ -58,6 +58,10 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>WIFAPIBaseURL</key>
-	<string>https://api.example.invalid</string>
+	<string>$(WIF_API_BASE_URL)</string>
+	<key>WIFAllowsLocalDemo</key>
+	<string>$(WIF_ALLOWS_LOCAL_DEMO)</string>
+	<key>WIFInviteBaseURL</key>
+	<string>$(WIF_INVITE_BASE_URL)</string>
 </dict>
 </plist>

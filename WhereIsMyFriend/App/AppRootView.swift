@@ -27,6 +27,10 @@ struct AppRootView: View {
         .environmentObject(locationService)
         .preferredColorScheme(nil)
         .task { await store.refresh() }
+        .onChange(of: backgroundUpdatesShouldRun, initial: true) { _, shouldRun in
+            locationService.setBackgroundUpdatesEnabled(shouldRun)
+        }
+        .onOpenURL { _ = store.handleIncomingURL($0) }
         .onReceive(locationService.$latestCity.compactMap { $0 }.removeDuplicates()) { update in
             Task {
                 await store.updateCurrentCity(
@@ -47,6 +51,67 @@ struct AppRootView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .sheet(item: authenticatedInvite) { invite in
+            IncomingInviteView(invite: invite)
+        }
+    }
+
+    private var backgroundUpdatesShouldRun: Bool {
+        store.snapshot.isAuthenticated
+            && store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+    }
+
+    private var authenticatedInvite: Binding<PendingInvite?> {
+        Binding {
+            store.snapshot.isAuthenticated ? store.pendingInvite : nil
+        } set: { newValue in
+            if newValue == nil { store.discardPendingInvite() }
+        }
+    }
+}
+
+private struct IncomingInviteView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: AppStore
+    let invite: PendingInvite
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Image(systemName: "person.crop.circle.badge.plus")
+                    .font(.system(size: 58))
+                    .foregroundStyle(WIFTheme.fresh)
+                Text("Connect with @\(invite.username)?")
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                Text("This invite link will send a friend request. Your city stays private until both people accept and sharing is enabled.")
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+                Button {
+                    Task {
+                        await store.acceptPendingInvite()
+                        if store.pendingInvite == nil { dismiss() }
+                    }
+                } label: {
+                    if store.isWorking {
+                        ProgressView().frame(maxWidth: .infinity)
+                    } else {
+                        Text("Send friend request").frame(maxWidth: .infinity)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(WIFTheme.fresh)
+                .disabled(store.isWorking)
+                Button("Not now", role: .cancel) {
+                    store.discardPendingInvite()
+                    dismiss()
+                }
+            }
+            .padding(28)
+            .navigationTitle("Friend invite")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .presentationDetents([.medium])
     }
 }
 

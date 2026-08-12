@@ -83,7 +83,7 @@ struct AddFriendView: View {
                 .font(.headline)
                 .foregroundStyle(WIFTheme.primaryText)
 
-            ShareLink(item: URL(string: "https://where-is-my-friend.example/invite/\(store.snapshot.currentUser.username)")!) {
+            ShareLink(item: InviteURLFactory.make(username: store.snapshot.currentUser.username)) {
                 Label("Share invite link", systemImage: "square.and.arrow.up")
                     .font(.body.weight(.semibold))
                     .frame(maxWidth: .infinity)

@@ -33,13 +33,23 @@ actor RemoteAppRepository: AppRepository {
 
     private let client: RESTClient
     private let tokenStore = KeychainSessionTokenStore()
+    private let mutationQueue: OfflineMutationQueue
 
-    init(configuration: APIConfiguration) {
+    init(configuration: APIConfiguration, mutationQueue: OfflineMutationQueue = .shared) {
         client = RESTClient(baseURL: configuration.baseURL)
+        self.mutationQueue = mutationQueue
     }
 
     func loadSnapshot() async throws -> AppSnapshot {
-        try await requestSnapshot(path: "/v1/bootstrap", method: "GET", body: Optional<EmptyBody>.none)
+        do {
+            try await flushPendingOperations()
+            return try await requestSnapshot(path: "/v1/bootstrap", method: "GET", body: Optional<EmptyBody>.none)
+        } catch where isRetryable(error) {
+            guard var cached = SharedAppStateStore.load(expectedOrigin: RepositoryMode.remote.rawValue),
+                  cached.isAuthenticated else { throw error }
+            cached.syncState = .offline
+            return cached
+        }
     }
 
     func signInDemo() async throws -> AppSnapshot {
@@ -58,15 +68,27 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func signOut() async throws -> AppSnapshot {
-        let snapshot = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody())
-        tokenStore.clear()
-        return snapshot
+        do {
+            let snapshot = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody())
+            tokenStore.clear()
+            await mutationQueue.reset()
+            return snapshot
+        } catch where isRetryable(error) {
+            tokenStore.clear()
+            await mutationQueue.reset()
+            return DemoData.signedOutSnapshot()
+        }
     }
 
     func deleteAccount() async throws -> AppSnapshot {
         let snapshot = try await requestSnapshot(path: "/v1/account", method: "DELETE", body: EmptyBody())
         tokenStore.clear()
+        await mutationQueue.reset()
         return snapshot
+    }
+
+    func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot {
+        try await requestSnapshot(path: "/v1/profile", method: "PATCH", body: try update.validated())
     }
 
     func sendFriendRequest(username: String) async throws -> AppSnapshot {
@@ -93,6 +115,22 @@ actor RemoteAppRepository: AppRepository {
         )
     }
 
+    func blockUser(id: UUID) async throws -> AppSnapshot {
+        try await requestSnapshot(
+            path: "/v1/users/\(id.uuidString)/block",
+            method: "PUT",
+            body: EmptyBody()
+        )
+    }
+
+    func unblockUser(id: UUID) async throws -> AppSnapshot {
+        try await requestSnapshot(
+            path: "/v1/users/\(id.uuidString)/block",
+            method: "DELETE",
+            body: EmptyBody()
+        )
+    }
+
     func setFavorite(friendID: UUID, isFavorite: Bool) async throws -> AppSnapshot {
         try await requestSnapshot(
             path: "/v1/friends/\(friendID.uuidString)/favorite",
@@ -114,21 +152,57 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot {
-        try await requestSnapshot(
-            path: "/v1/presence/current",
-            method: "PUT",
-            body: CityBody(city: city, countryCode: countryCode, source: source, clientUpdatedAt: Date())
+        let upload = PendingPresenceUpload(
+            city: CityIdentity.canonicalCity(city),
+            countryCode: countryCode?.uppercased(),
+            source: source,
+            clientUpdatedAt: Date()
         )
+        do {
+            return try await requestSnapshot(
+                path: "/v1/presence/current",
+                method: "PUT",
+                body: CityBody(
+                    city: upload.city,
+                    countryCode: upload.countryCode,
+                    source: upload.source,
+                    clientUpdatedAt: upload.clientUpdatedAt
+                )
+            )
+        } catch where isRetryable(error) {
+            await mutationQueue.enqueue(.presence(upload))
+            var cached = SharedAppStateStore.load(expectedOrigin: RepositoryMode.remote.rawValue)
+                ?? DemoData.signedOutSnapshot()
+            cached.currentPresence = CurrentUserPresence(
+                city: upload.city,
+                countryCode: upload.countryCode,
+                updatedAt: upload.clientUpdatedAt,
+                source: upload.source
+            )
+            cached.syncState = .offline
+            return cached
+        }
     }
 
     func registerPushToken(_ pushToken: String) async throws {
-        let _: EmptyResponse = try await client.request(
-            path: "/v1/devices/push-token",
-            method: "PUT",
-            body: PushTokenBody(token: pushToken),
-            bearerToken: try token()
-        )
+        do {
+            let _: EmptyResponse = try await client.request(
+                path: "/v1/devices/push-token",
+                method: "PUT",
+                body: PushTokenBody(token: pushToken),
+                bearerToken: try token()
+            )
+        } catch where isRetryable(error) {
+            await mutationQueue.enqueue(.pushToken(pushToken))
+        }
     }
+
+    func retryPendingOperations() async throws -> AppSnapshot {
+        try await flushPendingOperations(force: true)
+        return try await requestSnapshot(path: "/v1/bootstrap", method: "GET", body: Optional<EmptyBody>.none)
+    }
+
+    func pendingOperationCount() async -> Int { await mutationQueue.count() }
 
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot {
         throw RepositoryError.unsupportedInCurrentMode
@@ -145,6 +219,46 @@ actor RemoteAppRepository: AppRepository {
         body: Body?
     ) async throws -> AppSnapshot {
         try await client.request(path: path, method: method, body: body, bearerToken: try token())
+    }
+
+    private func flushPendingOperations(force: Bool = false) async throws {
+        guard tokenStore.load() != nil else { return }
+        let pending = force ? await mutationQueue.all() : await mutationQueue.due()
+        for mutation in pending {
+            do {
+                switch mutation.payload {
+                case .presence(let upload):
+                    let _: AppSnapshot = try await client.request(
+                        path: "/v1/presence/current",
+                        method: "PUT",
+                        body: CityBody(
+                            city: upload.city,
+                            countryCode: upload.countryCode,
+                            source: upload.source,
+                            clientUpdatedAt: upload.clientUpdatedAt
+                        ),
+                        bearerToken: try token()
+                    )
+                case .pushToken(let pushToken):
+                    let _: EmptyResponse = try await client.request(
+                        path: "/v1/devices/push-token",
+                        method: "PUT",
+                        body: PushTokenBody(token: pushToken),
+                        bearerToken: try token()
+                    )
+                }
+                await mutationQueue.remove(id: mutation.id)
+            } catch {
+                await mutationQueue.markFailed(id: mutation.id)
+                throw error
+            }
+        }
+    }
+
+    private func isRetryable(_ error: Error) -> Bool {
+        guard let repositoryError = error as? RepositoryError else { return false }
+        return repositoryError == .networkUnavailable
+            || repositoryError == .serverTemporarilyUnavailable
     }
 }
 
@@ -185,11 +299,26 @@ private actor RESTClient {
             request.httpBody = try encoder.encode(body)
         }
 
-        let (data, response) = try await session.data(for: request)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch let error as URLError {
+            switch error.code {
+            case .notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost,
+                    .cannotFindHost, .dnsLookupFailed, .internationalRoamingOff:
+                throw RepositoryError.networkUnavailable
+            default:
+                throw error
+            }
+        }
         guard let http = response as? HTTPURLResponse else {
             throw RepositoryError.invalidServerResponse
         }
         guard (200..<300).contains(http.statusCode) else {
+            if http.statusCode == 408 || http.statusCode == 429 || (500..<600).contains(http.statusCode) {
+                throw RepositoryError.serverTemporarilyUnavailable
+            }
             let message = (try? decoder.decode(ServerErrorEnvelope.self, from: data).message)
                 ?? "Server request failed (\(http.statusCode))."
             throw RepositoryError.message(message)
