@@ -85,7 +85,12 @@ enum MockFriendData {
         now: Date = Date()
     ) -> [FriendPresence] {
         friends.filter { friend in
-            friend.city?.caseInsensitiveCompare(currentCity) == .orderedSame
+            CityIdentity.matches(
+                city: friend.city,
+                countryCode: friend.countryCode,
+                otherCity: currentCity,
+                otherCountryCode: nil
+            )
                 && friend.isSameCityEligible(at: now)
         }
     }

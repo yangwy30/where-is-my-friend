@@ -11,7 +11,8 @@ actor LocalDemoRepository: AppRepository {
         if let snapshot {
             self.snapshot = snapshot
         } else {
-            self.snapshot = SharedAppStateStore.load() ?? DemoData.initialSnapshot()
+            self.snapshot = SharedAppStateStore.load(expectedOrigin: RepositoryMode.localDemo.rawValue)
+                ?? DemoData.initialSnapshot()
         }
     }
 
@@ -49,6 +50,15 @@ actor LocalDemoRepository: AppRepository {
         return commit()
     }
 
+    func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot {
+        try requireAuthentication()
+        let validated = try update.validated()
+        snapshot.currentUser.displayName = validated.displayName
+        snapshot.currentUser.username = validated.username
+        snapshot.currentUser.avatarPalette = validated.avatarPalette
+        return commit()
+    }
+
     func sendFriendRequest(username: String) async throws -> AppSnapshot {
         try requireAuthentication()
         let normalized = username
@@ -66,6 +76,9 @@ actor LocalDemoRepository: AppRepository {
         }
         guard let person = DemoData.person(username: normalized) else {
             throw RepositoryError.userNotFound
+        }
+        guard !snapshot.blockedUserIDs.contains(person.id) else {
+            throw RepositoryError.alreadyBlocked
         }
 
         snapshot.friendRequests.append(
@@ -87,8 +100,11 @@ actor LocalDemoRepository: AppRepository {
         guard let index = snapshot.friendRequests.firstIndex(where: { $0.id == requestID }) else {
             throw RepositoryError.requestNotFound
         }
-        let request = snapshot.friendRequests.remove(at: index)
+        let request = snapshot.friendRequests[index]
         if response == .accept {
+            guard !snapshot.blockedUserIDs.contains(request.userID) else {
+                throw RepositoryError.alreadyBlocked
+            }
             let person = DemoData.person(username: request.username)
                 ?? DirectoryPerson(
                     id: request.userID,
@@ -109,6 +125,7 @@ actor LocalDemoRepository: AppRepository {
                 )
             }
         }
+        snapshot.friendRequests.remove(at: index)
         return commit()
     }
 
@@ -119,6 +136,37 @@ actor LocalDemoRepository: AppRepository {
         }
         snapshot.friends.removeAll { $0.id == id }
         snapshot.friendPreferences.removeAll { $0.friendID == id }
+        snapshot.colocationSessions.removeAll { $0.friendID == id }
+        return commit()
+    }
+
+    func blockUser(id: UUID) async throws -> AppSnapshot {
+        try requireAuthentication()
+        guard !snapshot.blockedUserIDs.contains(id) else { throw RepositoryError.alreadyBlocked }
+        let friend = snapshot.friends.first(where: { $0.id == id })
+        let request = snapshot.friendRequests.first(where: { $0.userID == id })
+        guard friend != nil || request != nil else { throw RepositoryError.friendNotFound }
+        snapshot.blockedPeople.append(
+            BlockedPerson(
+                id: id,
+                displayName: friend?.displayName ?? request?.displayName ?? "Blocked user",
+                username: friend?.username ?? request?.username ?? "blocked",
+                avatarPalette: friend?.avatarPalette ?? request?.avatarPalette ?? 4,
+                blockedAt: Date()
+            )
+        )
+        snapshot.friends.removeAll { $0.id == id }
+        snapshot.friendRequests.removeAll { $0.userID == id }
+        snapshot.friendPreferences.removeAll { $0.friendID == id }
+        snapshot.colocationSessions.removeAll { $0.friendID == id }
+        snapshot.colocationEvents.removeAll { $0.friendIDs.contains(id) }
+        return commit()
+    }
+
+    func unblockUser(id: UUID) async throws -> AppSnapshot {
+        try requireAuthentication()
+        guard snapshot.blockedUserIDs.contains(id) else { throw RepositoryError.blockedUserNotFound }
+        snapshot.blockedPeople.removeAll { $0.id == id }
         return commit()
     }
 
@@ -138,24 +186,26 @@ actor LocalDemoRepository: AppRepository {
         }
         snapshot.friendPreferences.removeAll { $0.friendID == preference.friendID }
         snapshot.friendPreferences.append(preference)
+        ColocationEvaluator.evaluate(snapshot: &snapshot)
         return commit()
     }
 
     func setSharingPreferences(_ preferences: SharingPreferences) async throws -> AppSnapshot {
         try requireAuthentication()
         snapshot.sharingPreferences = preferences
+        ColocationEvaluator.evaluate(snapshot: &snapshot)
         return commit()
     }
 
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot {
         try requireAuthentication()
         snapshot.currentPresence = CurrentUserPresence(
-            city: city,
-            countryCode: countryCode,
+            city: CityIdentity.canonicalCity(city),
+            countryCode: countryCode?.uppercased(),
             updatedAt: Date(),
             source: source
         )
-        appendNewColocationEventIfNeeded()
+        ColocationEvaluator.evaluate(snapshot: &snapshot)
         return commit()
     }
 
@@ -163,6 +213,10 @@ actor LocalDemoRepository: AppRepository {
         try requireAuthentication()
         guard !token.isEmpty else { return }
     }
+
+    func retryPendingOperations() async throws -> AppSnapshot { snapshot }
+
+    func pendingOperationCount() async -> Int { 0 }
 
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot {
         try requireAuthentication()
@@ -177,12 +231,13 @@ actor LocalDemoRepository: AppRepository {
                 snapshot.friends[index].countryCode = snapshot.currentPresence.countryCode
                 snapshot.friends[index].updatedAt = Date()
                 snapshot.friends[index].sharingState = .active
-                appendNewColocationEventIfNeeded()
+                ColocationEvaluator.evaluate(snapshot: &snapshot)
             }
         case .ageLocations:
             for index in snapshot.friends.indices where snapshot.friends[index].sharingState == .active {
                 snapshot.friends[index].updatedAt = Date().addingTimeInterval(-26 * 60 * 60)
             }
+            ColocationEvaluator.evaluate(snapshot: &snapshot)
         case .incomingRequest:
             if let person = DemoData.directory.first(where: { candidate in
                 !snapshot.friends.contains(where: { $0.id == candidate.id })
@@ -211,48 +266,7 @@ actor LocalDemoRepository: AppRepository {
     }
 
     private func signedOutSnapshot() -> AppSnapshot {
-        var empty = DemoData.initialSnapshot()
-        empty.isAuthenticated = false
-        empty.friends = []
-        empty.friendRequests = []
-        empty.friendPreferences = []
-        empty.colocationEvents = []
-        empty.currentPresence = CurrentUserPresence(city: nil, countryCode: nil, updatedAt: nil, source: .demo)
-        return empty
-    }
-
-    private func appendNewColocationEventIfNeeded() {
-        guard
-            snapshot.sharingPreferences.citySharingEnabled,
-            let city = snapshot.currentPresence.city
-        else { return }
-
-        let matches = snapshot.friends.filter { friend in
-            let preference = snapshot.preference(for: friend.id)
-            return preference.sameCityAlertEnabled
-                && friend.city?.caseInsensitiveCompare(city) == .orderedSame
-                && friend.isSameCityEligible()
-        }
-        guard !matches.isEmpty else { return }
-
-        let day = Calendar(identifier: .gregorian).dateComponents(in: TimeZone(secondsFromGMT: 0)!, from: Date())
-        let dayKey = "\(day.year ?? 0)-\(day.month ?? 0)-\(day.day ?? 0)"
-        let friendKey = matches.map { $0.id.uuidString }.sorted().joined(separator: ",")
-        let key = "\(city.lowercased())|\(friendKey)|\(dayKey)"
-        guard !snapshot.colocationEvents.contains(where: { $0.deduplicationKey == key }) else { return }
-
-        snapshot.colocationEvents.insert(
-            ColocationEvent(
-                id: UUID(),
-                deduplicationKey: key,
-                city: city,
-                friendIDs: matches.map(\.id),
-                friendNames: matches.map(\.displayName),
-                createdAt: Date(),
-                wasNotified: false
-            ),
-            at: 0
-        )
+        DemoData.signedOutSnapshot()
     }
 
     private func commit() -> AppSnapshot {

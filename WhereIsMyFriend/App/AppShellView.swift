@@ -51,10 +51,51 @@ struct AppShellView: View {
             }
             .tag(AppTab.profile)
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if showsSyncBanner {
+                syncBanner
+            }
+        }
         .onOpenURL(perform: openDeepLink)
     }
 
+    private var showsSyncBanner: Bool {
+        store.repositoryMode == .remote
+            && (store.snapshot.syncState == .offline
+                || store.snapshot.syncState == .failed
+                || store.pendingOperationCount > 0)
+    }
+
+    private var syncBanner: some View {
+        HStack(spacing: 10) {
+            Image(systemName: store.snapshot.syncState == .offline ? "wifi.slash" : "arrow.triangle.2.circlepath")
+                .foregroundStyle(WIFTheme.fresh)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(store.snapshot.syncState == .offline ? "Working offline" : "Sync needs attention")
+                    .font(.caption.weight(.semibold))
+                Text(store.pendingOperationCount == 0
+                     ? "Showing the last saved update"
+                     : "\(store.pendingOperationCount) update(s) waiting")
+                    .font(.caption2)
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+            Spacer()
+            Button("Retry") { Task { await store.retryPendingOperations() } }
+                .font(.caption.weight(.semibold))
+                .disabled(store.isWorking)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 9)
+        .background(.regularMaterial)
+        .overlay(alignment: .bottom) { Divider() }
+    }
+
     private func openDeepLink(_ url: URL) {
+        if url.scheme == "whereismyfriend", url.host == "sharing" {
+            selection = .sharing
+            return
+        }
+
         if url.scheme == "whereismyfriend", url.host == "events" {
             selection = .profile
             profilePath = NavigationPath()

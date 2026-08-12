@@ -5,6 +5,7 @@ struct FriendDetailView: View {
     @EnvironmentObject private var store: AppStore
     let friend: FriendPresence
     @State private var showsRemoveConfirmation = false
+    @State private var showsBlockConfirmation = false
     private let referenceDate = Date()
 
     private var currentFriend: FriendPresence {
@@ -64,6 +65,21 @@ struct FriendDetailView: View {
                     .foregroundStyle(WIFTheme.destructive)
                     .padding(15)
                     .accessibilityIdentifier("removeFriendButton")
+
+                    Divider().overlay(WIFTheme.border).padding(.leading, 15)
+
+                    Button(role: .destructive) { showsBlockConfirmation = true } label: {
+                        HStack {
+                            settingLabel("Block person", note: "Also removes the friendship and pending requests")
+                            Spacer()
+                            Image(systemName: "hand.raised.slash.fill").font(.caption.weight(.semibold))
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(WIFTheme.destructive)
+                    .padding(15)
+                    .accessibilityIdentifier("blockFriendButton")
                 }
                 .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
                 .overlay {
@@ -112,6 +128,21 @@ struct FriendDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("The friendship and per-friend sharing preferences will be removed.")
+        }
+        .confirmationDialog(
+            "Block \(currentFriend.displayName)?",
+            isPresented: $showsBlockConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Block person", role: .destructive) {
+                Task {
+                    await store.blockUser(id: currentFriend.id)
+                    if store.friend(id: currentFriend.id) == nil { dismiss() }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("They will not be able to invite you or see your city. You can unblock them later in Privacy settings.")
         }
     }
 
