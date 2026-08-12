@@ -26,9 +26,38 @@
 
 ## 当前状态
 
-仓库已重置，目前处于产品与工程规划阶段，尚未开始新版本代码实现。
+仓库现在包含第一版静态 SwiftUI 原型：
 
-完整的产品、技术、测试、隐私与 App Store 发布路线图见 [PLAN.md](./PLAN.md)。
+- iOS 18+ SwiftUI App
+- Small、Medium、Large WidgetKit 小组件
+- Onboarding、朋友、好友详情、邀请、共享和隐私设置页面
+- App 与 Widget 共用的 Codable Mock Data 和 App Group 快照存储
+- Light/Dark Mode、Dynamic Type 友好的语义化设计系统
+- 单元测试和 UI smoke test targets
+
+原型不会请求真实账号、位置、通知或网络权限，也不会上传任何数据。
+
+完整产品路线图见 [PLAN.md](./PLAN.md)，视觉与交互规范见 [docs/DESIGN_SPEC.md](./docs/DESIGN_SPEC.md)。
+
+## 运行原型
+
+1. 使用 Xcode 26 或更新版本打开 `WhereIsMyFriend.xcodeproj`。
+2. 选择 `WhereIsMyFriend` scheme 和任意 iPhone Simulator。
+3. Build & Run。
+4. 完成三步原型 Onboarding 后浏览 App。
+5. 在模拟器桌面添加 `Where they are` Widget，切换三种尺寸查看布局。
+
+命令行构建：
+
+```bash
+xcodebuild \
+  -project WhereIsMyFriend.xcodeproj \
+  -scheme WhereIsMyFriend \
+  -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' \
+  CODE_SIGNING_ALLOWED=NO \
+  build
+```
 
 ## 成功标准
 
