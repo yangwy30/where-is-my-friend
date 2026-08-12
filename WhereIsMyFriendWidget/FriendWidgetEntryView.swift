@@ -6,15 +6,19 @@ struct FriendWidgetEntryView: View {
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        switch family {
-        case .systemSmall:
-            SmallFriendWidget(entry: entry)
-        case .systemMedium:
-            MediumFriendWidget(entry: entry)
-        case .systemLarge:
-            LargeFriendWidget(entry: entry)
-        default:
-            MediumFriendWidget(entry: entry)
+        if entry.friends.isEmpty {
+            WidgetEmptyState()
+        } else {
+            switch family {
+            case .systemSmall:
+                SmallFriendWidget(entry: entry)
+            case .systemMedium:
+                MediumFriendWidget(entry: entry)
+            case .systemLarge:
+                LargeFriendWidget(entry: entry)
+            default:
+                MediumFriendWidget(entry: entry)
+            }
         }
     }
 }
@@ -80,7 +84,7 @@ private struct MediumFriendWidget: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.fresh)
                 Spacer()
-                Text("Updated now")
+                Text(snapshotAgeText)
                     .font(.caption2)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
@@ -91,6 +95,13 @@ private struct MediumFriendWidget: View {
                 }
             }
         }
+    }
+
+    private var snapshotAgeText: String {
+        guard let updatedAt = entry.snapshotUpdatedAt else { return "Open app" }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        return formatter.localizedString(for: updatedAt, relativeTo: entry.date)
     }
 }
 
@@ -231,5 +242,25 @@ private struct WidgetAvatar: View {
                     .foregroundStyle(.white)
             }
             .accessibilityHidden(true)
+    }
+}
+
+private struct WidgetEmptyState: View {
+    var body: some View {
+        Link(destination: URL(string: "whereismyfriend://home")!) {
+            VStack(spacing: 8) {
+                Image(systemName: "person.2.circle")
+                    .font(.title)
+                    .foregroundStyle(WIFTheme.fresh)
+                Text("Open Where Is My Friend")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .multilineTextAlignment(.center)
+                Text("Sign in to refresh")
+                    .font(.caption2)
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }

@@ -36,6 +36,18 @@
 		400000000000000000000027 /* FriendPresenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000032 /* FriendPresenceTests.swift */; };
 		400000000000000000000028 /* PrototypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000033 /* PrototypeUITests.swift */; };
 		400000000000000000000029 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000026 /* Localizable.xcstrings */; };
+		400000000000000000000030 /* AppDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000035 /* AppDomain.swift */; };
+		400000000000000000000031 /* AppRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000036 /* AppRepository.swift */; };
+		400000000000000000000032 /* LocalDemoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000037 /* LocalDemoRepository.swift */; };
+		400000000000000000000033 /* RemoteAppRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000038 /* RemoteAppRepository.swift */; };
+		400000000000000000000034 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000039 /* AppStore.swift */; };
+		400000000000000000000035 /* PlatformServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000040 /* PlatformServices.swift */; };
+		400000000000000000000036 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000041 /* AuthenticationView.swift */; };
+		400000000000000000000037 /* NotificationHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000042 /* NotificationHistoryView.swift */; };
+		400000000000000000000038 /* DemoLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000043 /* DemoLabView.swift */; };
+		400000000000000000000039 /* AppDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000035 /* AppDomain.swift */; };
+		400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000044 /* PrivacyInfo.xcprivacy */; };
+		400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000045 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +123,17 @@
 		300000000000000000000032 /* FriendPresenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendPresenceTests.swift; sourceTree = "<group>"; };
 		300000000000000000000033 /* PrototypeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrototypeUITests.swift; sourceTree = "<group>"; };
 		300000000000000000000034 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		300000000000000000000035 /* AppDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDomain.swift; sourceTree = "<group>"; };
+		300000000000000000000036 /* AppRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRepository.swift; sourceTree = "<group>"; };
+		300000000000000000000037 /* LocalDemoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDemoRepository.swift; sourceTree = "<group>"; };
+		300000000000000000000038 /* RemoteAppRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteAppRepository.swift; sourceTree = "<group>"; };
+		300000000000000000000039 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
+		300000000000000000000040 /* PlatformServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformServices.swift; sourceTree = "<group>"; };
+		300000000000000000000041 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		300000000000000000000042 /* NotificationHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHistoryView.swift; sourceTree = "<group>"; };
+		300000000000000000000043 /* DemoLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLabView.swift; sourceTree = "<group>"; };
+		300000000000000000000044 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		300000000000000000000045 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				200000000000000000000004 /* App */,
+				200000000000000000000023 /* Core */,
 				200000000000000000000005 /* Features */,
 				200000000000000000000010 /* Shared */,
 				200000000000000000000016 /* Resources */,
@@ -172,10 +196,12 @@
 		200000000000000000000005 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				200000000000000000000021 /* Auth */,
 				200000000000000000000006 /* Onboarding */,
 				200000000000000000000007 /* Friends */,
 				200000000000000000000008 /* Sharing */,
 				200000000000000000000009 /* Profile */,
+				200000000000000000000022 /* Events */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -183,7 +209,7 @@
 		200000000000000000000006 /* Onboarding */ = {isa = PBXGroup; children = (300000000000000000000019 /* OnboardingView.swift */, ); path = Onboarding; sourceTree = "<group>"; };
 		200000000000000000000007 /* Friends */ = {isa = PBXGroup; children = (300000000000000000000020 /* FriendsView.swift */, 300000000000000000000021 /* FriendDetailView.swift */, 300000000000000000000022 /* AddFriendView.swift */, ); path = Friends; sourceTree = "<group>"; };
 		200000000000000000000008 /* Sharing */ = {isa = PBXGroup; children = (300000000000000000000023 /* SharingView.swift */, ); path = Sharing; sourceTree = "<group>"; };
-		200000000000000000000009 /* Profile */ = {isa = PBXGroup; children = (300000000000000000000024 /* ProfileView.swift */, ); path = Profile; sourceTree = "<group>"; };
+		200000000000000000000009 /* Profile */ = {isa = PBXGroup; children = (300000000000000000000024 /* ProfileView.swift */, 300000000000000000000043 /* DemoLabView.swift */, ); path = Profile; sourceTree = "<group>"; };
 		200000000000000000000010 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -197,11 +223,11 @@
 			sourceTree = "<group>";
 		};
 		200000000000000000000011 /* DesignSystem */ = {isa = PBXGroup; children = (300000000000000000000012 /* AppTheme.swift */, ); path = DesignSystem; sourceTree = "<group>"; };
-		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (300000000000000000000013 /* FriendPresence.swift */, ); path = Models; sourceTree = "<group>"; };
+		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (300000000000000000000013 /* FriendPresence.swift */, 300000000000000000000035 /* AppDomain.swift */, ); path = Models; sourceTree = "<group>"; };
 		200000000000000000000013 /* Mock */ = {isa = PBXGroup; children = (300000000000000000000014 /* MockFriendData.swift */, ); path = Mock; sourceTree = "<group>"; };
 		200000000000000000000014 /* Storage */ = {isa = PBXGroup; children = (300000000000000000000015 /* SharedPresenceStore.swift */, ); path = Storage; sourceTree = "<group>"; };
 		200000000000000000000015 /* Components */ = {isa = PBXGroup; children = (300000000000000000000016 /* FriendAvatarView.swift */, 300000000000000000000017 /* FriendRowView.swift */, 300000000000000000000018 /* SameCityMomentCard.swift */, ); path = Components; sourceTree = "<group>"; };
-		200000000000000000000016 /* Resources */ = {isa = PBXGroup; children = (300000000000000000000025 /* Assets.xcassets */, 300000000000000000000026 /* Localizable.xcstrings */, ); path = Resources; sourceTree = "<group>"; };
+		200000000000000000000016 /* Resources */ = {isa = PBXGroup; children = (300000000000000000000025 /* Assets.xcassets */, 300000000000000000000026 /* Localizable.xcstrings */, 300000000000000000000044 /* PrivacyInfo.xcprivacy */, ); path = Resources; sourceTree = "<group>"; };
 		200000000000000000000017 /* WhereIsMyFriendWidget */ = {
 			isa = PBXGroup;
 			children = (
@@ -210,6 +236,7 @@
 				300000000000000000000029 /* FriendWidgetEntryView.swift */,
 				300000000000000000000030 /* Info.plist */,
 				300000000000000000000031 /* WhereIsMyFriendWidget.entitlements */,
+				300000000000000000000045 /* PrivacyInfo.xcprivacy */,
 			);
 			path = WhereIsMyFriendWidget;
 			sourceTree = "<group>";
@@ -217,6 +244,9 @@
 		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
 		200000000000000000000019 /* WhereIsMyFriendUITests */ = {isa = PBXGroup; children = (300000000000000000000033 /* PrototypeUITests.swift */, ); path = WhereIsMyFriendUITests; sourceTree = "<group>"; };
 		200000000000000000000020 /* docs */ = {isa = PBXGroup; children = (300000000000000000000007 /* DESIGN_SPEC.md */, ); path = docs; sourceTree = "<group>"; };
+		200000000000000000000021 /* Auth */ = {isa = PBXGroup; children = (300000000000000000000041 /* AuthenticationView.swift */, ); path = Auth; sourceTree = "<group>"; };
+		200000000000000000000022 /* Events */ = {isa = PBXGroup; children = (300000000000000000000042 /* NotificationHistoryView.swift */, ); path = Events; sourceTree = "<group>"; };
+		200000000000000000000023 /* Core */ = {isa = PBXGroup; children = (300000000000000000000036 /* AppRepository.swift */, 300000000000000000000037 /* LocalDemoRepository.swift */, 300000000000000000000038 /* RemoteAppRepository.swift */, 300000000000000000000039 /* AppStore.swift */, 300000000000000000000040 /* PlatformServices.swift */, ); path = Core; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -300,8 +330,8 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		500000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000017 /* Assets.xcassets in Resources */, 400000000000000000000018 /* Localizable.xcstrings in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
-		500000000000000000000007 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000029 /* Localizable.xcstrings in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000017 /* Assets.xcassets in Resources */, 400000000000000000000018 /* Localizable.xcstrings in Resources */, 400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000007 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000029 /* Localizable.xcstrings in Resources */, 400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000010 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000013 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
@@ -311,6 +341,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				400000000000000000000030 /* AppDomain.swift in Sources */,
+				400000000000000000000031 /* AppRepository.swift in Sources */,
+				400000000000000000000032 /* LocalDemoRepository.swift in Sources */,
+				400000000000000000000033 /* RemoteAppRepository.swift in Sources */,
+				400000000000000000000034 /* AppStore.swift in Sources */,
+				400000000000000000000035 /* PlatformServices.swift in Sources */,
+				400000000000000000000036 /* AuthenticationView.swift in Sources */,
+				400000000000000000000037 /* NotificationHistoryView.swift in Sources */,
+				400000000000000000000038 /* DemoLabView.swift in Sources */,
 				400000000000000000000001 /* WhereIsMyFriendApp.swift in Sources */,
 				400000000000000000000002 /* AppRootView.swift in Sources */,
 				400000000000000000000003 /* AppShellView.swift in Sources */,
@@ -330,7 +369,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */

@@ -5,6 +5,7 @@ struct FriendWidgetEntry: TimelineEntry {
     let date: Date
     let friends: [FriendPresence]
     let currentCity: String
+    let snapshotUpdatedAt: Date?
 }
 
 struct FriendTimelineProvider: TimelineProvider {
@@ -12,7 +13,8 @@ struct FriendTimelineProvider: TimelineProvider {
         FriendWidgetEntry(
             date: Date(),
             friends: MockFriendData.friends,
-            currentCity: MockFriendData.currentUserCity
+            currentCity: MockFriendData.currentUserCity,
+            snapshotUpdatedAt: Date()
         )
     }
 
@@ -21,7 +23,8 @@ struct FriendTimelineProvider: TimelineProvider {
             FriendWidgetEntry(
                 date: Date(),
                 friends: SharedPresenceStore.load(),
-                currentCity: MockFriendData.currentUserCity
+                currentCity: SharedPresenceStore.loadCurrentCity(),
+                snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt()
             )
         )
     }
@@ -31,7 +34,8 @@ struct FriendTimelineProvider: TimelineProvider {
         let entry = FriendWidgetEntry(
             date: now,
             friends: SharedPresenceStore.load(),
-            currentCity: MockFriendData.currentUserCity
+            currentCity: SharedPresenceStore.loadCurrentCity(),
+            snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt()
         )
         let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now.addingTimeInterval(1_800)
         completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
@@ -60,6 +64,7 @@ struct FriendWidget: Widget {
     FriendWidgetEntry(
         date: .now,
         friends: MockFriendData.friends,
-        currentCity: MockFriendData.currentUserCity
+        currentCity: MockFriendData.currentUserCity,
+        snapshotUpdatedAt: .now
     )
 }
