@@ -1,8 +1,10 @@
 # Where Is My Friend?：从零到 App Store 发布计划
 
-- 最后更新：2026-08-11
-- 文档状态：v1，执行基线
+- 最后更新：2026-08-13
+- 文档状态：v2，远程 Supabase Staging 路线已确定
 - 目标平台：iPhone / iOS，包含 Widget
+
+后端已经确定使用 Supabase Auth + PostgreSQL + Edge Functions，并以远程 Staging 为主开发环境；本机 Docker 不是前置条件。逐项账号配置、CLI 命令、Apple 登录、APNs、环境隔离和生产部署见 [Supabase 接入与生产发布实施计划](./docs/SUPABASE_PRODUCTION_PLAN.md)。
 
 ## 1. 产品定义
 
@@ -112,7 +114,9 @@ Apple 要求所有 iOS App 提供隐私政策 URL，并在 App Store Connect 准
 
 ### 4.2 服务端
 
-选择一个支持以下能力的托管服务或自建 API；具体供应商应在阶段 1 用 ADR（Architecture Decision Record）确定：
+服务端已经选定 Supabase：Supabase Auth 负责生产身份与 session，PostgreSQL 负责事务和业务状态，Edge Functions 提供现有 REST API 并执行逐请求授权。iOS 不直接读取业务表，service role 只存在于后端。
+
+该方案必须支持：
 
 - 用户鉴权与 Sign in with Apple token 验证
 - 关系型数据库和事务

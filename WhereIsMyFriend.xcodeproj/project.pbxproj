@@ -49,6 +49,7 @@
 		400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000044 /* PrivacyInfo.xcprivacy */; };
 		400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000045 /* PrivacyInfo.xcprivacy */; };
 		400000000000000000000042 /* ClientReliability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000046 /* ClientReliability.swift */; };
+		400000000000000000000043 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000001 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,7 +140,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		500000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000043 /* Supabase in Frameworks */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000006 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000009 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000012 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -264,6 +265,7 @@
 			buildRules = ();
 			dependencies = (600000000000000000000001 /* PBXTargetDependency */, );
 			name = WhereIsMyFriend;
+			packageProductDependencies = (A20000000000000000000001 /* Supabase */, );
 			productName = WhereIsMyFriend;
 			productReference = 300000000000000000000001 /* Where Is My Friend.app */;
 			productType = "com.apple.product-type.application";
@@ -323,6 +325,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (en, Base, "zh-Hans", );
 			mainGroup = 200000000000000000000001;
+			packageReferences = (A10000000000000000000001 /* XCRemoteSwiftPackageReference "supabase-swift" */, );
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 200000000000000000000002 /* Products */;
 			projectDirPath = "";
@@ -330,6 +333,22 @@
 			targets = (100000000000000000000001 /* WhereIsMyFriend */, 100000000000000000000002 /* WhereIsMyFriendWidgetExtension */, 100000000000000000000003 /* WhereIsMyFriendTests */, 100000000000000000000004 /* WhereIsMyFriendUITests */, );
 		};
 /* End PBXProject section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A10000000000000000000001 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {kind = exactVersion; version = 2.54.1; };
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A20000000000000000000001 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000000000000000000001 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
 		500000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000017 /* Assets.xcassets in Resources */, 400000000000000000000018 /* Localizable.xcstrings in Resources */, 400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
@@ -423,7 +442,9 @@
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriend.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
 			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend?";
@@ -442,10 +463,14 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = YES;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
-			WIF_API_BASE_URL = "https://api.example.invalid";
+			WIF_API_BASE_URL = "http://127.0.0.1:54321/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
+			WIF_DISPLAY_NAME = "Where Is My Friend?";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = invite.example.invalid;
+			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_SUPABASE_PUBLISHABLE_KEY = "";
+			WIF_SUPABASE_URL = "";
 			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Debug; };
 		800000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
@@ -473,14 +498,20 @@
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "https://api.example.invalid";
 			WIF_APS_ENVIRONMENT = production;
+			WIF_DISPLAY_NAME = "Where Is My Friend?";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = invite.example.invalid;
+			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_SUPABASE_PUBLISHABLE_KEY = "";
+			WIF_SUPABASE_URL = "";
 			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Release; };
 		800000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -576,7 +607,9 @@
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriend.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
 			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend? Staging";
@@ -595,16 +628,22 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
-			WIF_API_BASE_URL = "https://staging-api.example.invalid";
+			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
+			WIF_DISPLAY_NAME = "Where Is My Friend Staging";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = staging-invite.example.invalid;
+			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
+			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
 			WIF_URL_SCHEME = whereismyfriend-staging;
 		}; name = Staging; };
 		800000000000000000000013 /* Staging */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -641,14 +680,108 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			TEST_TARGET_NAME = WhereIsMyFriend;
 		}; name = Staging; };
+		800000000000000000000016 /* Staging TestFlight */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = "Staging TestFlight";
+		};
+		800000000000000000000017 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {
+			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriendTestFlight.entitlements;
+			CODE_SIGN_STYLE = Automatic;
+			CURRENT_PROJECT_VERSION = 3;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
+			GENERATE_INFOPLIST_FILE = NO;
+			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
+			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend? Staging";
+			INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+			MARKETING_VERSION = 0.1.0;
+			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.staging;
+			PRODUCT_MODULE_NAME = WhereIsMyFriend;
+			PRODUCT_NAME = "Where Is My Friend";
+			SUPPORTED_PLATFORMS = iphoneos;
+			SWIFT_EMIT_LOC_STRINGS = YES;
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+			VALIDATE_PRODUCT = YES;
+			WIF_ALLOWS_LOCAL_DEMO = NO;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
+			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
+			WIF_APS_ENVIRONMENT = production;
+			WIF_DISPLAY_NAME = "Where Is My Friend Staging";
+			WIF_INVITE_BASE_URL = "";
+			WIF_INVITE_HOST = "";
+			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
+			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
+			WIF_URL_SCHEME = whereismyfriend-staging;
+		}; name = "Staging TestFlight"; };
+		800000000000000000000018 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {
+			APPLICATION_EXTENSION_API_ONLY = YES;
+			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
+			CODE_SIGN_STYLE = Automatic;
+			CURRENT_PROJECT_VERSION = 3;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
+			GENERATE_INFOPLIST_FILE = NO;
+			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
+			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", );
+			MARKETING_VERSION = 0.1.0;
+			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.staging.widget;
+			PRODUCT_NAME = "Where Is My Friend Widget";
+			SKIP_INSTALL = YES;
+			SUPPORTED_PLATFORMS = iphoneos;
+			SWIFT_EMIT_LOC_STRINGS = YES;
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+			VALIDATE_PRODUCT = YES;
+			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
+			WIF_URL_SCHEME = whereismyfriend-staging;
+		}; name = "Staging TestFlight"; };
+		800000000000000000000019 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {
+			BUNDLE_LOADER = "$(TEST_HOST)";
+			GENERATE_INFOPLIST_FILE = YES;
+			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.staging.tests;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+			TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Where Is My Friend.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Where Is My Friend";
+		}; name = "Staging TestFlight"; };
+		800000000000000000000020 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {
+			GENERATE_INFOPLIST_FILE = YES;
+			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.staging.uitests;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+			TEST_TARGET_NAME = WhereIsMyFriend;
+		}; name = "Staging TestFlight"; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		900000000000000000000001 /* Build configuration list for PBXProject "WhereIsMyFriend" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000001 /* Debug */, 800000000000000000000011 /* Staging */, 800000000000000000000002 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		900000000000000000000002 /* Build configuration list for PBXNativeTarget "WhereIsMyFriend" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000003 /* Debug */, 800000000000000000000012 /* Staging */, 800000000000000000000004 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		900000000000000000000003 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendWidgetExtension" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000005 /* Debug */, 800000000000000000000013 /* Staging */, 800000000000000000000006 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		900000000000000000000004 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendTests" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000007 /* Debug */, 800000000000000000000014 /* Staging */, 800000000000000000000008 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-		900000000000000000000005 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendUITests" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000009 /* Debug */, 800000000000000000000015 /* Staging */, 800000000000000000000010 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		900000000000000000000001 /* Build configuration list for PBXProject "WhereIsMyFriend" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000001 /* Debug */, 800000000000000000000011 /* Staging */, 800000000000000000000016 /* Staging TestFlight */, 800000000000000000000002 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		900000000000000000000002 /* Build configuration list for PBXNativeTarget "WhereIsMyFriend" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000003 /* Debug */, 800000000000000000000012 /* Staging */, 800000000000000000000017 /* Staging TestFlight */, 800000000000000000000004 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		900000000000000000000003 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendWidgetExtension" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000005 /* Debug */, 800000000000000000000013 /* Staging */, 800000000000000000000018 /* Staging TestFlight */, 800000000000000000000006 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		900000000000000000000004 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendTests" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000007 /* Debug */, 800000000000000000000014 /* Staging */, 800000000000000000000019 /* Staging TestFlight */, 800000000000000000000008 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		900000000000000000000005 /* Build configuration list for PBXNativeTarget "WhereIsMyFriendUITests" */ = {isa = XCConfigurationList; buildConfigurations = (800000000000000000000009 /* Debug */, 800000000000000000000015 /* Staging */, 800000000000000000000020 /* Staging TestFlight */, 800000000000000000000010 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = 000000000000000000000001 /* Project object */;

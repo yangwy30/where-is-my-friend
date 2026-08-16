@@ -1,0 +1,119 @@
+# TestFlight 发布手册
+
+这份手册用于把远程 Supabase Staging 版本分发给真实 iPhone 测试者。它不会发布到公开 App Store。
+
+App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统一维护在 [APP_STORE_METADATA.md](./APP_STORE_METADATA.md)。公开隐私政策与支持站点位于 `site/`，由 `Privacy Site` GitHub Pages workflow 部署。
+
+## 当前候选构建
+
+- App：Where Is My Friend Staging
+- Bundle ID：`com.yangwy30.whereismyfriend.staging`
+- Widget Bundle ID：`com.yangwy30.whereismyfriend.staging.widget`
+- 版本：`0.1.0`
+- 构建号：`3`
+- Scheme：`WhereIsMyFriend Staging`
+- Archive 配置：`Staging TestFlight`
+- 后端：远程 Supabase Staging
+- APNs：production
+- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-3/Where Is My Friend.ipa`
+
+## 1. 创建 App Store Connect App 记录
+
+Apple 要求先创建 App 记录，之后才能上传构建。打开 [App Store Connect](https://appstoreconnect.apple.com/apps)，点击左上角 `+` → `New App`，填写：
+
+| 字段 | 值 |
+| --- | --- |
+| Platforms | iOS |
+| Name | Where Is My Friend |
+| Primary Language | English (U.S.) |
+| Bundle ID | `com.yangwy30.whereismyfriend.staging` |
+| SKU | `WIF-STAGING-IOS` |
+| User Access | Full Access |
+
+如果名称已被占用，只修改 Name，例如 `WIF Friends Staging`；不要修改 Bundle ID。
+
+## 2. 上传构建
+
+App 记录创建后，在仓库根目录运行：
+
+```sh
+xcodebuild -exportArchive \
+  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build3.xcarchive' \
+  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build3-upload' \
+  -exportOptionsPlist Config/TestFlightUploadOptions.plist \
+  -allowProvisioningUpdates
+```
+
+上传成功后，Apple 会处理构建。处理完成前，构建可能不会立刻出现在 TestFlight 页面。
+
+## 3. TestFlight 测试信息
+
+### Beta App Description
+
+```text
+Where Is My Friend privately shares city-level presence between accepted friends. It never uploads precise coordinates or route history. This beta focuses on Sign in with Apple, friend requests, city sharing, same-city moments, and the Home Screen Widget.
+```
+
+### What to Test
+
+```text
+Please test with two different Apple Accounts on two iPhones:
+
+1. Sign in with Apple and finish onboarding.
+2. On the Sharing tab, choose a test city and keep City sharing enabled.
+3. On the Friends tab, invite the other tester by username.
+4. On the second phone, accept the incoming friend request.
+5. Confirm that each phone sees only the other person's shared city and update time—not precise coordinates.
+6. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
+7. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
+8. Force-quit and reopen the app; confirm the Apple session, shared city, and friend state remain available.
+
+Please report which step failed, the iPhone model, iOS version, and a screenshot when possible.
+```
+
+### Review Notes
+
+```text
+Sign in with Apple is the only authentication method. The reviewer can create a new account directly in the app; no demo credentials are required.
+
+The product stores and shares city-level presence only. Precise coordinates and route history are not uploaded. A user can pause sharing, remove a friend, block a user, sign out, or delete the account from the app.
+```
+
+填写一个可接收邮件的 Feedback Email 和 Review Contact。不要把私人手机号或邮箱提交到 Git。
+
+## 4. 邀请另一位 iPhone 用户
+
+对方不需要加入你的 Apple Developer Team。
+
+1. 先在 TestFlight 中创建一个 Internal Testing group。
+2. 再创建 External Testing group，例如 `Friends Alpha`。
+3. 把构建 `0.1.0 (2)` 加进外部组，粘贴上面的 What to Test。
+4. 提交 TestFlight App Review。
+5. Apple 批准后，通过对方的邮箱邀请，或创建有限人数的 Public Link。
+6. 对方在自己的 iPhone 安装 Apple 的 TestFlight App，接受邀请并安装构建。
+
+首次外部测试通常需要 Beta App Review。后续同版本构建可能不需要完整复审。
+
+## 5. 同城通知当前状态
+
+构建已具备 production Push entitlement，App 也会注册 production device token。远程 Staging 的 production Bundle ID 和 URL scheme 已与本构建对齐。
+
+服务器仍缺少 Apple APNs `.p8` 私钥、Key ID，以及每分钟执行 `push-worker` 的 Cron。配置完成前，可以验证：
+
+- 通知权限 UI；
+- production token 注册；
+- 好友、城市和同城事件记录；
+- Widget 数据同步。
+
+但真正的系统通知横幅还不会由服务器发出。APNs 凭证属于敏感数据，只能存进 Supabase Edge Function secrets，不能提交到仓库或放进 iOS App。
+
+## 6. 每次上传新构建
+
+同一个版本再次上传前，把 App 和 Widget 的 `CURRENT_PROJECT_VERSION` 同时递增。版本号可以继续保持 `0.1.0`，直到需要开启新的 TestFlight 版本线。
+
+官方参考：
+
+- [Create an app record](https://developer.apple.com/help/app-store-connect/create-an-app-record/add-a-new-app/)
+- [Upload builds](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/)
+- [TestFlight overview](https://developer.apple.com/help/app-store-connect/test-a-beta-version/testflight-overview)
+- [Invite external testers](https://developer.apple.com/help/app-store-connect/test-a-beta-version/invite-external-testers)

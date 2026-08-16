@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Where Is My Friend</title>
+  <meta name="description" content="Privacy and support information for Where Is My Friend.">
+  <style>
+    :root { --ink:#17221d; --muted:#5d6a64; --accent:#217a55; --line:rgba(23,34,29,.12); --card:rgba(255,255,255,.72); --bg:#edf4ef; }
+    @media (prefers-color-scheme:dark) { :root { --ink:#edf7f1; --muted:#adbbb3; --accent:#72d5a3; --line:rgba(237,247,241,.13); --card:rgba(28,42,34,.76); --bg:#101813; } }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(circle at 80% 5%, rgba(76,169,123,.22), transparent 34rem),var(--bg); font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { width:min(760px,calc(100% - 40px)); margin:0 auto; padding:12vh 0 10vh; }
+    .mark { width:72px; height:72px; display:grid; place-items:center; border-radius:24px; background:rgba(52,148,98,.18); font-size:34px; }
+    h1 { margin:24px 0 8px; font-size:clamp(38px,7vw,62px); line-height:1.05; letter-spacing:-.04em; }
+    p { color:var(--muted); max-width:620px; }
+    nav { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:42px; }
+    a { color:inherit; text-decoration:none; }
+    .card { padding:22px; border:1px solid var(--line); border-radius:24px; background:var(--card); backdrop-filter:blur(20px); }
+    .card strong { display:block; color:var(--accent); font-size:20px; margin-bottom:4px; }
+    .card span { color:var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="mark" aria-hidden="true">◎</div>
+    <h1>Where Is My Friend</h1>
+    <p>A privacy-first iPhone app for sharing your latest city with accepted friends—without live maps, precise-coordinate uploads, or route history.</p>
+    <nav aria-label="Legal and support">
+      <a class="card" href="privacy/"><strong>Privacy Policy</strong><span>What the app collects, why, and your choices.</span></a>
+      <a class="card" href="support/"><strong>Support</strong><span>Testing help, feedback, and account deletion.</span></a>
+    </nav>
+  </main>
+</body>
+</html>

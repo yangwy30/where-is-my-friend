@@ -90,8 +90,13 @@ protocol AppRepository: Sendable {
     func registerPushToken(_ token: String) async throws
     func retryPendingOperations() async throws -> AppSnapshot
     func pendingOperationCount() async -> Int
+    func isPushRegistrationPending() async -> Bool
 
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot
+}
+
+extension AppRepository {
+    func isPushRegistrationPending() async -> Bool { false }
 }
 
 enum AppEnvironment {
@@ -99,11 +104,18 @@ enum AppEnvironment {
         let configuredDemoValue = Bundle.main.object(forInfoDictionaryKey: "WIFAllowsLocalDemo")
         let allowsDemo = (configuredDemoValue as? Bool)
             ?? ((configuredDemoValue as? String)?.uppercased() == "YES")
-        if let configuration = APIConfiguration.fromBundle(),
-           ProcessInfo.processInfo.arguments.contains("-useRemoteAPI") || !allowsDemo {
-            return RemoteAppRepository(configuration: configuration)
+        let wantsRemote = ProcessInfo.processInfo.arguments.contains("-useRemoteAPI") || !allowsDemo
+        if wantsRemote {
+            guard
+                let configuration = APIConfiguration.fromBundle(),
+                let supabaseConfiguration = SupabaseConfiguration.fromBundle()
+            else { return UnavailableAppRepository() }
+            return RemoteAppRepository(
+                configuration: configuration,
+                supabaseConfiguration: supabaseConfiguration
+            )
         }
-        return allowsDemo ? LocalDemoRepository() : UnavailableAppRepository()
+        return LocalDemoRepository()
     }
 }
 

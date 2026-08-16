@@ -40,7 +40,7 @@ struct DemoLabView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .navigationTitle("Demo Lab")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("demoLabScreen")

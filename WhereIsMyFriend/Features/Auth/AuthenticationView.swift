@@ -8,7 +8,7 @@ struct AuthenticationView: View {
 
     var body: some View {
         ZStack {
-            WIFTheme.canvas.ignoresSafeArea()
+            WIFAmbientBackground()
 
             VStack(spacing: 0) {
                 Spacer()
@@ -54,25 +54,22 @@ struct AuthenticationView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .accessibilityIdentifier("appleSignInButton")
 
-                if store.repositoryMode == .localDemo {
+                if showsDebugSignIn {
                     Button {
                         Task { await store.signInDemo() }
                     } label: {
-                        Label("Continue with local demo", systemImage: "iphone.gen3")
+                        Label(debugSignInLabel, systemImage: "iphone.gen3")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15)
                     }
-                    .buttonStyle(.plain)
                     .foregroundStyle(WIFTheme.fresh)
-                    .background(WIFTheme.freshSurface, in: RoundedRectangle(cornerRadius: 14))
+                    .wifGlassButton(tint: WIFTheme.fresh.opacity(0.20))
                     .accessibilityIdentifier("demoSignInButton")
                     .padding(.top, 12)
                 }
 
-                Text(store.repositoryMode == .localDemo
-                     ? "Apple authorization is wired, but server verification is replaced by the local repository in this build."
-                     : "Your Apple identity token is sent only to the configured API over HTTPS.")
+                Text(authenticationFootnote)
                     .font(.caption)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
@@ -85,9 +82,27 @@ struct AuthenticationView: View {
             if isProcessingAppleSignIn || store.isWorking {
                 ProgressView()
                     .padding(18)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    .wifGlassSurface(
+                        tint: WIFTheme.surface.opacity(0.12),
+                        in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    )
             }
         }
+    }
+
+    private var showsDebugSignIn: Bool {
+        store.repositoryMode == .localDemo
+    }
+
+    private var debugSignInLabel: String {
+        "Continue with local demo"
+    }
+
+    private var authenticationFootnote: String {
+        if store.repositoryMode == .localDemo {
+            return "Apple authorization is wired, but server verification is replaced by the local repository in this build."
+        }
+        return "Apple verifies your identity, then Supabase securely stores and refreshes your session."
     }
 
     private func handleAppleResult(_ result: Result<ASAuthorization, Error>) {

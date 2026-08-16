@@ -57,7 +57,7 @@ struct FriendWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: FriendTimelineProvider()) { entry in
             FriendWidgetEntryView(entry: entry)
                 .containerBackground(for: .widget) {
-                    WIFTheme.elevatedSurface
+                    WIFTheme.ambientGradient
                 }
         }
         .configurationDisplayName("Where they are")

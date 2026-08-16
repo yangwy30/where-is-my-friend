@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FriendsView: View {
     @EnvironmentObject private var store: AppStore
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
     @State private var referenceDate = Date()
 
@@ -52,12 +53,14 @@ struct FriendsView: View {
                         Text("Accept a request or invite a demo user by username.")
                     } actions: {
                         Button("Add friends") { isAddingFriend = true }
-                            .buttonStyle(.borderedProminent)
-                            .tint(WIFTheme.fresh)
+                            .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
-                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
+                    .wifGlassSurface(
+                        tint: WIFTheme.surface.opacity(0.10),
+                        in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+                    )
                 } else {
                     LazyVStack(spacing: 0) {
                         ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
@@ -73,17 +76,16 @@ struct FriendsView: View {
                             }
                         }
                     }
-                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: WIFTheme.largeRadius)
-                            .stroke(WIFTheme.border, lineWidth: 1)
-                    }
+                    .wifGlassSurface(
+                        tint: WIFTheme.surface.opacity(0.08),
+                        in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+                    )
                 }
             }
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 24)
         }
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .toolbar(.hidden, for: .navigationBar)
         .refreshable {
             await store.refresh()
@@ -99,19 +101,44 @@ struct FriendsView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Friends")
-                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 10) {
+                    title
+                    friendCount
+                    addFriendButton
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+            } else {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        title
+                        friendCount
+                    }
 
-                Text("\(friends.count) friends · \(uniqueCityCount) cities")
-                    .font(.subheadline)
-                    .foregroundStyle(WIFTheme.secondaryText)
+                    Spacer()
+
+                    addFriendButton
+                }
             }
+        }
+        .padding(.top, 12)
+    }
 
-            Spacer()
+    private var title: some View {
+        Text("Friends")
+            .font(.system(.largeTitle, design: .rounded, weight: .bold))
+            .foregroundStyle(WIFTheme.primaryText)
+    }
 
+    private var friendCount: some View {
+        Text("\(friends.count) friends · \(uniqueCityCount) cities")
+            .font(.subheadline)
+            .foregroundStyle(WIFTheme.secondaryText)
+    }
+
+    private var addFriendButton: some View {
+        WIFGlassEffectGroup(spacing: 10) {
             Button {
                 isAddingFriend = true
             } label: {
@@ -119,8 +146,7 @@ struct FriendsView: View {
                     Image(systemName: "person.badge.plus")
                         .font(.headline)
                         .foregroundStyle(WIFTheme.fresh)
-                        .frame(width: 42, height: 42)
-                        .background(WIFTheme.freshSurface, in: Circle())
+                        .frame(width: 44, height: 44)
 
                     if store.incomingRequestCount > 0 {
                         Text("\(store.incomingRequestCount)")
@@ -128,14 +154,15 @@ struct FriendsView: View {
                             .foregroundStyle(.white)
                             .frame(minWidth: 18, minHeight: 18)
                             .background(WIFTheme.destructive, in: Circle())
-                            .offset(x: 4, y: -4)
+                            .offset(x: 5, y: -5)
                     }
                 }
             }
+            .buttonStyle(.plain)
+            .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.16), interactive: true, in: Circle())
             .accessibilityLabel("Add a friend")
             .accessibilityIdentifier("addFriendButton")
         }
-        .padding(.top, 12)
     }
 
     private var uniqueCityCount: Int {

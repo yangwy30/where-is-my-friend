@@ -29,7 +29,7 @@ struct NotificationHistoryView: View {
                 .scrollContentBackground(.hidden)
             }
         }
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .navigationTitle("Same-city moments")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("notificationHistoryScreen")

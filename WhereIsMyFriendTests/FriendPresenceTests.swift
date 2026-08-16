@@ -96,6 +96,16 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertNil(InviteLinkParser.parse(URL(string: "whereismyfriend://invite/bad-name")!))
     }
 
+    func testPrivacyPolicyConfigurationRequiresARealHTTPSURL() {
+        XCTAssertNil(PrivacyPolicyConfiguration.validated(rawValue: nil))
+        XCTAssertNil(PrivacyPolicyConfiguration.validated(rawValue: "http://example.com/privacy"))
+        XCTAssertNil(PrivacyPolicyConfiguration.validated(rawValue: "https://example.invalid/privacy"))
+        XCTAssertEqual(
+            PrivacyPolicyConfiguration.validated(rawValue: "https://example.com/privacy")?.absoluteString,
+            "https://example.com/privacy"
+        )
+    }
+
     func testSameCityListHonorsCountryCode() {
         let londonCanada = makeFriend(
             name: "Canadian Friend",
@@ -120,6 +130,37 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertEqual(
             APIConfiguration.validated(rawValue: "https://api.example.com")?.baseURL,
             URL(string: "https://api.example.com")
+        )
+        #if DEBUG
+        XCTAssertEqual(
+            APIConfiguration.validated(rawValue: "http://127.0.0.1:54321/functions/v1/api")?.baseURL,
+            URL(string: "http://127.0.0.1:54321/functions/v1/api")
+        )
+        #endif
+    }
+
+    func testAPIConfigurationPreservesEdgeFunctionPrefixWhenBuildingEndpoint() throws {
+        let configuration = try XCTUnwrap(
+            APIConfiguration.validated(rawValue: "https://project.supabase.co/functions/v1/api")
+        )
+        XCTAssertEqual(
+            configuration.endpoint(path: "/v1/friends/requests")?.absoluteString,
+            "https://project.supabase.co/functions/v1/api/v1/friends/requests"
+        )
+    }
+
+    func testSupabaseConfigurationRejectsSecretKeys() {
+        XCTAssertNil(
+            SupabaseConfiguration.validated(
+                projectURL: "https://project.supabase.co",
+                publishableKey: "sb_" + "secret_do-not-ship"
+            )
+        )
+        XCTAssertNotNil(
+            SupabaseConfiguration.validated(
+                projectURL: "https://project.supabase.co",
+                publishableKey: "sb_publishable_test"
+            )
         )
     }
 
@@ -358,6 +399,8 @@ final class OfflineMutationQueueTests: XCTestCase {
 }
 
 final class RemoteAppRepositoryTests: XCTestCase {
+    private let installationID = UUID(uuidString: "30000000-0000-0000-0000-000000000001")!
+
     override func tearDown() {
         StubURLProtocol.setHandler(nil)
         SharedAppStateStore.reset()
@@ -390,6 +433,64 @@ final class RemoteAppRepositoryTests: XCTestCase {
             XCTAssertEqual(error as? RepositoryError, .sessionExpired)
         }
         XCTAssertNil(setup.tokenStore.load())
+    }
+
+    func testAccountDeletionUsesDeleteEndpointAndClearsLocalSession() async throws {
+        let setup = try makeRepository()
+        SharedAppStateStore.save(DemoData.initialSnapshot(), origin: setup.repository.storageScope)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let response = try encoder.encode(DemoData.signedOutSnapshot())
+        var capturedMethod: String?
+        var capturedPath: String?
+        StubURLProtocol.setHandler { request in
+            capturedMethod = request.httpMethod
+            capturedPath = request.url?.path
+            return .response(statusCode: 200, data: response)
+        }
+
+        let snapshot = try await setup.repository.deleteAccount()
+
+        XCTAssertEqual(capturedMethod, "DELETE")
+        XCTAssertEqual(capturedPath, "/v1/account")
+        XCTAssertFalse(snapshot.isAuthenticated)
+        XCTAssertNil(setup.tokenStore.load())
+    }
+
+    func testPushRegistrationSendsStableInstallationAndSandboxEnvironment() async throws {
+        let setup = try makeRepository()
+        SharedAppStateStore.save(DemoData.initialSnapshot(), origin: setup.repository.storageScope)
+        var requestBody: [String: Any] = [:]
+        StubURLProtocol.setHandler { request in
+            if let data = requestBodyData(request),
+               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                requestBody = object
+            }
+            return .response(statusCode: 204, data: Data())
+        }
+
+        try await setup.repository.registerPushToken(String(repeating: "ab", count: 32))
+
+        XCTAssertEqual(requestBody["token"] as? String, String(repeating: "ab", count: 32))
+        XCTAssertEqual(requestBody["platform"] as? String, "ios")
+        XCTAssertEqual(requestBody["environment"] as? String, "sandbox")
+        XCTAssertEqual(
+            (requestBody["installationID"] as? String)?.lowercased(),
+            installationID.uuidString.lowercased()
+        )
+        let isPending = await setup.repository.isPushRegistrationPending()
+        XCTAssertFalse(isPending)
+    }
+
+    func testOfflinePushRegistrationReportsThatItIsWaitingForNetwork() async throws {
+        let setup = try makeRepository()
+        SharedAppStateStore.save(DemoData.initialSnapshot(), origin: setup.repository.storageScope)
+        StubURLProtocol.setHandler { _ in .failure(URLError(.notConnectedToInternet)) }
+
+        try await setup.repository.registerPushToken(String(repeating: "cd", count: 32))
+
+        let isPending = await setup.repository.isPushRegistrationPending()
+        XCTAssertTrue(isPending)
     }
 
     func testTerminalQueuedMutationIsRemovedInsteadOfBlockingFutureSync() async throws {
@@ -437,6 +538,12 @@ final class RemoteAppRepositoryTests: XCTestCase {
         tokenStore: InMemoryTokenStore
     ) {
         let configuration = try XCTUnwrap(APIConfiguration.validated(rawValue: "https://api.test"))
+        let supabaseConfiguration = try XCTUnwrap(
+            SupabaseConfiguration.validated(
+                projectURL: "https://project.supabase.co",
+                publishableKey: "sb_publishable_test"
+            )
+        )
         let sessionConfiguration = URLSessionConfiguration.ephemeral
         sessionConfiguration.protocolClasses = [StubURLProtocol.self]
         let tokenStore = InMemoryTokenStore(token: "token")
@@ -445,9 +552,14 @@ final class RemoteAppRepositoryTests: XCTestCase {
         let queue = OfflineMutationQueue(defaults: defaults, storageKey: "queue")
         let repository = RemoteAppRepository(
             configuration: configuration,
+            supabaseConfiguration: supabaseConfiguration,
             mutationQueue: queue,
             session: URLSession(configuration: sessionConfiguration),
-            tokenStore: tokenStore
+            authentication: tokenStore,
+            pushConfiguration: APNsRegistrationConfiguration(
+                environment: .sandbox,
+                installationID: installationID
+            )
         )
         return (repository, queue, tokenStore)
     }
@@ -518,7 +630,23 @@ private actor SlowTestRepository: AppRepository {
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot { snapshot }
 }
 
-private final class InMemoryTokenStore: SessionTokenStoring, @unchecked Sendable {
+private func requestBodyData(_ request: URLRequest) -> Data? {
+    if let body = request.httpBody { return body }
+    guard let stream = request.httpBodyStream else { return nil }
+    stream.open()
+    defer { stream.close() }
+    var result = Data()
+    var buffer = [UInt8](repeating: 0, count: 4_096)
+    while stream.hasBytesAvailable {
+        let count = stream.read(&buffer, maxLength: buffer.count)
+        if count < 0 { return nil }
+        if count == 0 { break }
+        result.append(buffer, count: count)
+    }
+    return result
+}
+
+private final class InMemoryTokenStore: RemoteAuthenticationProviding, @unchecked Sendable {
     private let lock = NSLock()
     private var token: String?
 
@@ -540,6 +668,24 @@ private final class InMemoryTokenStore: SessionTokenStoring, @unchecked Sendable
         lock.lock()
         token = nil
         lock.unlock()
+    }
+
+    func accessToken() async throws -> String {
+        guard let token = load() else { throw RepositoryError.notAuthenticated }
+        return token
+    }
+
+    func signInWithApple(_ payload: AppleSignInPayload) async throws -> String {
+        guard let token = load() else { throw RepositoryError.notAuthenticated }
+        return token
+    }
+
+    func refreshAccessToken() async throws -> String {
+        throw RepositoryError.sessionExpired
+    }
+
+    func signOut() async throws {
+        clear()
     }
 }
 

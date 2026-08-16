@@ -1,20 +1,21 @@
 # Where Is My Friend? — Design Specification
 
-Status: v1 static-prototype baseline
+Status: v2 Liquid Glass client baseline
 
 Target: iPhone, iOS 18+, WidgetKit
 Working language: English, localization-ready from day one
 
 ## 1. Design direction: Quiet Atlas
 
-The product should feel like a calm view of the people a user cares about, not a tracking dashboard. The visual language is warm, quiet, and human. We emphasize cities and recency while deliberately avoiding UI that implies precise, continuous surveillance.
+The product should feel like a calm view of the people a user cares about, not a tracking dashboard. The visual language is warm, quiet, and human. Native Liquid Glass controls float above a softly colored atlas-like backdrop, while city and recency remain clearer than decorative effects. We deliberately avoid UI that implies precise, continuous surveillance.
 
-The interface follows four principles:
+The interface follows five principles:
 
 1. **People before geography.** A friend’s identity is always the primary anchor.
 2. **City before coordinates.** The product never shows pins, street-level maps, or exact coordinates in v1.
 3. **Freshness is part of the fact.** Every city is paired with an update time or an explicit unavailable state.
 4. **Privacy is visible.** Paused sharing, stale data, and permission issues are first-class states rather than hidden errors.
+5. **Glass communicates hierarchy.** Navigation, controls, alerts, and compact moments may use glass; long-form content does not become a wall of translucent cards.
 
 ## 2. Information architecture
 
@@ -59,7 +60,7 @@ The home screen answers three questions in order:
 2. Where are my friends?
 3. How current is each answer?
 
-The same-city moment uses a soft green-to-blue surface and stacked avatars. It appears only when at least one fresh same-city match exists. The rest of the screen is a simple people list rather than a map.
+The same-city moment uses green-tinted Liquid Glass and stacked avatars. It appears only when at least one fresh same-city match exists. The rest of the screen is a simple people list rather than a map.
 
 Each friend row contains:
 
@@ -83,14 +84,24 @@ The profile screen reports the user’s own city and update time, then groups se
 
 ## 4. Design tokens
 
-SwiftUI uses semantic, adaptive colors rather than fixed light-only values.
+SwiftUI uses semantic, adaptive colors rather than fixed light-only values. On iOS 26 and later, custom glass surfaces use SwiftUI's native `glassEffect`, nearby controls use `GlassEffectContainer`, and actionable controls use the system glass button style. iOS 18–25 receive a legible native Material fallback with the same layout and semantics.
 
-### 4.1 Color roles
+### 4.1 Liquid Glass behavior
+
+- The Tab Bar is the system floating Liquid Glass control and minimizes on downward scroll on supported systems.
+- Glass is reserved for navigation, buttons, compact status cards, permission prompts, and same-city moments.
+- Interactive glass opts into the system interaction response; informational glass remains noninteractive.
+- Nearby glass controls share a `GlassEffectContainer` so their sampling and morphing behavior remains coherent.
+- A calm green-and-blue ambient layer sits behind glass so refraction is visible without reducing readability.
+- Standard SwiftUI controls are preferred so newer iOS releases can inherit Apple's system design refinements automatically.
+- Reduce Transparency removes ambient blur decoration and keeps every control readable.
+
+### 4.2 Color roles
 
 | Role | Light appearance | Dark appearance | Usage |
 | --- | --- | --- | --- |
 | Canvas | warm off-white | deep green-black | Main app background |
-| Surface | white | lifted green-black | Lists and grouped settings |
+| Surface | translucent warm white | translucent lifted green-black | Lists and grouped settings |
 | Primary text | forest ink | soft white-green | Titles and key facts |
 | Secondary text | muted gray-green | light gray-green | Timestamps and descriptions |
 | Fresh accent | calm green | mint green | Active sharing and fresh presence |
@@ -99,7 +110,7 @@ SwiftUI uses semantic, adaptive colors rather than fixed light-only values.
 
 Color must not be the only carrier of meaning. Freshness and sharing state always include text.
 
-### 4.2 Typography
+### 4.3 Typography
 
 - Use San Francisco through SwiftUI system fonts.
 - Large screen titles use rounded or default system design with semibold emphasis.
@@ -107,7 +118,7 @@ Color must not be the only carrier of meaning. Freshness and sharing state alway
 - Supporting text uses regular weight and the platform’s secondary color role.
 - All layouts must support Dynamic Type without truncating city status or privacy messaging.
 
-### 4.3 Shape and spacing
+### 4.4 Shape and spacing
 
 | Token | Value | Usage |
 | --- | --- | --- |
@@ -137,7 +148,7 @@ The Widget shares the same hierarchy as the App: city, friend, freshness.
 
 ### 6.1 Small
 
-- Displays one featured friend in the static prototype.
+- Displays one featured friend from the latest shared snapshot.
 - Shows friend, city, flag, and update time.
 - Production version should allow friend selection through App Intents.
 - Tapping deep-links to the friend detail page.
@@ -170,6 +181,7 @@ The Widget shares the same hierarchy as the App: city, friend, freshness.
 - Controls use native `Toggle`, `Button`, `NavigationLink`, and `TabView` semantics.
 - Same-city gradients preserve text contrast in both appearances.
 - Important content remains legible at accessibility text sizes.
+- Reduce Transparency removes nonessential ambient color and blur without removing content hierarchy.
 - Reduce Motion should disable nonessential transitions in later animation work.
 
 ## 8. Localization
@@ -182,13 +194,15 @@ The Widget shares the same hierarchy as the App: city, friend, freshness.
 
 ## 9. Prototype acceptance criteria
 
-The static prototype is complete when:
+The client baseline is complete when:
 
 - it builds for an iOS simulator with no external dependencies;
 - onboarding can be completed without real authentication;
 - Friends, Sharing, You, add-friend, and friend-detail flows are navigable;
 - mock presence data is shared by the App and Widget code;
 - Small, Medium, and Large Widget families render from the same timeline entry;
+- iOS 26+ renders native Liquid Glass surfaces and system glass controls rather than static blur imitations;
+- iOS 18–25 renders the same flows using the Material fallback;
 - light and dark appearance use semantic colors;
 - model unit tests cover freshness and same-city eligibility;
 - a UI smoke test can bypass onboarding and reach the Friends screen;
@@ -196,10 +210,10 @@ The static prototype is complete when:
 
 ## 10. Deferred decisions
 
-The prototype intentionally defers:
+The client baseline intentionally defers:
 
 - final public App Store name;
-- production app icon and illustration assets;
+- final App Store icon refinements and an Icon Composer layered variant;
 - backend vendor and API schema;
 - actual Sign in with Apple authorization;
 - Core Location permission requests and background behavior;
@@ -207,4 +221,4 @@ The prototype intentionally defers:
 - production App Intent friend configuration;
 - analytics and crash-reporting vendors.
 
-These decisions should be made only after the static prototype is reviewed on a real iPhone and in the Widget Gallery.
+These decisions should be made only after the client is reviewed on a real iPhone and in the Widget Gallery.

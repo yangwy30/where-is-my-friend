@@ -46,7 +46,7 @@ struct SharingView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 30)
         }
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .navigationTitle("Sharing")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showsCityPicker) {
@@ -88,37 +88,37 @@ struct SharingView: View {
             .padding(15)
             .disabled(store.isWorking)
         }
-        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
-        .overlay {
-            RoundedRectangle(cornerRadius: WIFTheme.mediumRadius).stroke(WIFTheme.border, lineWidth: 1)
-        }
+        .wifGlassSurface(
+            tint: WIFTheme.surface.opacity(0.08),
+            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+        )
     }
 
     private var locationActions: some View {
-        VStack(spacing: 10) {
-            Button {
-                showsCityPicker = true
-            } label: {
-                Label("Choose a test city", systemImage: "building.2.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(WIFTheme.fresh)
-            .accessibilityIdentifier("chooseCityButton")
-
-            Button {
-                locationService.requestForegroundCity()
-            } label: {
-                HStack {
-                    if locationService.isResolving { ProgressView().controlSize(.small) }
-                    Label("Use my current city", systemImage: "location.fill")
+        WIFGlassEffectGroup(spacing: 10) {
+            VStack(spacing: 10) {
+                Button {
+                    showsCityPicker = true
+                } label: {
+                    Label("Choose a test city", systemImage: "building.2.fill")
+                        .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.30), prominent: true)
+                .accessibilityIdentifier("chooseCityButton")
+
+                Button {
+                    locationService.requestForegroundCity()
+                } label: {
+                    HStack {
+                        if locationService.isResolving { ProgressView().controlSize(.small) }
+                        Label("Use my current city", systemImage: "location.fill")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.14))
+                .disabled(locationService.isResolving)
+                .accessibilityIdentifier("useCurrentCityButton")
             }
-            .buttonStyle(.bordered)
-            .tint(WIFTheme.fresh)
-            .disabled(locationService.isResolving)
-            .accessibilityIdentifier("useCurrentCityButton")
         }
     }
 
@@ -153,10 +153,10 @@ struct SharingView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(15)
-        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
-        .overlay {
-            RoundedRectangle(cornerRadius: WIFTheme.mediumRadius).stroke(WIFTheme.border, lineWidth: 1)
-        }
+        .wifGlassSurface(
+            tint: WIFTheme.eventBlue.opacity(0.12),
+            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+        )
     }
 
     private var widgetPrivacyModeTitle: LocalizedStringKey {
@@ -177,10 +177,6 @@ struct SharingView: View {
 
     private var sharingIllustration: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 32)
-                .fill(WIFTheme.eventGradient)
-                .frame(height: 230)
-
             Circle()
                 .stroke(WIFTheme.fresh.opacity(0.32), style: StrokeStyle(lineWidth: 3, dash: [7, 8]))
                 .frame(width: 210, height: 135)
@@ -196,10 +192,15 @@ struct SharingView: View {
                 .foregroundStyle(WIFTheme.primaryText)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
-                .background(WIFTheme.surface, in: Capsule())
+                .wifGlassSurface(tint: WIFTheme.surface.opacity(0.10), in: Capsule())
                 .offset(x: 78, y: -75)
                 .lineLimit(1)
         }
+        .frame(height: 230)
+        .wifGlassSurface(
+            tint: WIFTheme.eventBlue.opacity(0.18),
+            in: RoundedRectangle(cornerRadius: 32, style: .continuous)
+        )
         .accessibilityHidden(true)
     }
 
@@ -222,7 +223,10 @@ struct SharingView: View {
             Spacer()
         }
         .padding(15)
-        .background(WIFTheme.freshSurface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.18),
+            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+        )
     }
 
     private var statusText: String {
@@ -282,7 +286,7 @@ struct SharingView: View {
             preferences.notificationPreviewEnabled = newValue
             Task {
                 await store.setSharingPreferences(preferences)
-                if newValue { await store.notificationService.requestAuthorization() }
+                if newValue { await store.requestNotificationAuthorization() }
             }
         }
     }

@@ -5,3 +5,9 @@ build/
 *.xccheckout
 *.xcscmblueprint
 xcuserdata/
+node_modules/
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*
+!.env.example

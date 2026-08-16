@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import WidgetKit
 
 struct AppNotice: Identifiable, Equatable {
@@ -13,11 +14,30 @@ private struct PendingCityUpdate: Sendable {
     let source: PresenceSource
 }
 
+enum PushRegistrationState: Equatable {
+    case notStarted
+    case waitingForDeviceToken
+    case registering
+    case waitingForNetwork
+    case registered(Date)
+    case failed
+
+    var isInProgress: Bool {
+        switch self {
+        case .waitingForDeviceToken, .registering:
+            true
+        default:
+            false
+        }
+    }
+}
+
 @MainActor
 final class AppStore: ObservableObject {
     @Published private(set) var snapshot: AppSnapshot
     @Published private(set) var isWorking = false
     @Published private(set) var pendingOperationCount = 0
+    @Published private(set) var pushRegistrationState: PushRegistrationState = .notStarted
     @Published var pendingInvite: PendingInvite?
     @Published private(set) var widgetPrivacyMode: WidgetPrivacyMode
     @Published var notice: AppNotice?
@@ -27,6 +47,8 @@ final class AppStore: ObservableObject {
 
     private let repository: any AppRepository
     private var pendingCityUpdate: PendingCityUpdate?
+    private var latestPushToken: String?
+    private var celebratesNextPushRegistration = false
 
     init(repository: (any AppRepository)? = nil) {
         if ProcessInfo.processInfo.arguments.contains("-resetDemoData") {
@@ -74,20 +96,29 @@ final class AppStore: ObservableObject {
     }
 
     func signInWithApple(_ payload: AppleSignInPayload) async {
-        await perform(successMessage: "Signed in with Apple.") {
+        let signedIn = await perform(successMessage: "Signed in with Apple.") {
             try await self.repository.signInWithApple(payload)
         }
+        if signedIn { await preparePushRegistrationIfAuthorized() }
     }
 
     func signOut() async {
-        await perform(successMessage: nil) {
+        let signedOut = await perform(successMessage: nil) {
             try await self.repository.signOut()
+        }
+        if signedOut {
+            notificationService.unregisterRemoteNotifications()
+            resetPushRegistration()
         }
     }
 
     func deleteAccount() async {
-        await perform(successMessage: nil) {
+        let deleted = await perform(successMessage: nil) {
             try await self.repository.deleteAccount()
+        }
+        if deleted {
+            notificationService.unregisterRemoteNotifications()
+            resetPushRegistration()
         }
     }
 
@@ -169,20 +200,93 @@ final class AppStore: ObservableObject {
         }
     }
 
-    func registerPushToken(_ token: String) async {
-        do {
-            try await repository.registerPushToken(token)
-            await refreshPendingOperationCount()
-        } catch {
-            applySessionExpirationIfNeeded(error)
-            await refreshPendingOperationCount()
-            notice = AppNotice(title: "Push registration", message: error.localizedDescription)
+    func requestNotificationAuthorization() async {
+        celebratesNextPushRegistration = true
+        let isAllowed = await notificationService.requestAuthorization()
+        guard isAllowed else {
+            celebratesNextPushRegistration = false
+            pushRegistrationState = .notStarted
+            return
+        }
+        await preparePushRegistrationIfAuthorized(force: true, userInitiated: true)
+    }
+
+    func preparePushRegistrationIfAuthorized(
+        force: Bool = false,
+        userInitiated: Bool = false
+    ) async {
+        guard snapshot.isAuthenticated else {
+            resetPushRegistration()
+            return
+        }
+
+        await notificationService.refreshAuthorizationStatus()
+        guard notificationService.allowsNotifications else {
+            if !pushRegistrationState.isInProgress {
+                pushRegistrationState = .notStarted
+            }
+            return
+        }
+
+        if !force {
+            switch pushRegistrationState {
+            case .waitingForDeviceToken, .registering, .registered:
+                return
+            case .notStarted, .waitingForNetwork, .failed:
+                break
+            }
+        }
+
+        if userInitiated { celebratesNextPushRegistration = true }
+        pushRegistrationState = .waitingForDeviceToken
+        notificationService.registerForRemoteNotifications()
+    }
+
+    func retryPushRegistration() async {
+        celebratesNextPushRegistration = true
+        if let latestPushToken {
+            await registerPushToken(latestPushToken)
+        } else {
+            await preparePushRegistrationIfAuthorized(force: true, userInitiated: true)
         }
     }
 
+    func handlePushRegistrationFailure() {
+        celebratesNextPushRegistration = false
+        pushRegistrationState = .failed
+    }
+
+    func registerPushToken(_ token: String) async {
+        latestPushToken = token
+        pushRegistrationState = .registering
+        do {
+            try await repository.registerPushToken(token)
+            await refreshPendingOperationCount()
+            if await repository.isPushRegistrationPending() {
+                pushRegistrationState = .waitingForNetwork
+            } else {
+                let registeredAt = Date()
+                pushRegistrationState = .registered(registeredAt)
+                if celebratesNextPushRegistration {
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
+                }
+            }
+        } catch {
+            applySessionExpirationIfNeeded(error)
+            await refreshPendingOperationCount()
+            pushRegistrationState = .failed
+        }
+        celebratesNextPushRegistration = false
+    }
+
     func retryPendingOperations() async {
-        await perform(successMessage: "Sync completed.") {
+        let synced = await perform(successMessage: "Sync completed.") {
             try await self.repository.retryPendingOperations()
+        }
+        if synced,
+           pushRegistrationState == .waitingForNetwork,
+           !(await repository.isPushRegistrationPending()) {
+            pushRegistrationState = .registered(Date())
         }
     }
 
@@ -295,5 +399,11 @@ final class AppStore: ObservableObject {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: CharacterSet(charactersIn: "@"))
             .lowercased()
+    }
+
+    private func resetPushRegistration() {
+        latestPushToken = nil
+        celebratesNextPushRegistration = false
+        pushRegistrationState = .notStarted
     }
 }

@@ -54,6 +54,29 @@ enum InviteLinkConfiguration {
     }
 }
 
+enum PrivacyPolicyConfiguration {
+    static let fallbackURL = URL(
+        string: "https://yangwy30.github.io/where-is-my-friend/privacy/"
+    )!
+
+    static func validated(rawValue: String?) -> URL? {
+        guard
+            let rawValue,
+            let url = URL(string: rawValue),
+            url.scheme?.lowercased() == "https",
+            let host = url.host?.lowercased(),
+            !host.isEmpty,
+            !host.hasSuffix(".invalid")
+        else { return nil }
+        return url
+    }
+
+    static func url(bundle: Bundle = .main) -> URL {
+        validated(rawValue: bundle.object(forInfoDictionaryKey: "WIFPrivacyPolicyURL") as? String)
+            ?? fallbackURL
+    }
+}
+
 enum InviteURLFactory {
     static func make(username: String, bundle: Bundle = .main) -> URL {
         let normalized = username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? username

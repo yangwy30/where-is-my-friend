@@ -81,11 +81,10 @@ struct FriendDetailView: View {
                     .padding(15)
                     .accessibilityIdentifier("blockFriendButton")
                 }
-                .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
-                .overlay {
-                    RoundedRectangle(cornerRadius: WIFTheme.mediumRadius)
-                        .stroke(WIFTheme.border, lineWidth: 1)
-                }
+                .wifGlassSurface(
+                    tint: WIFTheme.surface.opacity(0.08),
+                    in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+                )
 
                 Label("No precise location or route history is shared.", systemImage: "hand.raised.fill")
                     .font(.footnote)
@@ -96,7 +95,7 @@ struct FriendDetailView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 28)
         }
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .navigationTitle(currentFriend.displayName.components(separatedBy: " ").first ?? currentFriend.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -187,10 +186,10 @@ struct FriendDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
         .padding(.horizontal, 18)
-        .background(WIFTheme.cityGradient, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
-        .overlay {
-            RoundedRectangle(cornerRadius: WIFTheme.largeRadius).stroke(WIFTheme.border, lineWidth: 1)
-        }
+        .wifGlassSurface(
+            tint: WIFTheme.eventBlue.opacity(0.20),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
     }
 
     private func sectionLabel(_ text: LocalizedStringKey) -> some View {

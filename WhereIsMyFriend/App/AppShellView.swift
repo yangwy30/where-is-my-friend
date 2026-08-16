@@ -51,6 +51,7 @@ struct AppShellView: View {
             }
             .tag(AppTab.profile)
         }
+        .wifTabBarMinimizeOnScroll()
         .safeAreaInset(edge: .top, spacing: 0) {
             if showsSyncBanner {
                 syncBanner
@@ -86,8 +87,12 @@ struct AppShellView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
-        .background(.regularMaterial)
-        .overlay(alignment: .bottom) { Divider() }
+        .wifGlassSurface(
+            tint: store.snapshot.syncState == .offline ? Color.orange.opacity(0.14) : WIFTheme.fresh.opacity(0.12),
+            in: Capsule()
+        )
+        .padding(.horizontal, 12)
+        .padding(.top, 4)
     }
 
     private func openDeepLink(_ url: URL) {

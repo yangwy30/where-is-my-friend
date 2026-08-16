@@ -1,23 +1,55 @@
-name: iOS
+name: CI
 
 on:
   pull_request:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
-  group: ios-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
-    runs-on: macos-26
-    timeout-minutes: 30
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify migrations, API boundaries, encryption, and repository secrets
+        run: npm run backend:test
+
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Validate project inputs
+        run: |
+          plutil -lint WhereIsMyFriend/App/Info.plist
+          plutil -lint WhereIsMyFriend/App/WhereIsMyFriend.entitlements
+          plutil -lint WhereIsMyFriendWidget/Info.plist
+          plutil -lint WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements
+          xmllint --noout 'WhereIsMyFriend.xcodeproj/xcshareddata/xcschemes/WhereIsMyFriend Staging.xcscheme'
 
       - name: Build Debug
         run: |
@@ -34,7 +66,7 @@ jobs:
         run: |
           xcodebuild \
             -project WhereIsMyFriend.xcodeproj \
-            -scheme WhereIsMyFriend \
+            -scheme 'WhereIsMyFriend Staging' \
             -configuration Staging \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
@@ -52,7 +84,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Run tests
+      - name: Run unit tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | ruby -rjson -e '
             devices = JSON.parse(STDIN.read)["devices"].values.flatten
@@ -63,6 +95,7 @@ jobs:
           xcodebuild \
             -project WhereIsMyFriend.xcodeproj \
             -scheme WhereIsMyFriend \
+            -configuration Debug \
             -destination "id=$DEVICE_ID" \
             -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=NO \

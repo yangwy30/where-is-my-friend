@@ -28,7 +28,7 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            WIFTheme.canvas.ignoresSafeArea()
+            WIFAmbientBackground()
 
             VStack(spacing: 0) {
                 progress
@@ -69,9 +69,8 @@ struct OnboardingView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .background(WIFTheme.fresh, in: RoundedRectangle(cornerRadius: 16))
+                .foregroundStyle(WIFTheme.primaryText)
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.34), prominent: true)
                 .accessibilityIdentifier("onboardingContinueButton")
                 .padding(.horizontal, WIFTheme.screenInset)
 
@@ -92,6 +91,9 @@ struct OnboardingView: View {
                     .frame(width: index == step ? 30 : 10, height: 7)
             }
         }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .wifGlassSurface(tint: WIFTheme.surface.opacity(0.08), in: Capsule())
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: step)
         .accessibilityLabel("Step \(step + 1) of \(pages.count)")
     }
@@ -125,10 +127,6 @@ private struct OnboardingIllustration: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 36)
-                .fill(WIFTheme.eventGradient)
-                .frame(maxWidth: 310, maxHeight: 280)
-
             Circle()
                 .stroke(WIFTheme.fresh.opacity(0.28), style: StrokeStyle(lineWidth: 3, dash: [8, 8]))
                 .frame(width: 210, height: 150)
@@ -147,7 +145,12 @@ private struct OnboardingIllustration: View {
                 cityLabel("TOKYO", x: 82, y: -86)
             }
         }
+        .frame(maxWidth: 310, maxHeight: 280)
         .frame(height: 280)
+        .wifGlassSurface(
+            tint: WIFTheme.eventBlue.opacity(0.18),
+            in: RoundedRectangle(cornerRadius: 36, style: .continuous)
+        )
         .padding(.horizontal, WIFTheme.screenInset)
         .accessibilityHidden(true)
     }
@@ -168,7 +171,7 @@ private struct OnboardingIllustration: View {
             .foregroundStyle(WIFTheme.primaryText)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(WIFTheme.surface, in: Capsule())
+            .wifGlassSurface(tint: WIFTheme.surface.opacity(0.10), in: Capsule())
             .offset(x: x, y: y)
     }
 }

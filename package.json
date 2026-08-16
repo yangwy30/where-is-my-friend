@@ -1,0 +1,16 @@
+{
+  "name": "where-is-my-friend",
+  "private": true,
+  "scripts": {
+    "backend:start": "supabase start",
+    "backend:stop": "supabase stop",
+    "backend:reset": "supabase db reset",
+    "backend:serve": "supabase functions serve api",
+    "backend:test": "node --test supabase/tests/*.test.mjs",
+    "backend:verify": "npm run backend:test"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.4",
+    "supabase": "^2.114.0"
+  }
+}
