@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AppRootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("prototype.hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @StateObject private var store = AppStore()
     @StateObject private var locationService = CityLocationService()
@@ -26,7 +27,14 @@ struct AppRootView: View {
         .environmentObject(store)
         .environmentObject(locationService)
         .preferredColorScheme(nil)
-        .task { await store.refresh() }
+        .task {
+            await store.refresh()
+            await store.preparePushRegistrationIfAuthorized()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await store.preparePushRegistrationIfAuthorized() }
+        }
         .onChange(of: backgroundUpdatesShouldRun, initial: true) { _, shouldRun in
             locationService.setBackgroundUpdatesEnabled(shouldRun)
         }
@@ -41,8 +49,12 @@ struct AppRootView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .pushTokenUpdated)) { notification in
-            guard let token = notification.object as? String else { return }
+            guard store.snapshot.isAuthenticated, let token = notification.object as? String else { return }
             Task { await store.registerPushToken(token) }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .pushRegistrationFailed)) { _ in
+            guard store.snapshot.isAuthenticated else { return }
+            store.handlePushRegistrationFailure()
         }
         .alert(item: $store.notice) { notice in
             Alert(
@@ -99,8 +111,7 @@ private struct IncomingInviteView: View {
                         Text("Send friend request").frame(maxWidth: .infinity)
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(WIFTheme.fresh)
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                 .disabled(store.isWorking)
                 Button("Not now", role: .cancel) {
                     store.discardPendingInvite()
@@ -108,6 +119,7 @@ private struct IncomingInviteView: View {
                 }
             }
             .padding(28)
+            .wifAmbientBackground()
             .navigationTitle("Friend invite")
             .navigationBarTitleDisplayMode(.inline)
         }

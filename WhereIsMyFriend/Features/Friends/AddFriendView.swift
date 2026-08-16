@@ -37,7 +37,7 @@ struct AddFriendView: View {
                 .padding(WIFTheme.screenInset)
             }
             .accessibilityIdentifier("addFriendScreen")
-            .background(WIFTheme.canvas)
+            .wifAmbientBackground()
             .navigationTitle("Add friends")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -62,15 +62,15 @@ struct AddFriendView: View {
                     .submitLabel(.send)
                     .onSubmit(sendInvite)
                     .padding(13)
-                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 14))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 14).stroke(WIFTheme.border, lineWidth: 1)
-                    }
+                    .wifGlassSurface(
+                        tint: WIFTheme.surface.opacity(0.08),
+                        interactive: true,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    )
                     .accessibilityIdentifier("friendUsernameField")
 
                 Button("Invite", action: sendInvite)
-                    .buttonStyle(.borderedProminent)
-                    .tint(WIFTheme.fresh)
+                    .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                     .disabled(username.trimmingCharacters(in: .whitespaces).isEmpty || store.isWorking)
                     .accessibilityIdentifier("sendInviteButton")
             }
@@ -88,7 +88,11 @@ struct AddFriendView: View {
                     .font(.body.weight(.semibold))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 13)
-                    .background(WIFTheme.freshSurface, in: RoundedRectangle(cornerRadius: 14))
+                    .wifGlassSurface(
+                        tint: WIFTheme.fresh.opacity(0.16),
+                        interactive: true,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    )
             }
             .foregroundStyle(WIFTheme.fresh)
         }
@@ -138,9 +142,7 @@ struct AddFriendView: View {
                 Button("Accept") {
                     Task { await store.respond(to: request.id, response: .accept) }
                 }
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .tint(WIFTheme.fresh)
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                 .accessibilityIdentifier("acceptRequestButton")
             } else {
                 Text("Pending")
@@ -149,10 +151,10 @@ struct AddFriendView: View {
             }
         }
         .padding(14)
-        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
-        .overlay {
-            RoundedRectangle(cornerRadius: WIFTheme.mediumRadius).stroke(WIFTheme.border, lineWidth: 1)
-        }
+        .wifGlassSurface(
+            tint: WIFTheme.surface.opacity(0.08),
+            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+        )
     }
 
     private func sendInvite() {

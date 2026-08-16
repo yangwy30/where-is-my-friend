@@ -59,6 +59,24 @@ final class PrototypeUITests: XCTestCase {
         hideEverything.tap()
         XCTAssertEqual(privacyPicker.value as? String, "hideAll")
     }
+
+    func testNotificationSettingsSeparatesPermissionAndDeviceRegistration() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        app.tabBars.buttons.element(boundBy: 2).tap()
+
+        let settingsLink = app.buttons["notificationSettingsLink"]
+        XCTAssertTrue(settingsLink.waitForExistence(timeout: 3))
+        settingsLink.tap()
+
+        XCTAssertTrue(app.scrollViews["notificationSettingsScreen"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.descendants(matching: .any)["notificationPermissionCard"].exists)
+        XCTAssertTrue(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
+    }
 }
 
 private extension XCUIElement {

@@ -170,17 +170,30 @@ final class LocalNotificationService: NSObject, ObservableObject {
     override init() {
         super.init()
         center.delegate = self
-        refreshAuthorizationStatus()
+        Task { await refreshAuthorizationStatus() }
     }
 
-    func requestAuthorization() async {
+    @discardableResult
+    func requestAuthorization() async -> Bool {
         do {
             _ = try await center.requestAuthorization(options: [.alert, .badge, .sound])
-            refreshAuthorizationStatus()
-            UIApplication.shared.registerForRemoteNotifications()
+            await refreshAuthorizationStatus()
         } catch {
-            refreshAuthorizationStatus()
+            await refreshAuthorizationStatus()
         }
+        return allowsNotifications
+    }
+
+    func refreshAuthorizationStatus() async {
+        authorizationStatus = await center.notificationSettings().authorizationStatus
+    }
+
+    func registerForRemoteNotifications() {
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+
+    func unregisterRemoteNotifications() {
+        UIApplication.shared.unregisterForRemoteNotifications()
     }
 
     func schedule(_ event: ColocationEvent) async {
@@ -202,9 +215,12 @@ final class LocalNotificationService: NSObject, ObservableObject {
         try? await center.add(request)
     }
 
-    private func refreshAuthorizationStatus() {
-        center.getNotificationSettings { [weak self] settings in
-            Task { @MainActor in self?.authorizationStatus = settings.authorizationStatus }
+    var allowsNotifications: Bool {
+        switch authorizationStatus {
+        case .authorized, .provisional, .ephemeral:
+            true
+        default:
+            false
         }
     }
 }
@@ -235,6 +251,7 @@ extension LocalNotificationService: UNUserNotificationCenterDelegate {
 
 extension Notification.Name {
     static let pushTokenUpdated = Notification.Name("WhereIsMyFriend.pushTokenUpdated")
+    static let pushRegistrationFailed = Notification.Name("WhereIsMyFriend.pushRegistrationFailed")
 }
 
 final class PushRegistrationDelegate: NSObject, UIApplicationDelegate {
@@ -244,5 +261,12 @@ final class PushRegistrationDelegate: NSObject, UIApplicationDelegate {
     ) {
         let token = deviceToken.map { String(format: "%02x", $0) }.joined()
         NotificationCenter.default.post(name: .pushTokenUpdated, object: token)
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        NotificationCenter.default.post(name: .pushRegistrationFailed, object: error)
     }
 }

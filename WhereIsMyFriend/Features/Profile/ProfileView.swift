@@ -33,10 +33,13 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.plain)
                     divider
-                    NavigationLink { NotificationSettingsView() } label: {
+                    NavigationLink {
+                        NotificationSettingsView(notificationService: store.notificationService)
+                    } label: {
                         settingRow("Notifications", note: "Permissions and moment history", symbol: "bell.fill", color: WIFTheme.fresh)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("notificationSettingsLink")
                 }
 
                 sectionLabel("Privacy").padding(.top, 24)
@@ -89,7 +92,7 @@ struct ProfileView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 30)
         }
-        .background(WIFTheme.canvas)
+        .wifAmbientBackground()
         .navigationTitle("You")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -113,7 +116,7 @@ struct ProfileView: View {
         } message: {
             Text(store.repositoryMode == .localDemo
                  ? "This removes the local demo account and cached Widget data."
-                 : "The server will delete your account, friendships, preferences and current city presence.")
+                 : "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Where Is My Friend under Sign in with Apple in your Apple Account settings.")
         }
     }
 
@@ -142,6 +145,11 @@ struct ProfileView: View {
             }
             Spacer()
         }
+        .padding(16)
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.12),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
         .padding(.top, 8)
     }
 
@@ -168,10 +176,10 @@ struct ProfileView: View {
 
     private func settingsGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         VStack(spacing: 0, content: content)
-            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius))
-            .overlay {
-                RoundedRectangle(cornerRadius: WIFTheme.mediumRadius).stroke(WIFTheme.border, lineWidth: 1)
-            }
+            .wifGlassSurface(
+                tint: WIFTheme.surface.opacity(0.08),
+                in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+            )
     }
 
     private var divider: some View {
@@ -261,34 +269,330 @@ private struct LocationAccessView: View {
 
 private struct NotificationSettingsView: View {
     @EnvironmentObject private var store: AppStore
+    @ObservedObject var notificationService: LocalNotificationService
 
     var body: some View {
-        List {
-            Section {
-                LabeledContent("Authorization", value: authorizationText)
-                Button("Allow notifications") {
-                    Task { await store.notificationService.requestAuthorization() }
+        ScrollView {
+            VStack(spacing: 18) {
+                notificationHeader
+                permissionCard
+                deviceRegistrationCard
+
+                NavigationLink {
+                    NotificationHistoryView()
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.title3.weight(.semibold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .frame(width: 42, height: 42)
+                            .background(WIFTheme.fresh.opacity(0.12), in: Circle())
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("View same-city history")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(WIFTheme.primaryText)
+                            Text("Every same-city moment stays available here.")
+                                .font(.caption)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .padding(16)
+                    .wifGlassSurface(
+                        tint: WIFTheme.surface.opacity(0.08),
+                        interactive: true,
+                        in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+                    )
                 }
+                .buttonStyle(.plain)
+
+                Text(footerText)
+                    .font(.caption)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 14)
             }
-            Section {
-                NavigationLink("View same-city history") { NotificationHistoryView() }
-            } footer: {
-                Text("The local demo schedules a real local notification. Production will create the same idempotent event on the server and deliver it through APNs.")
-            }
+            .padding(.horizontal, WIFTheme.screenInset)
+            .padding(.top, 10)
+            .padding(.bottom, 30)
         }
+        .wifAmbientBackground()
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("notificationSettingsScreen")
     }
 
-    private var authorizationText: String {
-        switch store.notificationService.authorizationStatus {
+    private var notificationHeader: some View {
+        VStack(spacing: 12) {
+            Image(systemName: isReady ? "bell.badge.fill" : "bell.and.waves.left.and.right.fill")
+                .font(.system(size: 34, weight: .semibold))
+                .foregroundStyle(isReady ? WIFTheme.fresh : WIFTheme.secondaryText)
+                .frame(width: 74, height: 74)
+                .background(
+                    (isReady ? WIFTheme.fresh : WIFTheme.elevatedSurface).opacity(0.18),
+                    in: Circle()
+                )
+                .contentTransition(.symbolEffect(.replace))
+
+            VStack(spacing: 5) {
+                Text(headerTitle)
+                    .font(.title2.bold())
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text(headerDetail)
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .animation(.spring(response: 0.42, dampingFraction: 0.78), value: isReady)
+    }
+
+    private var permissionCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                statusIcon(
+                    symbol: permissionSymbol,
+                    color: permissionColor,
+                    showsProgress: false
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Notification permission")
+                        .font(.headline)
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text(permissionDetail)
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                statusPill(permissionStatusText, color: permissionColor)
+            }
+
+            if notificationService.authorizationStatus == .notDetermined {
+                Button {
+                    Task { await store.requestNotificationAuthorization() }
+                } label: {
+                    Label("Allow notifications", systemImage: "bell.badge")
+                        .frame(maxWidth: .infinity)
+                }
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                .disabled(store.pushRegistrationState.isInProgress)
+                .accessibilityIdentifier("allowNotificationsButton")
+            } else if notificationService.authorizationStatus == .denied {
+                Button(action: openNotificationSettings) {
+                    Label("Open iOS Settings", systemImage: "gearshape.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .wifGlassButton(tint: Color.orange.opacity(0.16))
+                .accessibilityIdentifier("openNotificationSettingsButton")
+            }
+        }
+        .padding(16)
+        .wifGlassSurface(
+            tint: permissionColor.opacity(0.10),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .accessibilityIdentifier("notificationPermissionCard")
+    }
+
+    private var deviceRegistrationCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                statusIcon(
+                    symbol: deviceSymbol,
+                    color: deviceColor,
+                    showsProgress: store.pushRegistrationState.isInProgress
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("This iPhone")
+                        .font(.headline)
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text(deviceDetail)
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                statusPill(deviceStatusText, color: deviceColor)
+            }
+
+            if case .registered(let date) = store.pushRegistrationState {
+                Divider().overlay(WIFTheme.border)
+                LabeledContent("Last registered") {
+                    Text(date, style: .relative)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .font(.caption)
+            } else if canRetryDeviceRegistration {
+                Button {
+                    Task { await store.retryPushRegistration() }
+                } label: {
+                    Label(deviceActionTitle, systemImage: "arrow.clockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.18))
+                .disabled(store.pushRegistrationState.isInProgress)
+                .accessibilityIdentifier("retryPushRegistrationButton")
+            }
+        }
+        .padding(16)
+        .wifGlassSurface(
+            tint: deviceColor.opacity(0.10),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .animation(.easeInOut(duration: 0.25), value: store.pushRegistrationState)
+        .accessibilityIdentifier("devicePushRegistrationCard")
+    }
+
+    private func statusIcon(symbol: String, color: Color, showsProgress: Bool) -> some View {
+        ZStack {
+            Circle().fill(color.opacity(0.13))
+            if showsProgress {
+                ProgressView().tint(color)
+            } else {
+                Image(systemName: symbol)
+                    .font(.body.weight(.bold))
+                    .foregroundStyle(color)
+            }
+        }
+        .frame(width: 42, height: 42)
+    }
+
+    private func statusPill(_ text: LocalizedStringKey, color: Color) -> some View {
+        Text(text)
+            .font(.caption2.weight(.bold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 6)
+            .background(color.opacity(0.12), in: Capsule())
+    }
+
+    private var isReady: Bool {
+        guard notificationService.allowsNotifications else { return false }
+        if case .registered = store.pushRegistrationState { return true }
+        return false
+    }
+
+    private var headerTitle: LocalizedStringKey {
+        isReady ? "Notifications are ready" : "Complete notification setup"
+    }
+
+    private var headerDetail: LocalizedStringKey {
+        isReady
+            ? "This iPhone is ready for same-city alerts."
+            : "Two quick checks make sure same-city alerts can reach you."
+    }
+
+    private var permissionStatusText: LocalizedStringKey {
+        switch notificationService.authorizationStatus {
         case .notDetermined: "Not requested"
         case .denied: "Denied"
         case .authorized: "Allowed"
-        case .provisional: "Provisional"
+        case .provisional: "Quietly allowed"
         case .ephemeral: "Temporary"
         @unknown default: "Unknown"
         }
+    }
+
+    private var permissionDetail: LocalizedStringKey {
+        switch notificationService.authorizationStatus {
+        case .notDetermined: "Allow notifications to receive same-city updates."
+        case .denied: "Notifications are turned off in iOS Settings."
+        case .authorized: "City alerts can appear as banners and play sounds."
+        case .provisional: "City alerts arrive quietly in Notification Center."
+        case .ephemeral: "Notification access is temporarily available."
+        @unknown default: "Notification access is unavailable on this device."
+        }
+    }
+
+    private var permissionSymbol: String {
+        switch notificationService.authorizationStatus {
+        case .authorized, .provisional, .ephemeral: "checkmark"
+        case .denied: "exclamationmark"
+        default: "bell"
+        }
+    }
+
+    private var permissionColor: Color {
+        switch notificationService.authorizationStatus {
+        case .authorized, .provisional, .ephemeral: WIFTheme.fresh
+        case .denied: .orange
+        default: WIFTheme.secondaryText
+        }
+    }
+
+    private var deviceStatusText: LocalizedStringKey {
+        guard notificationService.allowsNotifications else { return "Waiting" }
+        return switch store.pushRegistrationState {
+        case .notStarted: "Not registered"
+        case .waitingForDeviceToken: "Connecting"
+        case .registering: "Registering"
+        case .waitingForNetwork: "Waiting for network"
+        case .registered: "Ready"
+        case .failed: "Needs attention"
+        }
+    }
+
+    private var deviceDetail: LocalizedStringKey {
+        guard notificationService.allowsNotifications else {
+            return "Allow notifications before registering this iPhone."
+        }
+        return switch store.pushRegistrationState {
+        case .notStarted: "Register this iPhone to receive remote same-city alerts."
+        case .waitingForDeviceToken: "Requesting a secure notification token from Apple."
+        case .registering: "Saving this iPhone with your account."
+        case .waitingForNetwork: "Registration will finish automatically when your connection returns."
+        case .registered: "This iPhone can receive remote same-city alerts."
+        case .failed: "Registration needs attention. Your account and other features still work."
+        }
+    }
+
+    private var deviceSymbol: String {
+        guard notificationService.allowsNotifications else { return "iphone" }
+        return switch store.pushRegistrationState {
+        case .registered: "checkmark"
+        case .failed: "exclamationmark"
+        case .waitingForNetwork: "wifi.slash"
+        default: "iphone"
+        }
+    }
+
+    private var deviceColor: Color {
+        guard notificationService.allowsNotifications else { return WIFTheme.secondaryText }
+        return switch store.pushRegistrationState {
+        case .registered: WIFTheme.fresh
+        case .failed: .orange
+        case .waitingForNetwork: .orange
+        default: WIFTheme.secondaryText
+        }
+    }
+
+    private var canRetryDeviceRegistration: Bool {
+        guard notificationService.allowsNotifications else { return false }
+        return switch store.pushRegistrationState {
+        case .notStarted, .waitingForNetwork, .failed: true
+        case .waitingForDeviceToken, .registering, .registered: false
+        }
+    }
+
+    private var deviceActionTitle: LocalizedStringKey {
+        store.pushRegistrationState == .notStarted ? "Register this iPhone" : "Try again"
+    }
+
+    private var footerText: LocalizedStringKey {
+        store.repositoryMode == .localDemo
+            ? "Demo mode schedules same-city alerts directly on this iPhone."
+            : "Same-city moments always appear in history. Remote alerts arrive when this iPhone is registered and notification delivery is available."
+    }
+
+    private func openNotificationSettings() {
+        guard let url = URL(string: UIApplication.openNotificationSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 
@@ -324,7 +628,7 @@ private struct BlockedPeopleView: View {
                         Button("Unblock") {
                             Task { await store.unblockUser(id: person.id) }
                         }
-                        .buttonStyle(.bordered)
+                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.14))
                         .disabled(store.isWorking)
                     }
                     .padding(.vertical, 4)
@@ -343,10 +647,21 @@ private struct BlockedPeopleView: View {
 private struct PrivacyDataView: View {
     var body: some View {
         List {
-            privacyRow("Stored", detail: "Account identity, accepted friendships, sharing choices, current city and update time")
-            privacyRow("Never stored", detail: "Precise coordinates, routes, location history or contact book")
-            privacyRow("Widget", detail: "Accepted friends’ last-known cities in an App Group cache")
-            privacyRow("Deletion", detail: "Local data is removed immediately; production calls the account deletion endpoint")
+            Section {
+                privacyRow("Stored", detail: "Account identity, accepted friendships, sharing choices, current city and update time")
+                privacyRow("Never stored", detail: "Precise coordinates, routes, location history or contact book")
+                privacyRow("Widget", detail: "Accepted friends’ last-known cities in an App Group cache")
+                privacyRow("Deletion", detail: "Deleting your account removes server account data, the local session and Widget cache")
+            }
+
+            Section {
+                Link(destination: PrivacyPolicyConfiguration.url()) {
+                    Label("View Privacy Policy", systemImage: "doc.text.magnifyingglass")
+                }
+                .accessibilityIdentifier("privacyPolicyLink")
+            } footer: {
+                Text("The public policy explains data collection, service providers, retention and your choices.")
+            }
         }
         .navigationTitle("Privacy & data")
         .navigationBarTitleDisplayMode(.inline)

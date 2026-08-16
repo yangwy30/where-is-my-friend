@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct FriendRowView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let friend: FriendPresence
     let referenceDate: Date
 
@@ -9,26 +11,12 @@ struct FriendRowView: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
-            FriendAvatarView(friend: friend)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(friend.displayName)
-                    .font(.headline)
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-
-                Text(friend.cityDisplay)
-                    .font(.subheadline)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .lineLimit(2)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                accessibilityLayout
+            } else {
+                standardLayout
             }
-
-            Spacer(minLength: 8)
-
-            Text(friend.relativeUpdateText(at: referenceDate))
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 14)
@@ -37,5 +25,48 @@ struct FriendRowView: View {
         .accessibilityLabel(
             "\(friend.displayName), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))"
         )
+    }
+
+    private var standardLayout: some View {
+        HStack(spacing: 12) {
+            FriendAvatarView(friend: friend)
+
+            identity
+
+            Spacer(minLength: 8)
+
+            updateText
+        }
+    }
+
+    private var accessibilityLayout: some View {
+        HStack(alignment: .top, spacing: 12) {
+            FriendAvatarView(friend: friend)
+
+            VStack(alignment: .leading, spacing: 8) {
+                identity
+                updateText
+            }
+        }
+    }
+
+    private var identity: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(friend.displayName)
+                .font(.headline)
+                .foregroundStyle(WIFTheme.primaryText)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
+
+            Text(friend.cityDisplay)
+                .font(.subheadline)
+                .foregroundStyle(WIFTheme.secondaryText)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 2)
+        }
+    }
+
+    private var updateText: some View {
+        Text(friend.relativeUpdateText(at: referenceDate))
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
     }
 }

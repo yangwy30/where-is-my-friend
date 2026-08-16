@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Support — Where Is My Friend</title>
+  <style>
+    :root { --ink:#17221d; --muted:#5d6a64; --accent:#217a55; --line:rgba(23,34,29,.12); --card:rgba(255,255,255,.76); --bg:#edf4ef; }
+    @media (prefers-color-scheme:dark) { :root { --ink:#edf7f1; --muted:#adbbb3; --accent:#72d5a3; --line:rgba(237,247,241,.13); --card:rgba(28,42,34,.8); --bg:#101813; } }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 85% 0,rgba(76,169,123,.2),transparent 34rem),var(--bg); font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { width:min(760px,calc(100% - 36px)); margin:0 auto; padding:48px 0 90px; }
+    a { color:var(--accent); }
+    h1 { font-size:clamp(40px,7vw,58px); letter-spacing:-.04em; line-height:1.06; margin:44px 0 12px; }
+    h2 { font-size:23px; margin:0 0 8px; }
+    p,li { color:var(--muted); }
+    section { padding:24px; margin:14px 0; border:1px solid var(--line); border-radius:24px; background:var(--card); backdrop-filter:blur(20px); }
+  </style>
+</head>
+<body>
+<main>
+  <a href="../">← Where Is My Friend</a>
+  <h1>Support</h1>
+  <p>Help and feedback for the Where Is My Friend TestFlight beta.</p>
+  <section>
+    <h2>Before reporting a problem</h2>
+    <ul>
+      <li>Confirm you are using the newest TestFlight build.</li>
+      <li>For city updates, check Location Services and the app’s sharing settings.</li>
+      <li>For notifications, check both the app’s notification page and iOS Settings.</li>
+      <li>Background refresh timing is controlled by iOS and is not continuous or instant.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Send feedback</h2>
+    <p>Use TestFlight’s <strong>Send Beta Feedback</strong> action, or open a <a href="https://github.com/yangwy30/where-is-my-friend/issues">GitHub issue</a>. Do not include authentication tokens, precise locations, or other sensitive information in a public issue.</p>
+  </section>
+  <section>
+    <h2>Delete your account</h2>
+    <p>In the app, open <strong>You → Delete account</strong> and confirm. If that action fails, report it through TestFlight feedback so we can assist with the request.</p>
+  </section>
+  <section>
+    <h2>Privacy</h2>
+    <p>Read the full <a href="../privacy/">Privacy Policy</a>.</p>
+  </section>
+</main>
+</body>
+</html>

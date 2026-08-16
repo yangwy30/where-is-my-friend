@@ -26,7 +26,7 @@
 
 ## 当前状态
 
-仓库现在包含可完整操作的 SwiftUI 离线 MVP：
+仓库现在包含可完整操作的 SwiftUI MVP，以及第一条真实 PostgreSQL 后端纵切：
 
 - iOS 18+ SwiftUI App
 - Small、Medium、Large WidgetKit 小组件
@@ -47,8 +47,13 @@
 - 离线位置/Push Token 队列、指数退避重试与可见同步状态
 - Widget 三档隐私模式：完整、隐藏姓名、全部隐藏
 - Debug、Staging、Release 分离；非 Debug 构建在无真实 API 时安全关闭
+- Supabase CLI 配置、版本化迁移、最小权限数据库模型与本地 seed
+- Edge REST API：session、好友请求、城市分享、同城事件与通知 outbox
+- Alice/Bob 双模拟器 Debug 登录，以及可独立运行的 PostgreSQL 业务集成测试
+- 远程 Supabase Staging 已连接，三条 migration、受 JWT 保护的业务 API v4 与 push-worker v1 均已部署并处于 ACTIVE
+- APNs token 加密、多安装注册和并发安全逐设备 outbox 已上线 Staging；worker 等待 Apple `.p8` / Key ID 后启用，Cron 当前保持关闭
 
-没有真实 Server 时，Debug App 默认使用 Local Demo Repository。所有业务交互都会本地保存；选择 Server 后只需实现 [API contract](./docs/API_CONTRACT.md)，无需重写 SwiftUI 页面。Staging 和 Release 不允许回退到 Demo 数据。
+Debug App 默认使用 Local Demo Repository，因此没有 Server 也能完整查看和操作 UI。真实后端使用远程 Supabase Staging：原生 Apple token 与 nonce 换取 Keychain-backed Supabase session，Edge API 从用户 JWT 推导业务身份。Staging 和 Release 不允许回退到 Demo 数据；本地 Docker Supabase 仅作为可选兼容流程保留。
 
 App 只会在用户主动点击相关控制后请求位置或通知权限。本地 Demo 模式不会上传任何数据；Sign in with Apple 的真实 token 交换与网络请求仅在配置 Remote API 后启用。
 
@@ -60,6 +65,8 @@ App 只会在用户主动点击相关控制后请求位置或通知权限。本�
 - [REST API 合同](./docs/API_CONTRACT.md)
 - [PostgreSQL 参考 schema](./docs/DATABASE_SCHEMA.sql)
 - [真实后端接入清单](./docs/REAL_BACKEND_CHECKLIST.md)
+- [可选：本地 Docker Supabase 双用户运行指南](./docs/LOCAL_BACKEND.md)
+- [远程 Supabase Staging、Apple 登录、APNs 与生产部署详细计划](./docs/SUPABASE_PRODUCTION_PLAN.md)
 
 ## 运行原型
 
@@ -68,6 +75,8 @@ App 只会在用户主动点击相关控制后请求位置或通知权限。本�
 3. Build & Run。
 4. 完成三步原型 Onboarding 后浏览 App。
 5. 在模拟器桌面添加 `Where they are` Widget，切换三种尺寸查看布局。
+
+当前开发 UI 不需要后端。要验证真实账号和持久化数据，请在 Xcode 选择 **WhereIsMyFriend Staging** scheme 并运行到已签名真机；详细步骤见 [远程 Staging 实施计划](./docs/SUPABASE_PRODUCTION_PLAN.md)。如果以后需要完全离线的 Supabase stack，再使用 [可选本地后端指南](./docs/LOCAL_BACKEND.md)。
 
 命令行构建：
 

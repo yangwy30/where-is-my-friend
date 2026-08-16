@@ -41,6 +41,9 @@ private struct SmallFriendWidget: View {
                     Label("Friends", systemImage: "location.circle.fill")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(WIFTheme.fresh)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.12), in: Capsule())
                     Spacer()
                     Text(friend.countryFlag)
                 }
@@ -87,6 +90,9 @@ private struct MediumFriendWidget: View {
                 Label("Where they are", systemImage: "location.circle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.fresh)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.12), in: Capsule())
                 Spacer()
                 Text(snapshotAgeText)
                     .font(.caption2)
@@ -133,6 +139,9 @@ private struct LargeFriendWidget: View {
                 Label("Friends", systemImage: "location.circle.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.fresh)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.12), in: Capsule())
                 Spacer()
                 Text("\(Set(entry.friends.compactMap(\.city)).count) cities")
                     .font(.caption2)
@@ -226,7 +235,10 @@ private struct WidgetSameCityMoment: View {
             Spacer(minLength: 0)
         }
         .padding(12)
-        .background(WIFTheme.eventGradient, in: RoundedRectangle(cornerRadius: 16))
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.18),
+            in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+        )
     }
 
 }
@@ -275,6 +287,8 @@ private struct WidgetPrivateState: View {
                 Image(systemName: "eye.slash.fill")
                     .font(.title)
                     .foregroundStyle(WIFTheme.fresh)
+                    .padding(12)
+                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.14), in: Circle())
                 Text("Friend locations hidden")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.primaryText)
@@ -296,6 +310,8 @@ private struct WidgetEmptyState: View {
                 Image(systemName: "person.2.circle")
                     .font(.title)
                     .foregroundStyle(WIFTheme.fresh)
+                    .padding(12)
+                    .wifGlassSurface(tint: WIFTheme.eventBlue.opacity(0.14), in: Circle())
                 Text("Open Where Is My Friend")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.primaryText)
