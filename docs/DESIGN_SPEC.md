@@ -173,6 +173,16 @@ The Widget shares the same hierarchy as the App: city, friend, freshness.
 - Every entry carries its source update time.
 - Timeline updates are best-effort and never described as real-time.
 
+### 6.5 Lock Screen
+
+- The rectangular accessory shows up to two prioritized friends in two columns.
+- Each friend uses only two lines: first name and shared city. Friend update times are intentionally omitted at this size.
+- Same-city friends are prioritized, followed by favorites and the most recently updated locations.
+- The circular accessory shows the number of fresh friends in the user's current city and a compact city label.
+- Both accessories use the existing Widget privacy mode and render compact hidden/empty states.
+- Lock Screen accessories use the system's vibrant/accented rendering instead of the Home Screen gradient.
+- Tapping either accessory opens the Friends tab.
+
 ## 7. Accessibility
 
 - Friend rows expose one combined accessibility label containing name, city, and freshness.

@@ -96,6 +96,12 @@ struct AppShellView: View {
     }
 
     private func openDeepLink(_ url: URL) {
+        if url.scheme == SharedAppLink.urlScheme, url.host == "home" {
+            selection = .friends
+            friendsPath = NavigationPath()
+            return
+        }
+
         if url.scheme == SharedAppLink.urlScheme, url.host == "sharing" {
             selection = .sharing
             return

@@ -48,6 +48,7 @@ CITY-LEVEL, NOT LIVE TRACKING
 DESIGNED FOR A QUICK GLANCE
 
 • Small, medium, and large Home Screen Widgets
+• Compact rectangular and circular Lock Screen Widgets
 • Freshness indicators show when a city was last updated
 • Three Widget privacy modes: full details, hidden names, or fully private
 • Same-city moments and configurable notification previews
@@ -72,7 +73,7 @@ Welcome to the first Where Is My Friend beta.
 • Sign in with Apple and persistent sessions
 • Mutual friend requests and per-friend city sharing
 • Manual and on-device city updates without uploading precise coordinates
-• Small, medium, and large Widgets with three privacy modes
+• Home Screen and Lock Screen Widgets with three privacy modes
 • Same-city moments, notification controls, and delivery registration
 • Profile editing, blocking, favorites, offline retry, and account deletion
 • In-app access to the full Privacy Policy and support information
@@ -147,7 +148,7 @@ Where Is My Friend 帮助亲近的朋友跨越城市保持联系，同时不会�
 
 ### Beta App Description
 
-Where Is My Friend is a privacy-first social utility for sharing your latest city with mutually accepted friends. It includes Sign in with Apple, friend requests, city-level presence, per-friend sharing controls, same-city moments, notification settings, account deletion, and small/medium/large Widgets. Precise coordinates are used on-device to determine a city and are not uploaded to the server.
+Where Is My Friend is a privacy-first social utility for sharing your latest city with mutually accepted friends. It includes Sign in with Apple, friend requests, city-level presence, per-friend sharing controls, same-city moments, notification settings, account deletion, and Home Screen and Lock Screen Widgets. Precise coordinates are used on-device to determine a city and are not uploaded to the server.
 
 This beta is intended to validate real two-person friendship and same-city flows on separate iPhones. Background city refresh timing is controlled by iOS and may not be immediate.
 
@@ -159,7 +160,7 @@ Thank you for testing Build 3.
 2. On two iPhones, exchange the usernames shown in the You tab. Send a friend request, accept it on the other phone, and confirm the friend appears on both devices.
 3. Set the same city on both phones from the Sharing tab. Refresh and confirm the shared city and same-city moment appear without exposing precise coordinates.
 4. Change per-friend sharing, pause all sharing, remove a friend, and block/unblock a user. Confirm the other phone no longer sees data it should not receive.
-5. Add each Widget size and try Full details, Hide names, and Hide all privacy modes.
+5. Add each Home Screen and Lock Screen Widget size and try Full details, Hide names, and Hide all privacy modes.
 6. Open You → Notifications and verify permission state, registration status, and same-city history. Delivery timing can vary while the beta push pipeline is being validated.
 7. Open You → Privacy & data and verify the public Privacy Policy link.
 8. Only on a disposable beta account, test You → Delete account and confirm the app returns to Sign in with Apple and cached Widget data disappears.

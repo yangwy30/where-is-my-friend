@@ -704,6 +704,26 @@
         }
       }
     },
+    "%lld friends in %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld 位好友在%2$@"
+          }
+        }
+      }
+    },
+    "Friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好友"
+          }
+        }
+      }
+    },
     "Friend arrives in my city" : {
       "localizations" : {
         "zh-Hans" : {

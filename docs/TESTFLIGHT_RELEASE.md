@@ -10,12 +10,12 @@ App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统
 - Bundle ID：`com.yangwy30.whereismyfriend.staging`
 - Widget Bundle ID：`com.yangwy30.whereismyfriend.staging.widget`
 - 版本：`0.1.0`
-- 构建号：`3`
+- 构建号：`4`
 - Scheme：`WhereIsMyFriend Staging`
 - Archive 配置：`Staging TestFlight`
 - 后端：远程 Supabase Staging
 - APNs：production
-- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-3/Where Is My Friend.ipa`
+- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-4/Where Is My Friend.ipa`
 
 ## 1. 创建 App Store Connect App 记录
 
@@ -38,8 +38,8 @@ App 记录创建后，在仓库根目录运行：
 
 ```sh
 xcodebuild -exportArchive \
-  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build3.xcarchive' \
-  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build3-upload' \
+  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build4.xcarchive' \
+  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build4-upload' \
   -exportOptionsPlist Config/TestFlightUploadOptions.plist \
   -allowProvisioningUpdates
 ```
@@ -51,7 +51,7 @@ xcodebuild -exportArchive \
 ### Beta App Description
 
 ```text
-Where Is My Friend privately shares city-level presence between accepted friends. It never uploads precise coordinates or route history. This beta focuses on Sign in with Apple, friend requests, city sharing, same-city moments, and the Home Screen Widget.
+Where Is My Friend privately shares city-level presence between accepted friends. It never uploads precise coordinates or route history. This beta focuses on Sign in with Apple, friend requests, city sharing, same-city moments, and Home Screen and Lock Screen Widgets.
 ```
 
 ### What to Test
@@ -66,7 +66,9 @@ Please test with two different Apple Accounts on two iPhones:
 5. Confirm that each phone sees only the other person's shared city and update time—not precise coordinates.
 6. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
 7. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
-8. Force-quit and reopen the app; confirm the Apple session, shared city, and friend state remain available.
+8. Add both Lock Screen Widget shapes. Confirm the rectangular Widget shows only friend names and cities, and the circular Widget shows the same-city count and city abbreviation.
+9. Switch Widget privacy to Hide names and Hide all, then confirm both Lock Screen Widgets update without leaking hidden details.
+10. Force-quit and reopen the app; confirm the Apple session, shared city, and friend state remain available.
 
 Please report which step failed, the iPhone model, iOS version, and a screenshot when possible.
 ```
@@ -87,7 +89,7 @@ The product stores and shares city-level presence only. Precise coordinates and 
 
 1. 先在 TestFlight 中创建一个 Internal Testing group。
 2. 再创建 External Testing group，例如 `Friends Alpha`。
-3. 把构建 `0.1.0 (2)` 加进外部组，粘贴上面的 What to Test。
+3. 把构建 `0.1.0 (4)` 加进外部组，粘贴上面的 What to Test。
 4. 提交 TestFlight App Review。
 5. Apple 批准后，通过对方的邮箱邀请，或创建有限人数的 Public Link。
 6. 对方在自己的 iPhone 安装 Apple 的 TestFlight App，接受邀请并安装构建。

@@ -57,16 +57,61 @@ struct FriendWidget: Widget {
         StaticConfiguration(kind: Self.kind, provider: FriendTimelineProvider()) { entry in
             FriendWidgetEntryView(entry: entry)
                 .containerBackground(for: .widget) {
-                    WIFTheme.ambientGradient
+                    FriendWidgetBackground()
                 }
         }
         .configurationDisplayName("Where they are")
         .description("See the latest city your friends have chosen to share.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .systemLarge,
+            .accessoryRectangular,
+            .accessoryCircular
+        ])
+    }
+}
+
+private struct FriendWidgetBackground: View {
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        switch family {
+        case .accessoryRectangular, .accessoryCircular:
+            Color.clear
+        default:
+            WIFTheme.ambientGradient
+        }
     }
 }
 
 #Preview(as: .systemMedium) {
+    FriendWidget()
+} timeline: {
+    FriendWidgetEntry(
+        date: .now,
+        friends: MockFriendData.friends,
+        currentCity: MockFriendData.currentUserCity,
+        currentCountryCode: "US",
+        snapshotUpdatedAt: .now,
+        privacyMode: .full
+    )
+}
+
+#Preview("Lock Screen — Friends", as: .accessoryRectangular) {
+    FriendWidget()
+} timeline: {
+    FriendWidgetEntry(
+        date: .now,
+        friends: MockFriendData.friends,
+        currentCity: MockFriendData.currentUserCity,
+        currentCountryCode: "US",
+        snapshotUpdatedAt: .now,
+        privacyMode: .full
+    )
+}
+
+#Preview("Lock Screen — Same City", as: .accessoryCircular) {
     FriendWidget()
 } timeline: {
     FriendWidgetEntry(
