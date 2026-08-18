@@ -183,6 +183,14 @@ The Widget shares the same hierarchy as the App: city, friend, freshness.
 - Lock Screen accessories use the system's vibrant/accented rendering instead of the Home Screen gradient.
 - Tapping either accessory opens the Friends tab.
 
+### 6.6 Friend configuration
+
+- Every Widget instance can optionally pin a first and second friend through the system Edit Widget interface.
+- Friend choices come from the signed-in account's App Group snapshot and are searchable by name, username, or city.
+- A valid configured friend takes priority in Home Screen and rectangular Lock Screen layouts.
+- Without a selection, Widgets prioritize same-city friends, then favorites, then the most recently updated locations.
+- Duplicate selections are collapsed. Removed friends, sign-out, and account changes safely fall back to the current snapshot.
+
 ## 7. Accessibility
 
 - Friend rows expose one combined accessibility label containing name, city, and freshness.

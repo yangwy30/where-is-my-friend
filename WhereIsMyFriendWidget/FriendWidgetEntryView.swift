@@ -31,7 +31,7 @@ private struct LockScreenRectangularFriendWidget: View {
     let entry: FriendWidgetEntry
 
     private var visibleFriends: [FriendPresence] {
-        Array(LockScreenWidgetPresentation.prioritizedFriends(for: entry).prefix(2))
+        Array(entry.friends.prefix(2))
     }
 
     var body: some View {
@@ -192,32 +192,6 @@ private struct LockScreenEmptyState: View {
 }
 
 private enum LockScreenWidgetPresentation {
-    static func prioritizedFriends(for entry: FriendWidgetEntry) -> [FriendPresence] {
-        let sameCityIDs = Set(
-            MockFriendData.sameCityFriends(
-                from: entry.friends,
-                currentCity: entry.currentCity,
-                currentCountryCode: entry.currentCountryCode,
-                now: entry.date
-            ).map(\.id)
-        )
-
-        return entry.friends.sorted { first, second in
-            let firstIsSameCity = sameCityIDs.contains(first.id)
-            let secondIsSameCity = sameCityIDs.contains(second.id)
-            if firstIsSameCity != secondIsSameCity {
-                return firstIsSameCity
-            }
-            if first.isFavorite != second.isFavorite {
-                return first.isFavorite
-            }
-            if first.updatedAt != second.updatedAt {
-                return (first.updatedAt ?? .distantPast) > (second.updatedAt ?? .distantPast)
-            }
-            return first.displayName.localizedStandardCompare(second.displayName) == .orderedAscending
-        }
-    }
-
     static func compactCityCode(_ city: String) -> String {
         let words = city
             .split(whereSeparator: { !$0.isLetter && !$0.isNumber })
@@ -235,8 +209,7 @@ private struct SmallFriendWidget: View {
     let entry: FriendWidgetEntry
 
     private var friend: FriendPresence {
-        entry.friends.first(where: { $0.username == "lin" })
-            ?? entry.friends.first
+        entry.friends.first
             ?? MockFriendData.featuredFriend
     }
 

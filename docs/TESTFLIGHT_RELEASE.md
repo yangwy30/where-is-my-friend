@@ -67,8 +67,9 @@ Please test with two different Apple Accounts on two iPhones:
 6. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
 7. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
 8. Add both Lock Screen Widget shapes. Confirm the rectangular Widget shows only friend names and cities, and the circular Widget shows the same-city count and city abbreviation.
-9. Switch Widget privacy to Hide names and Hide all, then confirm both Lock Screen Widgets update without leaking hidden details.
-10. Force-quit and reopen the app; confirm the Apple session, shared city, and friend state remain available.
+9. Long-press a Home Screen or rectangular Lock Screen Widget, choose Edit Widget, and select first and second friends. Confirm those friends move to the front.
+10. Switch Widget privacy to Hide names and Hide all, then confirm both Lock Screen Widgets update without leaking hidden details.
+11. Force-quit and reopen the app; confirm the Apple session, shared city, friend state, and Widget choices remain available.
 
 Please report which step failed, the iPhone model, iOS version, and a screenshot when possible.
 ```

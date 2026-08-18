@@ -393,6 +393,26 @@
         }
       }
     },
+    "Choose Friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择好友"
+          }
+        }
+      }
+    },
+    "Choose which friends appear first in this Widget." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择优先显示在此小组件中的好友。"
+          }
+        }
+      }
+    },
     "Cities remain visible, but friend names and initials are hidden." : {
       "localizations" : {
         "zh-Hans" : {
@@ -710,6 +730,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld 位好友在%2$@"
+          }
+        }
+      }
+    },
+    "First friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第一位好友"
           }
         }
       }
@@ -1520,6 +1550,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "场景"
+          }
+        }
+      }
+    },
+    "Second friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二位好友"
           }
         }
       }

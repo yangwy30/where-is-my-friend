@@ -50,6 +50,7 @@
 		400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000045 /* PrivacyInfo.xcprivacy */; };
 		400000000000000000000042 /* ClientReliability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000046 /* ClientReliability.swift */; };
 		400000000000000000000043 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000001 /* Supabase */; };
+		400000000000000000000044 /* FriendWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000047 /* FriendWidgetConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +138,7 @@
 		300000000000000000000044 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		300000000000000000000045 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		300000000000000000000046 /* ClientReliability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientReliability.swift; sourceTree = "<group>"; };
+		300000000000000000000047 /* FriendWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendWidgetConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,6 +239,7 @@
 				300000000000000000000027 /* WhereIsMyFriendWidgetBundle.swift */,
 				300000000000000000000028 /* FriendWidget.swift */,
 				300000000000000000000029 /* FriendWidgetEntryView.swift */,
+				300000000000000000000047 /* FriendWidgetConfiguration.swift */,
 				300000000000000000000030 /* Info.plist */,
 				300000000000000000000031 /* WhereIsMyFriendWidget.entitlements */,
 				300000000000000000000045 /* PrivacyInfo.xcprivacy */,
@@ -391,7 +394,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */

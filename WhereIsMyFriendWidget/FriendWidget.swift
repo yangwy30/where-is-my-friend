@@ -10,43 +10,77 @@ struct FriendWidgetEntry: TimelineEntry {
     let privacyMode: WidgetPrivacyMode
 }
 
-struct FriendTimelineProvider: TimelineProvider {
+struct FriendTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> FriendWidgetEntry {
-        FriendWidgetEntry(
+        makeEntry(
             date: Date(),
-            friends: MockFriendData.friends,
+            sourceFriends: MockFriendData.friends,
             currentCity: MockFriendData.currentUserCity,
             currentCountryCode: "US",
             snapshotUpdatedAt: Date(),
-            privacyMode: .full
+            privacyMode: .full,
+            selectedFriendIDs: []
         )
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (FriendWidgetEntry) -> Void) {
-        completion(
-            FriendWidgetEntry(
-                date: Date(),
-                friends: SharedPresenceStore.load(),
-                currentCity: SharedPresenceStore.loadCurrentCity(),
-                currentCountryCode: SharedPresenceStore.loadCurrentCountryCode(),
-                snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt(),
-                privacyMode: SharedWidgetPreferences.privacyMode()
-            )
+    func snapshot(
+        for configuration: FriendWidgetConfigurationIntent,
+        in context: Context
+    ) async -> FriendWidgetEntry {
+        makeStoredEntry(
+            date: Date(),
+            selectedFriendIDs: configuration.selectedFriendIDs
         )
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<FriendWidgetEntry>) -> Void) {
+    func timeline(
+        for configuration: FriendWidgetConfigurationIntent,
+        in context: Context
+    ) async -> Timeline<FriendWidgetEntry> {
         let now = Date()
-        let entry = FriendWidgetEntry(
+        let entry = makeStoredEntry(
             date: now,
-            friends: SharedPresenceStore.load(),
+            selectedFriendIDs: configuration.selectedFriendIDs
+        )
+        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now.addingTimeInterval(1_800)
+        return Timeline(entries: [entry], policy: .after(nextRefresh))
+    }
+
+    private func makeStoredEntry(date: Date, selectedFriendIDs: [UUID]) -> FriendWidgetEntry {
+        makeEntry(
+            date: date,
+            sourceFriends: SharedPresenceStore.load(),
             currentCity: SharedPresenceStore.loadCurrentCity(),
             currentCountryCode: SharedPresenceStore.loadCurrentCountryCode(),
             snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt(),
-            privacyMode: SharedWidgetPreferences.privacyMode()
+            privacyMode: SharedWidgetPreferences.privacyMode(),
+            selectedFriendIDs: selectedFriendIDs
         )
-        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now.addingTimeInterval(1_800)
-        completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+    }
+
+    private func makeEntry(
+        date: Date,
+        sourceFriends: [FriendPresence],
+        currentCity: String,
+        currentCountryCode: String?,
+        snapshotUpdatedAt: Date?,
+        privacyMode: WidgetPrivacyMode,
+        selectedFriendIDs: [UUID]
+    ) -> FriendWidgetEntry {
+        FriendWidgetEntry(
+            date: date,
+            friends: FriendWidgetOrdering.ordered(
+                sourceFriends,
+                currentCity: currentCity,
+                currentCountryCode: currentCountryCode,
+                selectedFriendIDs: selectedFriendIDs,
+                now: date
+            ),
+            currentCity: currentCity,
+            currentCountryCode: currentCountryCode,
+            snapshotUpdatedAt: snapshotUpdatedAt,
+            privacyMode: privacyMode
+        )
     }
 }
 
@@ -54,7 +88,11 @@ struct FriendWidget: Widget {
     static let kind = "WhereIsMyFriend.FriendWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: Self.kind, provider: FriendTimelineProvider()) { entry in
+        AppIntentConfiguration(
+            kind: Self.kind,
+            intent: FriendWidgetConfigurationIntent.self,
+            provider: FriendTimelineProvider()
+        ) { entry in
             FriendWidgetEntryView(entry: entry)
                 .containerBackground(for: .widget) {
                     FriendWidgetBackground()

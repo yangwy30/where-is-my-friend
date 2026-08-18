@@ -11,3 +11,4 @@ supabase/.branches/
 .env
 .env.*
 !.env.example
+award_tickets/
