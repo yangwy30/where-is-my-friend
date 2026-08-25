@@ -2,7 +2,6 @@ import SwiftUI
 
 private enum AppTab: Hashable {
     case friends
-    case sharing
     case profile
 }
 
@@ -16,11 +15,14 @@ struct AppShellView: View {
     @State private var selection: AppTab = .friends
     @State private var friendsPath = NavigationPath()
     @State private var profilePath = NavigationPath()
+    @State private var showsCitySharing = false
 
     var body: some View {
         TabView(selection: $selection) {
             NavigationStack(path: $friendsPath) {
-                FriendsView()
+                FriendsView {
+                    showsCitySharing = true
+                }
             }
             .tabItem {
                 Label("Friends", systemImage: "person.2.fill")
@@ -28,17 +30,11 @@ struct AppShellView: View {
             }
             .tag(AppTab.friends)
 
-            NavigationStack {
-                SharingView()
-            }
-            .tabItem {
-                Label("Sharing", systemImage: "location.circle.fill")
-                    .accessibilityIdentifier("sharingTab")
-            }
-            .tag(AppTab.sharing)
-
             NavigationStack(path: $profilePath) {
-                ProfileView(onReplayOnboarding: onReplayOnboarding)
+                ProfileView(
+                    onReplayOnboarding: onReplayOnboarding,
+                    onOpenCitySharing: { showsCitySharing = true }
+                )
                     .navigationDestination(for: ProfileRoute.self) { route in
                         switch route {
                         case .events: NotificationHistoryView()
@@ -53,6 +49,9 @@ struct AppShellView: View {
         }
         .wifTabBarMinimizeOnScroll()
         .onOpenURL(perform: openDeepLink)
+        .sheet(isPresented: $showsCitySharing) {
+            CitySharingSheet()
+        }
     }
 
     private func openDeepLink(_ url: URL) {
@@ -63,7 +62,9 @@ struct AppShellView: View {
         }
 
         if url.scheme == SharedAppLink.urlScheme, url.host == "sharing" {
-            selection = .sharing
+            selection = .friends
+            friendsPath = NavigationPath()
+            showsCitySharing = true
             return
         }
 

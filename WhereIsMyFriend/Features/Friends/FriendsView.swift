@@ -5,6 +5,11 @@ struct FriendsView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
     @State private var referenceDate = Date()
+    let onOpenCitySharing: () -> Void
+
+    init(onOpenCitySharing: @escaping () -> Void = {}) {
+        self.onOpenCitySharing = onOpenCitySharing
+    }
 
     private var friends: [FriendPresence] {
         store.friends.sorted { lhs, rhs in
@@ -27,6 +32,7 @@ struct FriendsView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
+                myCityCard.padding(.top, 20)
 
                 if !sameCityFriends.isEmpty {
                     SameCityMomentCard(
@@ -165,6 +171,67 @@ struct FriendsView: View {
             .accessibilityLabel("Add a friend")
             .accessibilityIdentifier("addFriendButton")
         }
+    }
+
+    private var myCityCard: some View {
+        Button(action: onOpenCitySharing) {
+            HStack(spacing: 12) {
+                Image(systemName: sharingIsEnabled ? "location.fill" : "location.slash.fill")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .frame(width: 46, height: 46)
+                    .background(WIFTheme.fresh.opacity(0.14), in: Circle())
+                    .contentTransition(.symbolEffect(.replace))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("You · \(store.snapshot.currentPresence.cityDisplay)")
+                        .font(.body.weight(.bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
+                    Text(myCityStatusText)
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 6)
+
+                Text(sharingIsEnabled ? "Sharing" : "Paused")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(sharingIsEnabled ? WIFTheme.fresh : WIFTheme.secondaryText)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 6)
+                    .background(
+                        (sharingIsEnabled ? WIFTheme.fresh : WIFTheme.secondaryText).opacity(0.12),
+                        in: Capsule()
+                    )
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+            .padding(15)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.17),
+            interactive: true,
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .accessibilityIdentifier("myCitySharingCard")
+    }
+
+    private var sharingIsEnabled: Bool {
+        store.snapshot.sharingPreferences.citySharingEnabled
+    }
+
+    private var myCityStatusText: String {
+        guard sharingIsEnabled else { return String(localized: "Friends cannot see your city") }
+        guard store.currentCity != nil else { return String(localized: "Choose a city to start sharing") }
+        let update = store.snapshot.currentPresence.updatedAt?
+            .formatted(date: .omitted, time: .shortened) ?? "—"
+        return String(format: String(localized: "Updated %@ · City only"), update)
     }
 
     private var uniqueCityCount: Int {

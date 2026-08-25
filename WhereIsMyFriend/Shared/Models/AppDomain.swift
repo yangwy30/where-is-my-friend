@@ -434,6 +434,10 @@ enum DemoData {
 }
 
 enum CityIdentity {
+    static func normalize(_ city: String) -> String {
+        cityNameKey(city)
+    }
+
     static func canonicalCity(_ city: String) -> String {
         city.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }

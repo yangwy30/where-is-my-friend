@@ -45,7 +45,7 @@ http://127.0.0.1:54321/functions/v1/api
 
 1. 两台真机分别使用不同 Apple 账号登录。
 2. 第一位用户用第二位用户的 `@username` 发邀请，第二位用户接受。
-3. Alice 和 Bob 都进入 Sharing → **Choose a test city** → **New York**。
+3. Alice 和 Bob 都在 Friends 首页点击自己的城市卡片 → **City source** → **Choose city manually** → **New York**。
 4. 两边下拉刷新；Friends 会显示对方在 New York，Same-city moments 会各出现一条事件。
 5. 任意一边再次选择 New York，不应产生重复事件。
 6. 任意一边关闭 City sharing，对方刷新后不再看到该城市，活跃同城会话会关闭。

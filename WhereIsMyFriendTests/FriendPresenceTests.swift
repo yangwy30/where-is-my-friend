@@ -180,6 +180,33 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertEqual(makeFriend(countryCode: nil, updatedAt: now).countryFlag, "")
     }
 
+    func testCityEmblemResolutionAndAliases() {
+        let ny = CityEmblem.resolve(city: "New York", countryCode: "US")
+        XCTAssertEqual(ny.cityID, "new_york")
+        XCTAssertEqual(ny.assetName, "City_new_york")
+
+        let nyc = CityEmblem.resolve(city: "NYC", countryCode: "US")
+        XCTAssertEqual(nyc.cityID, "new_york")
+
+        let tokyo = CityEmblem.resolve(city: "  shinjuku ", countryCode: "JP")
+        XCTAssertEqual(tokyo.cityID, "tokyo")
+        XCTAssertEqual(tokyo.assetName, "City_tokyo")
+
+        let sf = CityEmblem.resolve(city: "San Francisco")
+        XCTAssertEqual(sf.cityID, "san_francisco")
+        XCTAssertEqual(sf.assetName, "City_san_francisco")
+
+        let beijing = CityEmblem.resolve(city: "Peking")
+        XCTAssertEqual(beijing.cityID, "beijing")
+
+        let fallbackFrench = CityEmblem.resolve(city: "Strasbourg", countryCode: "FR")
+        XCTAssertEqual(fallbackFrench.archetype, .european)
+        XCTAssertNil(fallbackFrench.assetName)
+
+        let fallbackKorean = CityEmblem.resolve(city: "Busan", countryCode: "KR")
+        XCTAssertEqual(fallbackKorean.archetype, .asian)
+    }
+
     private func makeFriend(
         name: String = "Test Friend",
         city: String = "New York",

@@ -20,9 +20,12 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["doneAddFriendButton"].tap()
         XCTAssertTrue(app.staticTexts["Jamie Park"].waitForExistence(timeout: 3))
 
-        app.tabBars.buttons.element(boundBy: 1).tap()
-        XCTAssertTrue(app.scrollViews["sharingScreen"].waitForExistence(timeout: 3))
-        app.buttons["chooseCityButton"].tap()
+        let cityCard = app.buttons["myCitySharingCard"]
+        XCTAssertTrue(cityCard.waitForExistence(timeout: 3))
+        cityCard.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["citySharingSheet"].waitForExistence(timeout: 3))
+        app.buttons["citySourceButton"].tap()
+        app.buttons["Choose city manually"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["cityPickerScreen"].waitForExistence(timeout: 3))
     }
 
@@ -33,7 +36,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        app.tabBars.buttons.element(boundBy: 1).tap()
         XCTAssertTrue(app.buttons["editProfileButton"].waitForExistence(timeout: 3))
         app.buttons["editProfileButton"].tap()
 
@@ -43,16 +46,17 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["saveProfileButton"].tap()
         XCTAssertTrue(app.staticTexts["New Name"].waitForExistence(timeout: 3))
 
-        app.tabBars.buttons.element(boundBy: 1).tap()
-        XCTAssertTrue(app.scrollViews["sharingScreen"].waitForExistence(timeout: 3))
-        app.scrollViews["sharingScreen"].swipeUp()
-        let privacyPicker = app.buttons["widgetPrivacyPicker"]
-        XCTAssertTrue(privacyPicker.waitForExistence(timeout: 3))
-        privacyPicker.tap()
+        let privacySettings = app.buttons["widgetPrivacySettingsLink"]
+        if !privacySettings.isHittable {
+            app.scrollViews.firstMatch.swipeUp()
+        }
+        XCTAssertTrue(privacySettings.waitForExistence(timeout: 3))
+        privacySettings.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["widgetPrivacyScreen"].waitForExistence(timeout: 3))
         let hideEverything = app.buttons["widgetPrivacyHideAll"]
         XCTAssertTrue(hideEverything.waitForExistence(timeout: 3))
         hideEverything.tap()
-        XCTAssertEqual(privacyPicker.value as? String, "hideAll")
+        XCTAssertEqual(hideEverything.value as? String, "selected")
     }
 
     func testNotificationSettingsSeparatesPermissionAndDeviceRegistration() {
@@ -62,7 +66,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        app.tabBars.buttons.element(boundBy: 1).tap()
 
         let settingsLink = app.buttons["notificationSettingsLink"]
         XCTAssertTrue(settingsLink.waitForExistence(timeout: 3))
