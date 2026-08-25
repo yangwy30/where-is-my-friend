@@ -153,16 +153,16 @@ Where Is My Friend is a privacy-first social utility for sharing your latest cit
 
 This beta is intended to validate real two-person friendship and same-city flows on separate iPhones. Background city refresh timing is controlled by iOS and may not be immediate.
 
-### What to Test — Build 4
+### What to Test — Build 5
 
-Thank you for testing Build 3.
+Thank you for testing Build 5.
 
-1. Sign in with Apple, close the app, reopen it, and confirm your session remains active.
-2. On two iPhones, exchange the usernames shown in the You tab. Send a friend request, accept it on the other phone, and confirm the friend appears on both devices.
+1. On a fresh install, confirm the introduction is clearly separate from Sign in with Apple, no historical notification appears, and successful sign-in does not show a redundant “Done” alert. Close and reopen the app, then confirm your session remains active.
+2. On two iPhones, exchange the usernames shown beside each profile. Send a friend request, accept it on the other phone, and confirm the row shows progress, disappears, and the friend appears on both devices without a restart.
 3. Set the same city on both phones from the Sharing tab. Refresh and confirm the shared city and same-city moment appear without exposing precise coordinates.
 4. Change per-friend sharing, pause all sharing, remove a friend, and block/unblock a user. Confirm the other phone no longer sees data it should not receive.
 5. Add each Home Screen and Lock Screen Widget size, choose preferred friends with Edit Widget, and try Full details, Hide names, and Hide all privacy modes.
-6. Open You → Notifications and verify permission state, registration status, and same-city history. Delivery timing can vary while the beta push pipeline is being validated.
+6. Open You → Notifications and verify permission state, registration status, and same-city history. Confirm a real same-city notification appears only once.
 7. Open You → Privacy & data and verify the public Privacy Policy link.
 8. Only on a disposable beta account, test You → Delete account and confirm the app returns to Sign in with Apple and cached Widget data disappears.
 

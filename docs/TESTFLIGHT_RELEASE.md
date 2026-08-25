@@ -10,12 +10,12 @@ App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统
 - Bundle ID：`com.yangwy30.whereismyfriend.staging`
 - Widget Bundle ID：`com.yangwy30.whereismyfriend.staging.widget`
 - 版本：`0.1.0`
-- 构建号：`4`
+- 构建号：`5`
 - Scheme：`WhereIsMyFriend Staging`
 - Archive 配置：`Staging TestFlight`
 - 后端：远程 Supabase Staging
 - APNs：production
-- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-4/Where Is My Friend.ipa`
+- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-5/Where Is My Friend.ipa`
 
 ## 1. 创建 App Store Connect App 记录
 
@@ -38,8 +38,8 @@ App 记录创建后，在仓库根目录运行：
 
 ```sh
 xcodebuild -exportArchive \
-  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build4.xcarchive' \
-  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build4-upload' \
+  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build5.xcarchive' \
+  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build5-upload' \
   -exportOptionsPlist Config/TestFlightUploadOptions.plist \
   -allowProvisioningUpdates
 ```
@@ -59,10 +59,10 @@ Where Is My Friend privately shares city-level presence between accepted friends
 ```text
 Please test with two different Apple Accounts on two iPhones:
 
-1. Sign in with Apple and finish onboarding.
+1. On a fresh install, confirm the introduction is clearly separate from Sign in with Apple, no historical notification appears, and successful sign-in does not show a redundant “Done” alert.
 2. On the Sharing tab, choose a test city and keep City sharing enabled.
-3. On the Friends tab, invite the other tester by username.
-4. On the second phone, accept the incoming friend request.
+3. Confirm your own username is visible beside your profile, then invite the other tester by username.
+4. On the second phone, accept the incoming friend request. Confirm the row shows progress, disappears, and the new friend appears without requiring a restart.
 5. Confirm that each phone sees only the other person's shared city and update time—not precise coordinates.
 6. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
 7. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
@@ -90,7 +90,7 @@ The product stores and shares city-level presence only. Precise coordinates and 
 
 1. 先在 TestFlight 中创建一个 Internal Testing group。
 2. 再创建 External Testing group，例如 `Friends Alpha`。
-3. 把构建 `0.1.0 (4)` 加进外部组，粘贴上面的 What to Test。
+3. 把构建 `0.1.0 (5)` 加进外部组，粘贴上面的 What to Test。
 4. 提交 TestFlight App Review。
 5. Apple 批准后，通过对方的邮箱邀请，或创建有限人数的 Public Link。
 6. 对方在自己的 iPhone 安装 Apple 的 TestFlight App，接受邀请并安装构建。
@@ -99,16 +99,9 @@ The product stores and shares city-level presence only. Precise coordinates and 
 
 ## 5. 同城通知当前状态
 
-构建已具备 production Push entitlement，App 也会注册 production device token。远程 Staging 的 production Bundle ID 和 URL scheme 已与本构建对齐。
+构建已具备 production Push entitlement，App 会注册 production device token。远程 Staging 的 production Bundle ID、APNs Edge Function secrets 和每分钟执行的 `push-worker` Cron 已配置，定时调用已返回 HTTP 200。
 
-服务器仍缺少 Apple APNs `.p8` 私钥、Key ID，以及每分钟执行 `push-worker` 的 Cron。配置完成前，可以验证：
-
-- 通知权限 UI；
-- production token 注册；
-- 好友、城市和同城事件记录；
-- Widget 数据同步。
-
-但真正的系统通知横幅还不会由服务器发出。APNs 凭证属于敏感数据，只能存进 Supabase Edge Function secrets，不能提交到仓库或放进 iOS App。
+接下来要用两台真实 iPhone 做端到端验收：双方成为好友、打开通知、共享同一城市，并确认系统通知横幅只出现一次。APNs 凭证属于敏感数据，只能保存在 Supabase Edge Function secrets 中，不能提交到仓库或放进 iOS App。
 
 ## 6. 每次上传新构建
 
