@@ -62,6 +62,7 @@ final class AppStore: ObservableObject {
     private var visibleOperationCount = 0
     private var operationSequence = 0
     private var latestAppliedOperationSequence = 0
+    private var refreshIsInFlight = false
 
     init(repository: (any AppRepository)? = nil) {
         if ProcessInfo.processInfo.arguments.contains("-resetDemoData") {
@@ -90,8 +91,11 @@ final class AppStore: ObservableObject {
         snapshot.preference(for: friendID)
     }
 
-    func refresh(showErrors: Bool = false) async {
-        await perform(successMessage: nil, showsActivity: false, presentsErrors: showErrors) {
+    func refresh() async {
+        guard !refreshIsInFlight else { return }
+        refreshIsInFlight = true
+        defer { refreshIsInFlight = false }
+        await perform(successMessage: nil, showsActivity: false, presentsErrors: false) {
             try await self.repository.loadSnapshot()
         }
     }

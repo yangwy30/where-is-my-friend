@@ -90,7 +90,7 @@ struct FriendsView: View {
         .wifAmbientBackground()
         .toolbar(.hidden, for: .navigationBar)
         .refreshable {
-            await store.refresh(showErrors: true)
+            await store.refresh()
             referenceDate = Date()
         }
         .navigationDestination(for: FriendPresence.self) { friend in

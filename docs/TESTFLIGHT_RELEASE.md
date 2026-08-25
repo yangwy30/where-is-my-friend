@@ -10,12 +10,12 @@ App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统
 - Bundle ID：`com.yangwy30.whereismyfriend.staging`
 - Widget Bundle ID：`com.yangwy30.whereismyfriend.staging.widget`
 - 版本：`0.1.0`
-- 构建号：`5`
+- 构建号：`6`
 - Scheme：`WhereIsMyFriend Staging`
 - Archive 配置：`Staging TestFlight`
 - 后端：远程 Supabase Staging
 - APNs：production
-- Archive（本机临时生成，不提交 Git）：`/tmp/WhereIsMyFriend-Staging-TestFlight-build5.xcarchive`
+- Archive（本机临时生成，不提交 Git）：`/tmp/WhereIsMyFriend-Staging-TestFlight-build6.xcarchive`
 
 ## 1. 创建 App Store Connect App 记录
 
@@ -38,8 +38,8 @@ App 记录创建后，在仓库根目录运行：
 
 ```sh
 xcodebuild -exportArchive \
-  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build5.xcarchive' \
-  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build5-upload' \
+  -archivePath '/tmp/WhereIsMyFriend-Staging-TestFlight-build6.xcarchive' \
+  -exportPath '/tmp/WhereIsMyFriend-Staging-TestFlight-build6-upload' \
   -exportOptionsPlist Config/TestFlightUploadOptions.plist \
   -allowProvisioningUpdates
 ```
@@ -60,16 +60,17 @@ Where Is My Friend privately shares city-level presence between accepted friends
 Please test with two different Apple Accounts on two iPhones:
 
 1. On a fresh install, confirm the introduction is clearly separate from Sign in with Apple, no historical notification appears, and successful sign-in does not show a redundant “Done” alert.
-2. On the Sharing tab, choose a test city and keep City sharing enabled.
-3. Confirm your own username is visible beside your profile, then invite the other tester by username.
-4. On the second phone, accept the incoming friend request. Confirm the row shows progress, disappears, and the new friend appears without requiring a restart.
-5. Confirm that each phone sees only the other person's shared city and update time—not precise coordinates.
-6. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
-7. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
-8. Add both Lock Screen Widget shapes. Confirm the rectangular Widget shows only friend names and cities, and the circular Widget shows the same-city count and city abbreviation.
-9. Long-press a Home Screen or rectangular Lock Screen Widget, choose Edit Widget, and select first and second friends. Confirm those friends move to the front.
-10. Switch Widget privacy to Hide names and Hide all, then confirm both Lock Screen Widgets update without leaking hidden details.
-11. Force-quit and reopen the app; confirm the Apple session, shared city, friend state, and Widget choices remain available.
+2. Pull down repeatedly on the Friends screen, including with a weak or unavailable connection. Confirm no modal error loops appear and saved friends remain visible.
+3. On the Sharing tab, choose a test city and keep City sharing enabled.
+4. Confirm your own username is visible beside your profile, then invite the other tester by username.
+5. On the second phone, accept the incoming friend request. Confirm the row shows progress, disappears, and the new friend appears without requiring a restart.
+6. Confirm that each phone sees only the other person's shared city and update time—not precise coordinates.
+7. Set both phones to the same test city and confirm a same-city moment appears in the notification history.
+8. Add the Widget to the Home Screen and confirm friend/city data appears and respects the selected Widget privacy mode.
+9. Add both Lock Screen Widget shapes. Confirm the rectangular Widget shows only friend names and cities, and the circular Widget shows the same-city count and city abbreviation.
+10. Long-press a Home Screen or rectangular Lock Screen Widget, choose Edit Widget, and select first and second friends. Confirm those friends move to the front.
+11. Switch Widget privacy to Hide names and Hide all, then confirm both Lock Screen Widgets update without leaking hidden details.
+12. Force-quit and reopen the app; confirm the Apple session, shared city, friend state, and Widget choices remain available.
 
 Please report which step failed, the iPhone model, iOS version, and a screenshot when possible.
 ```
@@ -90,7 +91,7 @@ The product stores and shares city-level presence only. Precise coordinates and 
 
 1. 先在 TestFlight 中创建一个 Internal Testing group。
 2. 再创建 External Testing group，例如 `Friends Alpha`。
-3. 把构建 `0.1.0 (5)` 加进外部组，粘贴上面的 What to Test。
+3. 把构建 `0.1.0 (6)` 加进外部组，粘贴上面的 What to Test。
 4. 提交 TestFlight App Review。
 5. Apple 批准后，通过对方的邮箱邀请，或创建有限人数的 Public Link。
 6. 对方在自己的 iPhone 安装 Apple 的 TestFlight App，接受邀请并安装构建。

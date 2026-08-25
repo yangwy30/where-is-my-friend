@@ -614,6 +614,20 @@ final class AppStoreReliabilityTests: XCTestCase {
 
         XCTAssertNil(store.notice)
     }
+
+    func testConcurrentRefreshesAreCoalesced() async {
+        let repository = SlowTestRepository()
+        let store = AppStore(repository: repository)
+
+        let firstRefresh = Task { await store.refresh() }
+        try? await Task.sleep(for: .milliseconds(40))
+        let secondRefresh = Task { await store.refresh() }
+        await firstRefresh.value
+        await secondRefresh.value
+
+        let loadCount = await repository.snapshotLoadCount()
+        XCTAssertEqual(loadCount, 1)
+    }
 }
 
 private actor SlowTestRepository: AppRepository {
@@ -622,6 +636,7 @@ private actor SlowTestRepository: AppRepository {
     private var snapshot = DemoData.initialSnapshot()
     private var cities: [String] = []
     private var responses: [UUID] = []
+    private var loadCount = 0
     private let loadError: Error?
 
     init(loadError: Error? = nil) {
@@ -629,6 +644,7 @@ private actor SlowTestRepository: AppRepository {
     }
 
     func loadSnapshot() async throws -> AppSnapshot {
+        loadCount += 1
         try await Task.sleep(for: .milliseconds(180))
         if let loadError { throw loadError }
         return snapshot
@@ -638,6 +654,7 @@ private actor SlowTestRepository: AppRepository {
     func incomingRequestID() -> UUID? { snapshot.incomingRequests.first?.id }
     func incomingRequestUserID() -> UUID? { snapshot.incomingRequests.first?.userID }
     func respondedRequestIDs() -> [UUID] { responses }
+    func snapshotLoadCount() -> Int { loadCount }
     func signInDemo() async throws -> AppSnapshot { snapshot }
     func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { snapshot }
     func signOut() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }

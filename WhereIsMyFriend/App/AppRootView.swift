@@ -33,7 +33,10 @@ struct AppRootView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
-            Task { await store.preparePushRegistrationIfAuthorized() }
+            Task {
+                await store.refresh()
+                await store.preparePushRegistrationIfAuthorized()
+            }
         }
         .onChange(of: backgroundUpdatesShouldRun, initial: true) { _, shouldRun in
             locationService.setBackgroundUpdatesEnabled(shouldRun)
