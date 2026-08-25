@@ -35,7 +35,10 @@ struct FriendRowView: View {
 
             Spacer(minLength: 8)
 
-            updateText
+            VStack(alignment: .trailing, spacing: 4) {
+                updateText
+                CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 36)
+            }
         }
     }
 

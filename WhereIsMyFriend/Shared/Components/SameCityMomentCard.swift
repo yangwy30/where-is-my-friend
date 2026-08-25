@@ -23,6 +23,7 @@ struct SameCityMomentCard: View {
                     avatars
                     description
                     Spacer(minLength: 0)
+                    CityEmblemView(city: city, size: 48)
                 }
             }
         }

@@ -166,15 +166,19 @@ struct FriendDetailView: View {
     }
 
     private var citySurface: some View {
-        VStack(spacing: 7) {
-            Text(currentFriend.cityDisplay)
-                .font(.system(.title2, design: .rounded, weight: .bold))
-                .foregroundStyle(WIFTheme.primaryText)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 12) {
+            CityEmblemView(city: currentFriend.city, countryCode: currentFriend.countryCode, size: 84)
 
-            Text(currentFriend.relativeUpdateLongText(at: referenceDate))
-                .font(.subheadline)
-                .foregroundStyle(WIFTheme.secondaryText)
+            VStack(spacing: 4) {
+                Text(currentFriend.cityDisplay)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .multilineTextAlignment(.center)
+
+                Text(currentFriend.relativeUpdateLongText(at: referenceDate))
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
 
             if currentFriend.freshness(at: referenceDate) == .stale {
                 Label("This location is too old for same-city alerts", systemImage: "clock.badge.exclamationmark")
