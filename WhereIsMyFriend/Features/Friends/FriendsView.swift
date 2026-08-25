@@ -70,24 +70,20 @@ struct FriendsView: View {
                         in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
                     )
                 } else {
-                    LazyVStack(spacing: 0) {
-                        ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ],
+                        spacing: 14
+                    ) {
+                        ForEach(friends) { friend in
                             NavigationLink(value: friend) {
-                                FriendRowView(friend: friend, referenceDate: referenceDate)
+                                friendCard(friend)
                             }
                             .buttonStyle(.plain)
-
-                            if index < friends.count - 1 {
-                                Divider()
-                                    .overlay(WIFTheme.border)
-                                    .padding(.leading, 72)
-                            }
                         }
                     }
-                    .wifGlassSurface(
-                        tint: WIFTheme.surface.opacity(0.08),
-                        in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-                    )
                 }
             }
             .padding(.horizontal, WIFTheme.screenInset)
@@ -232,6 +228,49 @@ struct FriendsView: View {
         let update = store.snapshot.currentPresence.updatedAt?
             .formatted(date: .omitted, time: .shortened) ?? "—"
         return String(format: String(localized: "Updated %@ · City only"), update)
+    }
+
+    private func friendCard(_ friend: FriendPresence) -> some View {
+        let freshness = friend.freshness(at: referenceDate)
+        return VStack(spacing: 8) {
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 84)
+                .padding(.top, 12)
+
+            VStack(spacing: 3) {
+                Text(friend.displayName)
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .lineLimit(1)
+
+                Text(friend.cityDisplay)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(1)
+
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(freshness == .fresh ? WIFTheme.fresh : Color.secondary.opacity(0.4))
+                        .frame(width: 5, height: 5)
+
+                    Text(friend.relativeUpdateText(at: referenceDate))
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
+                }
+                .padding(.top, 2)
+            }
+            .padding(.horizontal, 8)
+            .padding(.bottom, 14)
+        }
+        .frame(maxWidth: .infinity)
+        .wifGlassSurface(
+            tint: WIFTheme.surface.opacity(0.10),
+            interactive: true,
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            "\(friend.displayName), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))"
+        )
     }
 
     private var uniqueCityCount: Int {

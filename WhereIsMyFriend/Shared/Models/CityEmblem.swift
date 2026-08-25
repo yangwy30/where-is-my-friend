@@ -157,14 +157,21 @@ public struct CityEmblemView: View {
         self.size = size
     }
 
+    private var loadedImage: UIImage? {
+        guard let assetName = emblem.assetName else { return nil }
+        if let direct = UIImage(named: assetName) { return direct }
+        if let namespaced = UIImage(named: "CityEmblems/\(assetName)") { return namespaced }
+        return nil
+    }
+
     public var body: some View {
         ZStack {
-            if let assetName = emblem.assetName, UIImage(named: assetName) != nil {
-                Image(assetName)
+            if let uiImage = loadedImage {
+                Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: size, height: size)
-                    .shadow(color: Color.black.opacity(0.12), radius: size * 0.08, x: 0, y: size * 0.05)
+                    .shadow(color: Color.black.opacity(0.14), radius: size * 0.08, x: 0, y: size * 0.05)
             } else {
                 proceduralFallback
             }
