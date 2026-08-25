@@ -15,7 +15,7 @@ App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统
 - Archive 配置：`Staging TestFlight`
 - 后端：远程 Supabase Staging
 - APNs：production
-- IPA（本机生成，不提交 Git）：`build/TestFlight/0.1.0-5/Where Is My Friend.ipa`
+- Archive（本机临时生成，不提交 Git）：`/tmp/WhereIsMyFriend-Staging-TestFlight-build5.xcarchive`
 
 ## 1. 创建 App Store Connect App 记录
 
