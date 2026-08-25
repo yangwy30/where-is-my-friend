@@ -6,9 +6,18 @@ import UserNotifications
 struct ProfileView: View {
     @EnvironmentObject private var store: AppStore
     let onReplayOnboarding: () -> Void
+    let onOpenCitySharing: () -> Void
     @State private var showsDeleteConfirmation = false
     @State private var showsSignOutConfirmation = false
     @State private var showsEditProfile = false
+
+    init(
+        onReplayOnboarding: @escaping () -> Void,
+        onOpenCitySharing: @escaping () -> Void = {}
+    ) {
+        self.onReplayOnboarding = onReplayOnboarding
+        self.onOpenCitySharing = onOpenCitySharing
+    }
 
     var body: some View {
         ScrollView {
@@ -33,24 +42,35 @@ struct ProfileView: View {
                     }
                 }
 
-                sectionLabel("Sharing").padding(.top, 24)
+                sectionLabel("Location & Sharing").padding(.top, 24)
                 settingsGroup {
-                    NavigationLink { SharingSummaryView() } label: {
+                    Button(action: onOpenCitySharing) {
                         settingRow(
                             "City sharing",
                             note: store.snapshot.sharingPreferences.citySharingEnabled
-                                ? "Visible to accepted friends" : "Paused",
+                                ? LocalizedStringKey(store.snapshot.currentPresence.cityDisplay) : "Paused",
                             symbol: "location.circle.fill",
                             color: WIFTheme.fresh
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("profileCitySharingButton")
                     divider
                     NavigationLink { LocationAccessView() } label: {
-                        settingRow("Location access", note: "Foreground and background controls", symbol: "gearshape.fill", color: WIFTheme.fresh)
+                        settingRow(
+                            "Location & automatic updates",
+                            note: store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+                                ? "Automatic updates on" : "Automatic updates off",
+                            symbol: "location.viewfinder",
+                            color: WIFTheme.fresh
+                        )
                     }
                     .buttonStyle(.plain)
-                    divider
+                    .accessibilityIdentifier("locationAccessLink")
+                }
+
+                sectionLabel("Alerts & Display").padding(.top, 24)
+                settingsGroup {
                     NavigationLink {
                         NotificationSettingsView(notificationService: store.notificationService)
                     } label: {
@@ -58,6 +78,17 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("notificationSettingsLink")
+                    divider
+                    NavigationLink { WidgetPrivacyView() } label: {
+                        settingRow(
+                            "Widget & Lock Screen",
+                            note: widgetPrivacySummary,
+                            symbol: "rectangle.3.group.bubble.left.fill",
+                            color: WIFTheme.fresh
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("widgetPrivacySettingsLink")
                 }
 
                 sectionLabel("Privacy").padding(.top, 24)
@@ -76,6 +107,11 @@ struct ProfileView: View {
                 if store.repositoryMode == .localDemo {
                     sectionLabel("Development").padding(.top, 24)
                     settingsGroup {
+                        NavigationLink { CityEmblemGalleryView() } label: {
+                            settingRow("City Emblem Gallery", note: "Browse 150+ 3D city landmarks", symbol: "building.2.crop.circle.fill", color: WIFTheme.fresh)
+                        }
+                        .buttonStyle(.plain)
+                        divider
                         NavigationLink { DemoLabView() } label: {
                             settingRow("Demo Lab", note: "Simulate invites, stale data and alerts", symbol: "testtube.2", color: WIFTheme.fresh)
                         }
@@ -180,6 +216,14 @@ struct ProfileView: View {
         return store.snapshot.currentPresence.cityDisplay
     }
 
+    private var widgetPrivacySummary: LocalizedStringKey {
+        switch store.widgetPrivacyMode {
+        case .full: "Names and cities visible"
+        case .hideNames: "Names hidden"
+        case .hideAll: "Everything hidden"
+        }
+    }
+
     private var buildFooter: String {
         if store.repositoryMode == .localDemo {
             return "Local demo · No precise coordinates or route history are stored"
@@ -252,43 +296,47 @@ struct ProfileView: View {
     }
 }
 
-private struct SharingSummaryView: View {
-    @EnvironmentObject private var store: AppStore
-
-    var body: some View {
-        List {
-            LabeledContent("Shared city", value: store.snapshot.currentPresence.cityDisplay)
-            LabeledContent("Accepted friends", value: "\(store.friends.count)")
-            LabeledContent("Global sharing", value: store.snapshot.sharingPreferences.citySharingEnabled ? "On" : "Paused")
-            LabeledContent("Stored precision", value: "City only")
-            LabeledContent("History retention", value: "Current city only")
-        }
-        .navigationTitle("City sharing")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 private struct LocationAccessView: View {
+    @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var locationService: CityLocationService
+    @State private var pendingBackgroundUpdates: Bool?
 
     var body: some View {
         List {
+            Section {
+                Toggle("Update city automatically", isOn: backgroundUpdatesBinding)
+                    .disabled(store.isWorking)
+                    .accessibilityIdentifier("backgroundUpdatesToggle")
+            } header: {
+                Text("Automatic updates")
+            } footer: {
+                Text("When enabled, iOS can update your city after significant location changes. Precise coordinates are resolved on this iPhone and are not uploaded.")
+            }
+
             Section {
                 LabeledContent("Authorization", value: authorizationText)
-                Button("Request current city") { locationService.requestForegroundCity() }
-                Button("Enable background city changes") { locationService.requestBackgroundUpdates() }
-            }
-            Section {
+                Button("Update current city") { locationService.requestForegroundCity() }
+                    .disabled(locationService.isResolving)
                 Button("Open iOS Settings") {
                     guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
                     UIApplication.shared.open(url)
                 }
+            } header: {
+                Text("Location access")
             } footer: {
-                Text("The app requests coarse, city-level use. iOS controls when background Visits and significant changes arrive.")
+                Text(locationPermissionFooter)
+            }
+
+            if let errorMessage = locationService.errorMessage {
+                Section {
+                    Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                        .foregroundStyle(WIFTheme.destructive)
+                }
             }
         }
-        .navigationTitle("Location access")
+        .navigationTitle("Location & updates")
         .navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("locationAccessScreen")
     }
 
     private var authorizationText: String {
@@ -301,18 +349,126 @@ private struct LocationAccessView: View {
         @unknown default: "Unknown"
         }
     }
+
+    private var locationPermissionFooter: LocalizedStringKey {
+        switch locationService.authorizationStatus {
+        case .authorizedAlways: "Automatic city changes are available."
+        case .authorizedWhenInUse: "Choose automatic updates to request Always access."
+        case .denied, .restricted: "Location access is off. You can still choose a city manually from the Friends screen."
+        case .notDetermined: "Permission is requested only when you use a location feature."
+        @unknown default: "Location access is unavailable."
+        }
+    }
+
+    private var backgroundUpdatesBinding: Binding<Bool> {
+        Binding {
+            pendingBackgroundUpdates ?? store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+        } set: { newValue in
+            pendingBackgroundUpdates = newValue
+            var preferences = store.snapshot.sharingPreferences
+            preferences.backgroundUpdatesEnabled = newValue
+            if !newValue {
+                locationService.stopBackgroundUpdates()
+            }
+            Task {
+                let saved = await store.setSharingPreferences(preferences)
+                if saved, newValue {
+                    locationService.requestBackgroundUpdates()
+                } else if !saved {
+                    locationService.stopBackgroundUpdates()
+                }
+                pendingBackgroundUpdates = nil
+            }
+        }
+    }
+}
+
+private struct WidgetPrivacyView: View {
+    @EnvironmentObject private var store: AppStore
+
+    var body: some View {
+        List {
+            Section {
+                privacyChoice(
+                    mode: .full,
+                    title: "Show names and cities",
+                    note: "Friend names and shared cities are visible."
+                )
+                privacyChoice(
+                    mode: .hideNames,
+                    title: "Hide names",
+                    note: "Cities stay visible, but names and initials are hidden."
+                )
+                privacyChoice(
+                    mode: .hideAll,
+                    title: "Hide everything",
+                    note: "Widgets show a private placeholder."
+                )
+            } header: {
+                Text("Visible details")
+            } footer: {
+                Text("This controls Where Is My Friend widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked.")
+            }
+        }
+        .navigationTitle("Widget & Lock Screen")
+        .navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("widgetPrivacyScreen")
+    }
+
+    private func privacyChoice(
+        mode: WidgetPrivacyMode,
+        title: LocalizedStringKey,
+        note: LocalizedStringKey
+    ) -> some View {
+        Button {
+            store.setWidgetPrivacyMode(mode)
+        } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text(note)
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                Spacer()
+                if store.widgetPrivacyMode == mode {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(WIFTheme.fresh)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(widgetPrivacyIdentifier(for: mode))
+        .accessibilityValue(store.widgetPrivacyMode == mode ? "selected" : "not selected")
+    }
+
+    private func widgetPrivacyIdentifier(for mode: WidgetPrivacyMode) -> String {
+        switch mode {
+        case .full: "widgetPrivacyFull"
+        case .hideNames: "widgetPrivacyHideNames"
+        case .hideAll: "widgetPrivacyHideAll"
+        }
+    }
 }
 
 private struct NotificationSettingsView: View {
     @EnvironmentObject private var store: AppStore
     @ObservedObject var notificationService: LocalNotificationService
+    @State private var pendingAlertPreference: Bool?
 
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
                 notificationHeader
-                permissionCard
-                deviceRegistrationCard
+                sameCityAlertCard
+
+                if alertsEnabled {
+                    permissionCard
+                    deviceRegistrationCard
+                }
 
                 NavigationLink {
                     NotificationHistoryView()
@@ -359,6 +515,49 @@ private struct NotificationSettingsView: View {
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("notificationSettingsScreen")
+    }
+
+    private var sameCityAlertCard: some View {
+        Toggle(isOn: sameCityAlertsBinding) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Same-city notifications")
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text("Get an alert when you and an allowed friend overlap")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .tint(WIFTheme.fresh)
+        .padding(16)
+        .disabled(store.isWorking)
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.10),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .accessibilityIdentifier("sameCityNotificationsToggle")
+    }
+
+    private var sameCityAlertsBinding: Binding<Bool> {
+        Binding {
+            alertsEnabled
+        } set: { newValue in
+            pendingAlertPreference = newValue
+            var preferences = store.snapshot.sharingPreferences
+            preferences.notificationPreviewEnabled = newValue
+            Task {
+                let saved = await store.setSharingPreferences(preferences)
+                pendingAlertPreference = nil
+                if saved, newValue {
+                    await store.requestNotificationAuthorization()
+                }
+            }
+        }
+    }
+
+    private var alertsEnabled: Bool {
+        pendingAlertPreference ?? store.snapshot.sharingPreferences.notificationPreviewEnabled
     }
 
     private var notificationHeader: some View {
@@ -509,17 +708,22 @@ private struct NotificationSettingsView: View {
     }
 
     private var isReady: Bool {
+        guard alertsEnabled else { return false }
         guard notificationService.allowsNotifications else { return false }
         if case .registered = store.pushRegistrationState { return true }
         return false
     }
 
     private var headerTitle: LocalizedStringKey {
-        isReady ? "Notifications are ready" : "Complete notification setup"
+        if !alertsEnabled { return "Same-city alerts are off" }
+        return isReady ? "Notifications are ready" : "Complete notification setup"
     }
 
     private var headerDetail: LocalizedStringKey {
-        isReady
+        if !alertsEnabled {
+            return "Same-city moments still remain available in your history."
+        }
+        return isReady
             ? "This iPhone is ready for same-city alerts."
             : "Two quick checks make sure same-city alerts can reach you."
     }
@@ -621,7 +825,10 @@ private struct NotificationSettingsView: View {
     }
 
     private var footerText: LocalizedStringKey {
-        store.repositoryMode == .localDemo
+        if !alertsEnabled {
+            return "Turn on same-city notifications whenever you want alerts again."
+        }
+        return store.repositoryMode == .localDemo
             ? "Demo mode schedules same-city alerts directly on this iPhone."
             : "Same-city moments always appear in history. Remote alerts arrive when this iPhone is registered and notification delivery is available."
     }

@@ -1,54 +1,53 @@
 import CoreLocation
 import SwiftUI
-import UIKit
 
-struct SharingView: View {
+struct CitySharingSheet: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var locationService: CityLocationService
     @State private var showsCityPicker = false
+    @State private var showsSourceOptions = false
+    @State private var pendingSharingEnabled: Bool?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                sharingIllustration
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    locationHero
+                    sharingControl
+                    locationActions
 
-                Text("City changes only")
-                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 24)
+                    if let errorMessage = locationService.errorMessage {
+                        Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                            .font(.footnote)
+                            .foregroundStyle(WIFTheme.destructive)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
-                Text("Friends see your latest city and update time. Precise coordinates and route history stay out of the product.")
-                    .font(.body)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(3)
-                    .padding(.top, 10)
-                    .padding(.horizontal, 8)
-
-                statusCard.padding(.top, 24)
-                controls.padding(.top, 16)
-                locationActions.padding(.top, 16)
-                widgetPrivacy.padding(.top, 16)
-
-                if let errorMessage = locationService.errorMessage {
-                    Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
-                        .font(.footnote)
-                        .foregroundStyle(WIFTheme.destructive)
-                        .padding(.top, 14)
-                }
-
-                Label("You can pause sharing at any time.", systemImage: "hand.raised.fill")
+                    Label(
+                        "Only your city and update time are shared. Precise location and routes are never stored.",
+                        systemImage: "hand.raised.fill"
+                    )
                     .font(.footnote)
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .padding(.top, 18)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                }
+                .padding(.horizontal, WIFTheme.screenInset)
+                .padding(.top, 10)
+                .padding(.bottom, 28)
             }
-            .padding(.horizontal, WIFTheme.screenInset)
-            .padding(.bottom, 30)
+            .wifAmbientBackground()
+            .navigationTitle("City sharing")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
         }
-        .wifAmbientBackground()
-        .navigationTitle("Sharing")
-        .navigationBarTitleDisplayMode(.inline)
+        .presentationDetents([.fraction(0.72), .large])
+        .presentationDragIndicator(.visible)
         .sheet(isPresented: $showsCityPicker) {
             CityPickerView { city, countryCode in
                 Task {
@@ -56,245 +55,168 @@ struct SharingView: View {
                 }
             }
         }
-        .accessibilityIdentifier("sharingScreen")
+        .confirmationDialog(
+            "Choose city source",
+            isPresented: $showsSourceOptions,
+            titleVisibility: .visible
+        ) {
+            Button("Use current location") {
+                locationService.requestForegroundCity()
+            }
+            Button("Choose city manually") {
+                showsCityPicker = true
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your precise coordinates stay on this iPhone. The app stores only the resolved city.")
+        }
+        .accessibilityIdentifier("citySharingSheet")
     }
 
-    private var controls: some View {
-        VStack(spacing: 0) {
-            Toggle(isOn: citySharingBinding) {
-                settingLabel("City sharing", note: "Visible only to accepted friends you allow")
-            }
-            .tint(WIFTheme.fresh)
-            .padding(15)
-            .disabled(store.isWorking)
-            .accessibilityIdentifier("citySharingToggle")
+    private var locationHero: some View {
+        VStack(spacing: 8) {
+            Image(systemName: sharingIsEnabled ? "location.circle.fill" : "pause.circle.fill")
+                .font(.system(size: 38, weight: .semibold))
+                .foregroundStyle(sharingIsEnabled ? WIFTheme.fresh : WIFTheme.secondaryText)
+                .contentTransition(.symbolEffect(.replace))
 
-            Divider().overlay(WIFTheme.border).padding(.leading, 15)
+            Text(store.snapshot.currentPresence.cityDisplay)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .foregroundStyle(WIFTheme.primaryText)
+                .multilineTextAlignment(.center)
 
-            Toggle(isOn: backgroundUpdatesBinding) {
-                settingLabel("Background updates", note: backgroundPermissionNote)
-            }
-            .tint(WIFTheme.fresh)
-            .padding(15)
-            .disabled(store.isWorking)
-            .accessibilityIdentifier("backgroundUpdatesToggle")
-
-            Divider().overlay(WIFTheme.border).padding(.leading, 15)
-
-            Toggle(isOn: notificationPreviewBinding) {
-                settingLabel("Same-city notifications", note: "Respects each friend’s alert preference")
-            }
-            .tint(WIFTheme.fresh)
-            .padding(15)
-            .disabled(store.isWorking)
+            Text(sharingStatusText)
+                .font(.subheadline)
+                .foregroundStyle(WIFTheme.secondaryText)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 24)
+        .padding(.horizontal, 18)
+        .wifGlassSurface(
+            tint: (sharingIsEnabled ? WIFTheme.fresh : WIFTheme.elevatedSurface).opacity(0.18),
+            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
+        )
+        .animation(.spring(response: 0.42, dampingFraction: 0.8), value: sharingIsEnabled)
+    }
+
+    private var sharingControl: some View {
+        Toggle(isOn: citySharingBinding) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Share my city with friends")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text("Your per-friend choices still apply")
+                    .font(.caption)
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+        }
+        .tint(WIFTheme.fresh)
+        .padding(16)
+        .disabled(store.isWorking)
         .wifGlassSurface(
             tint: WIFTheme.surface.opacity(0.08),
             in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
         )
+        .accessibilityIdentifier("citySharingToggle")
     }
 
     private var locationActions: some View {
         WIFGlassEffectGroup(spacing: 10) {
             VStack(spacing: 10) {
                 Button {
-                    showsCityPicker = true
-                } label: {
-                    Label("Choose a test city", systemImage: "building.2.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.30), prominent: true)
-                .accessibilityIdentifier("chooseCityButton")
-
-                Button {
                     locationService.requestForegroundCity()
                 } label: {
                     HStack {
-                        if locationService.isResolving { ProgressView().controlSize(.small) }
-                        Label("Use my current city", systemImage: "location.fill")
+                        if locationService.isResolving {
+                            ProgressView().controlSize(.small)
+                        }
+                        Label("Update from current location", systemImage: "location.fill")
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.14))
+                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                 .disabled(locationService.isResolving)
                 .accessibilityIdentifier("useCurrentCityButton")
-            }
-        }
-    }
 
-    private var widgetPrivacy: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label("Lock Screen & Widget privacy", systemImage: "rectangle.3.group.bubble.left.fill")
-                .font(.headline)
-                .foregroundStyle(WIFTheme.primaryText)
-            Menu {
-                Button("Show names and cities") { store.setWidgetPrivacyMode(.full) }
-                    .accessibilityIdentifier("widgetPrivacyFull")
-                Button("Hide names") { store.setWidgetPrivacyMode(.hideNames) }
-                    .accessibilityIdentifier("widgetPrivacyHideNames")
-                Button("Hide everything") { store.setWidgetPrivacyMode(.hideAll) }
-                    .accessibilityIdentifier("widgetPrivacyHideAll")
-            } label: {
-                HStack {
-                    Text("Widget details")
-                    Spacer()
-                    Text(widgetPrivacyModeTitle)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.caption2)
-                        .foregroundStyle(WIFTheme.secondaryText)
+                Button {
+                    showsSourceOptions = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "arrow.triangle.branch")
+                            .foregroundStyle(WIFTheme.fresh)
+                        Text("City source")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                        Spacer()
+                        Text(citySourceTitle)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .padding(16)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
+                .wifGlassSurface(
+                    tint: WIFTheme.surface.opacity(0.08),
+                    interactive: true,
+                    in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+                )
+                .accessibilityIdentifier("citySourceButton")
             }
-            .accessibilityIdentifier("widgetPrivacyPicker")
-            .accessibilityValue(store.widgetPrivacyMode.rawValue)
-            Text(widgetPrivacyDescription)
-                .font(.caption)
-                .foregroundStyle(WIFTheme.secondaryText)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(15)
-        .wifGlassSurface(
-            tint: WIFTheme.eventBlue.opacity(0.12),
-            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+    }
+
+    private var sharingIsEnabled: Bool {
+        pendingSharingEnabled ?? store.snapshot.sharingPreferences.citySharingEnabled
+    }
+
+    private var sharingStatusText: String {
+        guard sharingIsEnabled else { return String(localized: "Sharing is paused") }
+        guard store.currentCity != nil else { return String(localized: "Choose a city to start sharing") }
+
+        let recipientCount = store.friends.filter {
+            store.preference(for: $0.id).sharesMyCity
+        }.count
+        let updateTime = store.snapshot.currentPresence.updatedAt?
+            .formatted(date: .omitted, time: .shortened) ?? "—"
+
+        if recipientCount == 1 {
+            return String(format: String(localized: "Shared with 1 friend · updated %@"), updateTime)
+        }
+        return String(
+            format: String(localized: "Shared with %lld friends · updated %@"),
+            Int64(recipientCount),
+            updateTime
         )
     }
 
-    private var widgetPrivacyModeTitle: LocalizedStringKey {
-        switch store.widgetPrivacyMode {
-        case .full: "Show names and cities"
-        case .hideNames: "Hide names"
-        case .hideAll: "Hide everything"
+    private var citySourceTitle: String {
+        if store.snapshot.sharingPreferences.backgroundUpdatesEnabled {
+            return String(localized: "Automatic")
         }
-    }
 
-    private var widgetPrivacyDescription: LocalizedStringKey {
-        switch store.widgetPrivacyMode {
-        case .full: "Friend names and shared cities appear on the Home Screen."
-        case .hideNames: "Cities remain visible, but friend names and initials are hidden."
-        case .hideAll: "The Widget shows only a private placeholder until you change this setting."
-        }
-    }
-
-    private var sharingIllustration: some View {
-        ZStack {
-            Circle()
-                .stroke(WIFTheme.fresh.opacity(0.32), style: StrokeStyle(lineWidth: 3, dash: [7, 8]))
-                .frame(width: 210, height: 135)
-                .rotationEffect(.degrees(-11))
-
-            Image(systemName: "location.fill.viewfinder")
-                .font(.system(size: 50, weight: .semibold))
-                .foregroundStyle(WIFTheme.fresh)
-                .symbolRenderingMode(.hierarchical)
-
-            Text((store.currentCity ?? "NO CITY").uppercased())
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(WIFTheme.primaryText)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .wifGlassSurface(tint: WIFTheme.surface.opacity(0.10), in: Capsule())
-                .offset(x: 78, y: -75)
-                .lineLimit(1)
-        }
-        .frame(height: 230)
-        .wifGlassSurface(
-            tint: WIFTheme.eventBlue.opacity(0.18),
-            in: RoundedRectangle(cornerRadius: 32, style: .continuous)
-        )
-        .accessibilityHidden(true)
-    }
-
-    private var statusCard: some View {
-        HStack(spacing: 12) {
-            Image(systemName: store.snapshot.sharingPreferences.citySharingEnabled
-                  ? "checkmark.circle.fill" : "pause.circle.fill")
-                .font(.title2)
-                .foregroundStyle(store.snapshot.sharingPreferences.citySharingEnabled
-                                 ? WIFTheme.fresh : WIFTheme.secondaryText)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(store.snapshot.sharingPreferences.citySharingEnabled ? "Sharing is on" : "Sharing is paused")
-                    .font(.headline)
-                    .foregroundStyle(WIFTheme.primaryText)
-                Text(statusText)
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-            }
-            Spacer()
-        }
-        .padding(15)
-        .wifGlassSurface(
-            tint: WIFTheme.fresh.opacity(0.18),
-            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
-        )
-    }
-
-    private var statusText: String {
-        guard store.snapshot.sharingPreferences.citySharingEnabled else {
-            return "Friends cannot see your city"
-        }
-        guard let city = store.currentCity else { return "Choose a city to start sharing" }
-        let update = store.snapshot.currentPresence.updatedAt?.formatted(date: .omitted, time: .shortened) ?? "—"
-        return "\(city) · updated \(update)"
-    }
-
-    private var backgroundPermissionNote: LocalizedStringKey {
-        switch locationService.authorizationStatus {
-        case .authorizedAlways: "Visits and significant changes enabled"
-        case .authorizedWhenInUse: "Enable to request Always access"
-        case .denied, .restricted: "Location permission is off"
-        case .notDetermined: "Permission will be requested when enabled"
-        @unknown default: "Location permission unavailable"
+        return switch store.snapshot.currentPresence.source {
+        case .manual: String(localized: "Manual")
+        case .demo: String(localized: "Demo")
+        case .foregroundLocation: String(localized: "Current location")
+        case .significantChange, .visit: String(localized: "Automatic")
         }
     }
 
     private var citySharingBinding: Binding<Bool> {
         Binding {
-            store.snapshot.sharingPreferences.citySharingEnabled
+            sharingIsEnabled
         } set: { newValue in
+            pendingSharingEnabled = newValue
             var preferences = store.snapshot.sharingPreferences
             preferences.citySharingEnabled = newValue
-            Task { await store.setSharingPreferences(preferences) }
-        }
-    }
-
-    private var backgroundUpdatesBinding: Binding<Bool> {
-        Binding {
-            store.snapshot.sharingPreferences.backgroundUpdatesEnabled
-        } set: { newValue in
-            var preferences = store.snapshot.sharingPreferences
-            preferences.backgroundUpdatesEnabled = newValue
-            if !newValue {
-                locationService.stopBackgroundUpdates()
-            }
-            Task {
-                let saved = await store.setSharingPreferences(preferences)
-                if saved, newValue {
-                    locationService.requestBackgroundUpdates()
-                } else if !saved {
-                    locationService.stopBackgroundUpdates()
-                }
-            }
-        }
-    }
-
-    private var notificationPreviewBinding: Binding<Bool> {
-        Binding {
-            store.snapshot.sharingPreferences.notificationPreviewEnabled
-        } set: { newValue in
-            var preferences = store.snapshot.sharingPreferences
-            preferences.notificationPreviewEnabled = newValue
             Task {
                 await store.setSharingPreferences(preferences)
-                if newValue { await store.requestNotificationAuthorization() }
+                pendingSharingEnabled = nil
             }
-        }
-    }
-
-    private func settingLabel(_ title: LocalizedStringKey, note: LocalizedStringKey) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
-            Text(note).font(.caption).foregroundStyle(WIFTheme.secondaryText)
         }
     }
 }
@@ -324,7 +246,7 @@ private struct CityPickerView: View {
                 }
             }
             .accessibilityIdentifier("cityPickerScreen")
-            .navigationTitle("Choose a test city")
+            .navigationTitle("Choose city manually")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -336,7 +258,7 @@ private struct CityPickerView: View {
 }
 
 #Preview {
-    NavigationStack { SharingView() }
+    CitySharingSheet()
         .environmentObject(AppStore())
         .environmentObject(CityLocationService())
 }

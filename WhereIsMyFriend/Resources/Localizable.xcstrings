@@ -2675,6 +2675,496 @@
         }
       }
     },
+    "Alerts & Display" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提醒与显示"
+          }
+        }
+      }
+    },
+    "Automatic" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动"
+          }
+        }
+      }
+    },
+    "Automatic city changes are available." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可以自动更新城市。"
+          }
+        }
+      }
+    },
+    "Automatic updates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动更新"
+          }
+        }
+      }
+    },
+    "Automatic updates off" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动更新已关闭"
+          }
+        }
+      }
+    },
+    "Automatic updates on" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动更新已开启"
+          }
+        }
+      }
+    },
+    "Choose a city to start sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个城市以开始共享"
+          }
+        }
+      }
+    },
+    "Choose automatic updates to request Always access." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启自动更新以申请“始终”位置权限。"
+          }
+        }
+      }
+    },
+    "Choose city manually" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动选择城市"
+          }
+        }
+      }
+    },
+    "Choose city source" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择城市来源"
+          }
+        }
+      }
+    },
+    "Cities stay visible, but names and initials are hidden." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "城市仍会显示，但隐藏朋友姓名和姓名首字母。"
+          }
+        }
+      }
+    },
+    "City source" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "城市来源"
+          }
+        }
+      }
+    },
+    "Current location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前位置"
+          }
+        }
+      }
+    },
+    "Demo" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示"
+          }
+        }
+      }
+    },
+    "Everything hidden" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部隐藏"
+          }
+        }
+      }
+    },
+    "Friend names and shared cities are visible." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示朋友姓名和共享城市。"
+          }
+        }
+      }
+    },
+    "Friends cannot see your city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朋友无法看到你的城市"
+          }
+        }
+      }
+    },
+    "Get an alert when you and an allowed friend overlap" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当你与获准共享的朋友在同一城市时通知你"
+          }
+        }
+      }
+    },
+    "Location & Sharing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置与共享"
+          }
+        }
+      }
+    },
+    "Location & automatic updates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置与自动更新"
+          }
+        }
+      }
+    },
+    "Location & updates" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置与更新"
+          }
+        }
+      }
+    },
+    "Location access is off. You can still choose a city manually from the Friends screen." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置权限已关闭。你仍可从“朋友”页面手动选择城市。"
+          }
+        }
+      }
+    },
+    "Location access is unavailable." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位置权限不可用。"
+          }
+        }
+      }
+    },
+    "Manual" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动"
+          }
+        }
+      }
+    },
+    "Names and cities visible" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示姓名和城市"
+          }
+        }
+      }
+    },
+    "Names hidden" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐藏姓名"
+          }
+        }
+      }
+    },
+    "Only your city and update time are shared. Precise location and routes are never stored." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只共享你的城市和更新时间。绝不会存储精确位置或路线。"
+          }
+        }
+      }
+    },
+    "Permission is requested only when you use a location feature." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只有在你使用位置功能时才会请求权限。"
+          }
+        }
+      }
+    },
+    "Same-city alerts are off" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城提醒已关闭"
+          }
+        }
+      }
+    },
+    "Same-city moments still remain available in your history." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城记录仍会保留在历史中。"
+          }
+        }
+      }
+    },
+    "Share my city with friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与朋友共享我的城市"
+          }
+        }
+      }
+    },
+    "Shared with %lld friends · updated %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已与 %1$lld 位朋友共享 · 更新于 %2$@"
+          }
+        }
+      }
+    },
+    "Shared with 1 friend · updated %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已与 1 位朋友共享 · 更新于 %@"
+          }
+        }
+      }
+    },
+    "This controls Where Is My Friend widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此设置控制 Where Is My Friend 在主屏幕和锁屏上的小组件。iPhone 锁定时，iOS 可能会进一步隐藏隐私内容。"
+          }
+        }
+      }
+    },
+    "Turn on same-city notifications whenever you want alerts again." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "随时开启同城通知即可重新接收提醒。"
+          }
+        }
+      }
+    },
+    "Update city automatically" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动更新城市"
+          }
+        }
+      }
+    },
+    "Update current city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新当前城市"
+          }
+        }
+      }
+    },
+    "Update from current location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用当前位置更新"
+          }
+        }
+      }
+    },
+    "Updated %@ · City only" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新于 %@ · 仅共享城市"
+          }
+        }
+      }
+    },
+    "Use current location" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用当前位置"
+          }
+        }
+      }
+    },
+    "Visible details" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示内容"
+          }
+        }
+      }
+    },
+    "When enabled, iOS can update your city after significant location changes. Precise coordinates are resolved on this iPhone and are not uploaded." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开启后，iOS 可在位置发生显著变化时更新城市。精确坐标只在此 iPhone 上解析，不会上传。"
+          }
+        }
+      }
+    },
+    "Widget & Lock Screen" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小组件与锁屏"
+          }
+        }
+      }
+    },
+    "Widgets show a private placeholder." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小组件将显示隐私占位内容。"
+          }
+        }
+      }
+    },
+    "You · %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你 · %@"
+          }
+        }
+      }
+    },
+    "Your per-friend choices still apply" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仍会遵循你对每位朋友的共享设置"
+          }
+        }
+      }
+    },
+    "Your precise coordinates stay on this iPhone. The app stores only the resolved city." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "精确坐标只在此 iPhone 上处理，App 仅存储解析后的城市。"
+          }
+        }
+      }
+    },
+    "not selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择"
+          }
+        }
+      }
+    },
+    "selected" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已选择"
+          }
+        }
+      }
+    },
     "Your people, around the world" : {
       "localizations" : {
         "zh-Hans" : {

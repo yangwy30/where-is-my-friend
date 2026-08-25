@@ -51,6 +51,9 @@
 		400000000000000000000042 /* ClientReliability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000046 /* ClientReliability.swift */; };
 		400000000000000000000043 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = A20000000000000000000001 /* Supabase */; };
 		400000000000000000000044 /* FriendWidgetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000047 /* FriendWidgetConfiguration.swift */; };
+		400000000000000000000045 /* CityEmblem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000048 /* CityEmblem.swift */; };
+		400000000000000000000046 /* CityEmblem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000048 /* CityEmblem.swift */; };
+		400000000000000000000047 /* CityEmblemGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000049 /* CityEmblemGalleryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +142,8 @@
 		300000000000000000000045 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		300000000000000000000046 /* ClientReliability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientReliability.swift; sourceTree = "<group>"; };
 		300000000000000000000047 /* FriendWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendWidgetConfiguration.swift; sourceTree = "<group>"; };
+		300000000000000000000048 /* CityEmblem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityEmblem.swift; sourceTree = "<group>"; };
+		300000000000000000000049 /* CityEmblemGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityEmblemGalleryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,7 +219,7 @@
 		200000000000000000000006 /* Onboarding */ = {isa = PBXGroup; children = (300000000000000000000019 /* OnboardingView.swift */, ); path = Onboarding; sourceTree = "<group>"; };
 		200000000000000000000007 /* Friends */ = {isa = PBXGroup; children = (300000000000000000000020 /* FriendsView.swift */, 300000000000000000000021 /* FriendDetailView.swift */, 300000000000000000000022 /* AddFriendView.swift */, ); path = Friends; sourceTree = "<group>"; };
 		200000000000000000000008 /* Sharing */ = {isa = PBXGroup; children = (300000000000000000000023 /* SharingView.swift */, ); path = Sharing; sourceTree = "<group>"; };
-		200000000000000000000009 /* Profile */ = {isa = PBXGroup; children = (300000000000000000000024 /* ProfileView.swift */, 300000000000000000000043 /* DemoLabView.swift */, ); path = Profile; sourceTree = "<group>"; };
+		200000000000000000000009 /* Profile */ = {isa = PBXGroup; children = (300000000000000000000024 /* ProfileView.swift */, 300000000000000000000043 /* DemoLabView.swift */, 300000000000000000000049 /* CityEmblemGalleryView.swift */, ); path = Profile; sourceTree = "<group>"; };
 		200000000000000000000010 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -228,7 +233,7 @@
 			sourceTree = "<group>";
 		};
 		200000000000000000000011 /* DesignSystem */ = {isa = PBXGroup; children = (300000000000000000000012 /* AppTheme.swift */, ); path = DesignSystem; sourceTree = "<group>"; };
-		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (300000000000000000000013 /* FriendPresence.swift */, 300000000000000000000035 /* AppDomain.swift */, ); path = Models; sourceTree = "<group>"; };
+		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (300000000000000000000013 /* FriendPresence.swift */, 300000000000000000000035 /* AppDomain.swift */, 300000000000000000000048 /* CityEmblem.swift */, ); path = Models; sourceTree = "<group>"; };
 		200000000000000000000013 /* Mock */ = {isa = PBXGroup; children = (300000000000000000000014 /* MockFriendData.swift */, ); path = Mock; sourceTree = "<group>"; };
 		200000000000000000000014 /* Storage */ = {isa = PBXGroup; children = (300000000000000000000015 /* SharedPresenceStore.swift */, ); path = Storage; sourceTree = "<group>"; };
 		200000000000000000000015 /* Components */ = {isa = PBXGroup; children = (300000000000000000000016 /* FriendAvatarView.swift */, 300000000000000000000017 /* FriendRowView.swift */, 300000000000000000000018 /* SameCityMomentCard.swift */, ); path = Components; sourceTree = "<group>"; };
@@ -391,10 +396,12 @@
 				400000000000000000000014 /* AddFriendView.swift in Sources */,
 				400000000000000000000015 /* SharingView.swift in Sources */,
 				400000000000000000000016 /* ProfileView.swift in Sources */,
+				400000000000000000000045 /* CityEmblem.swift in Sources */,
+				400000000000000000000047 /* CityEmblemGalleryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
