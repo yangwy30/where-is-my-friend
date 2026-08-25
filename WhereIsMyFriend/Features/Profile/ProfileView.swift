@@ -15,6 +15,24 @@ struct ProfileView: View {
             VStack(spacing: 0) {
                 profileHeader
 
+                if connectionNeedsAttention {
+                    sectionLabel("Connection").padding(.top, 24)
+                    settingsGroup {
+                        Button {
+                            Task { await store.retryPendingOperations() }
+                        } label: {
+                            settingRow(
+                                "Finish syncing",
+                                note: connectionStatusText,
+                                symbol: "arrow.triangle.2.circlepath",
+                                color: WIFTheme.fresh
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(store.isWorking)
+                    }
+                }
+
                 sectionLabel("Sharing").padding(.top, 24)
                 settingsGroup {
                     NavigationLink { SharingSummaryView() } label: {
@@ -139,8 +157,12 @@ struct ProfileView: View {
                 Text(store.snapshot.currentUser.displayName)
                     .font(.title3.weight(.bold))
                     .foregroundStyle(WIFTheme.primaryText)
+                Text("@\(store.snapshot.currentUser.username)")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .textSelection(.enabled)
                 Text(profilePresenceText)
-                    .font(.subheadline)
+                    .font(.caption)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
             Spacer()
@@ -154,13 +176,27 @@ struct ProfileView: View {
     }
 
     private var profilePresenceText: String {
-        guard let city = store.currentCity else { return "No shared city" }
-        return "\(city) · \(store.snapshot.syncState.rawValue)"
+        guard store.currentCity != nil else { return "No shared city" }
+        return store.snapshot.currentPresence.cityDisplay
     }
 
     private var buildFooter: String {
-        let mode = store.repositoryMode == .localDemo ? "Local Demo Repository" : "Remote API"
-        return "Development build · \(mode)\nNo precise coordinates or route history are stored"
+        if store.repositoryMode == .localDemo {
+            return "Local demo · No precise coordinates or route history are stored"
+        }
+        return "No precise coordinates or route history are stored"
+    }
+
+    private var connectionNeedsAttention: Bool {
+        store.repositoryMode == .remote
+            && (store.snapshot.syncState == .offline || store.pendingOperationCount > 0)
+    }
+
+    private var connectionStatusText: LocalizedStringKey {
+        if store.pendingOperationCount > 0 {
+            return "\(store.pendingOperationCount) change(s) waiting for a connection"
+        }
+        return "Reconnect to refresh your friends"
     }
 
     private func sectionLabel(_ text: LocalizedStringKey) -> some View {

@@ -9,8 +9,9 @@ struct AddFriendView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    inviteForm
+                    yourUsernameCard
                     shareLink
+                    inviteForm
 
                     if !store.snapshot.incomingRequests.isEmpty {
                         requestSection(
@@ -49,6 +50,39 @@ struct AddFriendView: View {
         }
     }
 
+    private var yourUsernameCard: some View {
+        HStack(spacing: 13) {
+            Text(store.snapshot.currentUser.initials)
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(width: 48, height: 48)
+                .background(WIFTheme.fresh.gradient, in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Your username")
+                    .font(.caption)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                Text("@\(store.snapshot.currentUser.username)")
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .textSelection(.enabled)
+            }
+
+            Spacer()
+
+            Image(systemName: "person.crop.circle.badge.checkmark")
+                .font(.title3)
+                .foregroundStyle(WIFTheme.fresh)
+        }
+        .padding(15)
+        .wifGlassSurface(
+            tint: WIFTheme.fresh.opacity(0.14),
+            in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("currentUsernameCard")
+    }
+
     private var inviteForm: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Invite by username")
@@ -68,10 +102,18 @@ struct AddFriendView: View {
                         in: RoundedRectangle(cornerRadius: 14, style: .continuous)
                     )
                     .accessibilityIdentifier("friendUsernameField")
+                    .disabled(store.isSendingFriendRequest)
 
-                Button("Invite", action: sendInvite)
+                Button(action: sendInvite) {
+                    if store.isSendingFriendRequest {
+                        ProgressView()
+                            .frame(minWidth: 50)
+                    } else {
+                        Text("Invite")
+                    }
+                }
                     .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                    .disabled(username.trimmingCharacters(in: .whitespaces).isEmpty || store.isWorking)
+                    .disabled(username.trimmingCharacters(in: .whitespaces).isEmpty || store.isSendingFriendRequest)
                     .accessibilityIdentifier("sendInviteButton")
             }
         }
@@ -111,6 +153,7 @@ struct AddFriendView: View {
     }
 
     private func requestRow(_ request: FriendRequest, isIncoming: Bool) -> some View {
+        let isResponding = store.isResponding(to: request.id)
         let friend = FriendPresence(
             id: request.userID,
             displayName: request.displayName,
@@ -138,11 +181,21 @@ struct AddFriendView: View {
                 }
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(WIFTheme.secondaryText)
+                .disabled(isResponding)
+                .accessibilityIdentifier("declineRequestButton")
 
-                Button("Accept") {
+                Button {
                     Task { await store.respond(to: request.id, response: .accept) }
+                } label: {
+                    if isResponding {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Text("Accept")
+                    }
                 }
                 .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                .disabled(isResponding)
                 .accessibilityIdentifier("acceptRequestButton")
             } else {
                 Text("Pending")

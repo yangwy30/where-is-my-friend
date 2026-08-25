@@ -10,7 +10,7 @@ struct OnboardingView: View {
             title: "Your people, around the world",
             body: "See the latest city your closest friends have chosen to share — without starting another group chat.",
             symbol: "person.2.fill",
-            buttonTitle: "Continue with Apple"
+            buttonTitle: "See how it works"
         ),
         OnboardingPage(
             title: "City-level by design",
@@ -22,7 +22,7 @@ struct OnboardingView: View {
             title: "Keep your city current",
             body: "Background location lets the app notice meaningful city changes. You can pause sharing at any time.",
             symbol: "location.fill.viewfinder",
-            buttonTitle: "Open Friends"
+            buttonTitle: "Continue to sign in"
         )
     ]
 
@@ -60,7 +60,7 @@ struct OnboardingView: View {
 
                 Button(action: advance) {
                     HStack(spacing: 8) {
-                        if step == 0 {
+                        if step == pages.count - 1 {
                             Image(systemName: "apple.logo")
                         }
                         Text(pages[step].buttonTitle)
@@ -74,7 +74,9 @@ struct OnboardingView: View {
                 .accessibilityIdentifier("onboardingContinueButton")
                 .padding(.horizontal, WIFTheme.screenInset)
 
-                Text(step == 0 ? "Prototype sign-in — no account is created" : "You stay in control of sharing")
+                Text(step == pages.count - 1
+                     ? "Apple sign-in comes next"
+                     : "A quick introduction before you start")
                     .font(.caption)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.top, 12)

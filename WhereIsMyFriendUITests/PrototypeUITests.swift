@@ -14,11 +14,9 @@ final class PrototypeUITests: XCTestCase {
         addButton.tap()
 
         XCTAssertTrue(app.scrollViews["addFriendScreen"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.descendants(matching: .any)["currentUsernameCard"].exists)
         XCTAssertTrue(app.buttons["acceptRequestButton"].firstMatch.waitForExistence(timeout: 3))
         app.buttons["acceptRequestButton"].firstMatch.tap()
-        if app.alerts.firstMatch.waitForExistence(timeout: 2) {
-            app.alerts.firstMatch.buttons.firstMatch.tap()
-        }
         app.buttons["doneAddFriendButton"].tap()
         XCTAssertTrue(app.staticTexts["Jamie Park"].waitForExistence(timeout: 3))
 
@@ -43,9 +41,6 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(nameField.waitForExistence(timeout: 3))
         nameField.replaceText(with: "New Name")
         app.buttons["saveProfileButton"].tap()
-        if app.alerts.firstMatch.waitForExistence(timeout: 2) {
-            app.alerts.firstMatch.buttons.firstMatch.tap()
-        }
         XCTAssertTrue(app.staticTexts["New Name"].waitForExistence(timeout: 3))
 
         app.tabBars.buttons.element(boundBy: 1).tap()

@@ -46,21 +46,21 @@ enum RepositoryError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .notAuthenticated: "Please sign in first."
-        case .userNotFound: "No demo user has that username. Try jamie, priya, leo, or emma."
-        case .alreadyFriends: "You are already friends."
-        case .requestAlreadyExists: "An invitation already exists."
-        case .cannotInviteYourself: "You cannot invite yourself."
-        case .requestNotFound: "That friend request no longer exists."
-        case .friendNotFound: "That friend is no longer available."
-        case .alreadyBlocked: "That person is already blocked."
-        case .blockedUserNotFound: "That blocked person is no longer available."
-        case .serverNotConfigured: "The production server URL has not been configured."
-        case .unsupportedInCurrentMode: "This action is only available in the local demo."
-        case .invalidServerResponse: "The server returned an invalid response."
-        case .networkUnavailable: "You appear to be offline. The city update was saved and will retry automatically."
-        case .serverTemporarilyUnavailable: "The server is temporarily unavailable. Please try again shortly."
-        case .sessionExpired: "Your session expired. Please sign in again."
+        case .notAuthenticated: String(localized: "Please sign in first.")
+        case .userNotFound: String(localized: "No demo user has that username. Try jamie, priya, leo, or emma.")
+        case .alreadyFriends: String(localized: "You are already friends.")
+        case .requestAlreadyExists: String(localized: "An invitation already exists.")
+        case .cannotInviteYourself: String(localized: "You cannot invite yourself.")
+        case .requestNotFound: String(localized: "That friend request no longer exists.")
+        case .friendNotFound: String(localized: "That friend is no longer available.")
+        case .alreadyBlocked: String(localized: "That person is already blocked.")
+        case .blockedUserNotFound: String(localized: "That blocked person is no longer available.")
+        case .serverNotConfigured: String(localized: "The production server URL has not been configured.")
+        case .unsupportedInCurrentMode: String(localized: "This action is only available in the local demo.")
+        case .invalidServerResponse: String(localized: "The server returned an invalid response.")
+        case .networkUnavailable: String(localized: "You appear to be offline. The city update was saved and will retry automatically.")
+        case .serverTemporarilyUnavailable: String(localized: "The server is temporarily unavailable. Please try again shortly.")
+        case .sessionExpired: String(localized: "Your session expired. Please sign in again.")
         case .message(let message): message
         }
     }

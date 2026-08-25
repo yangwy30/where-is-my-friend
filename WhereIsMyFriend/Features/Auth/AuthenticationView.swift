@@ -42,7 +42,7 @@ struct AuthenticationView: View {
                         isProcessingAppleSignIn = true
                     } catch {
                         store.notice = AppNotice(
-                            title: "Apple sign-in failed",
+                            title: String(localized: "Apple sign-in failed"),
                             message: error.localizedDescription
                         )
                     }
@@ -118,8 +118,8 @@ struct AuthenticationView: View {
                 let nonce
             else {
                 store.notice = AppNotice(
-                    title: "Apple sign-in failed",
-                    message: "Apple did not return an identity token."
+                    title: String(localized: "Apple sign-in failed"),
+                    message: String(localized: "Apple did not return an identity token.")
                 )
                 return
             }
@@ -135,7 +135,10 @@ struct AuthenticationView: View {
                 )
             }
         case .failure(let error):
-            store.notice = AppNotice(title: "Apple sign-in failed", message: error.localizedDescription)
+            store.notice = AppNotice(
+                title: String(localized: "Apple sign-in failed"),
+                message: error.localizedDescription
+            )
         }
     }
 }

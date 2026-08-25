@@ -2245,6 +2245,436 @@
         }
       }
     },
+    "See how it works" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "看看如何使用"
+          }
+        }
+      }
+    },
+    "Continue to sign in" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续登录"
+          }
+        }
+      }
+    },
+    "Apple sign-in comes next" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一步将通过 Apple 登录"
+          }
+        }
+      }
+    },
+    "A quick introduction before you start" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始前，先快速了解一下"
+          }
+        }
+      }
+    },
+    "Your username" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的用户名"
+          }
+        }
+      }
+    },
+    "Connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接"
+          }
+        }
+      }
+    },
+    "Finish syncing" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成同步"
+          }
+        }
+      }
+    },
+    "%lld change(s) waiting for a connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "有 %lld 项更改正在等待网络连接"
+          }
+        }
+      }
+    },
+    "Reconnect to refresh your friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新连接后刷新好友信息"
+          }
+        }
+      }
+    },
+    "Share your username or invite someone by theirs." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享你的用户名，或输入朋友的用户名来邀请对方。"
+          }
+        }
+      }
+    },
+    "Local demo · No precise coordinates or route history are stored" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地演示 · 不会存储精确坐标或路线历史"
+          }
+        }
+      }
+    },
+    "No precise coordinates or route history are stored" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不会存储精确坐标或路线历史"
+          }
+        }
+      }
+    },
+    "Profile updated." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "个人资料已更新。"
+          }
+        }
+      }
+    },
+    "Request sent to @%@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已向 @%@ 发送好友请求。"
+          }
+        }
+      }
+    },
+    "Friend request accepted." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已接受好友请求。"
+          }
+        }
+      }
+    },
+    "Friend request declined." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已拒绝好友请求。"
+          }
+        }
+      }
+    },
+    "Friend removed and sharing stopped." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已移除好友并停止共享。"
+          }
+        }
+      }
+    },
+    "Person blocked. Sharing stopped both ways." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已屏蔽对方，双方的共享均已停止。"
+          }
+        }
+      }
+    },
+    "Person unblocked." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已取消屏蔽。"
+          }
+        }
+      }
+    },
+    "Your shared city is now %@." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你现在共享的城市是 %@。"
+          }
+        }
+      }
+    },
+    "A friend arrived in your city." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一位朋友到达了你所在的城市。"
+          }
+        }
+      }
+    },
+    "Friend locations are now stale." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "好友位置现已标记为过期。"
+          }
+        }
+      }
+    },
+    "A new incoming request was added." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已添加一条新的好友请求。"
+          }
+        }
+      }
+    },
+    "Demo data was restored." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "演示数据已恢复。"
+          }
+        }
+      }
+    },
+    "Sync completed." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步完成。"
+          }
+        }
+      }
+    },
+    "Couldn’t complete that" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法完成此操作"
+          }
+        }
+      }
+    },
+    "Apple sign-in failed" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通过 Apple 登录失败"
+          }
+        }
+      }
+    },
+    "Apple did not return an identity token." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple 没有返回身份令牌。"
+          }
+        }
+      }
+    },
+    "Please sign in first." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请先登录。"
+          }
+        }
+      }
+    },
+    "No demo user has that username. Try jamie, priya, leo, or emma." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "没有这个用户名的演示用户。请尝试 jamie、priya、leo 或 emma。"
+          }
+        }
+      }
+    },
+    "You are already friends." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你们已经是好友了。"
+          }
+        }
+      }
+    },
+    "An invitation already exists." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已经存在一条邀请。"
+          }
+        }
+      }
+    },
+    "You cannot invite yourself." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能邀请自己。"
+          }
+        }
+      }
+    },
+    "That friend request no longer exists." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这条好友请求已不存在。"
+          }
+        }
+      }
+    },
+    "That friend is no longer available." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这位好友已不可用。"
+          }
+        }
+      }
+    },
+    "That person is already blocked." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你已经屏蔽了对方。"
+          }
+        }
+      }
+    },
+    "That blocked person is no longer available." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这位已屏蔽用户已不可用。"
+          }
+        }
+      }
+    },
+    "The production server URL has not been configured." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未配置生产服务器 URL。"
+          }
+        }
+      }
+    },
+    "This action is only available in the local demo." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此操作仅在本地演示中可用。"
+          }
+        }
+      }
+    },
+    "The server returned an invalid response." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器返回了无效响应。"
+          }
+        }
+      }
+    },
+    "You appear to be offline. The city update was saved and will retry automatically." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你似乎处于离线状态。城市更新已保存，并会自动重试。"
+          }
+        }
+      }
+    },
+    "The server is temporarily unavailable. Please try again shortly." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务器暂时不可用，请稍后重试。"
+          }
+        }
+      }
+    },
+    "Your session expired. Please sign in again." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录会话已过期，请重新登录。"
+          }
+        }
+      }
+    },
     "Your people, around the world" : {
       "localizations" : {
         "zh-Hans" : {

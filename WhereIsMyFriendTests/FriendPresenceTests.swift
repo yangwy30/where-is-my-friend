@@ -585,6 +585,35 @@ final class AppStoreReliabilityTests: XCTestCase {
         XCTAssertEqual(uploadedCities, ["London"])
         XCTAssertEqual(store.snapshot.currentPresence.city, "London")
     }
+
+    func testFriendRequestResponseIsNotDroppedDuringRefresh() async throws {
+        let repository = SlowTestRepository()
+        let store = AppStore(repository: repository)
+        let rawRequestID = await repository.incomingRequestID()
+        let rawRequestUserID = await repository.incomingRequestUserID()
+        let requestID = try XCTUnwrap(rawRequestID)
+        let requestUserID = try XCTUnwrap(rawRequestUserID)
+
+        let refresh = Task { await store.refresh() }
+        try? await Task.sleep(for: .milliseconds(40))
+        let accepted = await store.respond(to: requestID, response: .accept)
+        await refresh.value
+
+        XCTAssertTrue(accepted)
+        let respondedRequestIDs = await repository.respondedRequestIDs()
+        XCTAssertEqual(respondedRequestIDs, [requestID])
+        XCTAssertFalse(store.snapshot.friendRequests.contains(where: { $0.id == requestID }))
+        XCTAssertTrue(store.snapshot.friends.contains(where: { $0.id == requestUserID }))
+    }
+
+    func testBackgroundRefreshFailureDoesNotPresentAnAlert() async {
+        let repository = SlowTestRepository(loadError: RepositoryError.notAuthenticated)
+        let store = AppStore(repository: repository)
+
+        await store.refresh()
+
+        XCTAssertNil(store.notice)
+    }
 }
 
 private actor SlowTestRepository: AppRepository {
@@ -592,20 +621,51 @@ private actor SlowTestRepository: AppRepository {
     nonisolated let storageScope = "test:slow-repository"
     private var snapshot = DemoData.initialSnapshot()
     private var cities: [String] = []
+    private var responses: [UUID] = []
+    private let loadError: Error?
+
+    init(loadError: Error? = nil) {
+        self.loadError = loadError
+    }
 
     func loadSnapshot() async throws -> AppSnapshot {
         try await Task.sleep(for: .milliseconds(180))
+        if let loadError { throw loadError }
         return snapshot
     }
 
     func uploadedCities() -> [String] { cities }
+    func incomingRequestID() -> UUID? { snapshot.incomingRequests.first?.id }
+    func incomingRequestUserID() -> UUID? { snapshot.incomingRequests.first?.userID }
+    func respondedRequestIDs() -> [UUID] { responses }
     func signInDemo() async throws -> AppSnapshot { snapshot }
     func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { snapshot }
     func signOut() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }
     func deleteAccount() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot { snapshot }
     func sendFriendRequest(username: String) async throws -> AppSnapshot { snapshot }
-    func respond(to requestID: UUID, response: FriendRequestResponse) async throws -> AppSnapshot { snapshot }
+    func respond(to requestID: UUID, response: FriendRequestResponse) async throws -> AppSnapshot {
+        responses.append(requestID)
+        guard let request = snapshot.friendRequests.first(where: { $0.id == requestID }) else {
+            throw RepositoryError.requestNotFound
+        }
+        snapshot.friendRequests.removeAll { $0.id == requestID }
+        if response == .accept {
+            snapshot.friends.append(
+                FriendPresence(
+                    id: request.userID,
+                    displayName: request.displayName,
+                    username: request.username,
+                    city: nil,
+                    countryCode: nil,
+                    updatedAt: nil,
+                    sharingState: .unavailable,
+                    avatarPalette: request.avatarPalette
+                )
+            )
+        }
+        return snapshot
+    }
     func removeFriend(id: UUID) async throws -> AppSnapshot { snapshot }
     func blockUser(id: UUID) async throws -> AppSnapshot { snapshot }
     func unblockUser(id: UUID) async throws -> AppSnapshot { snapshot }

@@ -12,16 +12,16 @@ struct AppRootView: View {
 
     var body: some View {
         Group {
-            if !(hasCompletedOnboarding || skipsOnboarding) {
-                OnboardingView {
-                    hasCompletedOnboarding = true
-                }
-            } else if !store.snapshot.isAuthenticated {
-                AuthenticationView()
-            } else {
+            if store.snapshot.isAuthenticated {
                 AppShellView {
                     hasCompletedOnboarding = false
                 }
+            } else if !(hasCompletedOnboarding || skipsOnboarding) {
+                OnboardingView {
+                    hasCompletedOnboarding = true
+                }
+            } else {
+                AuthenticationView()
             }
         }
         .environmentObject(store)
@@ -63,6 +63,21 @@ struct AppRootView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+        .overlay(alignment: .top) {
+            if let toast = store.toast {
+                Label(toast.message, systemImage: toast.systemImage)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 11)
+                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.20), in: Capsule())
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .accessibilityIdentifier("successToast")
+            }
+        }
+        .animation(.easeInOut(duration: 0.22), value: store.toast)
         .sheet(item: authenticatedInvite) { invite in
             IncomingInviteView(invite: invite)
         }
@@ -105,14 +120,14 @@ private struct IncomingInviteView: View {
                         if store.pendingInvite == nil { dismiss() }
                     }
                 } label: {
-                    if store.isWorking {
+                    if store.isSendingFriendRequest {
                         ProgressView().frame(maxWidth: .infinity)
                     } else {
                         Text("Send friend request").frame(maxWidth: .infinity)
                     }
                 }
                 .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                .disabled(store.isWorking)
+                .disabled(store.isSendingFriendRequest)
                 Button("Not now", role: .cancel) {
                     store.discardPendingInvite()
                     dismiss()

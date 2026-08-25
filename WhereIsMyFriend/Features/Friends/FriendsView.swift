@@ -50,7 +50,9 @@ struct FriendsView: View {
                     ContentUnavailableView {
                         Label("No friends yet", systemImage: "person.2.slash")
                     } description: {
-                        Text("Accept a request or invite a demo user by username.")
+                        Text(store.repositoryMode == .localDemo
+                             ? "Accept a request or invite a demo user by username."
+                             : "Share your username or invite someone by theirs.")
                     } actions: {
                         Button("Add friends") { isAddingFriend = true }
                             .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
@@ -88,7 +90,7 @@ struct FriendsView: View {
         .wifAmbientBackground()
         .toolbar(.hidden, for: .navigationBar)
         .refreshable {
-            await store.refresh()
+            await store.refresh(showErrors: true)
             referenceDate = Date()
         }
         .navigationDestination(for: FriendPresence.self) { friend in

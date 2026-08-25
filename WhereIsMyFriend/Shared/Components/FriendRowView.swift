@@ -23,7 +23,7 @@ struct FriendRowView: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(friend.displayName), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))"
+            "\(friend.displayName), @\(friend.username), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))"
         )
     }
 
@@ -56,6 +56,11 @@ struct FriendRowView: View {
                 .font(.headline)
                 .foregroundStyle(WIFTheme.primaryText)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
+
+            Text("@\(friend.username)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(WIFTheme.fresh)
+                .lineLimit(1)
 
             Text(friend.cityDisplay)
                 .font(.subheadline)
