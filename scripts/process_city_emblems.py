@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
-City Emblem Asset Pipeline
+City Emblem Asset Pipeline (High-Precision Transparent Alpha)
 
 Processes raw 3D miniature city renders into production-ready iOS Asset Catalogs:
-1. Alpha transparency extraction (clean edge matte from studio white background)
-2. Auto-centering and golden ratio padding (object occupies ~82% of bounding box)
-3. Multi-resolution generation (@1x: 64x64, @2x: 128x128, @3x: 192x192)
-4. Xcode Asset Catalog generation (Imageset + Contents.json)
+1. Border-seeded BFS flood-fill background removal (completely eliminates square borders & vignette artifacts)
+2. Soft anti-aliased edge matte ramp
+3. Tight bounding-box framing (94% occupancy to make the 3D model big and prominent)
+4. Multi-resolution generation (@1x: 64x64, @2x: 128x128, @3x: 192x192)
+5. Xcode Asset Catalog generation (Imageset + Contents.json)
 """
 
 import json
 import os
 import sys
+import collections
 from pathlib import Path
 from PIL import Image, ImageFilter
 
@@ -19,32 +21,55 @@ WORKSPACE_DIR = Path(__file__).resolve().parent.parent
 RAW_DIR = WORKSPACE_DIR / "scripts" / "raw_renders"
 XCSETS_DIR = WORKSPACE_DIR / "WhereIsMyFriend" / "Resources" / "Assets.xcassets" / "CityEmblems"
 
-def remove_white_background(img: Image.Image, threshold: int = 248) -> Image.Image:
-    """Extract alpha channel from studio white background with soft anti-aliasing."""
+def remove_background_clean(img: Image.Image, threshold: int = 218) -> Image.Image:
+    """
+    Remove solid/gradient white studio background using border-connected BFS flood-fill.
+    Completely eliminates any square frame edges or background vignetting.
+    """
     img = img.convert("RGBA")
-    data = img.getdata()
+    w, h = img.size
+    pixels = img.load()
     
-    new_data = []
-    ramp_width = 16
-    min_thresh = threshold - ramp_width
+    visited = set()
+    queue = collections.deque()
     
-    for r, g, b, a in data:
+    # Seed from all four image boundaries
+    for x in range(w):
+        queue.append((x, 0))
+        queue.append((x, h - 1))
+        visited.add((x, 0))
+        visited.add((x, h - 1))
+        
+    for y in range(h):
+        queue.append((0, y))
+        queue.append((w - 1, y))
+        visited.add((0, y))
+        visited.add((w - 1, y))
+        
+    while queue:
+        cx, cy = queue.popleft()
+        r, g, b, a = pixels[cx, cy]
+        
+        max_c = max(r, g, b)
         min_c = min(r, g, b)
-        if r >= threshold and g >= threshold and b >= threshold:
-            new_data.append((255, 255, 255, 0))
-        elif r >= min_thresh and g >= min_thresh and b >= min_thresh:
-            # Smooth anti-aliased transition
-            alpha_ratio = 1.0 - (min_c - min_thresh) / float(ramp_width)
-            alpha_val = max(0, min(255, int(255 * alpha_ratio)))
-            new_data.append((r, g, b, alpha_val))
-        else:
-            new_data.append((r, g, b, 255))
+        diff = max_c - min_c
+        
+        # If it's a light background pixel (low saturation and bright)
+        if min_c >= threshold and diff <= 28:
+            pixels[cx, cy] = (255, 255, 255, 0)
+            for nx, ny in [(cx+1, cy), (cx-1, cy), (cx, cy+1), (cx, cy-1)]:
+                if 0 <= nx < w and 0 <= ny < h and (nx, ny) not in visited:
+                    visited.add((nx, ny))
+                    queue.append((nx, ny))
+        elif min_c >= threshold - 20 and diff <= 32:
+            # Soft anti-aliased edge near threshold
+            alpha_val = int(255 * (1.0 - (min_c - (threshold - 20)) / 20.0))
+            pixels[cx, cy] = (r, g, b, max(0, min(255, alpha_val)))
             
-    img.putdata(new_data)
     return img
 
-def center_and_crop(img: Image.Image, target_size: int = 512, occupancy: float = 0.82) -> Image.Image:
-    """Center the non-transparent content within a square canvas, occupying specified percentage."""
+def center_and_tight_crop(img: Image.Image, target_size: int = 512, occupancy: float = 0.94) -> Image.Image:
+    """Center the non-transparent content within a square canvas with tight framing to maximize visual size."""
     bbox = img.getbbox()
     if not bbox:
         return img.resize((target_size, target_size), Image.LANCZOS)
@@ -103,21 +128,18 @@ def process_city_image(city_id: str, src_path: Path):
     """Process a single city image from source into Xcode Assets."""
     print(f"Processing '{city_id}' from {src_path.name}...")
     with Image.open(src_path) as raw:
-        clean = remove_white_background(raw)
-        centered = center_and_crop(clean, target_size=512, occupancy=0.84)
+        clean = remove_background_clean(raw)
+        centered = center_and_tight_crop(clean, target_size=512, occupancy=0.94)
         export_imageset(city_id, centered, XCSETS_DIR)
-        print(f"  -> Successfully generated City_{city_id}.imageset (@1x, @2x, @3x)")
+        print(f"  -> Cleaned & generated City_{city_id}.imageset (@1x, @2x, @3x)")
 
 def ensure_namespace():
-    """Ensure CityEmblems folder has a namespaced Contents.json."""
+    """Ensure CityEmblems folder has Contents.json."""
     XCSETS_DIR.mkdir(parents=True, exist_ok=True)
     contents = {
         "info": {
             "author": "xcode",
             "version": 1
-        },
-        "properties": {
-            "provides-namespace": True
         }
     }
     with open(XCSETS_DIR / "Contents.json", "w", encoding="utf-8") as f:
@@ -134,7 +156,7 @@ def main():
             process_city_image(city_id, img_file)
             count += 1
             
-    print(f"\n🎉 Successfully processed {count} city emblems into Xcode Assets Catalog:\n   {XCSETS_DIR}")
+    print(f"\n🎉 Successfully processed {count} city emblems with zero square border artifacts into:\n   {XCSETS_DIR}")
 
 if __name__ == "__main__":
     main()

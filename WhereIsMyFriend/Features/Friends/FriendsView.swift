@@ -233,8 +233,8 @@ struct FriendsView: View {
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
         return VStack(spacing: 8) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 84)
-                .padding(.top, 12)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 112)
+                .padding(.top, 10)
 
             VStack(spacing: 3) {
                 Text(friend.displayName)
