@@ -82,7 +82,27 @@ public struct CityEmblem: Hashable, Sendable {
         "washington": CityEmblem(cityID: "washington", displayName: "Washington", countryCode: "US", assetName: "City_washington", archetype: .european),
         "honolulu": CityEmblem(cityID: "honolulu", displayName: "Honolulu", countryCode: "US", assetName: "City_honolulu", archetype: .coastal),
         "houston": CityEmblem(cityID: "houston", displayName: "Houston", countryCode: "US", assetName: "City_houston", archetype: .metropolis),
-        "philadelphia": CityEmblem(cityID: "philadelphia", displayName: "Philadelphia", countryCode: "US", assetName: "City_philadelphia", archetype: .european)
+        "philadelphia": CityEmblem(cityID: "philadelphia", displayName: "Philadelphia", countryCode: "US", assetName: "City_philadelphia", archetype: .european),
+        "kyoto": CityEmblem(cityID: "kyoto", displayName: "Kyoto", countryCode: "JP", assetName: "City_kyoto", archetype: .asian),
+        "taipei": CityEmblem(cityID: "taipei", displayName: "Taipei", countryCode: "TW", assetName: "City_taipei", archetype: .asian),
+        "bangkok": CityEmblem(cityID: "bangkok", displayName: "Bangkok", countryCode: "TH", assetName: "City_bangkok", archetype: .asian),
+        "venice": CityEmblem(cityID: "venice", displayName: "Venice", countryCode: "IT", assetName: "City_venice", archetype: .coastal),
+        "florence": CityEmblem(cityID: "florence", displayName: "Florence", countryCode: "IT", assetName: "City_florence", archetype: .european),
+        "milan": CityEmblem(cityID: "milan", displayName: "Milan", countryCode: "IT", assetName: "City_milan", archetype: .european),
+        "madrid": CityEmblem(cityID: "madrid", displayName: "Madrid", countryCode: "ES", assetName: "City_madrid", archetype: .european),
+        "munich": CityEmblem(cityID: "munich", displayName: "Munich", countryCode: "DE", assetName: "City_munich", archetype: .european),
+        "vienna": CityEmblem(cityID: "vienna", displayName: "Vienna", countryCode: "AT", assetName: "City_vienna", archetype: .european),
+        "prague": CityEmblem(cityID: "prague", displayName: "Prague", countryCode: "CZ", assetName: "City_prague", archetype: .european),
+        "phoenix": CityEmblem(cityID: "phoenix", displayName: "Phoenix", countryCode: "US", assetName: "City_phoenix", archetype: .desert),
+        "san antonio": CityEmblem(cityID: "san_antonio", displayName: "San Antonio", countryCode: "US", assetName: "City_san_antonio", archetype: .desert),
+        "san diego": CityEmblem(cityID: "san_diego", displayName: "San Diego", countryCode: "US", assetName: "City_san_diego", archetype: .coastal),
+        "dallas": CityEmblem(cityID: "dallas", displayName: "Dallas", countryCode: "US", assetName: "City_dallas", archetype: .metropolis),
+        "denver": CityEmblem(cityID: "denver", displayName: "Denver", countryCode: "US", assetName: "City_denver", archetype: .alpine),
+        "atlanta": CityEmblem(cityID: "atlanta", displayName: "Atlanta", countryCode: "US", assetName: "City_atlanta", archetype: .metropolis),
+        "nashville": CityEmblem(cityID: "nashville", displayName: "Nashville", countryCode: "US", assetName: "City_nashville", archetype: .metropolis),
+        "new orleans": CityEmblem(cityID: "new_orleans", displayName: "New Orleans", countryCode: "US", assetName: "City_new_orleans", archetype: .coastal),
+        "portland": CityEmblem(cityID: "portland", displayName: "Portland", countryCode: "US", assetName: "City_portland", archetype: .coastal),
+        "st louis": CityEmblem(cityID: "st_louis", displayName: "St. Louis", countryCode: "US", assetName: "City_st_louis", archetype: .metropolis)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -99,7 +119,13 @@ public struct CityEmblem: Hashable, Sendable {
         "ginza": registeredCities["tokyo"]!,
         "westminster": registeredCities["london"]!,
         "soho": registeredCities["london"]!,
-        "peking": registeredCities["beijing"]!
+        "peking": registeredCities["beijing"]!,
+        "nola": registeredCities["new orleans"]!,
+        "philly": registeredCities["philadelphia"]!,
+        "saint louis": registeredCities["st louis"]!,
+        "st. louis": registeredCities["st louis"]!,
+        "washington dc": registeredCities["washington"]!,
+        "dc": registeredCities["washington"]!
     ]
 }
 
