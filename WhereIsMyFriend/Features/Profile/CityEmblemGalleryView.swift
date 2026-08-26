@@ -96,7 +96,7 @@ struct CityEmblemGalleryView: View {
 
     private func cityCard(_ city: CatalogCityItem) -> some View {
         VStack(spacing: 8) {
-            CityEmblemView(city: city.name, countryCode: city.countryCode, size: 80)
+            CityEmblemView(city: city.name, countryCode: city.countryCode, size: 100)
                 .padding(.top, 10)
 
             VStack(spacing: 2) {
@@ -116,7 +116,7 @@ struct CityEmblemGalleryView: View {
                         .lineLimit(1)
                 }
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 6)
             .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity)
@@ -133,7 +133,7 @@ struct CityEmblemGalleryView: View {
                 .frame(width: 36, height: 5)
                 .padding(.top, 8)
 
-            CityEmblemView(city: city.name, countryCode: city.countryCode, size: 120)
+            CityEmblemView(city: city.name, countryCode: city.countryCode, size: 130)
 
             VStack(spacing: 4) {
                 HStack(spacing: 6) {
