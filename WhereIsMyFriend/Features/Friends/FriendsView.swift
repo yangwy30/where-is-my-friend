@@ -232,6 +232,13 @@ struct FriendsView: View {
 
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
+        let isSameCity = store.currentCity != nil && CityIdentity.matches(
+            city: friend.city,
+            countryCode: friend.countryCode,
+            otherCity: store.currentCity,
+            otherCountryCode: store.snapshot.currentPresence.countryCode
+        ) && friend.isSameCityEligible(at: referenceDate)
+
         return VStack(spacing: 8) {
             CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 112)
                 .padding(.top, 10)
@@ -262,14 +269,36 @@ struct FriendsView: View {
             .padding(.bottom, 14)
         }
         .frame(maxWidth: .infinity)
+        .overlay(alignment: .topTrailing) {
+            if isSameCity {
+                HStack(spacing: 3) {
+                    Image(systemName: "person.2.fill")
+                        .font(.system(size: 8.5, weight: .bold))
+                    Text("Together")
+                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(WIFTheme.fresh)
+                .padding(.horizontal, 7)
+                .padding(.vertical, 3.5)
+                .background(
+                    Capsule()
+                        .fill(WIFTheme.fresh.opacity(0.18))
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1)
+                        )
+                )
+                .padding(8)
+            }
+        }
         .wifGlassSurface(
-            tint: WIFTheme.surface.opacity(0.10),
+            tint: isSameCity ? WIFTheme.fresh.opacity(0.16) : WIFTheme.surface.opacity(0.10),
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(friend.displayName), \(friend.cityDisplay), \(friend.relativeUpdateLongText(at: referenceDate))"
+            "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "Together in same city, " : "")\(friend.relativeUpdateLongText(at: referenceDate))"
         )
     }
 
