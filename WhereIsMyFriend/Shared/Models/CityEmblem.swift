@@ -122,7 +122,9 @@ public struct CityEmblem: Hashable, Sendable {
         "vancouver": CityEmblem(cityID: "vancouver", displayName: "Vancouver", countryCode: "CA", assetName: "City_vancouver", archetype: .coastal),
         "montreal": CityEmblem(cityID: "montreal", displayName: "Montreal", countryCode: "CA", assetName: "City_montreal", archetype: .european),
         "mexico city": CityEmblem(cityID: "mexico_city", displayName: "Mexico City", countryCode: "MX", assetName: "City_mexico_city", archetype: .metropolis),
-        "cape town": CityEmblem(cityID: "cape_town", displayName: "Cape Town", countryCode: "ZA", assetName: "City_cape_town", archetype: .coastal)
+        "cape town": CityEmblem(cityID: "cape_town", displayName: "Cape Town", countryCode: "ZA", assetName: "City_cape_town", archetype: .coastal),
+        "minneapolis": CityEmblem(cityID: "minneapolis", displayName: "Minneapolis", countryCode: "US", assetName: "City_minneapolis", archetype: .metropolis),
+        "detroit": CityEmblem(cityID: "detroit", displayName: "Detroit", countryCode: "US", assetName: "City_detroit", archetype: .metropolis)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -145,6 +147,10 @@ public struct CityEmblem: Hashable, Sendable {
         "cdmx": registeredCities["mexico city"]!,
         "mexico": registeredCities["mexico city"]!,
         "montréal": registeredCities["montreal"]!,
+        "twin cities": registeredCities["minneapolis"]!,
+        "st paul": registeredCities["minneapolis"]!,
+        "st. paul": registeredCities["minneapolis"]!,
+        "motor city": registeredCities["detroit"]!,
         "westminster": registeredCities["london"]!,
         "soho": registeredCities["london"]!,
         "peking": registeredCities["beijing"]!,
