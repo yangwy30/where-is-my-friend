@@ -126,7 +126,17 @@ public struct CityEmblem: Hashable, Sendable {
         "minneapolis": CityEmblem(cityID: "minneapolis", displayName: "Minneapolis", countryCode: "US", assetName: "City_minneapolis", archetype: .metropolis),
         "detroit": CityEmblem(cityID: "detroit", displayName: "Detroit", countryCode: "US", assetName: "City_detroit", archetype: .metropolis),
         "pittsburgh": CityEmblem(cityID: "pittsburgh", displayName: "Pittsburgh", countryCode: "US", assetName: "City_pittsburgh", archetype: .metropolis),
-        "tampa": CityEmblem(cityID: "tampa", displayName: "Tampa", countryCode: "US", assetName: "City_tampa", archetype: .coastal)
+        "tampa": CityEmblem(cityID: "tampa", displayName: "Tampa", countryCode: "US", assetName: "City_tampa", archetype: .coastal),
+        "orlando": CityEmblem(cityID: "orlando", displayName: "Orlando", countryCode: "US", assetName: "City_orlando", archetype: .metropolis),
+        "charlotte": CityEmblem(cityID: "charlotte", displayName: "Charlotte", countryCode: "US", assetName: "City_charlotte", archetype: .metropolis),
+        "salt lake city": CityEmblem(cityID: "salt_lake_city", displayName: "Salt Lake City", countryCode: "US", assetName: "City_salt_lake_city", archetype: .alpine),
+        "baltimore": CityEmblem(cityID: "baltimore", displayName: "Baltimore", countryCode: "US", assetName: "City_baltimore", archetype: .coastal),
+        "kansas city": CityEmblem(cityID: "kansas_city", displayName: "Kansas City", countryCode: "US", assetName: "City_kansas_city", archetype: .metropolis),
+        "cleveland": CityEmblem(cityID: "cleveland", displayName: "Cleveland", countryCode: "US", assetName: "City_cleveland", archetype: .coastal),
+        "indianapolis": CityEmblem(cityID: "indianapolis", displayName: "Indianapolis", countryCode: "US", assetName: "City_indianapolis", archetype: .metropolis),
+        "columbus": CityEmblem(cityID: "columbus", displayName: "Columbus", countryCode: "US", assetName: "City_columbus", archetype: .metropolis),
+        "milwaukee": CityEmblem(cityID: "milwaukee", displayName: "Milwaukee", countryCode: "US", assetName: "City_milwaukee", archetype: .coastal),
+        "cincinnati": CityEmblem(cityID: "cincinnati", displayName: "Cincinnati", countryCode: "US", assetName: "City_cincinnati", archetype: .metropolis)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -156,6 +166,9 @@ public struct CityEmblem: Hashable, Sendable {
         "tampa bay": registeredCities["tampa"]!,
         "st petersburg": registeredCities["tampa"]!,
         "clearwater": registeredCities["tampa"]!,
+        "slc": registeredCities["salt lake city"]!,
+        "kc": registeredCities["kansas city"]!,
+        "indy": registeredCities["indianapolis"]!,
         "westminster": registeredCities["london"]!,
         "soho": registeredCities["london"]!,
         "peking": registeredCities["beijing"]!,
