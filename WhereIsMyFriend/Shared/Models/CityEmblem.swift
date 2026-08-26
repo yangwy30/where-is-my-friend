@@ -136,7 +136,19 @@ public struct CityEmblem: Hashable, Sendable {
         "indianapolis": CityEmblem(cityID: "indianapolis", displayName: "Indianapolis", countryCode: "US", assetName: "City_indianapolis", archetype: .metropolis),
         "columbus": CityEmblem(cityID: "columbus", displayName: "Columbus", countryCode: "US", assetName: "City_columbus", archetype: .metropolis),
         "milwaukee": CityEmblem(cityID: "milwaukee", displayName: "Milwaukee", countryCode: "US", assetName: "City_milwaukee", archetype: .coastal),
-        "cincinnati": CityEmblem(cityID: "cincinnati", displayName: "Cincinnati", countryCode: "US", assetName: "City_cincinnati", archetype: .metropolis)
+        "cincinnati": CityEmblem(cityID: "cincinnati", displayName: "Cincinnati", countryCode: "US", assetName: "City_cincinnati", archetype: .metropolis),
+        "san jose": CityEmblem(cityID: "san_jose", displayName: "San Jose", countryCode: "US", assetName: "City_san_jose", archetype: .metropolis),
+        "raleigh": CityEmblem(cityID: "raleigh", displayName: "Raleigh", countryCode: "US", assetName: "City_raleigh", archetype: .metropolis),
+        "louisville": CityEmblem(cityID: "louisville", displayName: "Louisville", countryCode: "US", assetName: "City_louisville", archetype: .metropolis),
+        "memphis": CityEmblem(cityID: "memphis", displayName: "Memphis", countryCode: "US", assetName: "City_memphis", archetype: .metropolis),
+        "oklahoma city": CityEmblem(cityID: "oklahoma_city", displayName: "Oklahoma City", countryCode: "US", assetName: "City_oklahoma_city", archetype: .metropolis),
+        "albuquerque": CityEmblem(cityID: "albuquerque", displayName: "Albuquerque", countryCode: "US", assetName: "City_albuquerque", archetype: .desert),
+        "tucson": CityEmblem(cityID: "tucson", displayName: "Tucson", countryCode: "US", assetName: "City_tucson", archetype: .desert),
+        "el paso": CityEmblem(cityID: "el_paso", displayName: "El Paso", countryCode: "US", assetName: "City_el_paso", archetype: .desert),
+        "san juan": CityEmblem(cityID: "san_juan", displayName: "San Juan", countryCode: "PR", assetName: "City_san_juan", archetype: .coastal),
+        "anchorage": CityEmblem(cityID: "anchorage", displayName: "Anchorage", countryCode: "US", assetName: "City_anchorage", archetype: .alpine),
+        "sacramento": CityEmblem(cityID: "sacramento", displayName: "Sacramento", countryCode: "US", assetName: "City_sacramento", archetype: .metropolis),
+        "providence": CityEmblem(cityID: "providence", displayName: "Providence", countryCode: "US", assetName: "City_providence", archetype: .european)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -148,6 +160,7 @@ public struct CityEmblem: Hashable, Sendable {
         "bay area": registeredCities["san francisco"]!,
         "la": registeredCities["los angeles"]!,
         "hollywood": registeredCities["los angeles"]!,
+        "silicon valley": registeredCities["san jose"]!,
         "shibuya": registeredCities["tokyo"]!,
         "shinjuku": registeredCities["tokyo"]!,
         "ginza": registeredCities["tokyo"]!,
@@ -169,6 +182,9 @@ public struct CityEmblem: Hashable, Sendable {
         "slc": registeredCities["salt lake city"]!,
         "kc": registeredCities["kansas city"]!,
         "indy": registeredCities["indianapolis"]!,
+        "okc": registeredCities["oklahoma city"]!,
+        "abq": registeredCities["albuquerque"]!,
+        "puerto rico": registeredCities["san juan"]!,
         "westminster": registeredCities["london"]!,
         "soho": registeredCities["london"]!,
         "peking": registeredCities["beijing"]!,
