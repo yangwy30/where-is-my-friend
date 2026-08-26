@@ -148,7 +148,12 @@ public struct CityEmblem: Hashable, Sendable {
         "san juan": CityEmblem(cityID: "san_juan", displayName: "San Juan", countryCode: "PR", assetName: "City_san_juan", archetype: .coastal),
         "anchorage": CityEmblem(cityID: "anchorage", displayName: "Anchorage", countryCode: "US", assetName: "City_anchorage", archetype: .alpine),
         "sacramento": CityEmblem(cityID: "sacramento", displayName: "Sacramento", countryCode: "US", assetName: "City_sacramento", archetype: .metropolis),
-        "providence": CityEmblem(cityID: "providence", displayName: "Providence", countryCode: "US", assetName: "City_providence", archetype: .european)
+        "providence": CityEmblem(cityID: "providence", displayName: "Providence", countryCode: "US", assetName: "City_providence", archetype: .european),
+        "doha": CityEmblem(cityID: "doha", displayName: "Doha", countryCode: "QA", assetName: "City_doha", archetype: .desert),
+        "sao paulo": CityEmblem(cityID: "sao_paulo", displayName: "São Paulo", countryCode: "BR", assetName: "City_sao_paulo", archetype: .metropolis),
+        "buenos aires": CityEmblem(cityID: "buenos_aires", displayName: "Buenos Aires", countryCode: "AR", assetName: "City_buenos_aires", archetype: .metropolis),
+        "santiago": CityEmblem(cityID: "santiago", displayName: "Santiago", countryCode: "CL", assetName: "City_santiago", archetype: .metropolis),
+        "lima": CityEmblem(cityID: "lima", displayName: "Lima", countryCode: "PE", assetName: "City_lima", archetype: .metropolis)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -161,6 +166,9 @@ public struct CityEmblem: Hashable, Sendable {
         "la": registeredCities["los angeles"]!,
         "hollywood": registeredCities["los angeles"]!,
         "silicon valley": registeredCities["san jose"]!,
+        "são paulo": registeredCities["sao paulo"]!,
+        "sp": registeredCities["sao paulo"]!,
+        "ba": registeredCities["buenos aires"]!,
         "shibuya": registeredCities["tokyo"]!,
         "shinjuku": registeredCities["tokyo"]!,
         "ginza": registeredCities["tokyo"]!,
