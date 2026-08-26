@@ -102,7 +102,17 @@ public struct CityEmblem: Hashable, Sendable {
         "nashville": CityEmblem(cityID: "nashville", displayName: "Nashville", countryCode: "US", assetName: "City_nashville", archetype: .metropolis),
         "new orleans": CityEmblem(cityID: "new_orleans", displayName: "New Orleans", countryCode: "US", assetName: "City_new_orleans", archetype: .coastal),
         "portland": CityEmblem(cityID: "portland", displayName: "Portland", countryCode: "US", assetName: "City_portland", archetype: .coastal),
-        "st louis": CityEmblem(cityID: "st_louis", displayName: "St. Louis", countryCode: "US", assetName: "City_st_louis", archetype: .metropolis)
+        "st louis": CityEmblem(cityID: "st_louis", displayName: "St. Louis", countryCode: "US", assetName: "City_st_louis", archetype: .metropolis),
+        "melbourne": CityEmblem(cityID: "melbourne", displayName: "Melbourne", countryCode: "AU", assetName: "City_melbourne", archetype: .coastal),
+        "auckland": CityEmblem(cityID: "auckland", displayName: "Auckland", countryCode: "NZ", assetName: "City_auckland", archetype: .coastal),
+        "athens": CityEmblem(cityID: "athens", displayName: "Athens", countryCode: "GR", assetName: "City_athens", archetype: .european),
+        "istanbul": CityEmblem(cityID: "istanbul", displayName: "Istanbul", countryCode: "TR", assetName: "City_istanbul", archetype: .european),
+        "osaka": CityEmblem(cityID: "osaka", displayName: "Osaka", countryCode: "JP", assetName: "City_osaka", archetype: .asian),
+        "edinburgh": CityEmblem(cityID: "edinburgh", displayName: "Edinburgh", countryCode: "GB", assetName: "City_edinburgh", archetype: .european),
+        "nice": CityEmblem(cityID: "nice", displayName: "Nice", countryCode: "FR", assetName: "City_nice", archetype: .coastal),
+        "zurich": CityEmblem(cityID: "zurich", displayName: "Zurich", countryCode: "CH", assetName: "City_zurich", archetype: .alpine),
+        "geneva": CityEmblem(cityID: "geneva", displayName: "Geneva", countryCode: "CH", assetName: "City_geneva", archetype: .coastal),
+        "budapest": CityEmblem(cityID: "budapest", displayName: "Budapest", countryCode: "HU", assetName: "City_budapest", archetype: .european)
     ]
 
     private static let cityAliases: [String: CityEmblem] = [
@@ -117,6 +127,9 @@ public struct CityEmblem: Hashable, Sendable {
         "shibuya": registeredCities["tokyo"]!,
         "shinjuku": registeredCities["tokyo"]!,
         "ginza": registeredCities["tokyo"]!,
+        "dotonbori": registeredCities["osaka"]!,
+        "cannes": registeredCities["nice"]!,
+        "french riviera": registeredCities["nice"]!,
         "westminster": registeredCities["london"]!,
         "soho": registeredCities["london"]!,
         "peking": registeredCities["beijing"]!,
