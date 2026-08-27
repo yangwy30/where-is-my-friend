@@ -25,7 +25,7 @@ final class PrototypeUITests: XCTestCase {
         cityCard.tap()
         XCTAssertTrue(app.descendants(matching: .any)["citySharingSheet"].waitForExistence(timeout: 3))
         app.buttons["citySourceButton"].tap()
-        app.buttons["Choose city manually"].tap()
+        app.buttons["chooseCityManuallyButton"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["cityPickerScreen"].waitForExistence(timeout: 3))
     }
 
@@ -48,7 +48,7 @@ final class PrototypeUITests: XCTestCase {
 
         let privacySettings = app.buttons["widgetPrivacySettingsLink"]
         if !privacySettings.isHittable {
-            app.scrollViews.firstMatch.swipeUp()
+            app.tables.firstMatch.swipeUp()
         }
         XCTAssertTrue(privacySettings.waitForExistence(timeout: 3))
         privacySettings.tap()
@@ -56,7 +56,7 @@ final class PrototypeUITests: XCTestCase {
         let hideEverything = app.buttons["widgetPrivacyHideAll"]
         XCTAssertTrue(hideEverything.waitForExistence(timeout: 3))
         hideEverything.tap()
-        XCTAssertEqual(hideEverything.value as? String, "selected")
+        XCTAssertEqual(hideEverything.value as? String, "1")
     }
 
     func testNotificationSettingsSeparatesPermissionAndDeviceRegistration() {
@@ -72,7 +72,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(settingsLink.waitForExistence(timeout: 3))
         settingsLink.tap()
 
-        XCTAssertTrue(app.scrollViews["notificationSettingsScreen"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.descendants(matching: .any)["notificationSettingsScreen"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any)["notificationPermissionCard"].exists)
         XCTAssertTrue(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
     }

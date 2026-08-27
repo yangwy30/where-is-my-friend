@@ -20,133 +20,144 @@ struct ProfileView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
+        List {
+            Section {
                 profileHeader
-
-                if connectionNeedsAttention {
-                    sectionLabel("Connection").padding(.top, 24)
-                    settingsGroup {
-                        Button {
-                            Task { await store.retryPendingOperations() }
-                        } label: {
-                            settingRow(
-                                "Finish syncing",
-                                note: connectionStatusText,
-                                symbol: "arrow.triangle.2.circlepath",
-                                color: WIFTheme.fresh
-                            )
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(store.isWorking)
-                    }
-                }
-
-                sectionLabel("Location & Sharing").padding(.top, 24)
-                settingsGroup {
-                    Button(action: onOpenCitySharing) {
-                        settingRow(
-                            "City sharing",
-                            note: store.snapshot.sharingPreferences.citySharingEnabled
-                                ? LocalizedStringKey(store.snapshot.currentPresence.cityDisplay) : "Paused",
-                            symbol: "location.circle.fill",
-                            color: WIFTheme.fresh
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("profileCitySharingButton")
-                    divider
-                    NavigationLink { LocationAccessView() } label: {
-                        settingRow(
-                            "Location & automatic updates",
-                            note: store.snapshot.sharingPreferences.backgroundUpdatesEnabled
-                                ? "Automatic updates on" : "Automatic updates off",
-                            symbol: "location.viewfinder",
-                            color: WIFTheme.fresh
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("locationAccessLink")
-                }
-
-                sectionLabel("Alerts & Display").padding(.top, 24)
-                settingsGroup {
-                    NavigationLink {
-                        NotificationSettingsView(notificationService: store.notificationService)
-                    } label: {
-                        settingRow("Notifications", note: "Permissions and moment history", symbol: "bell.fill", color: WIFTheme.fresh)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("notificationSettingsLink")
-                    divider
-                    NavigationLink { WidgetPrivacyView() } label: {
-                        settingRow(
-                            "Widget & Lock Screen",
-                            note: widgetPrivacySummary,
-                            symbol: "rectangle.3.group.bubble.left.fill",
-                            color: WIFTheme.fresh
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("widgetPrivacySettingsLink")
-                }
-
-                sectionLabel("Privacy").padding(.top, 24)
-                settingsGroup {
-                    NavigationLink { BlockedPeopleView() } label: {
-                        settingRow("Blocked people", note: "\(store.snapshot.blockedUserIDs.count)", symbol: "person.crop.circle.badge.xmark", color: WIFTheme.fresh)
-                    }
-                    .buttonStyle(.plain)
-                    divider
-                    NavigationLink { PrivacyDataView() } label: {
-                        settingRow("Privacy & data", note: "City-level presence only", symbol: "hand.raised.fill", color: WIFTheme.fresh)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                if store.repositoryMode == .localDemo {
-                    sectionLabel("Development").padding(.top, 24)
-                    settingsGroup {
-                        NavigationLink { CityEmblemGalleryView() } label: {
-                            settingRow("City Emblem Gallery", note: "Browse 150+ 3D city landmarks", symbol: "building.2.crop.circle.fill", color: WIFTheme.fresh)
-                        }
-                        .buttonStyle(.plain)
-                        divider
-                        NavigationLink { DemoLabView() } label: {
-                            settingRow("Demo Lab", note: "Simulate invites, stale data and alerts", symbol: "testtube.2", color: WIFTheme.fresh)
-                        }
-                        .buttonStyle(.plain)
-                        divider
-                        Button(action: onReplayOnboarding) {
-                            settingRow("Preview onboarding", note: nil, symbol: "sparkles", color: WIFTheme.fresh)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-
-                sectionLabel("Account").padding(.top, 24)
-                settingsGroup {
-                    Button { showsSignOutConfirmation = true } label: {
-                        settingRow("Sign out", note: nil, symbol: "rectangle.portrait.and.arrow.right", color: WIFTheme.primaryText)
-                    }
-                    .buttonStyle(.plain)
-                    divider
-                    Button(role: .destructive) { showsDeleteConfirmation = true } label: {
-                        settingRow("Delete account", note: nil, symbol: "trash.fill", color: WIFTheme.destructive, isDestructive: true)
-                    }
-                    .buttonStyle(.plain)
-                }
-
-                Text(buildFooter)
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 22)
             }
-            .padding(.horizontal, WIFTheme.screenInset)
-            .padding(.bottom, 30)
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+
+            if connectionNeedsAttention {
+                Section("Connection") {
+                    Button {
+                        Task { await store.retryPendingOperations() }
+                    } label: {
+                        settingsLabel(
+                            "Finish syncing",
+                            symbol: "arrow.triangle.2.circlepath",
+                            color: WIFTheme.fresh,
+                            value: connectionStatusText
+                        )
+                    }
+                    .disabled(store.isWorking)
+                }
+            }
+
+            Section("Location & Sharing") {
+                Button(action: onOpenCitySharing) {
+                    settingsLabel(
+                        "City sharing",
+                        symbol: "location.fill",
+                        color: WIFTheme.fresh,
+                        value: store.snapshot.sharingPreferences.citySharingEnabled
+                            ? LocalizedStringKey(store.snapshot.currentPresence.cityDisplay)
+                            : "Paused",
+                        showsDisclosure: true
+                    )
+                }
+                .accessibilityIdentifier("profileCitySharingButton")
+
+                NavigationLink { LocationAccessView() } label: {
+                    settingsLabel(
+                        "Location & automatic updates",
+                        symbol: "location.viewfinder",
+                        color: WIFTheme.fresh,
+                        value: store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+                            ? "Automatic updates on"
+                            : "Automatic updates off"
+                    )
+                }
+                .accessibilityIdentifier("locationAccessLink")
+            }
+
+            Section("Alerts & Display") {
+                NavigationLink {
+                    NotificationSettingsView(notificationService: store.notificationService)
+                } label: {
+                    settingsLabel(
+                        "Notifications",
+                        symbol: "bell.fill",
+                        color: .red,
+                        value: notificationSummary
+                    )
+                }
+                .accessibilityIdentifier("notificationSettingsLink")
+
+                NavigationLink { WidgetPrivacyView() } label: {
+                    settingsLabel(
+                        "Widget & Lock Screen",
+                        symbol: "rectangle.3.group.fill",
+                        color: .indigo,
+                        value: widgetPrivacySummary
+                    )
+                }
+                .accessibilityIdentifier("widgetPrivacySettingsLink")
+            }
+
+            Section("Privacy") {
+                NavigationLink { BlockedPeopleView() } label: {
+                    settingsLabel(
+                        "Blocked people",
+                        symbol: "person.crop.circle.badge.xmark",
+                        color: .gray,
+                        value: "\(store.snapshot.blockedUserIDs.count)"
+                    )
+                }
+
+                NavigationLink { PrivacyDataView() } label: {
+                    settingsLabel(
+                        "Privacy & data",
+                        symbol: "hand.raised.fill",
+                        color: .blue
+                    )
+                }
+            }
+
+            if store.repositoryMode == .localDemo {
+                Section("Development") {
+                    NavigationLink { CityEmblemGalleryView() } label: {
+                        settingsLabel(
+                            "City Emblem Gallery",
+                            symbol: "building.2.crop.circle.fill",
+                            color: WIFTheme.fresh
+                        )
+                    }
+
+                    NavigationLink { DemoLabView() } label: {
+                        settingsLabel(
+                            "Demo Lab",
+                            symbol: "testtube.2",
+                            color: .purple
+                        )
+                    }
+
+                    Button(action: onReplayOnboarding) {
+                        settingsLabel(
+                            "Preview onboarding",
+                            symbol: "sparkles",
+                            color: .orange
+                        )
+                    }
+                }
+            }
+
+            Section {
+                Button("Sign out", role: .destructive) {
+                    showsSignOutConfirmation = true
+                }
+                Button("Delete account", role: .destructive) {
+                    showsDeleteConfirmation = true
+                }
+            } header: {
+                Text("Account")
+            } footer: {
+                Text(buildFooter)
+            }
         }
-        .wifAmbientBackground()
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color(uiColor: .systemGroupedBackground))
+        .accessibilityIdentifier("profileSettingsScreen")
         .navigationTitle("You")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -203,12 +214,9 @@ struct ProfileView: View {
             }
             Spacer()
         }
-        .padding(16)
-        .wifGlassSurface(
-            tint: WIFTheme.fresh.opacity(0.12),
-            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-        )
-        .padding(.top, 8)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
     }
 
     private var profilePresenceText: String {
@@ -222,6 +230,13 @@ struct ProfileView: View {
         case .hideNames: "Names hidden"
         case .hideAll: "Everything hidden"
         }
+    }
+
+    private var notificationSummary: LocalizedStringKey {
+        guard store.snapshot.sharingPreferences.notificationPreviewEnabled else {
+            return "Paused"
+        }
+        return store.notificationService.allowsNotifications ? "Allowed" : "Needs attention"
     }
 
     private var buildFooter: String {
@@ -243,55 +258,36 @@ struct ProfileView: View {
         return "Reconnect to refresh your friends"
     }
 
-    private func sectionLabel(_ text: LocalizedStringKey) -> some View {
-        Text(text)
-            .font(.caption.weight(.semibold))
-            .textCase(.uppercase)
-            .tracking(1.1)
-            .foregroundStyle(WIFTheme.secondaryText)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.leading, 3)
-            .padding(.bottom, 8)
-    }
-
-    private func settingsGroup<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        VStack(spacing: 0, content: content)
-            .wifGlassSurface(
-                tint: WIFTheme.surface.opacity(0.08),
-                in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
-            )
-    }
-
-    private var divider: some View {
-        Divider().overlay(WIFTheme.border).padding(.leading, 52)
-    }
-
-    private func settingRow(
+    private func settingsLabel(
         _ title: LocalizedStringKey,
-        note: LocalizedStringKey?,
         symbol: String,
         color: Color,
-        isDestructive: Bool = false
+        value: LocalizedStringKey? = nil,
+        showsDisclosure: Bool = false
     ) -> some View {
         HStack(spacing: 12) {
             Image(systemName: symbol)
-                .font(.body.weight(.semibold))
-                .foregroundStyle(color)
-                .frame(width: 28)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(isDestructive ? WIFTheme.destructive : WIFTheme.primaryText)
-                if let note {
-                    Text(note).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                }
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(color.gradient, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+
+            Text(title)
+
+            Spacer(minLength: 8)
+
+            if let value {
+                Text(value)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(WIFTheme.secondaryText)
+
+            if showsDisclosure {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
         }
-        .padding(15)
         .contentShape(Rectangle())
     }
 }
@@ -334,6 +330,7 @@ private struct LocationAccessView: View {
                 }
             }
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("Location & updates")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("locationAccessScreen")
@@ -410,6 +407,7 @@ private struct WidgetPrivacyView: View {
                 Text("This controls Where Is My Friend widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked.")
             }
         }
+        .listStyle(.insetGrouped)
         .navigationTitle("Widget & Lock Screen")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("widgetPrivacyScreen")
@@ -442,7 +440,7 @@ private struct WidgetPrivacyView: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(widgetPrivacyIdentifier(for: mode))
-        .accessibilityValue(store.widgetPrivacyMode == mode ? "selected" : "not selected")
+        .accessibilityValue(store.widgetPrivacyMode == mode ? "1" : "0")
     }
 
     private func widgetPrivacyIdentifier(for mode: WidgetPrivacyMode) -> String {
@@ -460,83 +458,128 @@ private struct NotificationSettingsView: View {
     @State private var pendingAlertPreference: Bool?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                notificationHeader
-                sameCityAlertCard
-
-                if alertsEnabled {
-                    permissionCard
-                    deviceRegistrationCard
+        List {
+            Section {
+                Toggle(isOn: sameCityAlertsBinding) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Same-city notifications")
+                        Text("Get an alert when you and an allowed friend overlap")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .tint(WIFTheme.fresh)
+                .disabled(store.isWorking)
+                .accessibilityIdentifier("sameCityNotificationsToggle")
+            } header: {
+                Text("Same-city notifications")
+            } footer: {
+                Text(alertsEnabled
+                     ? "Same-city moments still remain available in your history."
+                     : "Turn on same-city notifications whenever you want alerts again.")
+            }
 
+            if alertsEnabled {
+                Section {
+                    permissionStatusRow
+
+                    if notificationService.authorizationStatus == .notDetermined {
+                        Button("Allow notifications") {
+                            Task { await store.requestNotificationAuthorization() }
+                        }
+                        .disabled(store.pushRegistrationState.isInProgress)
+                        .accessibilityIdentifier("allowNotificationsButton")
+                    } else if notificationService.authorizationStatus == .denied {
+                        Button("Open iOS Settings", action: openNotificationSettings)
+                            .accessibilityIdentifier("openNotificationSettingsButton")
+                    }
+
+                    deviceStatusRow
+
+                    if case .registered(let date) = store.pushRegistrationState {
+                        LabeledContent("Last registered") {
+                            Text(date, style: .relative)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else if canRetryDeviceRegistration {
+                        Button(deviceActionTitle) {
+                            Task { await store.retryPushRegistration() }
+                        }
+                        .disabled(store.pushRegistrationState.isInProgress)
+                        .accessibilityIdentifier("retryPushRegistrationButton")
+                    }
+                } header: {
+                    Text("Notifications")
+                } footer: {
+                    Text(footerText)
+                }
+            }
+
+            Section {
                 NavigationLink {
                     NotificationHistoryView()
                 } label: {
-                    HStack(spacing: 14) {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .font(.title3.weight(.semibold))
-                            .foregroundStyle(WIFTheme.fresh)
-                            .frame(width: 42, height: 42)
-                            .background(WIFTheme.fresh.opacity(0.12), in: Circle())
+                    Label {
                         VStack(alignment: .leading, spacing: 3) {
                             Text("View same-city history")
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(WIFTheme.primaryText)
                             Text("Every same-city moment stays available here.")
                                 .font(.caption)
-                                .foregroundStyle(WIFTheme.secondaryText)
+                                .foregroundStyle(.secondary)
                         }
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(WIFTheme.secondaryText)
+                    } icon: {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .foregroundStyle(WIFTheme.fresh)
                     }
-                    .padding(16)
-                    .wifGlassSurface(
-                        tint: WIFTheme.surface.opacity(0.08),
-                        interactive: true,
-                        in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
-                    )
                 }
-                .buttonStyle(.plain)
-
-                Text(footerText)
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 14)
             }
-            .padding(.horizontal, WIFTheme.screenInset)
-            .padding(.top, 10)
-            .padding(.bottom, 30)
         }
-        .wifAmbientBackground()
+        .listStyle(.insetGrouped)
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("notificationSettingsScreen")
     }
 
-    private var sameCityAlertCard: some View {
-        Toggle(isOn: sameCityAlertsBinding) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Same-city notifications")
-                    .font(.headline)
-                    .foregroundStyle(WIFTheme.primaryText)
-                Text("Get an alert when you and an allowed friend overlap")
-                    .font(.subheadline)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .fixedSize(horizontal: false, vertical: true)
+    private var permissionStatusRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: permissionSymbol)
+                .foregroundStyle(permissionColor)
+                .frame(width: 22)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Notification permission")
+                Text(permissionDetail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
+            Spacer(minLength: 8)
+            Text(permissionStatusText)
+                .font(.subheadline)
+                .foregroundStyle(permissionColor)
         }
-        .tint(WIFTheme.fresh)
-        .padding(16)
-        .disabled(store.isWorking)
-        .wifGlassSurface(
-            tint: WIFTheme.fresh.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-        )
-        .accessibilityIdentifier("sameCityNotificationsToggle")
+        .accessibilityIdentifier("notificationPermissionCard")
+    }
+
+    private var deviceStatusRow: some View {
+        HStack(spacing: 12) {
+            if store.pushRegistrationState.isInProgress {
+                ProgressView()
+                    .frame(width: 22)
+            } else {
+                Image(systemName: deviceSymbol)
+                    .foregroundStyle(deviceColor)
+                    .frame(width: 22)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text("This iPhone")
+                Text(deviceDetail)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 8)
+            Text(deviceStatusText)
+                .font(.subheadline)
+                .foregroundStyle(deviceColor)
+        }
+        .accessibilityIdentifier("devicePushRegistrationCard")
     }
 
     private var sameCityAlertsBinding: Binding<Bool> {
@@ -558,174 +601,6 @@ private struct NotificationSettingsView: View {
 
     private var alertsEnabled: Bool {
         pendingAlertPreference ?? store.snapshot.sharingPreferences.notificationPreviewEnabled
-    }
-
-    private var notificationHeader: some View {
-        VStack(spacing: 12) {
-            Image(systemName: isReady ? "bell.badge.fill" : "bell.and.waves.left.and.right.fill")
-                .font(.system(size: 34, weight: .semibold))
-                .foregroundStyle(isReady ? WIFTheme.fresh : WIFTheme.secondaryText)
-                .frame(width: 74, height: 74)
-                .background(
-                    (isReady ? WIFTheme.fresh : WIFTheme.elevatedSurface).opacity(0.18),
-                    in: Circle()
-                )
-                .contentTransition(.symbolEffect(.replace))
-
-            VStack(spacing: 5) {
-                Text(headerTitle)
-                    .font(.title2.bold())
-                    .foregroundStyle(WIFTheme.primaryText)
-                Text(headerDetail)
-                    .font(.subheadline)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(.vertical, 8)
-        .frame(maxWidth: .infinity)
-        .animation(.spring(response: 0.42, dampingFraction: 0.78), value: isReady)
-    }
-
-    private var permissionCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                statusIcon(
-                    symbol: permissionSymbol,
-                    color: permissionColor,
-                    showsProgress: false
-                )
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Notification permission")
-                        .font(.headline)
-                        .foregroundStyle(WIFTheme.primaryText)
-                    Text(permissionDetail)
-                        .font(.subheadline)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 8)
-                statusPill(permissionStatusText, color: permissionColor)
-            }
-
-            if notificationService.authorizationStatus == .notDetermined {
-                Button {
-                    Task { await store.requestNotificationAuthorization() }
-                } label: {
-                    Label("Allow notifications", systemImage: "bell.badge")
-                        .frame(maxWidth: .infinity)
-                }
-                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                .disabled(store.pushRegistrationState.isInProgress)
-                .accessibilityIdentifier("allowNotificationsButton")
-            } else if notificationService.authorizationStatus == .denied {
-                Button(action: openNotificationSettings) {
-                    Label("Open iOS Settings", systemImage: "gearshape.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .wifGlassButton(tint: Color.orange.opacity(0.16))
-                .accessibilityIdentifier("openNotificationSettingsButton")
-            }
-        }
-        .padding(16)
-        .wifGlassSurface(
-            tint: permissionColor.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-        )
-        .accessibilityIdentifier("notificationPermissionCard")
-    }
-
-    private var deviceRegistrationCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                statusIcon(
-                    symbol: deviceSymbol,
-                    color: deviceColor,
-                    showsProgress: store.pushRegistrationState.isInProgress
-                )
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("This iPhone")
-                        .font(.headline)
-                        .foregroundStyle(WIFTheme.primaryText)
-                    Text(deviceDetail)
-                        .font(.subheadline)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer(minLength: 8)
-                statusPill(deviceStatusText, color: deviceColor)
-            }
-
-            if case .registered(let date) = store.pushRegistrationState {
-                Divider().overlay(WIFTheme.border)
-                LabeledContent("Last registered") {
-                    Text(date, style: .relative)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                }
-                .font(.caption)
-            } else if canRetryDeviceRegistration {
-                Button {
-                    Task { await store.retryPushRegistration() }
-                } label: {
-                    Label(deviceActionTitle, systemImage: "arrow.clockwise")
-                        .frame(maxWidth: .infinity)
-                }
-                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.18))
-                .disabled(store.pushRegistrationState.isInProgress)
-                .accessibilityIdentifier("retryPushRegistrationButton")
-            }
-        }
-        .padding(16)
-        .wifGlassSurface(
-            tint: deviceColor.opacity(0.10),
-            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-        )
-        .animation(.easeInOut(duration: 0.25), value: store.pushRegistrationState)
-        .accessibilityIdentifier("devicePushRegistrationCard")
-    }
-
-    private func statusIcon(symbol: String, color: Color, showsProgress: Bool) -> some View {
-        ZStack {
-            Circle().fill(color.opacity(0.13))
-            if showsProgress {
-                ProgressView().tint(color)
-            } else {
-                Image(systemName: symbol)
-                    .font(.body.weight(.bold))
-                    .foregroundStyle(color)
-            }
-        }
-        .frame(width: 42, height: 42)
-    }
-
-    private func statusPill(_ text: LocalizedStringKey, color: Color) -> some View {
-        Text(text)
-            .font(.caption2.weight(.bold))
-            .foregroundStyle(color)
-            .padding(.horizontal, 9)
-            .padding(.vertical, 6)
-            .background(color.opacity(0.12), in: Capsule())
-    }
-
-    private var isReady: Bool {
-        guard alertsEnabled else { return false }
-        guard notificationService.allowsNotifications else { return false }
-        if case .registered = store.pushRegistrationState { return true }
-        return false
-    }
-
-    private var headerTitle: LocalizedStringKey {
-        if !alertsEnabled { return "Same-city alerts are off" }
-        return isReady ? "Notifications are ready" : "Complete notification setup"
-    }
-
-    private var headerDetail: LocalizedStringKey {
-        if !alertsEnabled {
-            return "Same-city moments still remain available in your history."
-        }
-        return isReady
-            ? "This iPhone is ready for same-city alerts."
-            : "Two quick checks make sure same-city alerts can reach you."
     }
 
     private var permissionStatusText: LocalizedStringKey {
