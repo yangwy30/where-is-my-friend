@@ -2,20 +2,14 @@ import AppIntents
 import Foundation
 
 struct FriendWidgetConfigurationIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "Choose Friends"
-    static var description = IntentDescription("Choose which friends appear first in this Widget.")
+    static var title: LocalizedStringResource = "Widget Options"
+    static var description = IntentDescription("Leave this blank for automatic recommendations, or feature one friend.")
 
-    @Parameter(title: "First friend")
-    var firstFriend: WidgetFriendEntity?
-
-    @Parameter(title: "Second friend")
-    var secondFriend: WidgetFriendEntity?
+    @Parameter(title: "Featured friend (optional)")
+    var featuredFriend: WidgetFriendEntity?
 
     var selectedFriendIDs: [UUID] {
-        var seen = Set<UUID>()
-        return [firstFriend?.id, secondFriend?.id]
-            .compactMap { $0 }
-            .filter { seen.insert($0).inserted }
+        [featuredFriend?.id].compactMap { $0 }
     }
 }
 

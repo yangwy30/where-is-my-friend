@@ -32,16 +32,8 @@ struct FriendsView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
-                myCityCard.padding(.top, 20)
-
-                if !sameCityFriends.isEmpty {
-                    SameCityMomentCard(
-                        friends: sameCityFriends,
-                        city: store.currentCity ?? "",
-                        referenceDate: referenceDate
-                    )
-                        .padding(.top, 20)
-                }
+                cityContextCard
+                    .padding(.top, 20)
 
                 Text("Around the world")
                     .font(.caption.weight(.semibold))
@@ -169,7 +161,7 @@ struct FriendsView: View {
         }
     }
 
-    private var myCityCard: some View {
+    private var cityContextCard: some View {
         Button(action: onOpenCitySharing) {
             HStack(spacing: 12) {
                 Image(systemName: sharingIsEnabled ? "location.fill" : "location.slash.fill")
@@ -180,27 +172,35 @@ struct FriendsView: View {
                     .contentTransition(.symbolEffect(.replace))
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("You · \(store.snapshot.currentPresence.cityDisplay)")
-                        .font(.body.weight(.bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                        .lineLimit(1)
-                    Text(myCityStatusText)
-                        .font(.caption)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .lineLimit(1)
+                    HStack(spacing: 7) {
+                        Text(store.snapshot.currentPresence.cityDisplay)
+                            .font(.body.weight(.bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                            .lineLimit(1)
+
+                        Text("My city")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(WIFTheme.fresh.opacity(0.12), in: Capsule())
+                    }
+
+                    HStack(spacing: 5) {
+                        if !sameCityFriends.isEmpty {
+                            Image(systemName: "person.2.fill")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(WIFTheme.fresh)
+                        }
+
+                        Text(cityContextText)
+                            .font(.caption)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .lineLimit(1)
+                    }
                 }
 
                 Spacer(minLength: 6)
-
-                Text(sharingIsEnabled ? "Sharing" : "Paused")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(sharingIsEnabled ? WIFTheme.fresh : WIFTheme.secondaryText)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 6)
-                    .background(
-                        (sharingIsEnabled ? WIFTheme.fresh : WIFTheme.secondaryText).opacity(0.12),
-                        in: Capsule()
-                    )
 
                 Image(systemName: "chevron.right")
                     .font(.caption.weight(.bold))
@@ -215,6 +215,7 @@ struct FriendsView: View {
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
+        .accessibilityLabel("Your city, \(store.snapshot.currentPresence.cityDisplay), \(cityContextText)")
         .accessibilityIdentifier("myCitySharingCard")
     }
 
@@ -222,9 +223,24 @@ struct FriendsView: View {
         store.snapshot.sharingPreferences.citySharingEnabled
     }
 
-    private var myCityStatusText: String {
+    private var cityContextText: String {
         guard sharingIsEnabled else { return String(localized: "Friends cannot see your city") }
         guard store.currentCity != nil else { return String(localized: "Choose a city to start sharing") }
+
+        if sameCityFriends.count == 1, let friend = sameCityFriends.first {
+            return String(
+                format: String(localized: "%@ is in your city"),
+                friend.displayName
+            )
+        }
+
+        if sameCityFriends.count > 1 {
+            return String(
+                format: String(localized: "%lld friends are in your city"),
+                Int64(sameCityFriends.count)
+            )
+        }
+
         let update = store.snapshot.currentPresence.updatedAt?
             .formatted(date: .omitted, time: .shortened) ?? "—"
         return String(format: String(localized: "Updated %@ · City only"), update)

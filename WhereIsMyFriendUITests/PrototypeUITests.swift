@@ -48,7 +48,7 @@ final class PrototypeUITests: XCTestCase {
 
         let privacySettings = app.buttons["widgetPrivacySettingsLink"]
         if !privacySettings.isHittable {
-            app.tables.firstMatch.swipeUp()
+            app.scrollViews["profileSettingsScreen"].swipeUp()
         }
         XCTAssertTrue(privacySettings.waitForExistence(timeout: 3))
         privacySettings.tap()
@@ -59,7 +59,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertEqual(hideEverything.value as? String, "1")
     }
 
-    func testNotificationSettingsSeparatesPermissionAndDeviceRegistration() {
+    func testNotificationSettingsKeepsPushRegistrationAutomatic() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
@@ -74,7 +74,40 @@ final class PrototypeUITests: XCTestCase {
 
         XCTAssertTrue(app.descendants(matching: .any)["notificationSettingsScreen"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any)["notificationPermissionCard"].exists)
-        XCTAssertTrue(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
+        XCTAssertFalse(app.buttons["retryPushRegistrationButton"].exists)
+    }
+
+    func testAppearanceCanSwitchBetweenSolarAndNightJade() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        app.tabBars.buttons.element(boundBy: 1).tap()
+
+        let appearanceButton = app.buttons["appearanceSettingsButton"]
+        if !appearanceButton.isHittable {
+            app.scrollViews["profileSettingsScreen"].swipeUp()
+        }
+        XCTAssertTrue(appearanceButton.waitForExistence(timeout: 3))
+        appearanceButton.tap()
+
+        let solar = app.buttons["solarJadeAppearance"]
+        let night = app.buttons["nightJadeAppearance"]
+        XCTAssertTrue(solar.waitForExistence(timeout: 3))
+        XCTAssertTrue(night.exists)
+
+        solar.tap()
+        XCTAssertEqual(solar.value as? String, "1")
+        night.tap()
+        XCTAssertEqual(night.value as? String, "1")
+
+        app.buttons["appearanceDoneButton"].tap()
+        let profileScreen = app.scrollViews["profileSettingsScreen"]
+        XCTAssertTrue(profileScreen.waitForExistence(timeout: 3))
+        XCTAssertEqual(profileScreen.value as? String, "nightJade")
     }
 }
 

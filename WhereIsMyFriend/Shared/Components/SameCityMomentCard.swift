@@ -15,12 +15,12 @@ struct SameCityMomentCard: View {
         Group {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 14) {
-                    avatars
+                    cityMarker
                     description
                 }
             } else {
                 HStack(spacing: 14) {
-                    avatars
+                    cityMarker
                     description
                     Spacer(minLength: 0)
                     CityEmblemView(city: city, size: 48)
@@ -35,15 +35,13 @@ struct SameCityMomentCard: View {
         .accessibilityElement(children: .combine)
     }
 
-    private var avatars: some View {
-        HStack(spacing: -10) {
-            ForEach(friends.prefix(3)) { friend in
-                FriendAvatarView(friend: friend, size: 38)
-                    .overlay {
-                        Circle().stroke(WIFTheme.freshSurface, lineWidth: 2)
-                    }
-            }
-        }
+    private var cityMarker: some View {
+        Image(systemName: "location.fill")
+            .font(.headline)
+            .foregroundStyle(WIFTheme.fresh)
+            .frame(width: 42, height: 42)
+            .background(WIFTheme.fresh.opacity(0.13), in: Circle())
+            .accessibilityHidden(true)
     }
 
     private var description: some View {

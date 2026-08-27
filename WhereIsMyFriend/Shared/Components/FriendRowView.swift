@@ -29,7 +29,7 @@ struct FriendRowView: View {
 
     private var standardLayout: some View {
         HStack(spacing: 12) {
-            FriendAvatarView(friend: friend)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
 
             identity
 
@@ -44,7 +44,7 @@ struct FriendRowView: View {
 
     private var accessibilityLayout: some View {
         HStack(alignment: .top, spacing: 12) {
-            FriendAvatarView(friend: friend)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
 
             VStack(alignment: .leading, spacing: 8) {
                 identity

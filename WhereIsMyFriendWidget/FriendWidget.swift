@@ -12,7 +12,7 @@ struct FriendWidgetEntry: TimelineEntry {
 
 struct FriendTimelineProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> FriendWidgetEntry {
-        makeEntry(
+        FriendEntryFactory.makeEntry(
             date: Date(),
             sourceFriends: MockFriendData.friends,
             currentCity: MockFriendData.currentUserCity,
@@ -27,7 +27,7 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
         for configuration: FriendWidgetConfigurationIntent,
         in context: Context
     ) async -> FriendWidgetEntry {
-        makeStoredEntry(
+        FriendEntryFactory.makeStoredEntry(
             date: Date(),
             selectedFriendIDs: configuration.selectedFriendIDs
         )
@@ -38,7 +38,7 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
         in context: Context
     ) async -> Timeline<FriendWidgetEntry> {
         let now = Date()
-        let entry = makeStoredEntry(
+        let entry = FriendEntryFactory.makeStoredEntry(
             date: now,
             selectedFriendIDs: configuration.selectedFriendIDs
         )
@@ -46,7 +46,10 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
         return Timeline(entries: [entry], policy: .after(nextRefresh))
     }
 
-    private func makeStoredEntry(date: Date, selectedFriendIDs: [UUID]) -> FriendWidgetEntry {
+}
+
+private enum FriendEntryFactory {
+    static func makeStoredEntry(date: Date, selectedFriendIDs: [UUID]) -> FriendWidgetEntry {
         makeEntry(
             date: date,
             sourceFriends: SharedPresenceStore.load(),
@@ -58,7 +61,7 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
         )
     }
 
-    private func makeEntry(
+    static func makeEntry(
         date: Date,
         sourceFriends: [FriendPresence],
         currentCity: String,
@@ -84,6 +87,32 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
     }
 }
 
+struct SameCityTimelineProvider: TimelineProvider {
+    func placeholder(in context: Context) -> FriendWidgetEntry {
+        FriendEntryFactory.makeEntry(
+            date: Date(),
+            sourceFriends: MockFriendData.friends,
+            currentCity: MockFriendData.currentUserCity,
+            currentCountryCode: "US",
+            snapshotUpdatedAt: Date(),
+            privacyMode: .full,
+            selectedFriendIDs: []
+        )
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (FriendWidgetEntry) -> Void) {
+        completion(FriendEntryFactory.makeStoredEntry(date: Date(), selectedFriendIDs: []))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<FriendWidgetEntry>) -> Void) {
+        let now = Date()
+        let entry = FriendEntryFactory.makeStoredEntry(date: now, selectedFriendIDs: [])
+        let nextRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now)
+            ?? now.addingTimeInterval(1_800)
+        completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+    }
+}
+
 struct FriendWidget: Widget {
     static let kind = "WhereIsMyFriend.FriendWidget"
 
@@ -94,12 +123,41 @@ struct FriendWidget: Widget {
             provider: FriendTimelineProvider()
         ) { entry in
             FriendWidgetEntryView(entry: entry)
+                .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 .containerBackground(for: .widget) {
                     FriendWidgetBackground()
+                        .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 }
         }
-        .configurationDisplayName("Where they are")
-        .description("See the latest city your friends have chosen to share.")
+        .configurationDisplayName("City Stage")
+        .description("See your friends as miniature city stages.")
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .systemLarge,
+            .accessoryRectangular,
+            .accessoryCircular
+        ])
+    }
+}
+
+struct SameCityWidget: Widget {
+    static let kind = "WhereIsMyFriend.SameCityWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(
+            kind: Self.kind,
+            provider: SameCityTimelineProvider()
+        ) { entry in
+            SameCityWidgetEntryView(entry: entry)
+                .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                .containerBackground(for: .widget) {
+                    FriendWidgetBackground()
+                        .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                }
+        }
+        .configurationDisplayName("Together Moment")
+        .description("A focused view for friends who are in your city now.")
         .supportedFamilies([
             .systemSmall,
             .systemMedium,
@@ -151,6 +209,19 @@ private struct FriendWidgetBackground: View {
 
 #Preview("Lock Screen — Same City", as: .accessoryCircular) {
     FriendWidget()
+} timeline: {
+    FriendWidgetEntry(
+        date: .now,
+        friends: MockFriendData.friends,
+        currentCity: MockFriendData.currentUserCity,
+        currentCountryCode: "US",
+        snapshotUpdatedAt: .now,
+        privacyMode: .full
+    )
+}
+
+#Preview("Together Moment", as: .systemMedium) {
+    SameCityWidget()
 } timeline: {
     FriendWidgetEntry(
         date: .now,

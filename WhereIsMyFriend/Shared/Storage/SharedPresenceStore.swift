@@ -145,7 +145,7 @@ enum SharedWidgetPreferences {
 
     static func privacyMode() -> WidgetPrivacyMode {
         guard let rawValue = defaults.string(forKey: privacyModeKey),
-              let mode = WidgetPrivacyMode(rawValue: rawValue) else { return .hideAll }
+              let mode = WidgetPrivacyMode(rawValue: rawValue) else { return .full }
         return mode
     }
 

@@ -42,7 +42,7 @@ struct AppShellView: View {
                     }
             }
             .tabItem {
-                Label("You", systemImage: "person.crop.circle")
+                Label("You", systemImage: "person.fill")
                     .accessibilityIdentifier("profileTab")
             }
             .tag(AppTab.profile)

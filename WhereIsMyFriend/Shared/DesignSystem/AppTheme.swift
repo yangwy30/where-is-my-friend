@@ -1,50 +1,105 @@
 import SwiftUI
 import UIKit
 
+enum WIFAppearance: String, CaseIterable, Identifiable {
+    case solarJade
+    case nightJade
+
+    var id: String { rawValue }
+
+    var colorScheme: ColorScheme {
+        switch self {
+        case .solarJade: .light
+        case .nightJade: .dark
+        }
+    }
+}
+
+enum SharedAppearancePreference {
+    static let key = "wif.appearance"
+
+    static var defaults: UserDefaults {
+        UserDefaults(suiteName: SharedPresenceStore.appGroupIdentifier) ?? .standard
+    }
+
+    static var appearance: WIFAppearance {
+        get {
+            guard let rawValue = defaults.string(forKey: key),
+                  let appearance = WIFAppearance(rawValue: rawValue) else {
+                return .solarJade
+            }
+            return appearance
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: key)
+        }
+    }
+}
+
+@MainActor
+final class WIFAppearanceController: ObservableObject {
+    @Published private(set) var appearance: WIFAppearance
+
+    init(appearance: WIFAppearance = SharedAppearancePreference.appearance) {
+        self.appearance = appearance
+    }
+
+    func select(_ appearance: WIFAppearance) {
+        guard self.appearance != appearance else { return }
+        self.appearance = appearance
+        SharedAppearancePreference.appearance = appearance
+    }
+}
+
 enum WIFTheme {
     static let canvas = Color.adaptive(
-        light: UIColor(red: 0.965, green: 0.969, blue: 0.949, alpha: 1),
-        dark: UIColor(red: 0.061, green: 0.092, blue: 0.074, alpha: 1)
+        light: UIColor(red: 0.992, green: 0.984, blue: 0.949, alpha: 1),
+        dark: UIColor(red: 0.027, green: 0.067, blue: 0.043, alpha: 1)
     )
 
     static let surface = Color.adaptive(
-        light: .white,
-        dark: UIColor(red: 0.090, green: 0.133, blue: 0.106, alpha: 1)
+        light: UIColor(red: 1.000, green: 0.996, blue: 0.976, alpha: 1),
+        dark: UIColor(red: 0.067, green: 0.133, blue: 0.090, alpha: 1)
     )
 
     static let elevatedSurface = Color.adaptive(
-        light: UIColor(red: 0.929, green: 0.957, blue: 0.937, alpha: 1),
-        dark: UIColor(red: 0.118, green: 0.196, blue: 0.153, alpha: 1)
+        light: UIColor(red: 0.933, green: 0.976, blue: 0.855, alpha: 1),
+        dark: UIColor(red: 0.090, green: 0.208, blue: 0.141, alpha: 1)
     )
 
     static let primaryText = Color.adaptive(
-        light: UIColor(red: 0.090, green: 0.141, blue: 0.114, alpha: 1),
-        dark: UIColor(red: 0.929, green: 0.961, blue: 0.937, alpha: 1)
+        light: UIColor(red: 0.075, green: 0.188, blue: 0.129, alpha: 1),
+        dark: UIColor(red: 0.929, green: 0.976, blue: 0.945, alpha: 1)
     )
 
     static let secondaryText = Color.adaptive(
-        light: UIColor(red: 0.365, green: 0.424, blue: 0.392, alpha: 1),
-        dark: UIColor(red: 0.631, green: 0.694, blue: 0.655, alpha: 1)
+        light: UIColor(red: 0.365, green: 0.447, blue: 0.373, alpha: 1),
+        dark: UIColor(red: 0.620, green: 0.710, blue: 0.639, alpha: 1)
     )
 
     static let fresh = Color.adaptive(
-        light: UIColor(red: 0.157, green: 0.420, blue: 0.290, alpha: 1),
-        dark: UIColor(red: 0.486, green: 0.820, blue: 0.635, alpha: 1)
+        light: UIColor(red: 0.016, green: 0.459, blue: 0.322, alpha: 1),
+        dark: UIColor(red: 0.651, green: 0.902, blue: 0.467, alpha: 1)
     )
 
     static let freshSurface = Color.adaptive(
-        light: UIColor(red: 0.867, green: 0.949, blue: 0.902, alpha: 1),
-        dark: UIColor(red: 0.125, green: 0.286, blue: 0.208, alpha: 1)
+        light: UIColor(red: 0.855, green: 0.957, blue: 0.694, alpha: 1),
+        dark: UIColor(red: 0.098, green: 0.235, blue: 0.157, alpha: 1)
     )
 
     static let eventBlue = Color.adaptive(
-        light: UIColor(red: 0.855, green: 0.898, blue: 0.996, alpha: 1),
-        dark: UIColor(red: 0.153, green: 0.216, blue: 0.365, alpha: 1)
+        light: UIColor(red: 0.867, green: 0.961, blue: 0.925, alpha: 1),
+        dark: UIColor(red: 0.075, green: 0.153, blue: 0.224, alpha: 1)
+    )
+
+    static let sunGlow = Color.adaptive(
+        light: UIColor(red: 1.000, green: 0.824, blue: 0.302, alpha: 1),
+        dark: UIColor(red: 0.804, green: 0.969, blue: 0.302, alpha: 1)
     )
 
     static let border = Color.adaptive(
-        light: UIColor(red: 0.870, green: 0.894, blue: 0.878, alpha: 0.72),
-        dark: UIColor(red: 0.169, green: 0.224, blue: 0.188, alpha: 0.72)
+        light: UIColor(red: 0.710, green: 0.824, blue: 0.741, alpha: 0.66),
+        dark: UIColor(red: 0.176, green: 0.302, blue: 0.224, alpha: 0.76)
     )
 
     static let destructive = Color.adaptive(
@@ -106,7 +161,7 @@ struct WIFAmbientBackground: View {
                     .offset(x: 150, y: -280)
 
                 Circle()
-                    .fill(Color.blue.opacity(0.14))
+                    .fill(WIFTheme.sunGlow.opacity(0.13))
                     .frame(width: 280, height: 280)
                     .blur(radius: 82)
                     .offset(x: -170, y: 330)

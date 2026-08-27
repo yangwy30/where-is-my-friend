@@ -52,11 +52,11 @@ struct AddFriendView: View {
 
     private var yourUsernameCard: some View {
         HStack(spacing: 13) {
-            Text(store.snapshot.currentUser.initials)
-                .font(.headline)
-                .foregroundStyle(.white)
+            Image(systemName: "at")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(WIFTheme.fresh)
                 .frame(width: 48, height: 48)
-                .background(WIFTheme.fresh.gradient, in: Circle())
+                .background(WIFTheme.fresh.opacity(0.12), in: Circle())
 
             VStack(alignment: .leading, spacing: 3) {
                 Text("Your username")
@@ -70,7 +70,7 @@ struct AddFriendView: View {
 
             Spacer()
 
-            Image(systemName: "person.crop.circle.badge.checkmark")
+            Image(systemName: "checkmark.seal.fill")
                 .font(.title3)
                 .foregroundStyle(WIFTheme.fresh)
         }
@@ -154,20 +154,7 @@ struct AddFriendView: View {
 
     private func requestRow(_ request: FriendRequest, isIncoming: Bool) -> some View {
         let isResponding = store.isResponding(to: request.id)
-        let friend = FriendPresence(
-            id: request.userID,
-            displayName: request.displayName,
-            username: request.username,
-            city: nil,
-            countryCode: nil,
-            updatedAt: nil,
-            sharingState: .unavailable,
-            avatarPalette: request.avatarPalette
-        )
-
         return HStack(spacing: 12) {
-            FriendAvatarView(friend: friend, size: 42)
-
             VStack(alignment: .leading, spacing: 2) {
                 Text(request.displayName).font(.body.weight(.semibold))
                 Text("@\(request.username)").font(.caption).foregroundStyle(WIFTheme.secondaryText)

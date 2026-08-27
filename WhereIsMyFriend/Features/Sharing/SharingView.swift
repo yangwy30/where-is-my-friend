@@ -11,74 +11,116 @@ struct CitySharingSheet: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    locationSummaryRow
-                }
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    cityHero
 
-                Section {
-                    Toggle("Share my city with friends", isOn: citySharingBinding)
-                        .tint(WIFTheme.fresh)
-                        .disabled(store.isWorking)
-                        .accessibilityIdentifier("citySharingToggle")
-                } footer: {
-                    Text("Your per-friend choices still apply")
-                }
+                    Toggle(isOn: citySharingBinding) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Share my city")
+                                .font(.headline)
+                                .foregroundStyle(WIFTheme.primaryText)
+                            Text("Your per-friend choices still apply")
+                                .font(.subheadline)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                    }
+                    .tint(WIFTheme.fresh)
+                    .disabled(store.isWorking)
+                    .wifSettingsGlassCard(tint: WIFTheme.fresh.opacity(0.10))
+                    .accessibilityIdentifier("citySharingToggle")
 
-                Section("Location") {
-                    Button {
-                        locationService.requestForegroundCity()
-                    } label: {
-                        Label {
-                            HStack {
-                                Text("Update from current location")
-                                Spacer()
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("City source")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .padding(.bottom, 10)
+
+                        Button {
+                            showsSourceOptions = true
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: sourceSymbol)
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundStyle(WIFTheme.fresh)
+                                    .frame(width: 42, height: 42)
+                                    .background(WIFTheme.fresh.opacity(0.11), in: Circle())
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(citySourceTitle)
+                                        .font(.body.weight(.semibold))
+                                        .foregroundStyle(WIFTheme.primaryText)
+                                    Text(citySourceDetail)
+                                        .font(.caption)
+                                        .foregroundStyle(WIFTheme.secondaryText)
+                                }
+
+                                Spacer(minLength: 8)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(WIFTheme.secondaryText)
+                            }
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("citySourceButton")
+
+                        Divider()
+                            .overlay(WIFTheme.border)
+                            .padding(.vertical, 14)
+
+                        Button {
+                            locationService.requestForegroundCity()
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: locationService.isResolving ? "arrow.trianglehead.2.clockwise.rotate.90" : "arrow.clockwise")
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundStyle(WIFTheme.fresh)
+                                    .frame(width: 42, height: 42)
+                                    .background(WIFTheme.eventBlue.opacity(0.42), in: Circle())
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Refresh now")
+                                        .font(.body.weight(.semibold))
+                                        .foregroundStyle(WIFTheme.primaryText)
+                                    Text("Use your current location for this city")
+                                        .font(.caption)
+                                        .foregroundStyle(WIFTheme.secondaryText)
+                                }
+
+                                Spacer(minLength: 8)
+
                                 if locationService.isResolving {
                                     ProgressView()
+                                        .tint(WIFTheme.fresh)
                                 }
                             }
-                        } icon: {
-                            Image(systemName: "location.fill")
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
+                        .disabled(locationService.isResolving)
+                        .accessibilityIdentifier("useCurrentCityButton")
                     }
-                    .disabled(locationService.isResolving)
-                    .accessibilityIdentifier("useCurrentCityButton")
+                    .wifSettingsGlassCard()
 
-                    Button {
-                        showsSourceOptions = true
-                    } label: {
-                        HStack {
-                            Label("City source", systemImage: "arrow.triangle.branch")
-                            Spacer()
-                            Text(citySourceTitle)
-                                .foregroundStyle(.secondary)
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.tertiary)
-                        }
-                    }
-                    .accessibilityIdentifier("citySourceButton")
-                }
-
-                if let errorMessage = locationService.errorMessage {
-                    Section {
+                    if let errorMessage = locationService.errorMessage {
                         Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                            .font(.footnote.weight(.semibold))
                             .foregroundStyle(WIFTheme.destructive)
+                            .wifSettingsGlassCard(tint: WIFTheme.destructive.opacity(0.08))
                     }
-                }
 
-                Section {
-                    Label(
-                        "Only your city and update time are shared. Precise location and routes are never stored.",
-                        systemImage: "hand.raised.fill"
-                    )
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    Text("Only your city and update time are shared. Precise location and routes are never stored.")
+                        .font(.footnote)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .padding(.horizontal, 4)
+                        .padding(.bottom, 20)
                 }
+                .padding(WIFTheme.screenInset)
             }
-            .listStyle(.insetGrouped)
+            .scrollIndicators(.hidden)
+            .wifAmbientBackground()
             .navigationTitle("City sharing")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -116,29 +158,30 @@ struct CitySharingSheet: View {
         .accessibilityIdentifier("citySharingSheet")
     }
 
-    private var locationSummaryRow: some View {
-        VStack(spacing: 8) {
-            Image(systemName: sharingIsEnabled ? "location.circle.fill" : "pause.circle.fill")
-                .font(.system(size: 42, weight: .semibold))
-                .foregroundStyle(sharingIsEnabled ? WIFTheme.fresh : .secondary)
-                .contentTransition(.symbolEffect(.replace))
+    private var cityHero: some View {
+        HStack(spacing: 16) {
+            CityEmblemView(
+                city: store.currentCity,
+                countryCode: store.snapshot.currentPresence.countryCode,
+                size: 82
+            )
 
-            Text(store.snapshot.currentPresence.cityDisplay)
-                .font(.title2.bold())
-                .multilineTextAlignment(.center)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(store.snapshot.currentPresence.cityDisplay)
+                    .font(.title2.bold())
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.78)
 
-            Text(sharingStatusText)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+                Text(sharingStatusText)
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .padding(.horizontal, 16)
-        .background(
-            Color(uiColor: .secondarySystemGroupedBackground),
-            in: RoundedRectangle(cornerRadius: 22, style: .continuous)
-        )
+        .wifSettingsGlassCard(tint: sharingIsEnabled ? WIFTheme.fresh.opacity(0.13) : WIFTheme.surface.opacity(0.07))
         .animation(.spring(response: 0.42, dampingFraction: 0.8), value: sharingIsEnabled)
     }
 
@@ -179,6 +222,16 @@ struct CitySharingSheet: View {
         }
     }
 
+    private var sourceSymbol: String {
+        store.snapshot.sharingPreferences.backgroundUpdatesEnabled ? "arrow.triangle.branch" : "hand.tap.fill"
+    }
+
+    private var citySourceDetail: String {
+        store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+            ? "Updates when your city meaningfully changes"
+            : "Choose automatic or manual updates"
+    }
+
     private var citySharingBinding: Binding<Bool> {
         Binding {
             sharingIsEnabled
@@ -206,18 +259,46 @@ private struct CityPickerView: View {
 
     var body: some View {
         NavigationStack {
-            List(cities, id: \.0) { city, code, flag in
-                Button {
-                    onSelect(city, code)
-                    dismiss()
-                } label: {
-                    HStack {
-                        Text(flag).font(.title2)
-                        Text(city).foregroundStyle(WIFTheme.primaryText)
-                        Spacer()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    WIFSettingsPageHero(
+                        symbol: "building.2.crop.circle.fill",
+                        title: "Choose your city",
+                        detail: "Your friends see the city you choose, never a precise location."
+                    )
+
+                    VStack(spacing: 10) {
+                        ForEach(cities, id: \.0) { city, code, flag in
+                            Button {
+                                onSelect(city, code)
+                                dismiss()
+                            } label: {
+                                HStack(spacing: 14) {
+                                    CityEmblemView(city: city, countryCode: code, size: 48)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(city)
+                                            .font(.body.weight(.semibold))
+                                            .foregroundStyle(WIFTheme.primaryText)
+                                        Text("\(flag)  \(code)")
+                                            .font(.caption)
+                                            .foregroundStyle(WIFTheme.secondaryText)
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(WIFTheme.secondaryText)
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .wifSettingsGlassCard(tint: WIFTheme.surface.opacity(0.07))
+                        }
                     }
                 }
+                .padding(WIFTheme.screenInset)
             }
+            .scrollIndicators(.hidden)
+            .wifAmbientBackground()
             .accessibilityIdentifier("cityPickerScreen")
             .navigationTitle("Choose city manually")
             .navigationBarTitleDisplayMode(.inline)

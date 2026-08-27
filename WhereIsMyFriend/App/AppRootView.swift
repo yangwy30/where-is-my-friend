@@ -1,10 +1,12 @@
 import SwiftUI
+import WidgetKit
 
 struct AppRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("prototype.hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @StateObject private var store = AppStore()
     @StateObject private var locationService = CityLocationService()
+    @StateObject private var appearanceController = WIFAppearanceController()
 
     private var skipsOnboarding: Bool {
         ProcessInfo.processInfo.arguments.contains("-skipOnboarding")
@@ -26,7 +28,9 @@ struct AppRootView: View {
         }
         .environmentObject(store)
         .environmentObject(locationService)
-        .preferredColorScheme(nil)
+        .environmentObject(appearanceController)
+        .tint(WIFTheme.fresh)
+        .preferredColorScheme(appearanceController.appearance.colorScheme)
         .task {
             await store.refresh()
             await store.preparePushRegistrationIfAuthorized()
@@ -40,6 +44,9 @@ struct AppRootView: View {
         }
         .onChange(of: backgroundUpdatesShouldRun, initial: true) { _, shouldRun in
             locationService.setBackgroundUpdatesEnabled(shouldRun)
+        }
+        .onChange(of: appearanceController.appearance) { _, _ in
+            WidgetCenter.shared.reloadAllTimelines()
         }
         .onOpenURL { _ = store.handleIncomingURL($0) }
         .onReceive(locationService.$latestCity.compactMap { $0 }.removeDuplicates()) { update in
@@ -108,7 +115,7 @@ private struct IncomingInviteView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                Image(systemName: "person.crop.circle.badge.plus")
+                Image(systemName: "link.badge.plus")
                     .font(.system(size: 58))
                     .foregroundStyle(WIFTheme.fresh)
                 Text("Connect with @\(invite.username)?")

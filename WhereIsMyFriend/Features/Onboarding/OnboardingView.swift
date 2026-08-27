@@ -140,8 +140,10 @@ private struct OnboardingIllustration: View {
                 .symbolRenderingMode(.hierarchical)
 
             if pageIndex == 0 {
-                avatar(initials: "M", color: .pink, x: -102, y: 66)
-                avatar(initials: "L", color: .mint, x: 104, y: -66)
+                CityEmblemView(city: "New York", countryCode: "US", size: 66)
+                    .offset(x: -100, y: 70)
+                CityEmblemView(city: "Tokyo", countryCode: "JP", size: 66)
+                    .offset(x: 102, y: -70)
             } else if pageIndex == 2 {
                 cityLabel("NEW YORK", x: -74, y: 88)
                 cityLabel("TOKYO", x: 82, y: -86)
@@ -155,16 +157,6 @@ private struct OnboardingIllustration: View {
         )
         .padding(.horizontal, WIFTheme.screenInset)
         .accessibilityHidden(true)
-    }
-
-    private func avatar(initials: String, color: Color, x: CGFloat, y: CGFloat) -> some View {
-        Text(initials)
-            .font(.headline)
-            .foregroundStyle(.white)
-            .frame(width: 48, height: 48)
-            .background(color.gradient, in: Circle())
-            .overlay { Circle().stroke(WIFTheme.surface, lineWidth: 3) }
-            .offset(x: x, y: y)
     }
 
     private func cityLabel(_ text: String, x: CGFloat, y: CGFloat) -> some View {

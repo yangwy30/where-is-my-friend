@@ -19,20 +19,17 @@ struct FriendDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                FriendAvatarView(friend: currentFriend, size: 84)
-                    .padding(.top, 8)
-
                 Text(currentFriend.displayName)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(.system(.largeTitle, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
-                    .padding(.top, 12)
+                    .padding(.top, 18)
 
                 Text("@\(currentFriend.username)")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.top, 3)
 
-                citySurface.padding(.top, 24)
+                citySurface.padding(.top, 20)
 
                 sectionLabel("Between you two").padding(.top, 24)
 
