@@ -13,6 +13,7 @@ struct ProfileView: View {
     @State private var showsSignOutConfirmation = false
     @State private var showsEditProfile = false
     @State private var showsAppearanceSettings = false
+    @State private var isShowingOnboarding = false
 
     init(
         onReplayOnboarding: @escaping () -> Void,
@@ -185,7 +186,9 @@ struct ProfileView: View {
 
                         menuDivider
 
-                        Button(action: onReplayOnboarding) {
+                        Button {
+                            isShowingOnboarding = true
+                        } label: {
                             profileMenuRow(
                                 "Preview onboarding",
                                 subtitle: "A quick introduction before you start",
@@ -247,6 +250,11 @@ struct ProfileView: View {
         .accessibilityIdentifier("profileSettingsScreen")
         .accessibilityValue(appearance.rawValue)
         .toolbar(.hidden, for: .navigationBar)
+        .fullScreenCover(isPresented: $isShowingOnboarding) {
+            OnboardingView {
+                isShowingOnboarding = false
+            }
+        }
         .sheet(isPresented: $showsEditProfile) {
             EditProfileView()
                 .presentationDetents([.large])
@@ -269,7 +277,7 @@ struct ProfileView: View {
         } message: {
             Text(store.repositoryMode == .localDemo
                  ? "This removes the local demo account and cached Widget data."
-                 : "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Where Is My Friend under Sign in with Apple in your Apple Account settings.")
+                 : "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Across Us under Sign in with Apple in your Apple Account settings.")
         }
     }
 
@@ -716,7 +724,7 @@ private struct WidgetPrivacyView: View {
                     )
                 }
 
-                Text("This controls Where Is My Friend widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked.")
+                Text("This controls Across Us widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked.")
                     .font(.footnote)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.horizontal, 4)
