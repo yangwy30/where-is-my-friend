@@ -51,7 +51,7 @@ struct SameCityWidgetEntryView: View {
     }
 }
 
-// MARK: - Solar Ambience Helper (10-15% Subtle Edge Mood)
+// MARK: - Solar Ambience (8-12% Subtle Edge Halo, No Weather Clutter)
 
 enum SolarAmbience {
     case dawn
@@ -71,24 +71,15 @@ enum SolarAmbience {
 
     var edgeTint: Color {
         switch self {
-        case .dawn: return Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.18)
-        case .day: return Color(red: 0.38, green: 0.68, blue: 0.96).opacity(0.14)
-        case .goldenHour: return Color(red: 0.98, green: 0.58, blue: 0.24).opacity(0.20)
-        case .night: return Color(red: 0.35, green: 0.45, blue: 0.88).opacity(0.18)
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .dawn: return "sun.horizon.fill"
-        case .day: return "sun.max.fill"
-        case .goldenHour: return "sun.dust.fill"
-        case .night: return "moon.stars.fill"
+        case .dawn: return Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.12)
+        case .day: return Color(red: 0.38, green: 0.68, blue: 0.96).opacity(0.10)
+        case .goldenHour: return Color(red: 0.98, green: 0.58, blue: 0.24).opacity(0.12)
+        case .night: return Color(red: 0.35, green: 0.45, blue: 0.88).opacity(0.12)
         }
     }
 }
 
-// MARK: - Presentation Helper
+// MARK: - Presentation Helpers
 
 enum WidgetCityPresentation {
     static func sameCityFriends(in entry: FriendWidgetEntry) -> [FriendPresence] {
@@ -106,13 +97,13 @@ enum WidgetCityPresentation {
 
     static func names(_ friends: [FriendPresence], privacyMode: WidgetPrivacyMode) -> String {
         guard privacyMode == .full else {
-            return String(localized: "Friends are here too")
+            return String(localized: "Friends")
         }
-        return friends.prefix(3).map(firstName).joined(separator: " · ")
+        return friends.prefix(2).map(firstName).joined(separator: " · ")
     }
 }
 
-// MARK: - Medium Widget (Dual Orbit 3D 对望)
+// MARK: - Medium Widget (Dual Orbit: Smart Cross-City vs Same-City Merge)
 
 private struct MediumFriendWidget: View {
     let entry: FriendWidgetEntry
@@ -121,46 +112,103 @@ private struct MediumFriendWidget: View {
         entry.friends.first
     }
 
+    private var sameCityFriends: [FriendPresence] {
+        WidgetCityPresentation.sameCityFriends(in: entry)
+    }
+
     private var userCity: String {
         entry.currentCity.isEmpty ? "New York" : entry.currentCity
     }
 
-    private var solarMood: SolarAmbience {
-        SolarAmbience.current(for: entry.date)
+    private var isSameCity: Bool {
+        guard let friend = primaryFriend else { return false }
+        return CityIdentity.matches(
+            city: friend.city,
+            countryCode: friend.countryCode,
+            otherCity: entry.currentCity,
+            otherCountryCode: entry.currentCountryCode
+        ) || !sameCityFriends.isEmpty
     }
 
     var body: some View {
         Link(destination: SharedAppLink.make(host: "home")) {
-            if let friend = primaryFriend {
-                dualOrbitView(friend: friend)
+            if isSameCity {
+                sameCityMergedView
+            } else if let friend = primaryFriend {
+                crossCityOrbitView(friend: friend)
             } else {
                 WidgetEmptyState(entry: entry)
             }
         }
     }
 
-    @ViewBuilder
-    private func dualOrbitView(friend: FriendPresence) -> some View {
-        let friendCity = friend.city ?? "Tokyo"
-        let isSameCity = CityIdentity.matches(
-            city: friend.city,
-            countryCode: friend.countryCode,
-            otherCity: entry.currentCity,
-            otherCountryCode: entry.currentCountryCode
-        )
+    // 🟢 Same-City: Single Unified Hero Stage (Zero Redundancy)
+    private var sameCityMergedView: some View {
+        let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+        let count = max(1, sameCityFriends.count)
+        let friendNames = sameCityFriends.isEmpty
+            ? (primaryFriend != nil ? WidgetCityPresentation.firstName(primaryFriend!) : "Friend")
+            : WidgetCityPresentation.names(sameCityFriends, privacyMode: entry.privacyMode)
 
-        HStack(spacing: 0) {
-            // Left: User City Stage
-            VStack(spacing: 3) {
+        return HStack(spacing: 16) {
+            CityEmblemView(
+                city: city,
+                countryCode: entry.currentCountryCode,
+                size: 86
+            )
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text(city)
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .lineLimit(1)
+
+                Text(friendNames)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(1)
+
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(WIFTheme.fresh)
+                        .frame(width: 5, height: 5)
+
+                    Text(count == 1 ? "Together" : "\(count) together")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(WIFTheme.fresh)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3.5)
+                .background(
+                    Capsule()
+                        .fill(WIFTheme.fresh.opacity(0.16))
+                )
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(WIFTheme.fresh.opacity(0.08))
+        )
+    }
+
+    // ✈️ Cross-City: Dual 3D Orbit (Clean Bridge)
+    private func crossCityOrbitView(friend: FriendPresence) -> some View {
+        let friendCity = friend.city ?? "Tokyo"
+        let friendName = entry.privacyMode == .full
+            ? WidgetCityPresentation.firstName(friend)
+            : "Friend"
+
+        return HStack(spacing: 0) {
+            // Left: User City
+            VStack(spacing: 4) {
                 CityEmblemView(
                     city: userCity,
                     countryCode: entry.currentCountryCode,
                     size: 68
                 )
-
-                Text("Me")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.secondaryText)
 
                 Text(userCity)
                     .font(.system(.caption, design: .rounded, weight: .bold))
@@ -168,228 +216,209 @@ private struct MediumFriendWidget: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(solarMood.edgeTint.opacity(0.35))
-            )
 
-            // Center Connector: Minimal Orbit Arc
-            VStack(spacing: 4) {
-                if isSameCity {
-                    HStack(spacing: 3) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 9, weight: .bold))
-                        Text("Together")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                    }
-                    .foregroundStyle(WIFTheme.fresh)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3.5)
-                    .background(
-                        Capsule()
-                            .fill(WIFTheme.fresh.opacity(0.18))
-                            .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1))
-                    )
-                } else {
-                    HStack(spacing: 3) {
-                        Circle()
-                            .fill(WIFTheme.secondaryText.opacity(0.40))
-                            .frame(width: 4, height: 4)
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        WIFTheme.secondaryText.opacity(0.25),
-                                        WIFTheme.fresh.opacity(0.50),
-                                        WIFTheme.secondaryText.opacity(0.25)
-                                    ],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
+            // Center: Minimal Orbit Track
+            VStack(spacing: 0) {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(WIFTheme.secondaryText.opacity(0.35))
+                        .frame(width: 3.5, height: 3.5)
+
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    WIFTheme.secondaryText.opacity(0.20),
+                                    WIFTheme.fresh.opacity(0.45),
+                                    WIFTheme.secondaryText.opacity(0.20)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
                             )
-                            .frame(width: 32, height: 1.5)
-                        Circle()
-                            .fill(WIFTheme.fresh.opacity(0.80))
-                            .frame(width: 4, height: 4)
-                    }
+                        )
+                        .frame(width: 28, height: 1.5)
 
-                    Image(systemName: "arrow.left.and.right")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(WIFTheme.secondaryText.opacity(0.60))
+                    Circle()
+                        .fill(WIFTheme.fresh.opacity(0.75))
+                        .frame(width: 3.5, height: 3.5)
                 }
             }
-            .padding(.horizontal, 6)
+            .padding(.horizontal, 4)
 
-            // Right: Featured Friend City Stage
-            VStack(spacing: 3) {
+            // Right: Friend City
+            VStack(spacing: 4) {
                 CityEmblemView(
                     city: friend.city,
                     countryCode: friend.countryCode,
                     size: 68
                 )
 
-                Text(entry.privacyMode == .full ? WidgetCityPresentation.firstName(friend) : "Friend")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .lineLimit(1)
+                VStack(spacing: 1) {
+                    Text(friendCity)
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
 
-                Text(friendCity)
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
+                    Text(friendName)
+                        .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .lineLimit(1)
+                }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isSameCity ? WIFTheme.fresh.opacity(0.12) : Color.white.opacity(0.04))
-            )
         }
         .padding(10)
     }
 }
 
-// MARK: - Small Widget (Hero Stage 3D 单人手办)
+// MARK: - Small Widget (Friend is the Hero Protagonist)
 
 private struct SmallFriendWidget: View {
     let entry: FriendWidgetEntry
+
+    private var targetFriend: FriendPresence? {
+        entry.friends.first
+    }
 
     private var sameCityFriends: [FriendPresence] {
         WidgetCityPresentation.sameCityFriends(in: entry)
     }
 
-    private var displayCity: String {
-        entry.currentCity.isEmpty ? "New York" : entry.currentCity
-    }
-
-    private var solarMood: SolarAmbience {
-        SolarAmbience.current(for: entry.date)
-    }
-
     var body: some View {
         Link(destination: SharedAppLink.make(host: "home")) {
-            VStack(spacing: 4) {
-                HStack {
-                    Label(displayCity, systemImage: "location.fill")
-                        .font(.caption2.weight(.bold))
+            if !sameCityFriends.isEmpty {
+                // Same city state
+                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                let name = WidgetCityPresentation.firstName(sameCityFriends[0])
+                VStack(spacing: 3) {
+                    CityEmblemView(
+                        city: city,
+                        countryCode: entry.currentCountryCode,
+                        size: 70
+                    )
+
+                    Text(city)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
-                    Spacer(minLength: 0)
-                    Image(systemName: solarMood.symbol)
-                        .font(.caption2)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                }
 
-                Spacer(minLength: 0)
-
-                CityEmblemView(
-                    city: entry.currentCity,
-                    countryCode: entry.currentCountryCode,
-                    size: 68
-                )
-
-                Spacer(minLength: 0)
-
-                if !sameCityFriends.isEmpty {
-                    HStack(spacing: 3) {
-                        Image(systemName: "person.2.fill")
-                            .font(.system(size: 8.5, weight: .bold))
-                        Text(sameCityFriends.count == 1
-                             ? "\(WidgetCityPresentation.firstName(sameCityFriends[0])) here"
-                             : "\(sameCityFriends.count) together")
-                            .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                    }
-                    .foregroundStyle(WIFTheme.fresh)
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
-                    .background(
-                        Capsule()
-                            .fill(WIFTheme.fresh.opacity(0.18))
-                            .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1))
-                    )
-                } else {
-                    Text(entry.friends.isEmpty ? "No friends yet" : "\(entry.friends.count) friends around")
-                        .font(.system(size: 9.5, weight: .medium, design: .rounded))
-                        .foregroundStyle(WIFTheme.secondaryText)
+                    Text("\(name) · Together")
+                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
                         .lineLimit(1)
                 }
+                .padding(8)
+            } else if let friend = targetFriend {
+                // Focus on friend's city
+                let city = friend.city ?? friend.cityDisplay
+                let name = entry.privacyMode == .full ? WidgetCityPresentation.firstName(friend) : "Friend"
+                VStack(spacing: 3) {
+                    CityEmblemView(
+                        city: friend.city,
+                        countryCode: friend.countryCode,
+                        size: 70
+                    )
+
+                    Text(city)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
+
+                    Text(name)
+                        .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .lineLimit(1)
+                }
+                .padding(8)
+            } else {
+                WidgetEmptyState(entry: entry)
             }
-            .padding(10)
         }
     }
 }
 
-// MARK: - Large Widget (Constellation 4-City Stage)
+// MARK: - Large Widget (Constellation: 1 Hero Stage + 3 Companion Nodes)
 
 private struct LargeFriendWidget: View {
     let entry: FriendWidgetEntry
 
-    private var visibleFriends: [FriendPresence] {
-        Array(entry.friends.prefix(4))
+    private var heroFriend: FriendPresence? {
+        entry.friends.first
+    }
+
+    private var companionFriends: [FriendPresence] {
+        Array(entry.friends.dropFirst().prefix(3))
     }
 
     var body: some View {
         Link(destination: SharedAppLink.make(host: "home")) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Friend Orbit")
-                        .font(.system(.subheadline, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                    Spacer()
-                    Text("\(Set(entry.friends.compactMap(\.city)).count) cities")
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(WIFTheme.secondaryText)
+            VStack(spacing: 12) {
+                // Top Hero Centerpiece
+                if let hero = heroFriend {
+                    VStack(spacing: 4) {
+                        CityEmblemView(
+                            city: hero.city,
+                            countryCode: hero.countryCode,
+                            size: 80
+                        )
+
+                        Text(hero.city ?? hero.cityDisplay)
+                            .font(.system(.headline, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                            .lineLimit(1)
+
+                        Text(entry.privacyMode == .full ? hero.displayName : "Friend")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.white.opacity(0.04))
+                    )
                 }
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(visibleFriends) { friend in
-                        WidgetCityStageCard(
-                            friend: friend,
-                            referenceDate: entry.date,
-                            privacyMode: entry.privacyMode,
-                            emblemSize: 66
-                        )
+                // Bottom Orbit Nodes (3 Companion Cities)
+                if !companionFriends.isEmpty {
+                    HStack(spacing: 8) {
+                        ForEach(companionFriends) { friend in
+                            VStack(spacing: 2) {
+                                CityEmblemView(
+                                    city: friend.city,
+                                    countryCode: friend.countryCode,
+                                    size: 48
+                                )
+
+                                Text(friend.city ?? "—")
+                                    .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                                    .foregroundStyle(WIFTheme.primaryText)
+                                    .lineLimit(1)
+
+                                Text(entry.privacyMode == .full ? WidgetCityPresentation.firstName(friend) : "Friend")
+                                    .font(.system(size: 8.5, weight: .medium))
+                                    .foregroundStyle(WIFTheme.secondaryText)
+                                    .lineLimit(1)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                    .fill(Color.white.opacity(0.03))
+                            )
+                        }
                     }
                 }
 
                 Spacer(minLength: 0)
             }
-            .padding(10)
+            .padding(12)
         }
     }
 }
 
-private struct WidgetCityStageCard: View {
-    let friend: FriendPresence
-    let referenceDate: Date
-    let privacyMode: WidgetPrivacyMode
-    let emblemSize: CGFloat
-
-    var body: some View {
-        VStack(spacing: 2) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: emblemSize)
-
-            Text(privacyMode == .full ? WidgetCityPresentation.firstName(friend) : String(localized: "Friend"))
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(WIFTheme.primaryText)
-                .lineLimit(1)
-
-            Text(friend.city ?? friend.cityDisplay)
-                .font(.system(size: 9.5, weight: .medium))
-                .foregroundStyle(WIFTheme.secondaryText)
-                .lineLimit(1)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.vertical, 4)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.white.opacity(0.04))
-        )
-    }
-}
-
-// MARK: - Same City Widgets (Together Moments)
+// MARK: - Same City Dedicated Widgets
 
 private struct SmallSameCityWidget: View {
     let entry: FriendWidgetEntry
@@ -403,34 +432,25 @@ private struct SmallSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
-                VStack(spacing: 4) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "sparkles")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(WIFTheme.fresh)
-                        Text(entry.currentCity)
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-                        Spacer(minLength: 0)
-                    }
-
-                    Spacer(minLength: 0)
-
+                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                VStack(spacing: 3) {
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
-                        size: 68
+                        size: 70
                     )
 
-                    Spacer(minLength: 0)
+                    Text(city)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
 
-                    Text(WidgetCityPresentation.names(friends, privacyMode: entry.privacyMode))
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                    Text("\(WidgetCityPresentation.names(friends, privacyMode: entry.privacyMode)) · \(friends.count) together")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
                         .foregroundStyle(WIFTheme.fresh)
                         .lineLimit(1)
                 }
-                .padding(10)
+                .padding(8)
             }
         }
     }
@@ -448,27 +468,31 @@ private struct MediumSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
-                HStack(spacing: 12) {
+                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                HStack(spacing: 16) {
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
-                        size: 84
+                        size: 86
                     )
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label("Together in \(entry.currentCity)", systemImage: "sparkles")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.fresh)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(city)
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
 
-                        Text("You and \(WidgetCityPresentation.names(friends, privacyMode: entry.privacyMode))")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(2)
-
-                        Text(String(format: String(localized: "%lld friends in city now"), Int64(friends.count)))
-                            .font(.caption2)
+                        Text(WidgetCityPresentation.names(friends, privacyMode: entry.privacyMode))
+                            .font(.subheadline.weight(.semibold))
                             .foregroundStyle(WIFTheme.secondaryText)
+                            .lineLimit(1)
+
+                        Text("\(friends.count) together")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3.5)
+                            .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
                     }
                     Spacer(minLength: 0)
                 }
@@ -490,37 +514,33 @@ private struct LargeSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
+                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
                 VStack(spacing: 8) {
-                    Label("Together Moment", systemImage: "sparkles")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(WIFTheme.fresh)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.14), in: Capsule())
-
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
-                        size: 110
+                        size: 112
                     )
 
-                    Text(entry.currentCity)
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                    Text(city)
+                        .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
 
                     Text(WidgetCityPresentation.names(friends, privacyMode: entry.privacyMode))
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(WIFTheme.secondaryText)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
+                        .lineLimit(1)
 
-                    Text(String(format: String(localized: "%lld friends in your city"), Int64(friends.count)))
+                    Text("\(friends.count) together")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(WIFTheme.fresh)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(12)
+                .padding(14)
             }
         }
     }
@@ -530,6 +550,7 @@ private struct WidgetTogetherEmptyState: View {
     let entry: FriendWidgetEntry
 
     var body: some View {
+        let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
         HStack(spacing: 12) {
             CityEmblemView(
                 city: entry.currentCity,
@@ -538,10 +559,10 @@ private struct WidgetTogetherEmptyState: View {
             )
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("No friends here yet")
+                Text(city)
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text(entry.currentCity.isEmpty ? String(localized: "Open App to set city") : entry.currentCity)
+                Text("No friends here yet")
                     .font(.caption2)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(2)
@@ -733,7 +754,7 @@ private enum LockScreenWidgetPresentation {
     }
 }
 
-// MARK: - Generic States
+// MARK: - Generic Empty / Private States
 
 private struct WidgetPrivateState: View {
     var body: some View {
@@ -748,10 +769,6 @@ private struct WidgetPrivateState: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)
-                Text("Change Widget privacy in the App")
-                    .font(.caption2)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -763,27 +780,20 @@ private struct WidgetEmptyState: View {
 
     var body: some View {
         Link(destination: SharedAppLink.make(host: "home")) {
-            VStack(spacing: 8) {
-                if entry.currentCity.isEmpty {
-                    Image(systemName: "sparkles")
-                        .font(.title)
-                        .foregroundStyle(WIFTheme.fresh)
-                        .padding(12)
-                        .wifGlassSurface(tint: WIFTheme.eventBlue.opacity(0.14), in: Circle())
-                } else {
-                    CityEmblemView(
-                        city: entry.currentCity,
-                        countryCode: entry.currentCountryCode,
-                        size: 78
-                    )
-                }
+            let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+            VStack(spacing: 6) {
+                CityEmblemView(
+                    city: city,
+                    countryCode: entry.currentCountryCode,
+                    size: 68
+                )
 
-                Text(entry.currentCity.isEmpty ? String(localized: "Open Where Is My Friend") : entry.currentCity)
-                    .font(.caption.weight(.semibold))
+                Text(city)
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)
 
-                Text(entry.currentCity.isEmpty ? String(localized: "Sign in to refresh") : String(localized: "Friends will appear here"))
+                Text("Friends will appear here")
                     .font(.caption2)
                     .foregroundStyle(WIFTheme.secondaryText)
             }

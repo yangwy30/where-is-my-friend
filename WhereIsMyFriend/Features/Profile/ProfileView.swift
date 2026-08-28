@@ -1290,21 +1290,12 @@ struct WidgetShowcaseView: View {
 
         var id: String { rawValue }
 
-        var icon: String {
-            switch self {
-            case .dawn: return "sun.horizon.fill"
-            case .day: return "sun.max.fill"
-            case .goldenHour: return "sun.dust.fill"
-            case .night: return "moon.stars.fill"
-            }
-        }
-
         var edgeTint: Color {
             switch self {
-            case .dawn: return Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.18)
-            case .day: return Color(red: 0.38, green: 0.68, blue: 0.96).opacity(0.14)
-            case .goldenHour: return Color(red: 0.98, green: 0.58, blue: 0.24).opacity(0.20)
-            case .night: return Color(red: 0.35, green: 0.45, blue: 0.88).opacity(0.18)
+            case .dawn: return Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.12)
+            case .day: return Color(red: 0.38, green: 0.68, blue: 0.96).opacity(0.10)
+            case .goldenHour: return Color(red: 0.98, green: 0.58, blue: 0.24).opacity(0.12)
+            case .night: return Color(red: 0.35, green: 0.45, blue: 0.88).opacity(0.12)
             }
         }
     }
@@ -1326,6 +1317,15 @@ struct WidgetShowcaseView: View {
         )
     }
 
+    private var isSameCity: Bool {
+        CityIdentity.matches(
+            city: featuredFriend.city,
+            countryCode: featuredFriend.countryCode,
+            otherCity: store.currentCity,
+            otherCountryCode: store.snapshot.currentPresence.countryCode
+        )
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
@@ -1334,7 +1334,7 @@ struct WidgetShowcaseView: View {
                     Text("3D Diorama Widget Studio")
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
-                    Text("Live simulator for iOS 18 Home Screen & StandBy widgets.")
+                    Text("Live simulator for iOS Home Screen & StandBy widgets.")
                         .font(.subheadline)
                         .foregroundStyle(WIFTheme.secondaryText)
                         .multilineTextAlignment(.center)
@@ -1344,7 +1344,7 @@ struct WidgetShowcaseView: View {
 
                 // Solar Ambience Picker
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Solar Ambience (Day/Night Mood)")
+                    Text("Solar Ambience (Destination Mood)")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(WIFTheme.secondaryText)
                         .textCase(.uppercase)
@@ -1368,7 +1368,7 @@ struct WidgetShowcaseView: View {
 
                 // Live Widget Display
                 VStack(spacing: 10) {
-                    Text("iOS 18 Home Screen Preview")
+                    Text("Widget Live Preview")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(WIFTheme.secondaryText)
 
@@ -1393,24 +1393,24 @@ struct WidgetShowcaseView: View {
 
                 // Design Highlights
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Apple HIG Design Highlights")
+                    Text("Design Architecture")
                         .font(.headline)
                         .foregroundStyle(WIFTheme.primaryText)
 
                     highlightRow(
                         icon: "sparkles",
                         title: "101 Native 3D City Dioramas",
-                        desc: "Rendered at crisp Retina scale on chamfered aluminum & frosted glass pedestals."
+                        desc: "Rendered on chamfered aluminum & frosted glass pedestals with zero background boxes."
                     )
                     highlightRow(
                         icon: "arrow.left.and.right",
-                        title: "Dual Orbit 1v1 Connection",
-                        desc: "Uncluttered focus on your closest bond, bridging two cities with minimal elegance."
+                        title: "Smart Dual Orbit & Same-City Merge",
+                        desc: "Cross-city creates a dual horizon; Same-city merges seamlessly into a single hero stage."
                     )
                     highlightRow(
-                        icon: "sun.max.trianglebadge.exclamationmark",
-                        title: "10-15% Subtle Solar Edge Halo",
-                        desc: "Ambient mood lights up according to destination local sun position."
+                        icon: "sun.horizon.fill",
+                        title: "8-12% Subtle Solar Edge Halo",
+                        desc: "Ambient mood lights up according to destination local sun position without weather clutter."
                     )
                 }
                 .padding(18)
@@ -1425,179 +1425,197 @@ struct WidgetShowcaseView: View {
     }
 
     private var dualOrbitWidgetView: some View {
-        HStack(spacing: 0) {
-            // Left: User City Stage
-            VStack(spacing: 3) {
-                CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 68)
+        Group {
+            if isSameCity {
+                HStack(spacing: 16) {
+                    CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 86)
 
-                Text("Me")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.secondaryText)
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(myCity)
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                            .lineLimit(1)
 
-                Text(myCity)
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(selectedAmbience.edgeTint.opacity(0.35))
-            )
+                        Text(featuredFriend.displayName)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .lineLimit(1)
 
-            // Center Connector
-            VStack(spacing: 4) {
-                HStack(spacing: 3) {
-                    Circle()
-                        .fill(WIFTheme.secondaryText.opacity(0.40))
-                        .frame(width: 4, height: 4)
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    WIFTheme.secondaryText.opacity(0.25),
-                                    WIFTheme.fresh.opacity(0.50),
-                                    WIFTheme.secondaryText.opacity(0.25)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: 32, height: 1.5)
-                    Circle()
-                        .fill(WIFTheme.fresh.opacity(0.80))
-                        .frame(width: 4, height: 4)
+                        Text("Together")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3.5)
+                            .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
+                    }
+                    Spacer(minLength: 0)
                 }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(WIFTheme.fresh.opacity(0.08))
+                )
+            } else {
+                HStack(spacing: 0) {
+                    // Left: User City Stage
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 68)
 
-                Image(systemName: "arrow.left.and.right")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(WIFTheme.secondaryText.opacity(0.60))
+                        Text(myCity)
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    // Center: Minimal Orbit Track
+                    VStack(spacing: 0) {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(WIFTheme.secondaryText.opacity(0.35))
+                                .frame(width: 3.5, height: 3.5)
+
+                            Rectangle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            WIFTheme.secondaryText.opacity(0.20),
+                                            WIFTheme.fresh.opacity(0.45),
+                                            WIFTheme.secondaryText.opacity(0.20)
+                                        ],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .frame(width: 28, height: 1.5)
+
+                            Circle()
+                                .fill(WIFTheme.fresh.opacity(0.75))
+                                .frame(width: 3.5, height: 3.5)
+                        }
+                    }
+                    .padding(.horizontal, 4)
+
+                    // Right: Friend City Stage
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 68)
+
+                        VStack(spacing: 1) {
+                            Text(featuredFriend.city ?? "Tokyo")
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(WIFTheme.primaryText)
+                                .lineLimit(1)
+
+                            Text(featuredFriend.displayName.components(separatedBy: " ").first ?? featuredFriend.displayName)
+                                .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                                .foregroundStyle(WIFTheme.fresh)
+                                .lineLimit(1)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(10)
             }
-            .padding(.horizontal, 6)
-
-            // Right: Featured Friend
-            VStack(spacing: 3) {
-                CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 68)
-
-                Text(featuredFriend.displayName.components(separatedBy: " ").first ?? featuredFriend.displayName)
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .lineLimit(1)
-
-                Text(featuredFriend.city ?? "Tokyo")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color.white.opacity(0.04))
-            )
         }
-        .padding(10)
     }
 
     private var heroSmallWidgetView: some View {
-        VStack(spacing: 4) {
-            HStack {
-                Label(myCity, systemImage: "location.fill")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-                Spacer(minLength: 0)
-                Image(systemName: selectedAmbience.icon)
-                    .font(.caption2)
-                    .foregroundStyle(WIFTheme.secondaryText)
-            }
+        VStack(spacing: 3) {
+            CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 70)
 
-            Spacer(minLength: 0)
+            Text(featuredFriend.city ?? "Tokyo")
+                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .foregroundStyle(WIFTheme.primaryText)
+                .lineLimit(1)
 
-            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 68)
-
-            Spacer(minLength: 0)
-
-            HStack(spacing: 3) {
-                Image(systemName: "person.2.fill")
-                    .font(.system(size: 8.5, weight: .bold))
-                Text("2 friends around")
-                    .font(.system(size: 9.5, weight: .bold, design: .rounded))
-            }
-            .foregroundStyle(WIFTheme.fresh)
-            .padding(.horizontal, 7)
-            .padding(.vertical, 3)
-            .background(
-                Capsule()
-                    .fill(WIFTheme.fresh.opacity(0.18))
-                    .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1))
-            )
+            Text(featuredFriend.displayName.components(separatedBy: " ").first ?? featuredFriend.displayName)
+                .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                .foregroundStyle(WIFTheme.fresh)
+                .lineLimit(1)
         }
-        .padding(10)
+        .padding(8)
     }
 
     private var constellationLargeWidgetView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Friend Orbit")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                Spacer()
-                Text("\(Set(store.friends.compactMap(\.city)).count) cities")
-                    .font(.caption2.weight(.medium))
-                    .foregroundStyle(WIFTheme.secondaryText)
-            }
+        VStack(spacing: 12) {
+            // Top Hero Stage
+            VStack(spacing: 4) {
+                CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 80)
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                ForEach(store.friends.prefix(4)) { friend in
+                Text(featuredFriend.city ?? "Tokyo")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .lineLimit(1)
+
+                Text(featuredFriend.displayName)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.white.opacity(0.04))
+            )
+
+            // Bottom Orbit Nodes (3 Companion Cities)
+            HStack(spacing: 8) {
+                ForEach(store.friends.dropFirst().prefix(3)) { friend in
                     VStack(spacing: 2) {
-                        CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 66)
-                        Text(friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
-                            .font(.caption2.weight(.bold))
+                        CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
+                        Text(friend.city ?? "—")
+                            .font(.system(size: 9.5, weight: .bold, design: .rounded))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
-                        Text(friend.city ?? "—")
-                            .font(.system(size: 9.5, weight: .medium))
+                        Text(friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
+                            .font(.system(size: 8.5, weight: .medium))
                             .foregroundStyle(WIFTheme.secondaryText)
                             .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 6)
                     .background(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(Color.white.opacity(0.04))
+                            .fill(Color.white.opacity(0.03))
                     )
                 }
             }
 
             Spacer(minLength: 0)
         }
-        .padding(10)
+        .padding(12)
     }
 
     private var togetherWidgetView: some View {
-        HStack(spacing: 12) {
-            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 84)
+        HStack(spacing: 16) {
+            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 86)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Label("Together in \(myCity)", systemImage: "sparkles")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.fresh)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(myCity)
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
 
-                Text("You and Mia")
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(2)
-
-                Text("2 friends in city now")
-                    .font(.caption2)
+                Text("Mia Chen")
+                    .font(.subheadline.weight(.semibold))
                     .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(1)
+
+                Text("2 together")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3.5)
+                    .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
             }
             Spacer(minLength: 0)
         }
         .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(WIFTheme.fresh.opacity(0.08))
+        )
     }
 
     private func widgetContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -1630,24 +1648,20 @@ struct WidgetShowcaseView: View {
         return Button {
             selectedAmbience = tone
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: tone.icon)
-                    .font(.caption2.weight(.bold))
-                Text(tone.rawValue)
-                    .font(.caption2.weight(.semibold))
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity)
-            .background(
-                isSelected ? tone.edgeTint.opacity(0.8) : Color.white.opacity(0.06),
-                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .strokeBorder(isSelected ? WIFTheme.fresh : Color.clear, lineWidth: 1)
-            )
-            .foregroundStyle(isSelected ? WIFTheme.primaryText : WIFTheme.secondaryText)
+            Text(tone.rawValue)
+                .font(.caption2.weight(.bold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+                .background(
+                    isSelected ? tone.edgeTint.opacity(0.8) : Color.white.opacity(0.06),
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(isSelected ? WIFTheme.fresh : Color.clear, lineWidth: 1)
+                )
+                .foregroundStyle(isSelected ? WIFTheme.primaryText : WIFTheme.secondaryText)
         }
         .buttonStyle(.plain)
     }
