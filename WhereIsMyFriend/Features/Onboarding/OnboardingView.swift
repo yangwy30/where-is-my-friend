@@ -8,20 +8,20 @@ struct OnboardingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var step = 0
 
-    // Interactive States for Act 1 (Tactile Toy World)
-    @State private var selectedCityIndex: Int? = 0
+    // Act 1 Hero Carousel State
+    @State private var act1CityIndex = 0
     @State private var floatingPhase = false
-    @State private var cityBounces: [CGFloat] = [1.0, 1.0, 1.0, 1.0]
 
-    // Act 2 (Crystal Glass Shield)
+    // Act 2 Crystal Halo State
     @State private var shieldScale: CGFloat = 0.8
     @State private var shieldOpacity: Double = 0.0
 
-    // Act 3 (Romantic Aurora Collision & Starlight Serendipity)
+    // Act 3 Cinematic Serendipity Bloom
     @State private var collisionPhase: CGFloat = 0.0
     @State private var showMergedStage = false
-    @State private var showAuroraAlert = false
-    @State private var starlightBurst = false
+    @State private var showMomentCard = false
+    @State private var auraRadius: CGFloat = 20.0
+    @State private var auraOpacity: Double = 0.0
 
     private let totalSteps = 3
 
@@ -30,22 +30,22 @@ struct OnboardingView: View {
             WIFAmbientBackground()
 
             VStack(spacing: 0) {
-                // Top Progress Indicator
+                // Top Indicator
                 headerBar
                     .padding(.top, 18)
 
                 Spacer(minLength: 12)
 
-                // 🌟 Centerpiece: Living Liquid Glass Stage
+                // 🌟 Centerpiece: Hero Liquid Glass Stage
                 mainShowcaseStage
                     .padding(.horizontal, 20)
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 20)
 
-                // Ultra-Minimalist Narrative
+                // Narrative Copy
                 narrativeSection
                     .padding(.horizontal, 28)
-                    .frame(height: 68)
+                    .frame(height: 70)
 
                 Spacer(minLength: 16)
 
@@ -66,7 +66,7 @@ struct OnboardingView: View {
         HStack(spacing: 8) {
             ForEach(0..<totalSteps, id: \.self) { index in
                 Capsule()
-                    .fill(index == step ? WIFTheme.fresh : Color.white.opacity(0.18))
+                    .fill(index == step ? WIFTheme.fresh : Color.black.opacity(0.12))
                     .frame(width: index == step ? 30 : 8, height: 4.5)
             }
         }
@@ -74,22 +74,22 @@ struct OnboardingView: View {
         .padding(.vertical, 6)
         .background(
             Capsule()
-                .fill(Color.white.opacity(0.06))
+                .fill(Color.white.opacity(0.40))
         )
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: step)
     }
 
-    // MARK: - Main Showcase Stage
+    // MARK: - Showcase Stage
 
     private var mainShowcaseStage: some View {
         ZStack {
-            // Liquid Glass Showcase Container
+            // Ethereal White Frosted Glass Showcase Container
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(
                     LinearGradient(
                         colors: [
-                            Color.white.opacity(0.09),
-                            Color.white.opacity(0.03)
+                            Color.white.opacity(0.65),
+                            Color.white.opacity(0.35)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -97,292 +97,215 @@ struct OnboardingView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 32, style: .continuous)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    Color.white.opacity(0.18),
-                                    Color.white.opacity(0.04)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
+                        .strokeBorder(Color.white.opacity(0.70), lineWidth: 1.2)
                 )
-                .shadow(color: .black.opacity(0.3), radius: 24, y: 12)
+                .shadow(color: Color(red: 0.1, green: 0.3, blue: 0.2).opacity(0.08), radius: 24, y: 12)
 
             // Dynamic Step Content
             Group {
                 switch step {
                 case 0:
-                    actOneInteractiveToyStage
+                    actOneHeroDioramaCarouselStage
                 case 1:
                     actTwoPrivacyShieldStage
                 default:
-                    actThreeRomanticSerendipityStage
+                    actThreeCinematicReunionStage
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
         }
-        .frame(height: 310)
+        .frame(height: 320)
     }
 
-    // MARK: - Act 1: 趣味把玩 · 触碰朋友的世界 (Interactive Living Diorama World)
+    // MARK: - Act 1: 巨幅手办轮播 · 把朋友装进桌面 (Large Hero 3D Diorama Carousel)
 
-    private var actOneInteractiveToyStage: some View {
-        GeometryReader { geo in
-            let cx = geo.size.width / 2
-            let cy = geo.size.height / 2
-            let rx: CGFloat = 88
-            let ry: CGFloat = 58
+    private let carouselCities = [
+        (city: "Tokyo", country: "JP", name: "Lin Zhao", label: "Tokyo", time: "15:00", mood: "☀️ 下午茶时间"),
+        (city: "New York", country: "US", name: "You", label: "New York", time: "02:00", mood: "🌙 深夜星空"),
+        (city: "London", country: "GB", name: "Mia Chen", label: "London", time: "07:00", mood: "☕️ 晨光初醒")
+    ]
 
-            ZStack {
-                // Soft Ambient Halo
-                RadialGradient(
-                    colors: [
-                        WIFTheme.fresh.opacity(0.16),
-                        Color.clear
-                    ],
-                    center: .center,
-                    startRadius: 20,
-                    endRadius: 140
-                )
+    private var actOneHeroDioramaCarouselStage: some View {
+        TabView(selection: $act1CityIndex) {
+            ForEach(0..<carouselCities.count, id: \.self) { index in
+                let item = carouselCities[index]
+                VStack(spacing: 8) {
+                    Spacer(minLength: 0)
 
-                // Subtle Glowing Orbit Track
-                Ellipse()
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                WIFTheme.fresh.opacity(0.35),
-                                Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35),
-                                WIFTheme.fresh.opacity(0.35)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
+                    // Hero 112pt Large 3D Diorama
+                    CityEmblemView(city: item.city, countryCode: item.country, size: 116)
+                        .shadow(color: Color.black.opacity(0.12), radius: 14, y: 8)
+                        .offset(y: floatingPhase ? -4 : 4)
+
+                    // Crisp Ethereal Pill
+                    VStack(spacing: 3) {
+                        Text(item.label)
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+
+                        HStack(spacing: 6) {
+                            Text(item.name)
+                                .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                                .foregroundStyle(WIFTheme.fresh)
+
+                            Circle()
+                                .fill(WIFTheme.secondaryText.opacity(0.4))
+                                .frame(width: 3.5, height: 3.5)
+
+                            Text(item.mood)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(Color.white.opacity(0.60))
+                            .overlay(Capsule().strokeBorder(Color.white.opacity(0.80), lineWidth: 1))
+                            .shadow(color: Color.black.opacity(0.04), radius: 8, y: 3)
                     )
-                    .frame(width: rx * 2, height: ry * 2)
-                    .position(x: cx, y: cy)
 
-                // 4 Interactive Tappable City Nodes
-
-                // 1. Top: New York (You)
-                interactiveCityNode(index: 0, city: "New York", countryCode: "US", label: "New York", sub: "You", time: "02:00 🌙")
-                    .position(x: cx, y: cy - ry)
-                    .offset(y: floatingPhase ? -3 : 3)
-
-                // 2. Right: Tokyo (Lin)
-                interactiveCityNode(index: 1, city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", time: "15:00 ☀️")
-                    .position(x: cx + rx, y: cy)
-                    .offset(y: floatingPhase ? 3 : -3)
-
-                // 3. Bottom: London (Mia)
-                interactiveCityNode(index: 2, city: "London", countryCode: "GB", label: "London", sub: "Mia", time: "07:00 ☕️")
-                    .position(x: cx, y: cy + ry)
-                    .offset(y: floatingPhase ? -2 : 2)
-
-                // 4. Left: San Francisco (Alex)
-                interactiveCityNode(index: 3, city: "San Francisco", countryCode: "US", label: "SF", sub: "Alex", time: "23:00 🌉")
-                    .position(x: cx - rx, y: cy)
-                    .offset(y: floatingPhase ? 2 : -2)
+                    Spacer(minLength: 0)
+                }
+                .tag(index)
             }
         }
+        .tabViewStyle(.page(indexDisplayMode: .always))
     }
 
-    private func interactiveCityNode(index: Int, city: String, countryCode: String, label: String, sub: String, time: String) -> some View {
-        let isSelected = selectedCityIndex == index
-        return Button {
-            tapCity(at: index)
-        } label: {
-            VStack(spacing: 2) {
-                // Playful Popover Bubble on Selected City
-                if isSelected {
-                    Text(time)
-                        .font(.system(size: 8.5, weight: .bold, design: .rounded))
-                        .foregroundStyle(WIFTheme.primaryText)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 3)
-                        .background(
-                            Capsule()
-                                .fill(Color(white: 0.12).opacity(0.95))
-                                .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.4), lineWidth: 1))
-                        )
-                        .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
-                        .transition(.scale(scale: 0.8).combined(with: .opacity))
-                }
-
-                CityEmblemView(city: city, countryCode: countryCode, size: 68)
-                    .scaleEffect(cityBounces[index])
-                    .shadow(color: .black.opacity(0.25), radius: isSelected ? 12 : 6, y: isSelected ? 8 : 4)
-
-                VStack(spacing: 0.5) {
-                    Text(label)
-                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                        .foregroundStyle(WIFTheme.primaryText)
-                        .lineLimit(1)
-
-                    Text(sub)
-                        .font(.system(size: 8.5, weight: .semibold, design: .rounded))
-                        .foregroundStyle(isSelected ? WIFTheme.fresh : WIFTheme.secondaryText)
-                        .lineLimit(1)
-                }
-            }
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func tapCity(at index: Int) {
-        selectedCityIndex = index
-        cityBounces[index] = 1.25
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
-            cityBounces[index] = 1.0
-        }
-        triggerHaptic(style: .soft)
-    }
-
-    // MARK: - Act 2: 极简留白 (Crystal Glass Cloak)
+    // MARK: - Act 2: 纯净留白 · 城市级安心 (Crystal Glass Cloak over Paris)
 
     private var actTwoPrivacyShieldStage: some View {
         ZStack {
-            // Soft Emerald Ambient Sphere
+            // Radiant Light Sphere
             Circle()
                 .fill(
                     RadialGradient(
                         colors: [
-                            WIFTheme.fresh.opacity(0.20),
+                            WIFTheme.fresh.opacity(0.22),
                             Color.clear
                         ],
                         center: .center,
                         startRadius: 10,
-                        endRadius: 110
+                        endRadius: 120
                     )
                 )
-                .frame(width: 220, height: 220)
+                .frame(width: 230, height: 230)
 
-            // Center: Paris Hero Diorama
-            VStack(spacing: 3) {
-                CityEmblemView(city: "Paris", countryCode: "FR", size: 104)
-                    .shadow(color: .black.opacity(0.25), radius: 14, y: 8)
+            // Center: Paris Hero Diorama (116pt)
+            VStack(spacing: 6) {
+                CityEmblemView(city: "Paris", countryCode: "FR", size: 116)
+                    .shadow(color: Color.black.opacity(0.14), radius: 16, y: 8)
 
-                VStack(spacing: 1) {
+                VStack(spacing: 2) {
                     Text("Paris")
-                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                     Text("Chloe")
-                        .font(.caption2.weight(.bold))
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(WIFTheme.fresh)
                 }
             }
             .offset(y: floatingPhase ? -3 : 3)
 
-            // Descending Protective Glass Cloak Ring
+            // Descending Ethereal Crystal Halo Ring
             Circle()
                 .strokeBorder(
                     LinearGradient(
                         colors: [
-                            WIFTheme.fresh.opacity(0.8),
-                            WIFTheme.fresh.opacity(0.15)
+                            WIFTheme.fresh.opacity(0.85),
+                            WIFTheme.fresh.opacity(0.20)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     ),
-                    lineWidth: 1.8
+                    lineWidth: 2
                 )
-                .frame(width: 190, height: 190)
+                .frame(width: 200, height: 200)
                 .background(
                     Circle()
-                        .fill(WIFTheme.fresh.opacity(0.05))
+                        .fill(WIFTheme.fresh.opacity(0.04))
                 )
                 .scaleEffect(shieldScale)
                 .opacity(shieldOpacity)
-                .shadow(color: WIFTheme.fresh.opacity(0.35), radius: 14)
+                .shadow(color: WIFTheme.fresh.opacity(0.25), radius: 14)
 
-            // Privacy Capsule Badge
+            // Privacy Ethereal Badge
             HStack(spacing: 5) {
                 Image(systemName: "checkmark.shield.fill")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                 Text("城市级共享 · 零轨迹追踪")
-                    .font(.system(size: 10.5, weight: .bold, design: .rounded))
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
             }
             .foregroundStyle(WIFTheme.fresh)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
             .background(
                 Capsule()
-                    .fill(Color(white: 0.10).opacity(0.92))
-                    .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1))
+                    .fill(Color.white.opacity(0.85))
+                    .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1))
+                    .shadow(color: Color.black.opacity(0.06), radius: 8, y: 3)
             )
-            .offset(y: 94)
+            .offset(y: 104)
             .opacity(shieldOpacity)
         }
     }
 
-    // MARK: - Act 3: 浪漫同城 · 璀璨相遇 (Romantic Aurora Halo & Starlight Sparkles)
+    // MARK: - Act 3: 浪漫同城 · 璀璨相遇提醒 (Serendipity Bloom & Luminous Alert Card)
 
-    private var actThreeRomanticSerendipityStage: some View {
+    private var actThreeCinematicReunionStage: some View {
         ZStack {
-            // Emerald Radiance
+            // Emerald Luminous Radiance
             RadialGradient(
                 colors: [
-                    WIFTheme.fresh.opacity(0.35),
+                    WIFTheme.fresh.opacity(0.28),
                     Color.clear
                 ],
                 center: .center,
                 startRadius: 20,
-                endRadius: 140
+                endRadius: 150
             )
 
-            // Romantic Starlight Particles floating around
-            if starlightBurst {
-                ForEach(0..<6, id: \.self) { i in
-                    Circle()
-                        .fill(WIFTheme.fresh.opacity(0.7))
-                        .frame(width: 4, height: 4)
-                        .offset(
-                            x: CGFloat(cos(Double(i) * .pi / 3)) * 96,
-                            y: CGFloat(sin(Double(i) * .pi / 3)) * 80
-                        )
-                        .scaleEffect(starlightBurst ? 1.2 : 0.2)
-                        .opacity(starlightBurst ? 0.8 : 0.0)
-                        .animation(.easeOut(duration: 1.2).repeatForever(autoreverses: true).delay(Double(i) * 0.15), value: starlightBurst)
-                }
-            }
+            // Expanding Celestial Light Aura on Merge
+            Circle()
+                .strokeBorder(WIFTheme.fresh.opacity(auraOpacity), lineWidth: 2)
+                .frame(width: auraRadius, height: auraRadius)
 
             // Phase 1: Two cities sliding into center
             if !showMergedStage {
-                HStack {
-                    VStack(spacing: 2) {
-                        CityEmblemView(city: "New York", countryCode: "US", size: 76)
+                HStack(spacing: 0) {
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: "New York", countryCode: "US", size: 84)
                         Text("You")
-                            .font(.caption2.weight(.bold))
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(WIFTheme.primaryText)
                     }
-                    .offset(x: collisionPhase * 56)
+                    .offset(x: collisionPhase * 54)
 
                     Spacer()
 
-                    VStack(spacing: 2) {
-                        CityEmblemView(city: "Tokyo", countryCode: "JP", size: 76)
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: "Tokyo", countryCode: "JP", size: 84)
                         Text("Mia")
-                            .font(.caption2.weight(.bold))
+                            .font(.caption.weight(.bold))
                             .foregroundStyle(WIFTheme.primaryText)
                     }
-                    .offset(x: -collisionPhase * 56)
+                    .offset(x: -collisionPhase * 54)
                 }
-                .padding(.horizontal, 36)
-                .opacity(1.0 - Double(collisionPhase * 0.8))
+                .padding(.horizontal, 32)
+                .opacity(1.0 - Double(collisionPhase * 0.7))
             }
 
-            // Phase 2: Merged Glowing City Stage
+            // Phase 2: Merged Hero New York Monument
             if showMergedStage {
-                VStack(spacing: 6) {
-                    CityEmblemView(city: "New York", countryCode: "US", size: 94)
-                        .shadow(color: .black.opacity(0.28), radius: 14, y: 8)
+                VStack(spacing: 8) {
+                    CityEmblemView(city: "New York", countryCode: "US", size: 108)
+                        .shadow(color: Color.black.opacity(0.16), radius: 16, y: 8)
 
-                    VStack(spacing: 3) {
+                    VStack(spacing: 4) {
                         Text("New York")
-                            .font(.system(.headline, design: .rounded, weight: .bold))
+                            .font(.system(.title3, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
 
                         HStack(spacing: 4) {
@@ -390,75 +313,71 @@ struct OnboardingView: View {
                                 .fill(WIFTheme.fresh)
                                 .frame(width: 5, height: 5)
                             Text("Mia · 2 together")
-                                .font(.caption2.weight(.bold))
+                                .font(.caption.weight(.bold))
                                 .foregroundStyle(WIFTheme.fresh)
                         }
-                        .padding(.horizontal, 9)
-                        .padding(.vertical, 3.5)
-                        .background(Capsule().fill(WIFTheme.fresh.opacity(0.20)))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(WIFTheme.fresh.opacity(0.18)))
                     }
                 }
                 .transition(.scale(scale: 0.85).combined(with: .opacity))
-                .offset(y: showAuroraAlert ? 18 : 0)
-                .animation(.spring(response: 0.45, dampingFraction: 0.8), value: showAuroraAlert)
+                .offset(y: showMomentCard ? 28 : 0)
+                .animation(.spring(response: 0.45, dampingFraction: 0.78), value: showMomentCard)
             }
 
-            // Phase 3: ✨ Romantic Aurora Serendipity Capsule (No rigid system alert box!)
-            if showAuroraAlert {
-                HStack(spacing: 7) {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 11, weight: .bold))
-                        .foregroundStyle(Color(red: 0.98, green: 0.82, blue: 0.42))
+            // Phase 3: 🔔 Luminous High-Impact "Same City Moment" Card (Visible, Cinematic & Clean)
+            if showMomentCard {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(Color(red: 0.95, green: 0.65, blue: 0.20))
 
-                    Text("今夜同城 · 距离归零")
-                        .font(.system(size: 11.5, weight: .bold, design: .rounded))
+                        Text("SAME CITY MOMENT")
+                            .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                            .foregroundStyle(WIFTheme.fresh)
+
+                        Spacer()
+
+                        Text("NOW")
+                            .font(.system(size: 8.5, weight: .bold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+
+                    Text("你和 Mia 今晚都在 New York 📍")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundStyle(WIFTheme.primaryText)
-
-                    Circle()
-                        .fill(WIFTheme.fresh)
-                        .frame(width: 4, height: 4)
-
-                    Text("Mia Chen")
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(WIFTheme.fresh)
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 11)
                 .background(
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.12, green: 0.22, blue: 0.18).opacity(0.95),
-                                    Color(white: 0.10).opacity(0.95)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Color.white.opacity(0.92))
                         .overlay(
-                            Capsule()
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
                                 .strokeBorder(
                                     LinearGradient(
                                         colors: [
-                                            WIFTheme.fresh.opacity(0.7),
-                                            Color(red: 0.98, green: 0.82, blue: 0.42).opacity(0.5)
+                                            WIFTheme.fresh.opacity(0.70),
+                                            Color(red: 0.95, green: 0.65, blue: 0.20).opacity(0.50)
                                         ],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
                                     ),
-                                    lineWidth: 1
+                                    lineWidth: 1.5
                                 )
                         )
-                        .shadow(color: WIFTheme.fresh.opacity(0.35), radius: 14, y: 6)
+                        .shadow(color: Color.black.opacity(0.10), radius: 14, y: 6)
                 )
-                .offset(y: -96)
-                .transition(.scale(scale: 0.85).combined(with: .opacity))
+                .padding(.horizontal, 18)
+                .offset(y: -98)
+                .transition(.move(edge: .top).combined(with: .opacity).combined(with: .scale(scale: 0.92)))
             }
         }
     }
 
-    // MARK: - Ultra-Minimalist Narrative Section
+    // MARK: - Narrative Section
 
     private var narrativeSection: some View {
         VStack(spacing: 6) {
@@ -467,7 +386,7 @@ struct OnboardingView: View {
                 Text("把朋友装进桌面")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("随时感知远方，轻触探索世界。")
+                Text("左右轻扫，随时感知远方世界。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             case 1:
@@ -481,7 +400,7 @@ struct OnboardingView: View {
                 Text("偶然同城，惊喜点亮")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("同在这一座城，为你悄然点亮。")
+                Text("同在这一座城，为你第一时间捕捉相遇。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
@@ -537,19 +456,12 @@ struct OnboardingView: View {
             floatingPhase = true
         }
 
-        // Start Act 1 FX
+        // Start Act 1
         triggerActAnimation(for: 0)
     }
 
     private func triggerActAnimation(for currentStep: Int) {
-        if currentStep == 0 {
-            // Auto select a city for demo
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                    selectedCityIndex = 1 // Tokyo (Lin)
-                }
-            }
-        } else if currentStep == 1 {
+        if currentStep == 1 {
             // Shield descends over Paris
             shieldScale = 0.7
             shieldOpacity = 0.0
@@ -559,30 +471,37 @@ struct OnboardingView: View {
             }
             triggerHaptic(style: .soft)
         } else if currentStep == 2 {
-            // Act 3 Romantic Flow
+            // Act 3 Cinematic Serendipity Flow
             collisionPhase = 0.0
             showMergedStage = false
-            showAuroraAlert = false
-            starlightBurst = false
+            showMomentCard = false
+            auraRadius = 20.0
+            auraOpacity = 0.0
 
             // Stage 1: Glide into center (0.0s -> 0.8s)
             withAnimation(.easeInOut(duration: 0.8).delay(0.15)) {
                 collisionPhase = 1.0
             }
 
-            // Stage 2: Merge with starlight (0.95s)
+            // Stage 2: Merge with radiant shockwave (0.95s)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
                 withAnimation(.spring(response: 0.55, dampingFraction: 0.68)) {
                     showMergedStage = true
-                    starlightBurst = true
+                }
+                withAnimation(.easeOut(duration: 0.75)) {
+                    auraRadius = 260.0
+                    auraOpacity = 0.75
+                }
+                withAnimation(.easeOut(duration: 0.75).delay(0.35)) {
+                    auraOpacity = 0.0
                 }
                 triggerHaptic(style: .medium)
             }
 
-            // Stage 3: Romantic Aurora Serendipity Capsule appears (1.4s)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+            // Stage 3: Luminous Alert Card Blossoms (1.45s)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.45) {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
-                    showAuroraAlert = true
+                    showMomentCard = true
                 }
                 triggerSuccessHaptic()
             }
