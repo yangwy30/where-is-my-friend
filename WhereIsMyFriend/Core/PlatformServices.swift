@@ -102,8 +102,15 @@ final class CityLocationService: NSObject, ObservableObject {
                     self.errorMessage = error.localizedDescription
                     return
                 }
-                guard let placemark = placemarks?.first,
-                      let city = placemark.locality ?? placemark.subAdministrativeArea else {
+                guard let placemark = placemarks?.first else {
+                    self.errorMessage = "A city could not be resolved for this location."
+                    return
+                }
+                let cityCandidate = placemark.locality
+                    ?? placemark.subAdministrativeArea
+                    ?? placemark.administrativeArea
+                    ?? placemark.name
+                guard let city = cityCandidate?.trimmingCharacters(in: .whitespacesAndNewlines), !city.isEmpty else {
                     self.errorMessage = "A city could not be resolved for this location."
                     return
                 }

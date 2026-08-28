@@ -458,7 +458,7 @@
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
-			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend?";
+			INFOPLIST_KEY_CFBundleDisplayName = "Across Us";
 			INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -476,7 +476,7 @@
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "http://127.0.0.1:54321/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
-			WIF_DISPLAY_NAME = "Where Is My Friend?";
+			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = invite.example.invalid;
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
@@ -491,7 +491,7 @@
 			CURRENT_PROJECT_VERSION = 1;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
-			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend?";
+			INFOPLIST_KEY_CFBundleDisplayName = "Across Us";
 			INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -507,14 +507,14 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
-			WIF_API_BASE_URL = "https://api.example.invalid";
+			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
-			WIF_DISPLAY_NAME = "Where Is My Friend?";
+			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = invite.example.invalid;
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
-			WIF_SUPABASE_PUBLISHABLE_KEY = "";
-			WIF_SUPABASE_URL = "";
+			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
+			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
 			WIF_URL_SCHEME = whereismyfriend;
 		}; name = Release; };
 		800000000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
@@ -623,7 +623,7 @@
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
-			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend? Staging";
+			INFOPLIST_KEY_CFBundleDisplayName = "Across Us";
 			INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -641,7 +641,7 @@
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
-			WIF_DISPLAY_NAME = "Where Is My Friend Staging";
+			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = staging-invite.example.invalid;
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
@@ -715,7 +715,7 @@
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
-			INFOPLIST_KEY_CFBundleDisplayName = "Where Is My Friend? Staging";
+			INFOPLIST_KEY_CFBundleDisplayName = "Across Us";
 			INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -734,7 +734,7 @@
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
-			WIF_DISPLAY_NAME = "Where Is My Friend Staging";
+			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = "";
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";

@@ -126,6 +126,8 @@ final class AppStore: ObservableObject {
         if signedOut {
             notificationService.unregisterRemoteNotifications()
             resetPushRegistration()
+            SharedAppStateStore.reset()
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
@@ -136,6 +138,8 @@ final class AppStore: ObservableObject {
         if deleted {
             notificationService.unregisterRemoteNotifications()
             resetPushRegistration()
+            SharedAppStateStore.reset()
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 
