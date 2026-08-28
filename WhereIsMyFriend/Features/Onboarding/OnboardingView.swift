@@ -11,7 +11,7 @@ struct OnboardingView: View {
     // Animation States
     @State private var isScattered = false
     @State private var isMerged = false
-    @State private var pulseBeam = false
+    @State private var isReunionVisible = false
 
     private let totalSteps = 3
 
@@ -20,11 +20,11 @@ struct OnboardingView: View {
             WIFAmbientBackground()
 
             VStack(spacing: 0) {
-                // Top Progress Indicator
+                // Top Minimal Progress Indicator
                 progressHeader
-                    .padding(.top, 18)
+                    .padding(.top, 20)
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 16)
 
                 // Cinematic Stage Carousel
                 TabView(selection: $step) {
@@ -38,12 +38,12 @@ struct OnboardingView: View {
                     handleStepChange(newStep)
                 }
 
-                Spacer(minLength: 12)
+                Spacer(minLength: 16)
 
-                // Bottom Action & Caption
+                // Bottom Action
                 bottomControls
                     .padding(.horizontal, WIFTheme.screenInset)
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 28)
             }
         }
         .onAppear {
@@ -54,155 +54,128 @@ struct OnboardingView: View {
     // MARK: - Progress Header
 
     private var progressHeader: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 7) {
             ForEach(0..<totalSteps, id: \.self) { index in
                 Capsule()
-                    .fill(index <= step ? WIFTheme.fresh : WIFTheme.border.opacity(0.35))
-                    .frame(width: index == step ? 32 : 10, height: 5.5)
+                    .fill(index == step ? WIFTheme.fresh : Color.white.opacity(0.18))
+                    .frame(width: index == step ? 28 : 8, height: 4.5)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 7)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
         .background(
             Capsule()
-                .fill(Color.white.opacity(0.06))
+                .fill(Color.white.opacity(0.05))
         )
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: step)
     }
 
-    // MARK: - Act 1: 散落 (The Interactive Scatter Animation)
+    // MARK: - Act 1: 散落 (Clean 3D Floating Stage, No Circles, No Crosshairs)
 
     private var actOneView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 28) {
             Spacer(minLength: 0)
 
-            // Stage Visual: Animated Burst from Center
-            Button {
-                triggerScatterAnimation()
-            } label: {
-                ZStack {
-                    // Expanding shockwave ripple rings
-                    Circle()
-                        .strokeBorder(WIFTheme.fresh.opacity(isScattered ? 0.18 : 0.0), lineWidth: 1.5)
-                        .frame(width: isScattered ? 230 : 60, height: isScattered ? 230 : 60)
-                        .animation(.easeOut(duration: 0.85), value: isScattered)
+            // Pure 3D Diorama Constellation (Clean floating stage with soft shadows)
+            ZStack {
+                // Subtle Ambient Light Glow
+                RadialGradient(
+                    colors: [
+                        WIFTheme.fresh.opacity(0.15),
+                        Color.clear
+                    ],
+                    center: .center,
+                    startRadius: 10,
+                    endRadius: 130
+                )
+                .frame(width: 260, height: 200)
 
-                    Circle()
-                        .strokeBorder(Color.white.opacity(isScattered ? 0.08 : 0.0), lineWidth: 1)
-                        .frame(width: isScattered ? 160 : 40, height: isScattered ? 160 : 40)
-                        .animation(.easeOut(duration: 0.70).delay(0.05), value: isScattered)
+                // 1. Top Left: New York
+                cityDioramaCard(city: "New York", countryCode: "US", label: "New York")
+                    .offset(x: isScattered ? -74 : 0, y: isScattered ? -54 : 0)
+                    .scaleEffect(isScattered ? 1.0 : 0.6)
+                    .opacity(isScattered ? 1.0 : 0.2)
+                    .animation(.spring(response: 0.7, dampingFraction: 0.72).delay(0.05), value: isScattered)
 
-                    // Connecting Laser Lines from center
-                    if isScattered {
-                        ForEach([45.0, 135.0, 225.0, 315.0], id: \.self) { angle in
-                            Rectangle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [WIFTheme.fresh.opacity(0.4), Color.clear],
-                                        startPoint: .center,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .frame(width: 80, height: 1)
-                                .rotationEffect(.degrees(angle))
-                        }
-                        .transition(.opacity)
-                    }
+                // 2. Top Right: London
+                cityDioramaCard(city: "London", countryCode: "GB", label: "London")
+                    .offset(x: isScattered ? 74 : 0, y: isScattered ? -54 : 0)
+                    .scaleEffect(isScattered ? 1.0 : 0.6)
+                    .opacity(isScattered ? 1.0 : 0.2)
+                    .animation(.spring(response: 0.7, dampingFraction: 0.72).delay(0.12), value: isScattered)
 
-                    // Center Hub Label (Fades when scattered)
-                    VStack(spacing: 2) {
-                        Image(systemName: isScattered ? "arrow.up.left.and.arrow.down.right" : "person.3.sequence.fill")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(WIFTheme.fresh)
-                        Text(isScattered ? "轻触重放" : "曾在一个地方")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(Color(white: 0.12).opacity(0.9)))
-                    .scaleEffect(isScattered ? 0.88 : 1.05)
+                // 3. Bottom Left: San Francisco
+                cityDioramaCard(city: "San Francisco", countryCode: "US", label: "SF")
+                    .offset(x: isScattered ? -74 : 0, y: isScattered ? 54 : 0)
+                    .scaleEffect(isScattered ? 1.0 : 0.6)
+                    .opacity(isScattered ? 1.0 : 0.2)
+                    .animation(.spring(response: 0.7, dampingFraction: 0.72).delay(0.18), value: isScattered)
 
-                    // 4 Scattering Cities:
-
-                    // 1. Top Left: New York
-                    cityNode(city: "New York", countryCode: "US", label: "New York")
-                        .offset(x: isScattered ? -82 : 0, y: isScattered ? -68 : 0)
-                        .scaleEffect(isScattered ? 1.0 : 0.45)
-                        .opacity(isScattered ? 1.0 : 0.15)
-
-                    // 2. Top Right: London
-                    cityNode(city: "London", countryCode: "GB", label: "London")
-                        .offset(x: isScattered ? 82 : 0, y: isScattered ? -68 : 0)
-                        .scaleEffect(isScattered ? 1.0 : 0.45)
-                        .opacity(isScattered ? 1.0 : 0.15)
-
-                    // 3. Bottom Left: San Francisco
-                    cityNode(city: "San Francisco", countryCode: "US", label: "SF")
-                        .offset(x: isScattered ? -82 : 0, y: isScattered ? 68 : 0)
-                        .scaleEffect(isScattered ? 1.0 : 0.45)
-                        .opacity(isScattered ? 1.0 : 0.15)
-
-                    // 4. Bottom Right: Tokyo
-                    cityNode(city: "Tokyo", countryCode: "JP", label: "Tokyo")
-                        .offset(x: isScattered ? 82 : 0, y: isScattered ? 68 : 0)
-                        .scaleEffect(isScattered ? 1.0 : 0.45)
-                        .opacity(isScattered ? 1.0 : 0.15)
-                }
-                .frame(height: 220)
+                // 4. Bottom Right: Tokyo
+                cityDioramaCard(city: "Tokyo", countryCode: "JP", label: "Tokyo")
+                    .offset(x: isScattered ? 74 : 0, y: isScattered ? 54 : 0)
+                    .scaleEffect(isScattered ? 1.0 : 0.6)
+                    .opacity(isScattered ? 1.0 : 0.2)
+                    .animation(.spring(response: 0.7, dampingFraction: 0.72).delay(0.24), value: isScattered)
             }
-            .buttonStyle(.plain)
+            .frame(height: 210)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                triggerScatterAnimation()
+            }
 
             Spacer(minLength: 0)
 
-            // Universal Narrative Copy (No forced graduation assumption)
-            VStack(spacing: 10) {
-                Text("无论曾经在哪里相聚，\n后来我们四散在世界各地。")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+            // Ultra-clean Minimalist Copy
+            VStack(spacing: 8) {
+                Text("散落世界的朋友")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
 
-                Text("有人去了远方，有人留守原地。\n散落天涯的朋友，不该因为距离而淡出彼此的生活。")
+                Text("山海相隔，依然相连。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .lineSpacing(4)
             }
 
             Spacer(minLength: 0)
         }
     }
 
-    private func cityNode(city: String, countryCode: String, label: String) -> some View {
+    private func cityDioramaCard(city: String, countryCode: String, label: String) -> some View {
         VStack(spacing: 3) {
-            CityEmblemView(city: city, countryCode: countryCode, size: 60)
+            CityEmblemView(city: city, countryCode: countryCode, size: 66)
+
             Text(label)
-                .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                .font(.system(size: 10, weight: .bold, design: .rounded))
                 .foregroundStyle(WIFTheme.primaryText)
         }
+        .padding(6)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.white.opacity(0.04))
+                .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
+        )
     }
 
-    // MARK: - Act 2: 挂念 (Silent Presence / 遥遥相望)
+    // MARK: - Act 2: 挂念 (Dual Horizon)
 
     private var actTwoView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 28) {
             Spacer(minLength: 0)
 
-            // Stage Visual: Dual Horizon Bridge with Shimmering Pulse
+            // Dual City Bridge Stage
             ZStack {
-                // Connecting Horizon Arc
+                // Connecting Horizon Light Beam
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(WIFTheme.fresh.opacity(0.85))
-                        .frame(width: 5, height: 5)
+                        .fill(WIFTheme.fresh.opacity(0.8))
+                        .frame(width: 4, height: 4)
                     Rectangle()
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    WIFTheme.fresh.opacity(0.6),
-                                    Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.7)
+                                    WIFTheme.fresh.opacity(0.5),
+                                    Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.5)
                                 ],
                                 startPoint: .leading,
                                 endPoint: .trailing
@@ -210,13 +183,13 @@ struct OnboardingView: View {
                         )
                         .frame(height: 1.5)
                     Circle()
-                        .fill(Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.85))
-                        .frame(width: 5, height: 5)
+                        .fill(Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.8))
+                        .frame(width: 4, height: 4)
                 }
-                .padding(.horizontal, 48)
+                .padding(.horizontal, 56)
 
                 HStack {
-                    // Left: New York (Me)
+                    // Left: New York
                     VStack(spacing: 4) {
                         CityEmblemView(city: "New York", countryCode: "US", size: 84)
                         Text("New York")
@@ -225,13 +198,13 @@ struct OnboardingView: View {
                     }
                     .padding(10)
                     .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .fill(Color.white.opacity(0.04))
                     )
 
-                    Spacer(minLength: 20)
+                    Spacer(minLength: 24)
 
-                    // Right: Tokyo (Friend)
+                    // Right: Tokyo
                     VStack(spacing: 4) {
                         CityEmblemView(city: "Tokyo", countryCode: "JP", size: 84)
                         VStack(spacing: 1) {
@@ -245,80 +218,53 @@ struct OnboardingView: View {
                     }
                     .padding(10)
                     .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .fill(Color.white.opacity(0.04))
                     )
                 }
                 .padding(.horizontal, 24)
-
-                // Privacy Indicator
-                HStack(spacing: 4) {
-                    Image(systemName: "shield.fill")
-                        .font(.system(size: 8.5, weight: .bold))
-                    Text("只知身在何城 · 不查轨迹，不添打扰")
-                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                }
-                .foregroundStyle(WIFTheme.fresh)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(Color(white: 0.12).opacity(0.92))
-                        .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.30), lineWidth: 1))
-                )
-                .offset(y: 74)
             }
-            .frame(height: 220)
-            .padding(.horizontal, 16)
+            .frame(height: 210)
 
             Spacer(minLength: 0)
 
-            // Narrative Copy
-            VStack(spacing: 10) {
-                Text("即使很少联系，\n依然想知道你去了哪。")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+            // Ultra-clean Minimalist Copy
+            VStack(spacing: 8) {
+                Text("只知城市，不添打扰")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
 
-                Text("不必频繁寒暄，不查精确轨迹。\n只要看一眼你所在的城市，就知道你一切安好。")
+                Text("不查轨迹，知道你平安便好。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .lineSpacing(4)
             }
 
             Spacer(minLength: 0)
         }
     }
 
-    // MARK: - Act 3: 重聚 (The Reunion / 偶然降落同一座城)
+    // MARK: - Act 3: 重聚 (Same-City Serendipity)
 
     private var actThreeView: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 28) {
             Spacer(minLength: 0)
 
-            // Visual: Merged Same-City Hero Stage with Magnetic Snap Animation
+            // Single Hero Same-City Stage
             ZStack {
-                // Ambient Green Aura
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(
-                        RadialGradient(
-                            colors: [
-                                WIFTheme.fresh.opacity(isMerged ? 0.28 : 0.08),
-                                Color.clear
-                            ],
-                            center: .center,
-                            startRadius: 20,
-                            endRadius: 110
-                        )
-                    )
-                    .frame(width: 230, height: 190)
+                // Soft Green Halo
+                RadialGradient(
+                    colors: [
+                        WIFTheme.fresh.opacity(0.24),
+                        Color.clear
+                    ],
+                    center: .center,
+                    startRadius: 15,
+                    endRadius: 120
+                )
+                .frame(width: 240, height: 200)
 
                 VStack(spacing: 8) {
                     CityEmblemView(city: "New York", countryCode: "US", size: 96)
-                        .scaleEffect(isMerged ? 1.0 : 0.88)
 
                     VStack(spacing: 4) {
                         Text("New York")
@@ -344,28 +290,23 @@ struct OnboardingView: View {
                         .fill(Color.white.opacity(0.06))
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                .strokeBorder(WIFTheme.fresh.opacity(isMerged ? 0.45 : 0.15), lineWidth: 1)
+                                .strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1)
                         )
                 )
             }
-            .frame(height: 220)
+            .frame(height: 210)
 
             Spacer(minLength: 0)
 
-            // Narrative Copy
-            VStack(spacing: 10) {
-                Text("如果有一天，\n我们在同一座城市降落。")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+            // Ultra-clean Minimalist Copy
+            VStack(spacing: 8) {
+                Text("同一座城，偶然重逢")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
 
-                Text("时差归零，街角相聚。\n当生活轨迹再次重叠，App 会替你记住这奇迹的一刻。")
+                Text("当轨迹重叠，点亮这一刻。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .lineSpacing(4)
             }
 
             Spacer(minLength: 0)
@@ -381,7 +322,7 @@ struct OnboardingView: View {
                     if step == totalSteps - 1 {
                         Image(systemName: "apple.logo")
                     }
-                    Text(step == totalSteps - 1 ? "开启，看看老朋友们在哪座城" : "继续")
+                    Text(step == totalSteps - 1 ? "开启" : "继续")
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -392,7 +333,7 @@ struct OnboardingView: View {
             .accessibilityIdentifier("onboardingContinueButton")
 
             Text(step == totalSteps - 1
-                 ? "只分享城市，你可以随时暂停"
+                 ? "只分享城市 · 随时可暂停"
                  : "左右轻扫浏览")
                 .font(.caption2)
                 .foregroundStyle(WIFTheme.secondaryText)
@@ -418,23 +359,18 @@ struct OnboardingView: View {
         triggerHaptic(for: newStep)
         if newStep == 0 {
             triggerScatterAnimation()
-        } else if newStep == 2 {
-            isMerged = false
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.65).delay(0.1)) {
-                isMerged = true
-            }
         }
     }
 
     private func triggerScatterAnimation() {
         isScattered = false
-        withAnimation(.spring(response: 0.75, dampingFraction: 0.68).delay(0.15)) {
+        withAnimation(.spring(response: 0.72, dampingFraction: 0.70).delay(0.12)) {
             isScattered = true
         }
         #if canImport(UIKit)
         let generator = UIImpactFeedbackGenerator(style: .soft)
         generator.prepare()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             generator.impactOccurred()
         }
         #endif
