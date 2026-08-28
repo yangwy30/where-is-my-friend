@@ -10,13 +10,16 @@ struct OnboardingView: View {
 
     // Continuous Fluid Physics & Visual FX States
     @State private var floatingPhase = false
-    @State private var particlePhase1: CGFloat = 0.0
-    @State private var particlePhase2: CGFloat = 0.0
-    @State private var particlePhase3: CGFloat = 0.0
+    @State private var orbitRotation: Double = 0.0
     @State private var shieldScale: CGFloat = 0.8
     @State private var shieldOpacity: Double = 0.0
-    @State private var collisionProgress: CGFloat = 0.0
-    @State private var rippleActive = false
+
+    // Act 3 Cinematic Multi-Stage Animation
+    @State private var collisionPhase: CGFloat = 0.0
+    @State private var showMergedStage = false
+    @State private var showNotificationBanner = false
+    @State private var shockwaveRadius: CGFloat = 10.0
+    @State private var shockwaveOpacity: Double = 0.0
 
     private let totalSteps = 3
 
@@ -25,17 +28,17 @@ struct OnboardingView: View {
             WIFAmbientBackground()
 
             VStack(spacing: 0) {
-                // Top Indicator
+                // Top Progress Indicator
                 headerBar
                     .padding(.top, 18)
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 12)
 
-                // 🌟 Centerpiece: Seamless Liquid Glass Stage
+                // 🌟 Centerpiece: Cinematic Liquid Glass Stage
                 mainShowcaseStage
                     .padding(.horizontal, 20)
 
-                Spacer(minLength: 20)
+                Spacer(minLength: 16)
 
                 // Narrative Copy
                 narrativeSection
@@ -78,7 +81,7 @@ struct OnboardingView: View {
 
     private var mainShowcaseStage: some View {
         ZStack {
-            // Seamless Frosted Glass Stage
+            // Seamless Frosted Glass Stage Container
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -110,7 +113,7 @@ struct OnboardingView: View {
             Group {
                 switch step {
                 case 0:
-                    actOneConstellationStage
+                    actOneFourCityOrbitStage
                 case 1:
                     actTwoPrivacyShieldStage
                 default:
@@ -122,18 +125,17 @@ struct OnboardingView: View {
         .frame(height: 310)
     }
 
-    // MARK: - Act 1: 多城星系光织网络 (Geometry-Locked Precision Constellation)
+    // MARK: - Act 1: 全球四城 · 星系引力环 (4-City Celestial Orbit Ring)
 
-    private var actOneConstellationStage: some View {
+    private var actOneFourCityOrbitStage: some View {
         GeometryReader { geo in
             let cx = geo.size.width / 2
             let cy = geo.size.height / 2
-            let pNYC = CGPoint(x: cx - 82, y: cy - 44)
-            let pTYO = CGPoint(x: cx + 82, y: cy - 44)
-            let pLON = CGPoint(x: cx, y: cy + 56)
+            let rx: CGFloat = 88
+            let ry: CGFloat = 58
 
             ZStack {
-                // Soft Center Ambient Radial Glow
+                // Soft Ambient Center Radial Halo
                 RadialGradient(
                     colors: [
                         WIFTheme.fresh.opacity(0.18),
@@ -144,74 +146,75 @@ struct OnboardingView: View {
                     endRadius: 140
                 )
 
-                // 💫 3 Direct Luminous Constellation Beams (Connecting exact center of 3D bases)
-                constellationTrackSegment(from: pNYC, to: pTYO, progress: particlePhase1)
-                constellationTrackSegment(from: pTYO, to: pLON, progress: particlePhase2)
-                constellationTrackSegment(from: pLON, to: pNYC, progress: particlePhase3)
+                // 💫 Celestial Elliptical Orbit Track
+                Ellipse()
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                WIFTheme.fresh.opacity(0.40),
+                                Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35),
+                                WIFTheme.fresh.opacity(0.40)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
+                    .frame(width: rx * 2, height: ry * 2)
+                    .position(x: cx, y: cy)
 
-                // 🗽 City 1: New York (Top Left)
-                citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
-                    .position(x: pNYC.x, y: pNYC.y + (floatingPhase ? -3 : 3))
+                // Traveling Aurora Particle around orbit
+                Circle()
+                    .fill(WIFTheme.fresh)
+                    .frame(width: 6, height: 6)
+                    .shadow(color: WIFTheme.fresh.opacity(0.95), radius: 8)
+                    .position(
+                        x: cx + rx * cos(orbitRotation * .pi / 180),
+                        y: cy + ry * sin(orbitRotation * .pi / 180)
+                    )
 
-                // 🗼 City 2: Tokyo (Top Right)
-                citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 76)
-                    .position(x: pTYO.x, y: pTYO.y + (floatingPhase ? 3 : -3))
+                // 4 Global Cities (Equally spaced around orbit)
 
-                // 🎡 City 3: London (Bottom Center)
-                citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 76)
-                    .position(x: pLON.x, y: pLON.y + (floatingPhase ? -2 : 2))
+                // 1. Top: New York (You)
+                citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 68)
+                    .position(x: cx, y: cy - ry)
+                    .offset(y: floatingPhase ? -3 : 3)
+
+                // 2. Right: Tokyo (Lin)
+                citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 68)
+                    .position(x: cx + rx, y: cy)
+                    .offset(y: floatingPhase ? 3 : -3)
+
+                // 3. Bottom: London (Mia)
+                citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 68)
+                    .position(x: cx, y: cy + ry)
+                    .offset(y: floatingPhase ? -2 : 2)
+
+                // 4. Left: San Francisco (Alex)
+                citySeamlessNode(city: "San Francisco", countryCode: "US", label: "SF", sub: "Alex", size: 68)
+                    .position(x: cx - rx, y: cy)
+                    .offset(y: floatingPhase ? 2 : -2)
             }
         }
     }
 
-    // Seamless Floating Node (Zero Nested Box, Pure Clean Diorama + Shadows)
+    // Seamless Floating Node
     private func citySeamlessNode(city: String, countryCode: String, label: String, sub: String, size: CGFloat) -> some View {
-        VStack(spacing: 3) {
+        VStack(spacing: 2) {
             CityEmblemView(city: city, countryCode: countryCode, size: size)
-                .shadow(color: .black.opacity(0.22), radius: 10, y: 6)
+                .shadow(color: .black.opacity(0.22), radius: 8, y: 5)
 
-            VStack(spacing: 1) {
+            VStack(spacing: 0.5) {
                 Text(label)
-                    .font(.system(size: 10.5, weight: .bold, design: .rounded))
+                    .font(.system(size: 9.5, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
 
                 Text(sub)
-                    .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                    .font(.system(size: 8.5, weight: .semibold, design: .rounded))
                     .foregroundStyle(WIFTheme.fresh)
                     .lineLimit(1)
             }
-        }
-    }
-
-    // Accurate Constellation Laser Track Segment with Travelling Aurora Particle
-    private func constellationTrackSegment(from start: CGPoint, to end: CGPoint, progress: CGFloat) -> some View {
-        ZStack {
-            Path { path in
-                path.move(to: start)
-                path.addLine(to: end)
-            }
-            .stroke(
-                LinearGradient(
-                    colors: [
-                        WIFTheme.fresh.opacity(0.35),
-                        Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35)
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                ),
-                style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
-            )
-
-            // Flowing Particle right on track
-            Circle()
-                .fill(WIFTheme.fresh)
-                .frame(width: 5.5, height: 5.5)
-                .shadow(color: WIFTheme.fresh.opacity(0.95), radius: 6)
-                .position(
-                    x: start.x + (end.x - start.x) * progress,
-                    y: start.y + (end.y - start.y) * progress
-                )
         }
     }
 
@@ -234,7 +237,7 @@ struct OnboardingView: View {
                 )
                 .frame(width: 220, height: 220)
 
-            // Center: Paris Hero Diorama (Seamless, Zero Box)
+            // Center: Paris Hero Diorama (Seamless)
             VStack(spacing: 3) {
                 CityEmblemView(city: "Paris", countryCode: "FR", size: 104)
                     .shadow(color: .black.opacity(0.25), radius: 14, y: 8)
@@ -292,24 +295,14 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Act 3: 磁吸重聚 (Magnetic Collision & Merged Same-City Hero Stage)
+    // MARK: - Act 3: 奇迹重逢 + 同城通知提醒 (Reunion Collision & Push Alert Banner)
 
     private var actThreeReunionCollisionStage: some View {
         ZStack {
-            // Expanding Shockwave Ripple when merged
-            if rippleActive {
-                Circle()
-                    .strokeBorder(WIFTheme.fresh.opacity(0.4), lineWidth: 1.5)
-                    .frame(width: 260, height: 260)
-                    .scaleEffect(1.3)
-                    .opacity(0.0)
-                    .animation(.easeOut(duration: 0.8), value: rippleActive)
-            }
-
             // Emerald Radiance
             RadialGradient(
                 colors: [
-                    WIFTheme.fresh.opacity(0.30),
+                    WIFTheme.fresh.opacity(0.32),
                     Color.clear
                 ],
                 center: .center,
@@ -317,47 +310,93 @@ struct OnboardingView: View {
                 endRadius: 140
             )
 
-            // Sliding In State vs Final Unified Stage (Seamless)
-            if collisionProgress < 0.95 {
+            // Shockwave Ring on Collision
+            Circle()
+                .strokeBorder(WIFTheme.fresh.opacity(shockwaveOpacity), lineWidth: 2)
+                .frame(width: shockwaveRadius, height: shockwaveRadius)
+
+            // Phase 1: Two cities sliding in from sides
+            if !showMergedStage {
                 HStack {
                     citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
-                        .offset(x: collisionProgress * 48)
+                        .offset(x: collisionPhase * 56)
 
                     Spacer()
 
                     citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Mia", size: 76)
-                        .offset(x: -collisionProgress * 48)
+                        .offset(x: -collisionPhase * 56)
                 }
                 .padding(.horizontal, 36)
-                .opacity(1.0 - Double(collisionProgress))
+                .opacity(1.0 - Double(collisionPhase * 0.8))
             }
 
-            // Merged Final Stage (Seamless, Glowing)
-            VStack(spacing: 8) {
-                CityEmblemView(city: "New York", countryCode: "US", size: 104)
-                    .shadow(color: .black.opacity(0.28), radius: 14, y: 8)
+            // Phase 2: Merged Hero Stage
+            if showMergedStage {
+                VStack(spacing: 6) {
+                    CityEmblemView(city: "New York", countryCode: "US", size: 94)
+                        .shadow(color: .black.opacity(0.28), radius: 14, y: 8)
 
-                VStack(spacing: 4) {
-                    Text("New York")
-                        .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
+                    VStack(spacing: 3) {
+                        Text("New York")
+                            .font(.system(.headline, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
 
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(WIFTheme.fresh)
-                            .frame(width: 5, height: 5)
-                        Text("Mia · 2 together")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(WIFTheme.fresh)
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(WIFTheme.fresh)
+                                .frame(width: 5, height: 5)
+                            Text("Mia · 2 together")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(WIFTheme.fresh)
+                        }
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 3.5)
+                        .background(Capsule().fill(WIFTheme.fresh.opacity(0.20)))
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(WIFTheme.fresh.opacity(0.20)))
                 }
+                .transition(.scale(scale: 0.85).combined(with: .opacity))
+                .offset(y: showNotificationBanner ? 22 : 0)
+                .animation(.spring(response: 0.45, dampingFraction: 0.8), value: showNotificationBanner)
             }
-            .scaleEffect(collisionProgress > 0.9 ? 1.0 : 0.75)
-            .opacity(collisionProgress > 0.9 ? 1.0 : 0.0)
-            .offset(y: floatingPhase ? -3 : 3)
+
+            // Phase 3: 🔔 iOS Dropdown Notification Banner (宣传核心“同城提醒”功能)
+            if showNotificationBanner {
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 5) {
+                        Image(systemName: "bell.badge.fill")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(WIFTheme.fresh)
+
+                        Text("SAME CITY MOMENT")
+                            .font(.system(size: 8.5, weight: .bold, design: .rounded))
+                            .foregroundStyle(WIFTheme.fresh)
+
+                        Spacer()
+
+                        Text("NOW")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+
+                    Text("你和 Mia 今晚都在 New York 📍")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color(white: 0.12).opacity(0.96))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.35), radius: 14, y: 8)
+                )
+                .padding(.horizontal, 20)
+                .offset(y: -96)
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
         }
     }
 
@@ -381,10 +420,10 @@ struct OnboardingView: View {
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             default:
-                Text("若有幸同城，街角偶遇")
+                Text("如果刚好同城，自动通知提醒")
                     .font(.system(size: 25, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("当生活轨迹再次重叠，App 会替你点亮这一刻。")
+                Text("当轨迹重叠，App 会第一时间为你捕捉相遇瞬间。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
@@ -440,15 +479,9 @@ struct OnboardingView: View {
             floatingPhase = true
         }
 
-        // Particle beam loops
-        withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-            particlePhase1 = 1.0
-        }
-        withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true).delay(0.3)) {
-            particlePhase2 = 1.0
-        }
-        withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true).delay(0.6)) {
-            particlePhase3 = 1.0
+        // Orbit rotation loop (smoother and continuous)
+        withAnimation(.linear(duration: 8.0).repeatForever(autoreverses: false)) {
+            orbitRotation = 360.0
         }
 
         // Start Act 1 FX
@@ -466,15 +499,39 @@ struct OnboardingView: View {
             }
             triggerHaptic(style: .soft)
         } else if currentStep == 2 {
-            // Magnetic collision
-            collisionProgress = 0.0
-            rippleActive = false
-            withAnimation(.easeInOut(duration: 0.65).delay(0.1)) {
-                collisionProgress = 1.0
+            // Act 3 Cinematic Multi-Stage Flow:
+            collisionPhase = 0.0
+            showMergedStage = false
+            showNotificationBanner = false
+            shockwaveRadius = 10.0
+            shockwaveOpacity = 0.0
+
+            // Stage 1: Slow-burn approach (0.0s -> 0.8s)
+            withAnimation(.easeInOut(duration: 0.8).delay(0.15)) {
+                collisionPhase = 1.0
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                rippleActive = true
+
+            // Stage 2: Merge & Shockwave explosion (0.95s)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
+                withAnimation(.spring(response: 0.55, dampingFraction: 0.68)) {
+                    showMergedStage = true
+                }
+                withAnimation(.easeOut(duration: 0.7)) {
+                    shockwaveRadius = 240.0
+                    shockwaveOpacity = 0.6
+                }
+                withAnimation(.easeOut(duration: 0.7).delay(0.3)) {
+                    shockwaveOpacity = 0.0
+                }
                 triggerHaptic(style: .medium)
+            }
+
+            // Stage 3: Notification Dropdown Banner (1.5s)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
+                    showNotificationBanner = true
+                }
+                triggerSuccessHaptic()
             }
         } else {
             triggerHaptic(style: .soft)
@@ -486,6 +543,14 @@ struct OnboardingView: View {
         let generator = UIImpactFeedbackGenerator(style: style)
         generator.prepare()
         generator.impactOccurred()
+        #endif
+    }
+
+    private func triggerSuccessHaptic() {
+        #if canImport(UIKit)
+        let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
+        generator.notificationOccurred(.success)
         #endif
     }
 }
