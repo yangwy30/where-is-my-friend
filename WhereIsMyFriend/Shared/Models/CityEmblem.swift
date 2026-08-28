@@ -156,8 +156,8 @@ public struct CityEmblem: Hashable, Sendable {
         "lima": CityEmblem(cityID: "lima", displayName: "Lima", countryCode: "PE", assetName: "City_lima", archetype: .metropolis),
 
         // UK & Europe Hubs
-        "oxford": CityEmblem(cityID: "oxford", displayName: "Oxford", countryCode: "GB", archetype: .european),
-        "cambridge": CityEmblem(cityID: "cambridge", displayName: "Cambridge", countryCode: "GB", archetype: .european),
+        "oxford": CityEmblem(cityID: "oxford", displayName: "Oxford", countryCode: "GB", assetName: "City_oxford", archetype: .european),
+        "cambridge": CityEmblem(cityID: "cambridge", displayName: "Cambridge", countryCode: "GB", assetName: "City_cambridge", archetype: .european),
         "manchester": CityEmblem(cityID: "manchester", displayName: "Manchester", countryCode: "GB", archetype: .european),
         "birmingham": CityEmblem(cityID: "birmingham", displayName: "Birmingham", countryCode: "GB", archetype: .european),
         "bristol": CityEmblem(cityID: "bristol", displayName: "Bristol", countryCode: "GB", archetype: .coastal),
@@ -189,7 +189,7 @@ public struct CityEmblem: Hashable, Sendable {
 
         // North America University & Tech Hubs
         "berkeley": CityEmblem(cityID: "berkeley", displayName: "Berkeley", countryCode: "US", archetype: .coastal),
-        "palo alto": CityEmblem(cityID: "palo_alto", displayName: "Palo Alto", countryCode: "US", archetype: .metropolis),
+        "palo alto": CityEmblem(cityID: "palo_alto", displayName: "Palo Alto", countryCode: "US", assetName: "City_palo_alto", archetype: .metropolis),
         "mountain view": CityEmblem(cityID: "mountain_view", displayName: "Mountain View", countryCode: "US", archetype: .metropolis),
         "cupertino": CityEmblem(cityID: "cupertino", displayName: "Cupertino", countryCode: "US", archetype: .metropolis),
         "sunnyvale": CityEmblem(cityID: "sunnyvale", displayName: "Sunnyvale", countryCode: "US", archetype: .metropolis),
@@ -245,9 +245,9 @@ public struct CityEmblem: Hashable, Sendable {
         "macau": CityEmblem(cityID: "macau", displayName: "Macau", countryCode: "MO", archetype: .metropolis),
         "kuala lumpur": CityEmblem(cityID: "kuala_lumpur", displayName: "Kuala Lumpur", countryCode: "MY", archetype: .metropolis),
         "penang": CityEmblem(cityID: "penang", displayName: "Penang", countryCode: "MY", archetype: .coastal),
-        "bali": CityEmblem(cityID: "bali", displayName: "Bali", countryCode: "ID", archetype: .coastal),
+        "bali": CityEmblem(cityID: "bali", displayName: "Bali", countryCode: "ID", assetName: "City_bali", archetype: .coastal),
         "jakarta": CityEmblem(cityID: "jakarta", displayName: "Jakarta", countryCode: "ID", archetype: .metropolis),
-        "phuket": CityEmblem(cityID: "phuket", displayName: "Phuket", countryCode: "TH", archetype: .coastal),
+        "phuket": CityEmblem(cityID: "phuket", displayName: "Phuket", countryCode: "TH", assetName: "City_phuket", archetype: .coastal),
         "chiang mai": CityEmblem(cityID: "chiang_mai", displayName: "Chiang Mai", countryCode: "TH", archetype: .asian),
         "manila": CityEmblem(cityID: "manila", displayName: "Manila", countryCode: "PH", archetype: .coastal),
 
