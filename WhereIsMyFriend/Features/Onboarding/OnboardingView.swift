@@ -8,18 +8,20 @@ struct OnboardingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var step = 0
 
-    // Continuous Fluid Physics & Visual FX States
+    // Interactive States for Act 1 (Tactile Toy World)
+    @State private var selectedCityIndex: Int? = 0
     @State private var floatingPhase = false
-    @State private var orbitRotation: Double = 0.0
+    @State private var cityBounces: [CGFloat] = [1.0, 1.0, 1.0, 1.0]
+
+    // Act 2 (Crystal Glass Shield)
     @State private var shieldScale: CGFloat = 0.8
     @State private var shieldOpacity: Double = 0.0
 
-    // Act 3 Cinematic Multi-Stage Animation
+    // Act 3 (Romantic Aurora Collision & Starlight Serendipity)
     @State private var collisionPhase: CGFloat = 0.0
     @State private var showMergedStage = false
-    @State private var showNotificationBanner = false
-    @State private var shockwaveRadius: CGFloat = 10.0
-    @State private var shockwaveOpacity: Double = 0.0
+    @State private var showAuroraAlert = false
+    @State private var starlightBurst = false
 
     private let totalSteps = 3
 
@@ -34,20 +36,20 @@ struct OnboardingView: View {
 
                 Spacer(minLength: 12)
 
-                // 🌟 Centerpiece: Cinematic Liquid Glass Stage
+                // 🌟 Centerpiece: Living Liquid Glass Stage
                 mainShowcaseStage
                     .padding(.horizontal, 20)
 
                 Spacer(minLength: 16)
 
-                // Narrative Copy
+                // Ultra-Minimalist Narrative
                 narrativeSection
                     .padding(.horizontal, 28)
-                    .frame(height: 72)
+                    .frame(height: 68)
 
                 Spacer(minLength: 16)
 
-                // Bottom CTA Controls
+                // Bottom Controls
                 bottomControls
                     .padding(.horizontal, WIFTheme.screenInset)
                     .padding(.bottom, 28)
@@ -77,11 +79,11 @@ struct OnboardingView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: step)
     }
 
-    // MARK: - Showcase Stage
+    // MARK: - Main Showcase Stage
 
     private var mainShowcaseStage: some View {
         ZStack {
-            // Seamless Frosted Glass Stage Container
+            // Liquid Glass Showcase Container
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -109,15 +111,15 @@ struct OnboardingView: View {
                 )
                 .shadow(color: .black.opacity(0.3), radius: 24, y: 12)
 
-            // Stage Content Switcher
+            // Dynamic Step Content
             Group {
                 switch step {
                 case 0:
-                    actOneFourCityOrbitStage
+                    actOneInteractiveToyStage
                 case 1:
                     actTwoPrivacyShieldStage
                 default:
-                    actThreeReunionCollisionStage
+                    actThreeRomanticSerendipityStage
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
@@ -125,9 +127,9 @@ struct OnboardingView: View {
         .frame(height: 310)
     }
 
-    // MARK: - Act 1: 全球四城 · 星系引力环 (4-City Celestial Orbit Ring)
+    // MARK: - Act 1: 趣味把玩 · 触碰朋友的世界 (Interactive Living Diorama World)
 
-    private var actOneFourCityOrbitStage: some View {
+    private var actOneInteractiveToyStage: some View {
         GeometryReader { geo in
             let cx = geo.size.width / 2
             let cy = geo.size.height / 2
@@ -135,10 +137,10 @@ struct OnboardingView: View {
             let ry: CGFloat = 58
 
             ZStack {
-                // Soft Ambient Center Radial Halo
+                // Soft Ambient Halo
                 RadialGradient(
                     colors: [
-                        WIFTheme.fresh.opacity(0.18),
+                        WIFTheme.fresh.opacity(0.16),
                         Color.clear
                     ],
                     center: .center,
@@ -146,14 +148,14 @@ struct OnboardingView: View {
                     endRadius: 140
                 )
 
-                // 💫 Celestial Elliptical Orbit Track
+                // Subtle Glowing Orbit Track
                 Ellipse()
                     .strokeBorder(
                         LinearGradient(
                             colors: [
-                                WIFTheme.fresh.opacity(0.40),
+                                WIFTheme.fresh.opacity(0.35),
                                 Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35),
-                                WIFTheme.fresh.opacity(0.40)
+                                WIFTheme.fresh.opacity(0.35)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -163,62 +165,83 @@ struct OnboardingView: View {
                     .frame(width: rx * 2, height: ry * 2)
                     .position(x: cx, y: cy)
 
-                // Traveling Aurora Particle around orbit
-                Circle()
-                    .fill(WIFTheme.fresh)
-                    .frame(width: 6, height: 6)
-                    .shadow(color: WIFTheme.fresh.opacity(0.95), radius: 8)
-                    .position(
-                        x: cx + rx * cos(orbitRotation * .pi / 180),
-                        y: cy + ry * sin(orbitRotation * .pi / 180)
-                    )
-
-                // 4 Global Cities (Equally spaced around orbit)
+                // 4 Interactive Tappable City Nodes
 
                 // 1. Top: New York (You)
-                citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 68)
+                interactiveCityNode(index: 0, city: "New York", countryCode: "US", label: "New York", sub: "You", time: "02:00 🌙")
                     .position(x: cx, y: cy - ry)
                     .offset(y: floatingPhase ? -3 : 3)
 
                 // 2. Right: Tokyo (Lin)
-                citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 68)
+                interactiveCityNode(index: 1, city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", time: "15:00 ☀️")
                     .position(x: cx + rx, y: cy)
                     .offset(y: floatingPhase ? 3 : -3)
 
                 // 3. Bottom: London (Mia)
-                citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 68)
+                interactiveCityNode(index: 2, city: "London", countryCode: "GB", label: "London", sub: "Mia", time: "07:00 ☕️")
                     .position(x: cx, y: cy + ry)
                     .offset(y: floatingPhase ? -2 : 2)
 
                 // 4. Left: San Francisco (Alex)
-                citySeamlessNode(city: "San Francisco", countryCode: "US", label: "SF", sub: "Alex", size: 68)
+                interactiveCityNode(index: 3, city: "San Francisco", countryCode: "US", label: "SF", sub: "Alex", time: "23:00 🌉")
                     .position(x: cx - rx, y: cy)
                     .offset(y: floatingPhase ? 2 : -2)
             }
         }
     }
 
-    // Seamless Floating Node
-    private func citySeamlessNode(city: String, countryCode: String, label: String, sub: String, size: CGFloat) -> some View {
-        VStack(spacing: 2) {
-            CityEmblemView(city: city, countryCode: countryCode, size: size)
-                .shadow(color: .black.opacity(0.22), radius: 8, y: 5)
+    private func interactiveCityNode(index: Int, city: String, countryCode: String, label: String, sub: String, time: String) -> some View {
+        let isSelected = selectedCityIndex == index
+        return Button {
+            tapCity(at: index)
+        } label: {
+            VStack(spacing: 2) {
+                // Playful Popover Bubble on Selected City
+                if isSelected {
+                    Text(time)
+                        .font(.system(size: 8.5, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(Color(white: 0.12).opacity(0.95))
+                                .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.4), lineWidth: 1))
+                        )
+                        .shadow(color: .black.opacity(0.2), radius: 6, y: 3)
+                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                }
 
-            VStack(spacing: 0.5) {
-                Text(label)
-                    .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
+                CityEmblemView(city: city, countryCode: countryCode, size: 68)
+                    .scaleEffect(cityBounces[index])
+                    .shadow(color: .black.opacity(0.25), radius: isSelected ? 12 : 6, y: isSelected ? 8 : 4)
 
-                Text(sub)
-                    .font(.system(size: 8.5, weight: .semibold, design: .rounded))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .lineLimit(1)
+                VStack(spacing: 0.5) {
+                    Text(label)
+                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
+
+                    Text(sub)
+                        .font(.system(size: 8.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(isSelected ? WIFTheme.fresh : WIFTheme.secondaryText)
+                        .lineLimit(1)
+                }
             }
         }
+        .buttonStyle(.plain)
     }
 
-    // MARK: - Act 2: 纯净留白 (Crystal Glass Shield Descending over Paris)
+    private func tapCity(at index: Int) {
+        selectedCityIndex = index
+        cityBounces[index] = 1.25
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) {
+            cityBounces[index] = 1.0
+        }
+        triggerHaptic(style: .soft)
+    }
+
+    // MARK: - Act 2: 极简留白 (Crystal Glass Cloak)
 
     private var actTwoPrivacyShieldStage: some View {
         ZStack {
@@ -237,7 +260,7 @@ struct OnboardingView: View {
                 )
                 .frame(width: 220, height: 220)
 
-            // Center: Paris Hero Diorama (Seamless)
+            // Center: Paris Hero Diorama
             VStack(spacing: 3) {
                 CityEmblemView(city: "Paris", countryCode: "FR", size: 104)
                     .shadow(color: .black.opacity(0.25), radius: 14, y: 8)
@@ -295,14 +318,14 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Act 3: 奇迹重逢 + 同城通知提醒 (Reunion Collision & Push Alert Banner)
+    // MARK: - Act 3: 浪漫同城 · 璀璨相遇 (Romantic Aurora Halo & Starlight Sparkles)
 
-    private var actThreeReunionCollisionStage: some View {
+    private var actThreeRomanticSerendipityStage: some View {
         ZStack {
             // Emerald Radiance
             RadialGradient(
                 colors: [
-                    WIFTheme.fresh.opacity(0.32),
+                    WIFTheme.fresh.opacity(0.35),
                     Color.clear
                 ],
                 center: .center,
@@ -310,27 +333,48 @@ struct OnboardingView: View {
                 endRadius: 140
             )
 
-            // Shockwave Ring on Collision
-            Circle()
-                .strokeBorder(WIFTheme.fresh.opacity(shockwaveOpacity), lineWidth: 2)
-                .frame(width: shockwaveRadius, height: shockwaveRadius)
+            // Romantic Starlight Particles floating around
+            if starlightBurst {
+                ForEach(0..<6, id: \.self) { i in
+                    Circle()
+                        .fill(WIFTheme.fresh.opacity(0.7))
+                        .frame(width: 4, height: 4)
+                        .offset(
+                            x: CGFloat(cos(Double(i) * .pi / 3)) * 96,
+                            y: CGFloat(sin(Double(i) * .pi / 3)) * 80
+                        )
+                        .scaleEffect(starlightBurst ? 1.2 : 0.2)
+                        .opacity(starlightBurst ? 0.8 : 0.0)
+                        .animation(.easeOut(duration: 1.2).repeatForever(autoreverses: true).delay(Double(i) * 0.15), value: starlightBurst)
+                }
+            }
 
-            // Phase 1: Two cities sliding in from sides
+            // Phase 1: Two cities sliding into center
             if !showMergedStage {
                 HStack {
-                    citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
-                        .offset(x: collisionPhase * 56)
+                    VStack(spacing: 2) {
+                        CityEmblemView(city: "New York", countryCode: "US", size: 76)
+                        Text("You")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                    }
+                    .offset(x: collisionPhase * 56)
 
                     Spacer()
 
-                    citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Mia", size: 76)
-                        .offset(x: -collisionPhase * 56)
+                    VStack(spacing: 2) {
+                        CityEmblemView(city: "Tokyo", countryCode: "JP", size: 76)
+                        Text("Mia")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                    }
+                    .offset(x: -collisionPhase * 56)
                 }
                 .padding(.horizontal, 36)
                 .opacity(1.0 - Double(collisionPhase * 0.8))
             }
 
-            // Phase 2: Merged Hero Stage
+            // Phase 2: Merged Glowing City Stage
             if showMergedStage {
                 VStack(spacing: 6) {
                     CityEmblemView(city: "New York", countryCode: "US", size: 94)
@@ -355,75 +399,89 @@ struct OnboardingView: View {
                     }
                 }
                 .transition(.scale(scale: 0.85).combined(with: .opacity))
-                .offset(y: showNotificationBanner ? 22 : 0)
-                .animation(.spring(response: 0.45, dampingFraction: 0.8), value: showNotificationBanner)
+                .offset(y: showAuroraAlert ? 18 : 0)
+                .animation(.spring(response: 0.45, dampingFraction: 0.8), value: showAuroraAlert)
             }
 
-            // Phase 3: 🔔 iOS Dropdown Notification Banner (宣传核心“同城提醒”功能)
-            if showNotificationBanner {
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack(spacing: 5) {
-                        Image(systemName: "bell.badge.fill")
-                            .font(.system(size: 9, weight: .bold))
-                            .foregroundStyle(WIFTheme.fresh)
-
-                        Text("SAME CITY MOMENT")
-                            .font(.system(size: 8.5, weight: .bold, design: .rounded))
-                            .foregroundStyle(WIFTheme.fresh)
-
-                        Spacer()
-
-                        Text("NOW")
-                            .font(.system(size: 8, weight: .semibold))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                    }
-
-                    Text("你和 Mia 今晚都在 New York 📍")
+            // Phase 3: ✨ Romantic Aurora Serendipity Capsule (No rigid system alert box!)
+            if showAuroraAlert {
+                HStack(spacing: 7) {
+                    Image(systemName: "sparkles")
                         .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(Color(red: 0.98, green: 0.82, blue: 0.42))
+
+                    Text("今夜同城 · 距离归零")
+                        .font(.system(size: 11.5, weight: .bold, design: .rounded))
                         .foregroundStyle(WIFTheme.primaryText)
+
+                    Circle()
+                        .fill(WIFTheme.fresh)
+                        .frame(width: 4, height: 4)
+
+                    Text("Mia Chen")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
                 }
                 .padding(.horizontal, 14)
-                .padding(.vertical, 9)
+                .padding(.vertical, 8)
                 .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color(white: 0.12).opacity(0.96))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1)
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color(red: 0.12, green: 0.22, blue: 0.18).opacity(0.95),
+                                    Color(white: 0.10).opacity(0.95)
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                        .shadow(color: .black.opacity(0.35), radius: 14, y: 8)
+                        .overlay(
+                            Capsule()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [
+                                            WIFTheme.fresh.opacity(0.7),
+                                            Color(red: 0.98, green: 0.82, blue: 0.42).opacity(0.5)
+                                        ],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        )
+                        .shadow(color: WIFTheme.fresh.opacity(0.35), radius: 14, y: 6)
                 )
-                .padding(.horizontal, 20)
                 .offset(y: -96)
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(.scale(scale: 0.85).combined(with: .opacity))
             }
         }
     }
 
-    // MARK: - Narrative Section
+    // MARK: - Ultra-Minimalist Narrative Section
 
     private var narrativeSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             switch step {
             case 0:
-                Text("跨越时区，相连彼此")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                Text("把朋友装进桌面")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("散落世界各地的朋友，一眼看清彼此的城市。")
+                Text("随时感知远方，轻触探索世界。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             case 1:
-                Text("只知城市，不添打扰")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                Text("只知城市")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("不记录轨迹，不查经纬度。知道你平安，便已足够。")
+                Text("零轨迹追踪，零社交压力。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             default:
-                Text("如果刚好同城，自动通知提醒")
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                Text("偶然同城，惊喜点亮")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("当轨迹重叠，App 会第一时间为你捕捉相遇瞬间。")
+                Text("同在这一座城，为你悄然点亮。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
@@ -441,7 +499,7 @@ struct OnboardingView: View {
                     if step == totalSteps - 1 {
                         Image(systemName: "apple.logo")
                     }
-                    Text(step == totalSteps - 1 ? "开始探索" : "继续")
+                    Text(step == totalSteps - 1 ? "开启" : "继续")
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -479,17 +537,19 @@ struct OnboardingView: View {
             floatingPhase = true
         }
 
-        // Orbit rotation loop (smoother and continuous)
-        withAnimation(.linear(duration: 8.0).repeatForever(autoreverses: false)) {
-            orbitRotation = 360.0
-        }
-
         // Start Act 1 FX
         triggerActAnimation(for: 0)
     }
 
     private func triggerActAnimation(for currentStep: Int) {
-        if currentStep == 1 {
+        if currentStep == 0 {
+            // Auto select a city for demo
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                    selectedCityIndex = 1 // Tokyo (Lin)
+                }
+            }
+        } else if currentStep == 1 {
             // Shield descends over Paris
             shieldScale = 0.7
             shieldOpacity = 0.0
@@ -499,37 +559,30 @@ struct OnboardingView: View {
             }
             triggerHaptic(style: .soft)
         } else if currentStep == 2 {
-            // Act 3 Cinematic Multi-Stage Flow:
+            // Act 3 Romantic Flow
             collisionPhase = 0.0
             showMergedStage = false
-            showNotificationBanner = false
-            shockwaveRadius = 10.0
-            shockwaveOpacity = 0.0
+            showAuroraAlert = false
+            starlightBurst = false
 
-            // Stage 1: Slow-burn approach (0.0s -> 0.8s)
+            // Stage 1: Glide into center (0.0s -> 0.8s)
             withAnimation(.easeInOut(duration: 0.8).delay(0.15)) {
                 collisionPhase = 1.0
             }
 
-            // Stage 2: Merge & Shockwave explosion (0.95s)
+            // Stage 2: Merge with starlight (0.95s)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
                 withAnimation(.spring(response: 0.55, dampingFraction: 0.68)) {
                     showMergedStage = true
-                }
-                withAnimation(.easeOut(duration: 0.7)) {
-                    shockwaveRadius = 240.0
-                    shockwaveOpacity = 0.6
-                }
-                withAnimation(.easeOut(duration: 0.7).delay(0.3)) {
-                    shockwaveOpacity = 0.0
+                    starlightBurst = true
                 }
                 triggerHaptic(style: .medium)
             }
 
-            // Stage 3: Notification Dropdown Banner (1.5s)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // Stage 3: Romantic Aurora Serendipity Capsule appears (1.4s)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.75)) {
-                    showNotificationBanner = true
+                    showAuroraAlert = true
                 }
                 triggerSuccessHaptic()
             }
