@@ -1,6 +1,6 @@
 # App Store and TestFlight metadata
 
-Prepared for **Across Us 0.1.0 (Build 6)** on August 27, 2026.
+Prepared for **Across Us 0.1.0 (Build 7)** on August 27, 2026.
 
 ## URLs
 
@@ -153,9 +153,9 @@ Across Us is a privacy-first social utility for sharing your latest city with mu
 
 This beta is intended to validate real two-person friendship and same-city flows on separate iPhones. Background city refresh timing is controlled by iOS and may not be immediate.
 
-### What to Test — Build 6
+### What to Test — Build 7
 
-Thank you for testing Build 6.
+Thank you for testing Build 7.
 
 1. On a fresh install, confirm the introduction is clearly separate from Sign in with Apple, no historical notification appears, and successful sign-in does not show a redundant “Done” alert. Close and reopen the app, then confirm your session remains active.
 2. Pull down repeatedly on the Friends screen, including with a weak or unavailable connection. Confirm no modal error loops appear and saved friends remain visible.
