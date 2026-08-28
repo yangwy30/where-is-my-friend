@@ -122,44 +122,45 @@ struct OnboardingView: View {
         .frame(height: 310)
     }
 
-    // MARK: - Act 1: 多城星系光织网络 (Multi-City Constellation Horizon, Zero Nested Boxes)
+    // MARK: - Act 1: 多城星系光织网络 (Geometry-Locked Precision Constellation)
 
     private var actOneConstellationStage: some View {
-        ZStack {
-            // Soft Radial Glow
-            RadialGradient(
-                colors: [
-                    WIFTheme.fresh.opacity(0.18),
-                    Color.clear
-                ],
-                center: .center,
-                startRadius: 20,
-                endRadius: 140
-            )
+        GeometryReader { geo in
+            let cx = geo.size.width / 2
+            let cy = geo.size.height / 2
+            let pNYC = CGPoint(x: cx - 82, y: cy - 44)
+            let pTYO = CGPoint(x: cx + 82, y: cy - 44)
+            let pLON = CGPoint(x: cx, y: cy + 56)
 
-            // 💫 Multi-City Luminous Constellation Threads (NYC <-> TYO <-> LON)
             ZStack {
-                // Thread 1: Top (NYC) to Bottom-Right (TYO)
-                constellationTrack(from: CGPoint(x: -78, y: -48), to: CGPoint(x: 78, y: -48), progress: particlePhase1)
+                // Soft Center Ambient Radial Glow
+                RadialGradient(
+                    colors: [
+                        WIFTheme.fresh.opacity(0.18),
+                        Color.clear
+                    ],
+                    center: .center,
+                    startRadius: 20,
+                    endRadius: 140
+                )
 
-                // Thread 2: Top-Right (TYO) to Bottom (LON)
-                constellationTrack(from: CGPoint(x: 78, y: -48), to: CGPoint(x: 0, y: 56), progress: particlePhase2)
+                // 💫 3 Direct Luminous Constellation Beams (Connecting exact center of 3D bases)
+                constellationTrackSegment(from: pNYC, to: pTYO, progress: particlePhase1)
+                constellationTrackSegment(from: pTYO, to: pLON, progress: particlePhase2)
+                constellationTrackSegment(from: pLON, to: pNYC, progress: particlePhase3)
 
-                // Thread 3: Bottom (LON) to Top-Left (NYC)
-                constellationTrack(from: CGPoint(x: 0, y: 56), to: CGPoint(x: -78, y: -48), progress: particlePhase3)
+                // 🗽 City 1: New York (Top Left)
+                citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
+                    .position(x: pNYC.x, y: pNYC.y + (floatingPhase ? -3 : 3))
+
+                // 🗼 City 2: Tokyo (Top Right)
+                citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 76)
+                    .position(x: pTYO.x, y: pTYO.y + (floatingPhase ? 3 : -3))
+
+                // 🎡 City 3: London (Bottom Center)
+                citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 76)
+                    .position(x: pLON.x, y: pLON.y + (floatingPhase ? -2 : 2))
             }
-
-            // 🗽 City 1: New York (Top Left)
-            citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
-                .offset(x: -78, y: -48 + (floatingPhase ? -3 : 3))
-
-            // 🗼 City 2: Tokyo (Top Right)
-            citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 76)
-                .offset(x: 78, y: -48 + (floatingPhase ? 3 : -3))
-
-            // 🎡 City 3: London (Bottom Center)
-            citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 76)
-                .offset(x: 0, y: 56 + (floatingPhase ? -2 : 2))
         }
     }
 
@@ -183,8 +184,8 @@ struct OnboardingView: View {
         }
     }
 
-    // Dynamic Constellation Laser Track with Travelling Aurora Particle
-    private func constellationTrack(from start: CGPoint, to end: CGPoint, progress: CGFloat) -> some View {
+    // Accurate Constellation Laser Track Segment with Travelling Aurora Particle
+    private func constellationTrackSegment(from start: CGPoint, to end: CGPoint, progress: CGFloat) -> some View {
         ZStack {
             Path { path in
                 path.move(to: start)
@@ -193,8 +194,8 @@ struct OnboardingView: View {
             .stroke(
                 LinearGradient(
                     colors: [
-                        WIFTheme.fresh.opacity(0.4),
-                        Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.4)
+                        WIFTheme.fresh.opacity(0.35),
+                        Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35)
                     ],
                     startPoint: .leading,
                     endPoint: .trailing
@@ -202,7 +203,7 @@ struct OnboardingView: View {
                 style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
             )
 
-            // Flowing Particle
+            // Flowing Particle right on track
             Circle()
                 .fill(WIFTheme.fresh)
                 .frame(width: 5.5, height: 5.5)
