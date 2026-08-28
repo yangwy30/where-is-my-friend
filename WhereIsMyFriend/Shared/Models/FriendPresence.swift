@@ -81,7 +81,10 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
     }
 
     func isSameCityEligible(at referenceDate: Date = Date()) -> Bool {
-        sharingState == .active && city != nil && freshness(at: referenceDate) == .fresh
+        guard sharingState == .active, let city, !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+        return freshness(at: referenceDate) != .unavailable
     }
 
     func relativeUpdateText(at referenceDate: Date = Date()) -> String {

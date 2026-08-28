@@ -11,9 +11,28 @@ struct FriendsView: View {
         self.onOpenCitySharing = onOpenCitySharing
     }
 
+    private func isFriendInSameCity(_ friend: FriendPresence) -> Bool {
+        guard let myCity = store.currentCity, !myCity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+        return CityIdentity.matches(
+            city: friend.city,
+            countryCode: friend.countryCode,
+            otherCity: myCity,
+            otherCountryCode: store.snapshot.currentPresence.countryCode
+        ) && friend.isSameCityEligible(at: referenceDate)
+    }
+
     private var friends: [FriendPresence] {
         store.friends.sorted { lhs, rhs in
-            if lhs.isFavorite != rhs.isFavorite { return lhs.isFavorite }
+            let lhsTogether = isFriendInSameCity(lhs)
+            let rhsTogether = isFriendInSameCity(rhs)
+            if lhsTogether != rhsTogether {
+                return lhsTogether // 🟢 Bump Together / Same-city friends to the very top!
+            }
+            if lhs.isFavorite != rhs.isFavorite {
+                return lhs.isFavorite
+            }
             return (lhs.updatedAt ?? .distantPast) > (rhs.updatedAt ?? .distantPast)
         }
     }
@@ -248,12 +267,7 @@ struct FriendsView: View {
 
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
-        let isSameCity = store.currentCity != nil && CityIdentity.matches(
-            city: friend.city,
-            countryCode: friend.countryCode,
-            otherCity: store.currentCity,
-            otherCountryCode: store.snapshot.currentPresence.countryCode
-        ) && friend.isSameCityEligible(at: referenceDate)
+        let isSameCity = isFriendInSameCity(friend)
 
         return VStack(spacing: 8) {
             CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 112)

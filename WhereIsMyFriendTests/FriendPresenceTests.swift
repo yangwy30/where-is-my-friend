@@ -29,18 +29,18 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertFalse(paused.cityDisplay.isEmpty)
     }
 
-    func testSameCityMatchingExcludesAgingAndOtherCities() {
+    func testSameCityMatchingIncludesActiveFriendsAndExcludesOtherCities() {
         let freshNewYork = makeFriend(name: "Mia", city: "New York", updatedAt: now.addingTimeInterval(-60))
-        let agingNewYork = makeFriend(name: "Alex", city: "New York", updatedAt: now.addingTimeInterval(-3 * 60 * 60))
+        let activeNewYork = makeFriend(name: "Alex", city: "New York", updatedAt: now.addingTimeInterval(-3 * 60 * 60))
         let freshTokyo = makeFriend(name: "Lin", city: "Tokyo", updatedAt: now.addingTimeInterval(-60))
 
         let matches = MockFriendData.sameCityFriends(
-            from: [freshNewYork, agingNewYork, freshTokyo],
+            from: [freshNewYork, activeNewYork, freshTokyo],
             currentCity: "new york",
             now: now
         )
 
-        XCTAssertEqual(matches.map(\.displayName), ["Mia"])
+        XCTAssertEqual(matches.map(\.displayName), ["Mia", "Alex"])
     }
 
     func testCityIdentityIgnoresCaseWhitespaceAndDiacriticsButHonorsKnownCountry() {

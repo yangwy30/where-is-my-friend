@@ -439,11 +439,12 @@ enum CityIdentity {
     }
 
     static func canonicalCity(_ city: String) -> String {
-        city.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        let primaryPart = city.components(separatedBy: ",").first ?? city
+        return primaryPart.split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
 
     static func key(city: String, countryCode: String?) -> String {
-        let country = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? "--"
+        let country = normalizedCountryCode(countryCode) ?? "--"
         return "\(country)|\(cityNameKey(city))"
     }
 
@@ -454,10 +455,44 @@ enum CityIdentity {
         otherCountryCode: String?
     ) -> Bool {
         guard let city, let otherCity else { return false }
-        let firstCountry = countryCode?.uppercased()
-        let secondCountry = otherCountryCode?.uppercased()
-        if let firstCountry, let secondCountry, firstCountry != secondCountry { return false }
-        return cityNameKey(city) == cityNameKey(otherCity)
+        let c1 = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        let c2 = otherCity.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !c1.isEmpty, !c2.isEmpty else { return false }
+
+        // If both have explicit non-empty country codes that differ, reject
+        if let country1 = normalizedCountryCode(countryCode),
+           let country2 = normalizedCountryCode(otherCountryCode),
+           country1 != country2 {
+            return false
+        }
+
+        // Direct key equality
+        if cityNameKey(c1) == cityNameKey(c2) {
+            return true
+        }
+
+        // Emblem alias matching (e.g. "NYC" vs "New York", "SF" vs "San Francisco")
+        let emblem1 = CityEmblem.resolve(city: c1, countryCode: countryCode)
+        let emblem2 = CityEmblem.resolve(city: c2, countryCode: otherCountryCode)
+        if emblem1.cityID != "unknown" && emblem1.cityID == emblem2.cityID {
+            return true
+        }
+
+        // Base name matching (e.g. "New York, NY" vs "New York")
+        let base1 = canonicalCity(c1)
+        let base2 = canonicalCity(c2)
+        if cityNameKey(base1) == cityNameKey(base2) {
+            return true
+        }
+
+        return false
+    }
+
+    private static func normalizedCountryCode(_ code: String?) -> String? {
+        guard let code = code?.trimmingCharacters(in: .whitespacesAndNewlines), !code.isEmpty else {
+            return nil
+        }
+        return code.uppercased()
     }
 
     private static func cityNameKey(_ city: String) -> String {

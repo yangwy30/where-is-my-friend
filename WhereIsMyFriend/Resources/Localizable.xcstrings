@@ -24,6 +24,19 @@
         }
       }
     },
+    "%@ · %lld together" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$lld together"
+          }
+        }
+      }
+    },
+    "%@ · Together" : {
+
+    },
     "%@ can see your latest city" : {
       "localizations" : {
         "zh-Hans" : {
@@ -35,6 +48,7 @@
       }
     },
     "%@ is here too" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -75,6 +89,7 @@
       }
     },
     "%@, %@, %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -146,6 +161,7 @@
       }
     },
     "%lld friends are here too" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -166,6 +182,7 @@
       }
     },
     "%lld friends in %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -176,6 +193,7 @@
       }
     },
     "%lld friends in your city" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -184,6 +202,9 @@
           }
         }
       }
+    },
+    "%lld together" : {
+
     },
     "%lld update(s) waiting" : {
       "extractionState" : "stale",
@@ -200,6 +221,12 @@
 
     },
     "1" : {
+
+    },
+    "2 together" : {
+
+    },
+    "3D Diorama Widget Studio" : {
 
     },
     "3D Hero Landmark:" : {
@@ -757,6 +784,7 @@
       }
     },
     "Change Widget privacy in the App" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1264,6 +1292,9 @@
         }
       }
     },
+    "Design Architecture" : {
+
+    },
     "Development" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1414,6 +1445,9 @@
         }
       }
     },
+    "Format" : {
+
+    },
     "Friend" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1547,6 +1581,7 @@
       }
     },
     "Friends are here too" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1671,6 +1706,9 @@
         }
       }
     },
+    "Interactive 3D diorama widget preview" : {
+
+    },
     "Invite" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1741,6 +1779,9 @@
           }
         }
       }
+    },
+    "Live simulator for iOS Home Screen & StandBy widgets." : {
+
     },
     "Local demo · No precise coordinates or route history are stored" : {
       "extractionState" : "stale",
@@ -1887,6 +1928,9 @@
         }
       }
     },
+    "Mia Chen" : {
+
+    },
     "Miniature Accent:" : {
 
     },
@@ -1993,6 +2037,9 @@
         }
       }
     },
+    "No friends here yet" : {
+
+    },
     "No friends yet" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2004,6 +2051,7 @@
       }
     },
     "No one here yet" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2219,6 +2267,7 @@
       }
     },
     "Open app" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2250,6 +2299,7 @@
       }
     },
     "Open the App to set your city" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2422,6 +2472,9 @@
           }
         }
       }
+    },
+    "Privacy mode active" : {
+
     },
     "Procedural Archetype · %@" : {
 
@@ -3029,6 +3082,7 @@
       }
     },
     "Sign in to refresh" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3077,6 +3131,9 @@
           }
         }
       }
+    },
+    "Solar Ambience (Destination Mood)" : {
+
     },
     "Solar Jade" : {
       "localizations" : {
@@ -3432,6 +3489,7 @@
       }
     },
     "Together now" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3760,6 +3818,9 @@
         }
       }
     },
+    "Widget Live Preview" : {
+
+    },
     "Widget Options" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3769,6 +3830,9 @@
           }
         }
       }
+    },
+    "Widget Studio" : {
+
     },
     "Widgets show a private placeholder." : {
       "extractionState" : "stale",
@@ -3906,6 +3970,7 @@
       }
     },
     "Your city is ready" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
