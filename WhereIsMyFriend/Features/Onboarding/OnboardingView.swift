@@ -10,7 +10,9 @@ struct OnboardingView: View {
 
     // Continuous Fluid Physics & Visual FX States
     @State private var floatingPhase = false
-    @State private var particleOffset: CGFloat = -1.0
+    @State private var particlePhase1: CGFloat = 0.0
+    @State private var particlePhase2: CGFloat = 0.0
+    @State private var particlePhase3: CGFloat = 0.0
     @State private var shieldScale: CGFloat = 0.8
     @State private var shieldOpacity: Double = 0.0
     @State private var collisionProgress: CGFloat = 0.0
@@ -29,7 +31,7 @@ struct OnboardingView: View {
 
                 Spacer(minLength: 16)
 
-                // 🌟 Centerpiece: Cinematic Liquid Glass 3D Stage
+                // 🌟 Centerpiece: Seamless Liquid Glass Stage
                 mainShowcaseStage
                     .padding(.horizontal, 20)
 
@@ -76,7 +78,7 @@ struct OnboardingView: View {
 
     private var mainShowcaseStage: some View {
         ZStack {
-            // Luxury Frosted Glass Stage Container
+            // Seamless Frosted Glass Stage
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(
                     LinearGradient(
@@ -108,7 +110,7 @@ struct OnboardingView: View {
             Group {
                 switch step {
                 case 0:
-                    actOneDualOrbitStage
+                    actOneConstellationStage
                 case 1:
                     actTwoPrivacyShieldStage
                 default:
@@ -120,14 +122,14 @@ struct OnboardingView: View {
         .frame(height: 310)
     }
 
-    // MARK: - Act 1: 跨国对望 (Dual Orbit Horizon with Aurora Particle Beam)
+    // MARK: - Act 1: 多城星系光织网络 (Multi-City Constellation Horizon, Zero Nested Boxes)
 
-    private var actOneDualOrbitStage: some View {
+    private var actOneConstellationStage: some View {
         ZStack {
-            // Ambient Horizon Halo
+            // Soft Radial Glow
             RadialGradient(
                 colors: [
-                    WIFTheme.fresh.opacity(0.16),
+                    WIFTheme.fresh.opacity(0.18),
                     Color.clear
                 ],
                 center: .center,
@@ -135,82 +137,80 @@ struct OnboardingView: View {
                 endRadius: 140
             )
 
-            // Connecting Aurora Horizon Beam
-            HStack(spacing: 0) {
-                Spacer(minLength: 70)
+            // 💫 Multi-City Luminous Constellation Threads (NYC <-> TYO <-> LON)
+            ZStack {
+                // Thread 1: Top (NYC) to Bottom-Right (TYO)
+                constellationTrack(from: CGPoint(x: -78, y: -48), to: CGPoint(x: 78, y: -48), progress: particlePhase1)
 
-                ZStack {
-                    // Soft Glowing Track
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    WIFTheme.fresh.opacity(0.35),
-                                    Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.35)
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(height: 2)
+                // Thread 2: Top-Right (TYO) to Bottom (LON)
+                constellationTrack(from: CGPoint(x: 78, y: -48), to: CGPoint(x: 0, y: 56), progress: particlePhase2)
 
-                    // Flying Aurora Particle
-                    Circle()
-                        .fill(WIFTheme.fresh)
-                        .frame(width: 7, height: 7)
-                        .shadow(color: WIFTheme.fresh.opacity(0.95), radius: 8)
-                        .offset(x: particleOffset * 54)
-                }
-
-                Spacer(minLength: 70)
+                // Thread 3: Bottom (LON) to Top-Left (NYC)
+                constellationTrack(from: CGPoint(x: 0, y: 56), to: CGPoint(x: -78, y: -48), progress: particlePhase3)
             }
 
-            // Left & Right Hero 3D Dioramas
-            HStack {
-                // Left: New York
-                VStack(spacing: 5) {
-                    CityEmblemView(city: "New York", countryCode: "US", size: 88)
-                    Text("New York")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.white.opacity(0.05))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.10), lineWidth: 1)
-                        )
-                )
-                .offset(y: floatingPhase ? -4 : 4)
+            // 🗽 City 1: New York (Top Left)
+            citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
+                .offset(x: -78, y: -48 + (floatingPhase ? -3 : 3))
 
-                Spacer(minLength: 28)
+            // 🗼 City 2: Tokyo (Top Right)
+            citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Lin", size: 76)
+                .offset(x: 78, y: -48 + (floatingPhase ? 3 : -3))
 
-                // Right: Tokyo
-                VStack(spacing: 5) {
-                    CityEmblemView(city: "Tokyo", countryCode: "JP", size: 88)
-                    VStack(spacing: 1) {
-                        Text("Tokyo")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                        Text("Lin")
-                            .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                            .foregroundStyle(WIFTheme.fresh)
-                    }
-                }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.white.opacity(0.05))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(Color.white.opacity(0.10), lineWidth: 1)
-                        )
-                )
-                .offset(y: floatingPhase ? 4 : -4)
+            // 🎡 City 3: London (Bottom Center)
+            citySeamlessNode(city: "London", countryCode: "GB", label: "London", sub: "Mia", size: 76)
+                .offset(x: 0, y: 56 + (floatingPhase ? -2 : 2))
+        }
+    }
+
+    // Seamless Floating Node (Zero Nested Box, Pure Clean Diorama + Shadows)
+    private func citySeamlessNode(city: String, countryCode: String, label: String, sub: String, size: CGFloat) -> some View {
+        VStack(spacing: 3) {
+            CityEmblemView(city: city, countryCode: countryCode, size: size)
+                .shadow(color: .black.opacity(0.22), radius: 10, y: 6)
+
+            VStack(spacing: 1) {
+                Text(label)
+                    .font(.system(size: 10.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .lineLimit(1)
+
+                Text(sub)
+                    .font(.system(size: 9.5, weight: .semibold, design: .rounded))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .lineLimit(1)
             }
-            .padding(.horizontal, 24)
+        }
+    }
+
+    // Dynamic Constellation Laser Track with Travelling Aurora Particle
+    private func constellationTrack(from start: CGPoint, to end: CGPoint, progress: CGFloat) -> some View {
+        ZStack {
+            Path { path in
+                path.move(to: start)
+                path.addLine(to: end)
+            }
+            .stroke(
+                LinearGradient(
+                    colors: [
+                        WIFTheme.fresh.opacity(0.4),
+                        Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.4)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                ),
+                style: StrokeStyle(lineWidth: 1.5, lineCap: .round)
+            )
+
+            // Flowing Particle
+            Circle()
+                .fill(WIFTheme.fresh)
+                .frame(width: 5.5, height: 5.5)
+                .shadow(color: WIFTheme.fresh.opacity(0.95), radius: 6)
+                .position(
+                    x: start.x + (end.x - start.x) * progress,
+                    y: start.y + (end.y - start.y) * progress
+                )
         }
     }
 
@@ -233,13 +233,19 @@ struct OnboardingView: View {
                 )
                 .frame(width: 220, height: 220)
 
-            // Center: Paris Hero Diorama
-            VStack(spacing: 6) {
+            // Center: Paris Hero Diorama (Seamless, Zero Box)
+            VStack(spacing: 3) {
                 CityEmblemView(city: "Paris", countryCode: "FR", size: 104)
+                    .shadow(color: .black.opacity(0.25), radius: 14, y: 8)
 
-                Text("Paris")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
+                VStack(spacing: 1) {
+                    Text("Paris")
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text("Chloe")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(WIFTheme.fresh)
+                }
             }
             .offset(y: floatingPhase ? -3 : 3)
 
@@ -280,7 +286,7 @@ struct OnboardingView: View {
                     .fill(Color(white: 0.10).opacity(0.92))
                     .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1))
             )
-            .offset(y: 92)
+            .offset(y: 94)
             .opacity(shieldOpacity)
         }
     }
@@ -310,24 +316,25 @@ struct OnboardingView: View {
                 endRadius: 140
             )
 
-            // Sliding In State vs Final Unified Stage
+            // Sliding In State vs Final Unified Stage (Seamless)
             if collisionProgress < 0.95 {
                 HStack {
-                    stagePedestalMini(city: "New York", countryCode: "US", label: "You")
+                    citySeamlessNode(city: "New York", countryCode: "US", label: "New York", sub: "You", size: 76)
                         .offset(x: collisionProgress * 48)
 
                     Spacer()
 
-                    stagePedestalMini(city: "Tokyo", countryCode: "JP", label: "Mia")
+                    citySeamlessNode(city: "Tokyo", countryCode: "JP", label: "Tokyo", sub: "Mia", size: 76)
                         .offset(x: -collisionProgress * 48)
                 }
                 .padding(.horizontal, 36)
                 .opacity(1.0 - Double(collisionProgress))
             }
 
-            // Merged Final Stage
+            // Merged Final Stage (Seamless, Glowing)
             VStack(spacing: 8) {
                 CityEmblemView(city: "New York", countryCode: "US", size: 104)
+                    .shadow(color: .black.opacity(0.28), radius: 14, y: 8)
 
                 VStack(spacing: 4) {
                     Text("New York")
@@ -347,34 +354,10 @@ struct OnboardingView: View {
                     .background(Capsule().fill(WIFTheme.fresh.opacity(0.20)))
                 }
             }
-            .padding(18)
-            .background(
-                RoundedRectangle(cornerRadius: 26, style: .continuous)
-                    .fill(Color.white.opacity(0.08))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .strokeBorder(WIFTheme.fresh.opacity(0.45), lineWidth: 1.2)
-                    )
-                    .shadow(color: WIFTheme.fresh.opacity(0.28), radius: 20)
-            )
             .scaleEffect(collisionProgress > 0.9 ? 1.0 : 0.75)
             .opacity(collisionProgress > 0.9 ? 1.0 : 0.0)
             .offset(y: floatingPhase ? -3 : 3)
         }
-    }
-
-    private func stagePedestalMini(city: String, countryCode: String, label: String) -> some View {
-        VStack(spacing: 4) {
-            CityEmblemView(city: city, countryCode: countryCode, size: 76)
-            Text(label)
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(WIFTheme.primaryText)
-        }
-        .padding(10)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.white.opacity(0.06))
-        )
     }
 
     // MARK: - Narrative Section
@@ -456,9 +439,15 @@ struct OnboardingView: View {
             floatingPhase = true
         }
 
-        // Particle beam loop
+        // Particle beam loops
         withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
-            particleOffset = 1.0
+            particlePhase1 = 1.0
+        }
+        withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true).delay(0.3)) {
+            particlePhase2 = 1.0
+        }
+        withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true).delay(0.6)) {
+            particlePhase3 = 1.0
         }
 
         // Start Act 1 FX
