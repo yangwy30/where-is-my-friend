@@ -117,13 +117,24 @@ struct OnboardingView: View {
         .frame(height: 320)
     }
 
-    // MARK: - Act 1: 巨幅手办轮播 · 把朋友装进桌面 (Large Hero 3D Diorama Carousel)
+    // MARK: - Act 1: Large Hero 3D Diorama Carousel
 
-    private let carouselCities = [
-        (city: "Tokyo", country: "JP", name: "Lin Zhao", label: "Tokyo", time: "15:00", mood: "☀️ 下午茶时间"),
-        (city: "New York", country: "US", name: "You", label: "New York", time: "02:00", mood: "🌙 深夜星空"),
-        (city: "London", country: "GB", name: "Mia Chen", label: "London", time: "07:00", mood: "☕️ 晨光初醒")
-    ]
+    private struct CarouselCityItem {
+        let city: String
+        let country: String
+        let name: String
+        let label: String
+        let time: String
+        let mood: LocalizedStringKey
+    }
+
+    private var carouselCities: [CarouselCityItem] {
+        [
+            CarouselCityItem(city: "Tokyo", country: "JP", name: "Lin Zhao", label: "Tokyo", time: "15:00", mood: "☀️ Afternoon tea"),
+            CarouselCityItem(city: "New York", country: "US", name: "You", label: "New York", time: "02:00", mood: "🌙 Starlit night"),
+            CarouselCityItem(city: "London", country: "GB", name: "Mia Chen", label: "London", time: "07:00", mood: "☕️ Morning coffee")
+        ]
+    }
 
     private var actOneHeroDioramaCarouselStage: some View {
         TabView(selection: $act1CityIndex) {
@@ -132,7 +143,7 @@ struct OnboardingView: View {
                 VStack(spacing: 8) {
                     Spacer(minLength: 0)
 
-                    // Hero 112pt Large 3D Diorama
+                    // Hero 116pt Large 3D Diorama
                     CityEmblemView(city: item.city, countryCode: item.country, size: 116)
                         .shadow(color: Color.black.opacity(0.12), radius: 14, y: 8)
                         .offset(y: floatingPhase ? -4 : 4)
@@ -174,7 +185,7 @@ struct OnboardingView: View {
         .tabViewStyle(.page(indexDisplayMode: .always))
     }
 
-    // MARK: - Act 2: 纯净留白 · 城市级安心 (Crystal Glass Cloak over Paris)
+    // MARK: - Act 2: Crystal Glass Cloak over Paris
 
     private var actTwoPrivacyShieldStage: some View {
         ZStack {
@@ -235,7 +246,7 @@ struct OnboardingView: View {
             HStack(spacing: 5) {
                 Image(systemName: "checkmark.shield.fill")
                     .font(.system(size: 11, weight: .bold))
-                Text("城市级共享 · 零轨迹追踪")
+                Text("City-Level Sharing · Zero Tracking")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
             }
             .foregroundStyle(WIFTheme.fresh)
@@ -252,7 +263,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Act 3: 浪漫同城 · 璀璨相遇提醒 (Serendipity Bloom & Luminous Alert Card)
+    // MARK: - Act 3: Serendipity Bloom & Luminous Alert Card
 
     private var actThreeCinematicReunionStage: some View {
         ZStack {
@@ -313,7 +324,7 @@ struct OnboardingView: View {
                                 .fill(WIFTheme.fresh)
                                 .frame(width: 5, height: 5)
                             Text("Mia · 2 together")
-                                .font(.caption.weight(.bold))
+                                .font(.caption2.weight(.bold))
                                 .foregroundStyle(WIFTheme.fresh)
                         }
                         .padding(.horizontal, 10)
@@ -345,7 +356,7 @@ struct OnboardingView: View {
                             .foregroundStyle(WIFTheme.secondaryText)
                     }
 
-                    Text("你和 Mia 今晚都在 New York 📍")
+                    Text("You and Mia are in New York together 📍")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundStyle(WIFTheme.primaryText)
                 }
@@ -377,30 +388,30 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Narrative Section
+    // MARK: - Native English Base Narrative (with Full Localization Support)
 
     private var narrativeSection: some View {
         VStack(spacing: 6) {
             switch step {
             case 0:
-                Text("把朋友装进桌面")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                Text("Your Friends, on Your Screen")
+                    .font(.system(size: 25, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("左右轻扫，随时感知远方世界。")
+                Text("Swipe gently to feel connected with friends around the globe.")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             case 1:
-                Text("只知城市")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                Text("City-Level Only")
+                    .font(.system(size: 25, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("零轨迹追踪，零社交压力。")
+                Text("Zero precise tracking. Zero social pressure.")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             default:
-                Text("偶然同城，惊喜点亮")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                Text("Spark Moments in the Same City")
+                    .font(.system(size: 25, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
-                Text("同在这一座城，为你第一时间捕捉相遇。")
+                Text("When paths cross, Across Us captures the reunion.")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
             }
@@ -418,7 +429,7 @@ struct OnboardingView: View {
                     if step == totalSteps - 1 {
                         Image(systemName: "apple.logo")
                     }
-                    Text(step == totalSteps - 1 ? "开启" : "继续")
+                    Text(step == totalSteps - 1 ? "Get Started" : "Continue")
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
@@ -429,8 +440,8 @@ struct OnboardingView: View {
             .accessibilityIdentifier("onboardingContinueButton")
 
             Text(step == totalSteps - 1
-                 ? "只分享城市 · 随时可暂停"
-                 : "左右轻扫浏览")
+                 ? "City sharing only · Pause anytime"
+                 : "Swipe to explore")
                 .font(.caption2)
                 .foregroundStyle(WIFTheme.secondaryText)
         }
