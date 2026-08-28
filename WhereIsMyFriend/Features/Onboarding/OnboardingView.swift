@@ -19,7 +19,7 @@ struct OnboardingView: View {
                 progressHeader
                     .padding(.top, 18)
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 12)
 
                 // Cinematic Stage Carousel
                 TabView(selection: $step) {
@@ -33,7 +33,7 @@ struct OnboardingView: View {
                     triggerHaptic(for: newStep)
                 }
 
-                Spacer(minLength: 16)
+                Spacer(minLength: 12)
 
                 // Bottom Action & Caption
                 bottomControls
@@ -62,18 +62,103 @@ struct OnboardingView: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: step)
     }
 
-    // MARK: - Act 1: 羁绊 (Cross-Horizon Bond)
+    // MARK: - Act 1: 散落 (The Great Scatter / 毕业奔赴山海)
 
     private var actOneView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             Spacer(minLength: 0)
 
-            // Stage Visual: Dual Horizon
+            // Visual: 4 Cities Scattering Outward
             ZStack {
-                // Connecting Horizon Beam
+                // Background subtle orbital rings
+                Circle()
+                    .strokeBorder(WIFTheme.fresh.opacity(0.12), lineWidth: 1)
+                    .frame(width: 210, height: 210)
+
+                Circle()
+                    .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
+                    .frame(width: 140, height: 140)
+
+                // Center Origin Tag
+                Text("🎓 Origin")
+                    .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3.5)
+                    .background(Capsule().fill(Color.white.opacity(0.08)))
+
+                // Top Left: New York
+                VStack(spacing: 2) {
+                    CityEmblemView(city: "New York", countryCode: "US", size: 62)
+                    Text("New York")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .offset(x: -76, y: -62)
+
+                // Top Right: London
+                VStack(spacing: 2) {
+                    CityEmblemView(city: "London", countryCode: "GB", size: 62)
+                    Text("London")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .offset(x: 76, y: -62)
+
+                // Bottom Left: San Francisco
+                VStack(spacing: 2) {
+                    CityEmblemView(city: "San Francisco", countryCode: "US", size: 62)
+                    Text("SF")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .offset(x: -76, y: 64)
+
+                // Bottom Right: Tokyo
+                VStack(spacing: 2) {
+                    CityEmblemView(city: "Tokyo", countryCode: "JP", size: 62)
+                    Text("Tokyo")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .offset(x: 76, y: 64)
+            }
+            .frame(height: 210)
+
+            Spacer(minLength: 0)
+
+            // Narrative Copy
+            VStack(spacing: 10) {
+                Text("毕业那年，\n我们奔赴各自的山海。")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+
+                Text("各自收拾行囊，各奔东西。\n曾经形影不离的人，散落到了世界各个角落。")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 28)
+                    .lineSpacing(4)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    // MARK: - Act 2: 挂念 (Silent Presence / 各自忙碌 遥遥相望)
+
+    private var actTwoView: some View {
+        VStack(spacing: 20) {
+            Spacer(minLength: 0)
+
+            // Visual: Dual Horizon Bridge
+            ZStack {
+                // Connecting Horizon Arc
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(WIFTheme.fresh.opacity(0.7))
+                        .fill(WIFTheme.fresh.opacity(0.8))
                         .frame(width: 5, height: 5)
                     Rectangle()
                         .fill(
@@ -94,8 +179,8 @@ struct OnboardingView: View {
                 .padding(.horizontal, 48)
 
                 HStack {
-                    // New York
-                    VStack(spacing: 6) {
+                    // Left: New York (Me)
+                    VStack(spacing: 4) {
                         CityEmblemView(city: "New York", countryCode: "US", size: 84)
                         Text("New York")
                             .font(.system(.caption, design: .rounded, weight: .bold))
@@ -103,142 +188,88 @@ struct OnboardingView: View {
                     }
                     .padding(10)
                     .background(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(Color.white.opacity(0.04))
                     )
 
                     Spacer(minLength: 20)
 
-                    // Tokyo
-                    VStack(spacing: 6) {
+                    // Right: Tokyo (Friend)
+                    VStack(spacing: 4) {
                         CityEmblemView(city: "Tokyo", countryCode: "JP", size: 84)
-                        Text("Tokyo")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
+                        VStack(spacing: 1) {
+                            Text("Tokyo")
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(WIFTheme.primaryText)
+                            Text("Lin")
+                                .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                                .foregroundStyle(WIFTheme.fresh)
+                        }
                     }
                     .padding(10)
                     .background(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(Color.white.opacity(0.04))
                     )
                 }
                 .padding(.horizontal, 24)
+
+                // Privacy Indicator
+                HStack(spacing: 4) {
+                    Image(systemName: "shield.fill")
+                        .font(.system(size: 8.5, weight: .bold))
+                    Text("只知身在何城 · 不查轨迹，不添打扰")
+                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
+                }
+                .foregroundStyle(WIFTheme.fresh)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(Color(white: 0.12).opacity(0.92))
+                        .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.30), lineWidth: 1))
+                )
+                .offset(y: 74)
             }
-            .frame(height: 200)
+            .frame(height: 210)
             .padding(.horizontal, 16)
 
             Spacer(minLength: 0)
 
-            // Text
+            // Narrative Copy
             VStack(spacing: 10) {
-                Text("相隔万里，\n也能知道你在哪座城。")
+                Text("我们很少再联系，\n但依然想知道你去了哪。")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
 
-                Text("朋友散落世界各地，但距离不必让彼此失去联系。")
+                Text("各自忙于生活，不必刻意寒暄。\n只要看一眼你所在的城市，就知道你一切安好。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
-                    .lineSpacing(3)
+                    .lineSpacing(4)
             }
 
             Spacer(minLength: 0)
         }
     }
 
-    // MARK: - Act 2: 安心 (City-Level Gentle Privacy)
-
-    private var actTwoView: some View {
-        VStack(spacing: 24) {
-            Spacer(minLength: 0)
-
-            // Stage Visual: Protected Paris Diorama
-            ZStack {
-                // Soft Privacy Halo Circle
-                Circle()
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                WIFTheme.fresh.opacity(0.45),
-                                WIFTheme.fresh.opacity(0.08)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 1.5
-                    )
-                    .frame(width: 170, height: 170)
-                    .background(
-                        Circle()
-                            .fill(WIFTheme.fresh.opacity(0.06))
-                    )
-
-                VStack(spacing: 6) {
-                    CityEmblemView(city: "Paris", countryCode: "FR", size: 96)
-
-                    Text("Paris")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                }
-
-                // Floating Privacy Tag
-                HStack(spacing: 4) {
-                    Image(systemName: "shield.fill")
-                        .font(.system(size: 9, weight: .bold))
-                    Text("仅共享城市 · 零轨迹追踪")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                }
-                .foregroundStyle(WIFTheme.fresh)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4.5)
-                .background(
-                    Capsule()
-                        .fill(Color(white: 0.12).opacity(0.92))
-                        .overlay(Capsule().strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1))
-                )
-                .offset(y: 72)
-            }
-            .frame(height: 200)
-
-            Spacer(minLength: 0)
-
-            // Text
-            VStack(spacing: 10) {
-                Text("只分享城市，\n不分享轨迹。")
-                    .font(.system(size: 26, weight: .bold, design: .rounded))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-
-                Text("知道你平安在哪座城，也尊重你独处的距离。")
-                    .font(.subheadline)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 28)
-                    .lineSpacing(3)
-            }
-
-            Spacer(minLength: 0)
-        }
-    }
-
-    // MARK: - Act 3: 惊喜 (Same-City Serendipity)
+    // MARK: - Act 3: 重聚 (The Reunion / 偶然降落同一座城)
 
     private var actThreeView: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             Spacer(minLength: 0)
 
-            // Stage Visual: Merged Same-City Stage
+            // Visual: Merged Same-City Hero Stage
             ZStack {
-                // Outer Radiance
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                // Ambient Green Aura
+                RoundedRectangle(cornerRadius: 32, style: .continuous)
                     .fill(
                         RadialGradient(
                             colors: [
-                                WIFTheme.fresh.opacity(0.22),
+                                WIFTheme.fresh.opacity(0.24),
                                 Color.clear
                             ],
                             center: .center,
@@ -246,14 +277,14 @@ struct OnboardingView: View {
                             endRadius: 110
                         )
                     )
-                    .frame(width: 220, height: 180)
+                    .frame(width: 230, height: 190)
 
                 VStack(spacing: 8) {
-                    CityEmblemView(city: "New York", countryCode: "US", size: 94)
+                    CityEmblemView(city: "New York", countryCode: "US", size: 96)
 
-                    VStack(spacing: 3) {
+                    VStack(spacing: 4) {
                         Text("New York")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .font(.system(.title3, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
 
                         HStack(spacing: 4) {
@@ -264,39 +295,39 @@ struct OnboardingView: View {
                                 .font(.caption2.weight(.bold))
                                 .foregroundStyle(WIFTheme.fresh)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3.5)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 4)
                         .background(Capsule().fill(WIFTheme.fresh.opacity(0.18)))
                     }
                 }
-                .padding(14)
+                .padding(16)
                 .background(
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                        .fill(Color.white.opacity(0.05))
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color.white.opacity(0.06))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .strokeBorder(WIFTheme.fresh.opacity(0.35), lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                .strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1)
                         )
                 )
             }
-            .frame(height: 200)
+            .frame(height: 210)
 
             Spacer(minLength: 0)
 
-            // Text
+            // Narrative Copy
             VStack(spacing: 10) {
-                Text("有一天，\n我们刚好同城。")
+                Text("如果有一天，\n我们在同一座城市降落。")
                     .font(.system(size: 26, weight: .bold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
 
-                Text("当城市重叠，App 会提醒你这一刻。")
+                Text("时差归零，街角相聚。\n当生活轨迹再次重叠，App 会替你记住这奇迹的一刻。")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 28)
-                    .lineSpacing(3)
+                    .lineSpacing(4)
             }
 
             Spacer(minLength: 0)
@@ -312,7 +343,7 @@ struct OnboardingView: View {
                     if step == totalSteps - 1 {
                         Image(systemName: "apple.logo")
                     }
-                    Text(step == totalSteps - 1 ? "开启，看看朋友在哪座城" : "继续")
+                    Text(step == totalSteps - 1 ? "开启，看看老朋友们在哪座城" : "继续")
                 }
                 .font(.headline)
                 .frame(maxWidth: .infinity)
