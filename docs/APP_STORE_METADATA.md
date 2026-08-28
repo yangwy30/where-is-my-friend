@@ -1,6 +1,6 @@
 # App Store and TestFlight metadata
 
-Prepared for **Where Is My Friend 0.1.0 (Build 3)** on August 16, 2026.
+Prepared for **Across Us 0.1.0 (Build 6)** on August 27, 2026.
 
 ## URLs
 
@@ -15,7 +15,7 @@ The privacy and support URLs become public after this branch is merged to `main`
 
 ### Name
 
-Where Is My Friend
+Across Us
 
 ### Subtitle
 
@@ -27,7 +27,7 @@ Stay loosely connected across cities. Share only your latest city with accepted 
 
 ### Description
 
-Where Is My Friend helps close friends stay connected across cities—without turning friendship into live tracking.
+Across Us helps close friends stay connected across cities—without turning friendship into live tracking.
 
 After both people accept a friend request, you can see each other’s latest shared city and update time. Add the Widget to your Home Screen for an at-a-glance view. When eligible friends share the same city, the app can create a same-city moment and notify you.
 
@@ -69,7 +69,7 @@ friends,city,widget,location,travel,social,nearby,sharing,reunion
 
 ### What’s New — 0.1.0
 
-Welcome to the first Where Is My Friend beta.
+Welcome to the first Across Us beta.
 
 • Sign in with Apple and persistent sessions
 • Mutual friend requests and per-friend city sharing
@@ -83,7 +83,7 @@ Welcome to the first Where Is My Friend beta.
 
 ### 名称
 
-Where Is My Friend
+Across Us
 
 ### 副标题
 
@@ -95,7 +95,7 @@ Where Is My Friend
 
 ### 描述
 
-Where Is My Friend 帮助亲近的朋友跨越城市保持联系，同时不会把友情变成实时定位。
+Across Us 帮助亲近的朋友跨越城市保持联系，同时不会把友情变成实时定位。
 
 双方接受好友请求后，就能看到彼此最近共享的城市和更新时间。把小组件放在主屏幕上，即可快速查看。当符合条件的好友共享同一座城市时，App 可以创建同城时刻并通知你。
 
@@ -135,7 +135,7 @@ Where Is My Friend 帮助亲近的朋友跨越城市保持联系，同时不会�
 
 ### 版本更新说明 — 0.1.0
 
-欢迎体验 Where Is My Friend 的第一个测试版本。
+欢迎体验 Across Us 的第一个测试版本。
 
 • 通过 Apple 登录并保持会话
 • 双向好友请求和逐好友城市共享
@@ -149,7 +149,7 @@ Where Is My Friend 帮助亲近的朋友跨越城市保持联系，同时不会�
 
 ### Beta App Description
 
-Where Is My Friend is a privacy-first social utility for sharing your latest city with mutually accepted friends. It includes Sign in with Apple, friend requests, city-level presence, per-friend sharing controls, same-city moments, notification settings, account deletion, and Home Screen and Lock Screen Widgets. Precise coordinates are used on-device to determine a city and are not uploaded to the server.
+Across Us is a privacy-first social utility for sharing your latest city with mutually accepted friends. It includes Sign in with Apple, friend requests, city-level presence, per-friend sharing controls, same-city moments, notification settings, account deletion, and Home Screen and Lock Screen Widgets. Precise coordinates are used on-device to determine a city and are not uploaded to the server.
 
 This beta is intended to validate real two-person friendship and same-city flows on separate iPhones. Background city refresh timing is controlled by iOS and may not be immediate.
 

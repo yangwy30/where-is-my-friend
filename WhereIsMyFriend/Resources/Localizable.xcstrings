@@ -368,6 +368,17 @@
         }
       }
     },
+    "Across Us" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Across Us"
+          }
+        }
+      }
+    },
     "Add a friend" : {
       "localizations" : {
         "zh-Hans" : {
@@ -532,6 +543,7 @@
       }
     },
     "Apple sign-in comes next" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -669,6 +681,7 @@
       }
     },
     "Background location lets the app notice meaningful city changes. You can pause sharing at any time." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1085,6 +1098,7 @@
       }
     },
     "Continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1095,6 +1109,7 @@
       }
     },
     "Continue to sign in" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1613,6 +1628,7 @@
       }
     },
     "Friends see a city and an update time. Precise coordinates and route history are not part of this experience." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1750,6 +1766,7 @@
       }
     },
     "Keep your city current" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1779,6 +1796,9 @@
           }
         }
       }
+    },
+    "Lin" : {
+
     },
     "Live simulator for iOS Home Screen & StandBy widgets." : {
 
@@ -1928,6 +1948,9 @@
         }
       }
     },
+    "Mia · 2 together" : {
+
+    },
     "Mia Chen" : {
 
     },
@@ -2006,6 +2029,9 @@
           }
         }
       }
+    },
+    "New York" : {
+
     },
     "Night Jade" : {
       "localizations" : {
@@ -2266,6 +2292,16 @@
         }
       }
     },
+    "Open Across Us" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 Across Us"
+          }
+        }
+      }
+    },
     "Open app" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2305,16 +2341,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "打开 App 设置你的城市"
-          }
-        }
-      }
-    },
-    "Open Where Is My Friend" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "打开 Where Is My Friend"
           }
         }
       }
@@ -2855,6 +2881,7 @@
       }
     },
     "See how it works" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2875,6 +2902,7 @@
       }
     },
     "See the latest city your closest friends have chosen to share — without starting another group chat." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3156,6 +3184,7 @@
       }
     },
     "Step %lld of %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3351,12 +3380,12 @@
         }
       }
     },
-    "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Where Is My Friend under Sign in with Apple in your Apple Account settings." : {
+    "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Across Us under Sign in with Apple in your Apple Account settings." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "服务器将删除你的账号、好友关系、偏好、当前城市和通知设备。你还可以在 Apple 账号设置的“通过 Apple 登录”中单独移除 Where Is My Friend 的授权。"
+            "value" : "服务器将删除你的账号、好友关系、偏好、当前城市和通知设备。你还可以在 Apple 账号设置的“通过 Apple 登录”中单独移除 Across Us 的授权。"
           }
         }
       }
@@ -3392,12 +3421,12 @@
         }
       }
     },
-    "This controls Where Is My Friend widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked." : {
+    "This controls Across Us widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "此设置控制 Where Is My Friend 在主屏幕和锁屏上的小组件。iPhone 锁定时，iOS 可能会进一步隐藏隐私内容。"
+            "value" : "此设置控制 Across Us 在主屏幕和锁屏上的小组件。iPhone 锁定时，iOS 可能会进一步隐藏隐私内容。"
           }
         }
       }
@@ -3498,6 +3527,9 @@
           }
         }
       }
+    },
+    "Tokyo" : {
+
     },
     "Try again" : {
       "extractionState" : "stale",
@@ -3775,17 +3807,6 @@
         }
       }
     },
-    "Where they are" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "他们在哪里"
-          }
-        }
-      }
-    },
     "Widget" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4024,6 +4045,7 @@
       }
     },
     "Your people, around the world" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4092,6 +4114,36 @@
           }
         }
       }
+    },
+    "不查轨迹，知道你平安便好。" : {
+
+    },
+    "只分享城市 · 随时可暂停" : {
+
+    },
+    "只知城市，不添打扰" : {
+
+    },
+    "同一座城，偶然重逢" : {
+
+    },
+    "山海相隔，依然相连。" : {
+
+    },
+    "左右轻扫浏览" : {
+
+    },
+    "开启" : {
+
+    },
+    "当轨迹重叠，点亮这一刻。" : {
+
+    },
+    "散落世界的朋友" : {
+
+    },
+    "继续" : {
+
     }
   },
   "version" : "1.0"

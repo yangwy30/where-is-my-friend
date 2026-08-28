@@ -277,7 +277,7 @@ https://<STAGING_PROJECT_REF>.supabase.co/functions/v1/api
 
 工程已经包含共享的 **WhereIsMyFriend Staging** scheme、Staging Bundle ID 和 Team ID。第一次在真机运行前，需要在 Mac 的 **Xcode → Settings → Accounts** 登录属于 Team `93RUQ2A6KX` 的 Apple Developer 账号，让 Xcode 自动创建或下载主 App 与 Widget 的 provisioning profiles。随后连接并解锁 iPhone、按提示信任 Mac 和开启 Developer Mode，在 Xcode 选择 **WhereIsMyFriend Staging** scheme 与该 iPhone 后运行。
 
-Team `93RUQ2A6KX` 已配置，Xcode 已自动生成 Staging 主 App 与 Widget profiles，ARM64 真机构建和两份代码签名均已验证。手机上使用 **Where Is My Friend Staging**（Bundle ID `com.yangwy30.whereismyfriend.staging`）验证真实 Supabase 链路；普通 **Where Is My Friend?** 仍是本地 Demo 包。
+Team `93RUQ2A6KX` 已配置，Xcode 已自动生成 Staging 主 App 与 Widget profiles，ARM64 真机构建和两份代码签名均已验证。手机上使用 **Across Us**（Bundle ID `com.yangwy30.whereismyfriend.staging`）验证真实 Supabase 链路；普通 **Across Us** 仍是本地 Demo 包。
 
 ### C7. Apple 账号删除与 token 撤销——代码任务
 

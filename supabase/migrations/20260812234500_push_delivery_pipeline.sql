@@ -276,7 +276,7 @@ begin
         end,
         case when s.notification_preview_enabled
             then e.friend_name || ' is now in ' || e.city_name || ', too.'
-            else 'Open Where Is My Friend to see the update.'
+            else 'Open Across Us to see the update.'
         end,
         d.url_scheme || '://events/' || e.id::text
     from claimed c

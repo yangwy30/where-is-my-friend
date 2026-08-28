@@ -6,7 +6,7 @@ App Store/TestFlight 文案、审核说明、隐私标签建议和公开 URL 统
 
 ## 当前候选构建
 
-- App：Where Is My Friend Staging
+- App：Across Us
 - Bundle ID：`com.yangwy30.whereismyfriend.staging`
 - Widget Bundle ID：`com.yangwy30.whereismyfriend.staging.widget`
 - 版本：`0.1.0`
@@ -24,7 +24,7 @@ Apple 要求先创建 App 记录，之后才能上传构建。打开 [App Store 
 | 字段 | 值 |
 | --- | --- |
 | Platforms | iOS |
-| Name | Where Is My Friend |
+| Name | Across Us |
 | Primary Language | English (U.S.) |
 | Bundle ID | `com.yangwy30.whereismyfriend.staging` |
 | SKU | `WIF-STAGING-IOS` |
@@ -51,7 +51,7 @@ xcodebuild -exportArchive \
 ### Beta App Description
 
 ```text
-Where Is My Friend privately shares city-level presence between accepted friends. It never uploads precise coordinates or route history. This beta focuses on Sign in with Apple, friend requests, city sharing, same-city moments, and Home Screen and Lock Screen Widgets.
+Across Us privately shares city-level presence between accepted friends. It never uploads precise coordinates or route history. This beta focuses on Sign in with Apple, friend requests, city sharing, same-city moments, and Home Screen and Lock Screen Widgets.
 ```
 
 ### What to Test

@@ -1,4 +1,4 @@
-# Where Is My Friend?
+# Across Us
 
 一个以隐私为先的 iOS 应用：让彼此同意分享的朋友看到对方**最近所在的城市**，并在朋友们来到同一座城市时收到提醒。
 
@@ -74,7 +74,7 @@ App 只会在用户主动点击相关控制后请求位置或通知权限。本�
 2. 选择 `WhereIsMyFriend` scheme 和任意 iPhone Simulator。
 3. Build & Run。
 4. 完成三步原型 Onboarding 后浏览 App。
-5. 在模拟器桌面添加 `Where they are` Widget，切换三种尺寸查看布局。
+5. 在模拟器桌面添加 `Across Us` Widget，切换三种尺寸查看布局。
 
 当前开发 UI 不需要后端。要验证真实账号和持久化数据，请在 Xcode 选择 **WhereIsMyFriend Staging** scheme 并运行到已签名真机；详细步骤见 [远程 Staging 实施计划](./docs/SUPABASE_PRODUCTION_PLAN.md)。如果以后需要完全离线的 Supabase stack，再使用 [可选本地后端指南](./docs/LOCAL_BACKEND.md)。
 

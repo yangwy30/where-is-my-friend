@@ -1,4 +1,4 @@
-# Where Is My Friend? — Design Specification
+# Across Us — Design Specification
 
 Status: v2 Liquid Glass client baseline
 

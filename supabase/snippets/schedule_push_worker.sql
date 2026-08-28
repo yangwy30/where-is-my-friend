@@ -5,19 +5,19 @@
 select vault.create_secret(
     'https://PROJECT_REF.supabase.co',
     'wif_project_url',
-    'Where Is My Friend Edge Function origin'
+    'Across Us Edge Function origin'
 );
 
 select vault.create_secret(
     'PUBLISHABLE_KEY',
     'wif_publishable_key',
-    'Where Is My Friend public Edge gateway key'
+    'Across Us public Edge gateway key'
 );
 
 select vault.create_secret(
     'PUSH_WORKER_SECRET',
     'wif_push_worker_secret',
-    'Where Is My Friend cron-to-worker bearer secret'
+    'Across Us cron-to-worker bearer secret'
 );
 
 select cron.unschedule(jobid)

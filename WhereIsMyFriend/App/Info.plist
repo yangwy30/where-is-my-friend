@@ -38,9 +38,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Where Is My Friend uses meaningful city changes to keep the city you share with accepted friends current, even when you are not using the app.</string>
+	<string>Across Us uses meaningful city changes to keep the city you share with accepted friends current, even when you are not using the app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Where Is My Friend uses your location on-device to determine the city you choose to share. Precise coordinates are not uploaded.</string>
+	<string>Across Us uses your location on-device to determine the city you choose to share. Precise coordinates are not uploaded.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>

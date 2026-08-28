@@ -1,4 +1,4 @@
--- Where Is My Friend: first production-shaped backend schema.
+-- Across Us: first production-shaped backend schema.
 -- The public schema is never exposed directly to the iOS client. The Edge API
 -- uses the service role and every request is authorized from a hashed session.
 

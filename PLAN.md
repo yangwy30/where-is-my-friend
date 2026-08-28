@@ -1,4 +1,4 @@
-# Where Is My Friend?：从零到 App Store 发布计划
+# Across Us：从零到 App Store 发布计划
 
 - 最后更新：2026-08-13
 - 文档状态：v2，远程 Supabase Staging 路线已确定

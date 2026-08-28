@@ -722,7 +722,7 @@ private struct LockScreenEmptyState: View {
     var body: some View {
         switch layout {
         case .rectangular:
-            Label("Open Where Is My Friend", systemImage: "person.2.fill")
+            Label("Open Across Us", systemImage: "person.2.fill")
                 .font(.caption.weight(.semibold))
                 .lineLimit(2)
                 .widgetAccentable()
@@ -730,7 +730,7 @@ private struct LockScreenEmptyState: View {
             Image(systemName: "person.2.fill")
                 .font(.title3.weight(.semibold))
                 .widgetAccentable()
-                .accessibilityLabel("Open Where Is My Friend")
+                .accessibilityLabel("Open Across Us")
         }
     }
 }
