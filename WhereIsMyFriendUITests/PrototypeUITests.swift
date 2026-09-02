@@ -109,6 +109,66 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(profileScreen.waitForExistence(timeout: 3))
         XCTAssertEqual(profileScreen.value as? String, "nightJade")
     }
+
+    func testCaptureAppStoreScreenshots() {
+        continueAfterFailure = false
+        let dir = URL(fileURLWithPath: "/Users/wangyang/.gemini/antigravity-insiders/brain/a9fe7251-03e8-4092-990c-527a6ef21b48/raw_screenshots")
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+
+        let app = XCUIApplication()
+        app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        sleep(2)
+        let shot1 = XCUIScreen.main.screenshot()
+        try? shot1.pngRepresentation.write(to: dir.appendingPathComponent("01_friends_main.png"))
+
+        // Tap Lin Zhao or Mia Chen for detail
+        let miaCard = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Mia Chen'")).firstMatch
+        if miaCard.waitForExistence(timeout: 3) {
+            miaCard.tap()
+            sleep(2)
+            let shot2 = XCUIScreen.main.screenshot()
+            try? shot2.pngRepresentation.write(to: dir.appendingPathComponent("02_friend_detail.png"))
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            sleep(1)
+        }
+
+        // Tap City Sharing card
+        let cityCard = app.buttons["myCitySharingCard"]
+        if cityCard.waitForExistence(timeout: 3) {
+            cityCard.tap()
+            sleep(2)
+            let shot3 = XCUIScreen.main.screenshot()
+            try? shot3.pngRepresentation.write(to: dir.appendingPathComponent("03_city_sharing_privacy.png"))
+            app.swipeDown()
+            sleep(1)
+        }
+
+        // Profile -> City Emblem Gallery
+        app.tabBars.buttons.element(boundBy: 1).tap()
+        sleep(1)
+        let galleryButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'City Emblem Gallery'")).firstMatch
+        if !galleryButton.isHittable {
+            app.scrollViews["profileSettingsScreen"].swipeUp()
+            sleep(1)
+        }
+        if galleryButton.waitForExistence(timeout: 3) {
+            galleryButton.tap()
+            sleep(2)
+            let shot4 = XCUIScreen.main.screenshot()
+            try? shot4.pngRepresentation.write(to: dir.appendingPathComponent("04_city_emblems.png"))
+        }
+
+        // Fresh Onboarding
+        let onboardingApp = XCUIApplication()
+        onboardingApp.launchArguments = ["-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        onboardingApp.launch()
+        sleep(2)
+        let shot5 = XCUIScreen.main.screenshot()
+        try? shot5.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding.png"))
+    }
 }
 
 private extension XCUIElement {
