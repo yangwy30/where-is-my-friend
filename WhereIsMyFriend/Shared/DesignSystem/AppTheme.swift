@@ -132,8 +132,8 @@ enum WIFTheme {
         LinearGradient(
             colors: [
                 canvas,
-                freshSurface.opacity(0.72),
-                eventBlue.opacity(0.58),
+                freshSurface.opacity(0.38),
+                eventBlue.opacity(0.34),
                 canvas
             ],
             startPoint: .topLeading,
@@ -155,16 +155,22 @@ struct WIFAmbientBackground: View {
                 WIFTheme.ambientGradient
 
                 Circle()
-                    .fill(WIFTheme.fresh.opacity(0.20))
+                    .fill(WIFTheme.fresh.opacity(0.10))
                     .frame(width: 310, height: 310)
                     .blur(radius: 72)
                     .offset(x: 150, y: -280)
 
                 Circle()
-                    .fill(WIFTheme.sunGlow.opacity(0.13))
+                    .fill(WIFTheme.sunGlow.opacity(0.065))
                     .frame(width: 280, height: 280)
                     .blur(radius: 82)
                     .offset(x: -170, y: 330)
+
+                Circle()
+                    .fill(WIFTheme.eventBlue.opacity(0.10))
+                    .frame(width: 300, height: 300)
+                    .blur(radius: 88)
+                    .offset(x: 180, y: 360)
             }
         }
         .ignoresSafeArea()

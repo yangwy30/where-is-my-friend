@@ -6,8 +6,8 @@ final class FriendPresenceTests: XCTestCase {
 
     func testFreshnessTransitions() {
         let fresh = makeFriend(updatedAt: now.addingTimeInterval(-30 * 60))
-        let aging = makeFriend(updatedAt: now.addingTimeInterval(-3 * 60 * 60))
-        let stale = makeFriend(updatedAt: now.addingTimeInterval(-25 * 60 * 60))
+        let aging = makeFriend(updatedAt: now.addingTimeInterval(-3 * 24 * 60 * 60))
+        let stale = makeFriend(updatedAt: now.addingTimeInterval(-15 * 24 * 60 * 60))
 
         XCTAssertEqual(fresh.freshness(at: now), .fresh)
         XCTAssertEqual(aging.freshness(at: now), .aging)
@@ -29,18 +29,24 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertFalse(paused.cityDisplay.isEmpty)
     }
 
-    func testSameCityMatchingIncludesActiveFriendsAndExcludesOtherCities() {
+    func testSameCityMatchingIncludesFriendsUpdatedWithin14Days() {
         let freshNewYork = makeFriend(name: "Mia", city: "New York", updatedAt: now.addingTimeInterval(-60))
-        let activeNewYork = makeFriend(name: "Alex", city: "New York", updatedAt: now.addingTimeInterval(-3 * 60 * 60))
+        let agingThreeDaysNewYork = makeFriend(name: "Alex", city: "New York", updatedAt: now.addingTimeInterval(-3 * 24 * 60 * 60))
+        let agingThirteenDaysNewYork = makeFriend(name: "Chloe", city: "New York", updatedAt: now.addingTimeInterval(-13 * 24 * 60 * 60))
+        let staleFifteenDaysNewYork = makeFriend(name: "Sam", city: "New York", updatedAt: now.addingTimeInterval(-15 * 24 * 60 * 60))
         let freshTokyo = makeFriend(name: "Lin", city: "Tokyo", updatedAt: now.addingTimeInterval(-60))
 
         let matches = MockFriendData.sameCityFriends(
-            from: [freshNewYork, activeNewYork, freshTokyo],
+            from: [freshNewYork, agingThreeDaysNewYork, agingThirteenDaysNewYork, staleFifteenDaysNewYork, freshTokyo],
             currentCity: "new york",
             now: now
         )
 
-        XCTAssertEqual(matches.map(\.displayName), ["Mia", "Alex"])
+        XCTAssertEqual(matches.map(\.displayName), ["Mia", "Alex", "Chloe"])
+        XCTAssertTrue(freshNewYork.isSameCityEligible(at: now))
+        XCTAssertTrue(agingThreeDaysNewYork.isSameCityEligible(at: now))
+        XCTAssertTrue(agingThirteenDaysNewYork.isSameCityEligible(at: now))
+        XCTAssertFalse(staleFifteenDaysNewYork.isSameCityEligible(at: now))
     }
 
     func testCityIdentityIgnoresCaseWhitespaceAndDiacriticsButHonorsKnownCountry() {
@@ -203,8 +209,9 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertEqual(fallbackFrench.archetype, .european)
         XCTAssertNil(fallbackFrench.assetName)
 
-        let fallbackKorean = CityEmblem.resolve(city: "Busan", countryCode: "KR")
+        let fallbackKorean = CityEmblem.resolve(city: "Daegu", countryCode: "KR")
         XCTAssertEqual(fallbackKorean.archetype, .asian)
+        XCTAssertNil(fallbackKorean.assetName)
     }
 
     private func makeFriend(

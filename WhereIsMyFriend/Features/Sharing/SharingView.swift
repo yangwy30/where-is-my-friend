@@ -1,5 +1,6 @@
 import CoreLocation
 import SwiftUI
+import UIKit
 
 struct CitySharingSheet: View {
     @Environment(\.dismiss) private var dismiss
@@ -8,6 +9,7 @@ struct CitySharingSheet: View {
     @State private var showsCityPicker = false
     @State private var showsSourceOptions = false
     @State private var pendingSharingEnabled: Bool?
+    @State private var pendingBackgroundUpdates: Bool?
 
     var body: some View {
         NavigationStack {
@@ -70,6 +72,24 @@ struct CitySharingSheet: View {
                             .overlay(WIFTheme.border)
                             .padding(.vertical, 14)
 
+                        Toggle(isOn: backgroundUpdatesBinding) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Automatic background updates")
+                                    .font(.body.weight(.semibold))
+                                    .foregroundStyle(WIFTheme.primaryText)
+                                Text("Refresh when your city meaningfully changes")
+                                    .font(.caption)
+                                    .foregroundStyle(WIFTheme.secondaryText)
+                            }
+                        }
+                        .tint(WIFTheme.fresh)
+                        .disabled(store.isWorking)
+                        .accessibilityIdentifier("backgroundUpdatesToggle")
+
+                        Divider()
+                            .overlay(WIFTheme.border)
+                            .padding(.vertical, 14)
+
                         Button {
                             locationService.requestForegroundCity()
                         } label: {
@@ -101,6 +121,21 @@ struct CitySharingSheet: View {
                         .buttonStyle(.plain)
                         .disabled(locationService.isResolving)
                         .accessibilityIdentifier("useCurrentCityButton")
+
+                        if locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted {
+                            Divider()
+                                .overlay(WIFTheme.border)
+                                .padding(.vertical, 14)
+
+                            Button("Open iOS Settings", systemImage: "gear") {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                UIApplication.shared.open(url)
+                            }
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(WIFTheme.fresh)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .buttonStyle(.plain)
+                        }
                     }
                     .wifSettingsGlassCard()
 
@@ -242,6 +277,28 @@ struct CitySharingSheet: View {
             Task {
                 await store.setSharingPreferences(preferences)
                 pendingSharingEnabled = nil
+            }
+        }
+    }
+
+    private var backgroundUpdatesBinding: Binding<Bool> {
+        Binding {
+            pendingBackgroundUpdates ?? store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+        } set: { newValue in
+            pendingBackgroundUpdates = newValue
+            var preferences = store.snapshot.sharingPreferences
+            preferences.backgroundUpdatesEnabled = newValue
+            if !newValue {
+                locationService.stopBackgroundUpdates()
+            }
+            Task {
+                let saved = await store.setSharingPreferences(preferences)
+                if saved, newValue {
+                    locationService.requestBackgroundUpdates()
+                } else if !saved {
+                    locationService.stopBackgroundUpdates()
+                }
+                pendingBackgroundUpdates = nil
             }
         }
     }

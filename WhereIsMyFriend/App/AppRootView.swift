@@ -12,9 +12,24 @@ struct AppRootView: View {
         ProcessInfo.processInfo.arguments.contains("-skipOnboarding")
     }
 
+    private var previewsOnboarding: Bool {
+        ProcessInfo.processInfo.arguments.contains("-previewOnboarding")
+    }
+
+    private var onboardingPreviewStep: Int {
+        guard let argument = ProcessInfo.processInfo.arguments.first(where: {
+            $0.hasPrefix("-previewOnboardingStep=")
+        }), let value = Int(argument.split(separator: "=").last ?? "0") else {
+            return 0
+        }
+        return value
+    }
+
     var body: some View {
         Group {
-            if store.snapshot.isAuthenticated {
+            if previewsOnboarding {
+                OnboardingView(initialStep: onboardingPreviewStep, onComplete: {})
+            } else if store.snapshot.isAuthenticated {
                 AppShellView {
                     hasCompletedOnboarding = false
                 }

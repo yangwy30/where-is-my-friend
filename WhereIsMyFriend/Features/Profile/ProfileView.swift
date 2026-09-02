@@ -29,11 +29,11 @@ struct ProfileView: View {
                 profileHeader
                     .padding(.bottom, 42)
 
-                profileSection("Your world") {
+                profileSection("Sharing & City") {
                     Button(action: onOpenCitySharing) {
                         profileMenuRow(
                             "City sharing",
-                            subtitle: "Choose who can see your current city",
+                            subtitle: citySharingSubtitle,
                             symbol: "location.fill",
                             color: WIFTheme.fresh
                         )
@@ -44,12 +44,30 @@ struct ProfileView: View {
                     menuDivider
 
                     NavigationLink {
+                        NotificationHistoryView()
+                            .toolbar(.visible, for: .navigationBar)
+                    } label: {
+                        profileMenuRow(
+                            "Same-city moments",
+                            subtitle: sameCityMomentsSubtitle,
+                            symbol: "clock.arrow.circlepath",
+                            color: WIFTheme.fresh
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("sameCityMomentsLink")
+                }
+
+                sectionDivider
+
+                profileSection("Preferences") {
+                    NavigationLink {
                         NotificationSettingsView(notificationService: store.notificationService)
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
                         profileMenuRow(
                             "Notifications",
-                            subtitle: "Same-city alerts and moment history",
+                            subtitle: "Same-city alerts and sound",
                             symbol: "bell.fill",
                             color: .orange
                         )
@@ -91,23 +109,7 @@ struct ProfileView: View {
 
                 sectionDivider
 
-                profileSection("Account & privacy") {
-                    NavigationLink {
-                        LocationAccessView()
-                            .toolbar(.visible, for: .navigationBar)
-                    } label: {
-                        profileMenuRow(
-                            "Location & automatic updates",
-                            subtitle: "Control automatic city updates",
-                            symbol: "location.viewfinder",
-                            color: .cyan
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("locationAccessLink")
-
-                    menuDivider
-
+                profileSection("Privacy & Account") {
                     NavigationLink {
                         BlockedPeopleView()
                             .toolbar(.visible, for: .navigationBar)
@@ -135,75 +137,9 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                }
 
-                if store.repositoryMode == .localDemo {
-                    sectionDivider
+                    menuDivider
 
-                    profileSection("Development") {
-                        NavigationLink {
-                            DemoLabView()
-                                .toolbar(.visible, for: .navigationBar)
-                        } label: {
-                            profileMenuRow(
-                                "Demo Lab",
-                                subtitle: "Simulate invites, stale data and alerts",
-                                symbol: "testtube.2",
-                                color: .purple
-                            )
-                        }
-                        .buttonStyle(.plain)
-
-                        menuDivider
-
-                        NavigationLink {
-                            CityEmblemGalleryView()
-                                .toolbar(.visible, for: .navigationBar)
-                        } label: {
-                            profileMenuRow(
-                                "City Emblem Gallery",
-                                subtitle: "Browse 150+ 3D city landmarks",
-                                symbol: "building.2.crop.circle.fill",
-                                color: WIFTheme.fresh
-                            )
-                        }
-                        .buttonStyle(.plain)
-
-                        menuDivider
-
-                        NavigationLink {
-                            WidgetShowcaseView()
-                                .toolbar(.visible, for: .navigationBar)
-                        } label: {
-                            profileMenuRow(
-                                "Widget Studio",
-                                subtitle: "Interactive 3D diorama widget preview",
-                                symbol: "square.grid.2x2.fill",
-                                color: .cyan
-                            )
-                        }
-                        .buttonStyle(.plain)
-
-                        menuDivider
-
-                        Button {
-                            isShowingOnboarding = true
-                        } label: {
-                            profileMenuRow(
-                                "Preview onboarding",
-                                subtitle: "A quick introduction before you start",
-                                symbol: "sparkles",
-                                color: .yellow,
-                                showsDisclosure: false
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-
-                sectionDivider
-
-                profileSection("Account") {
                     Button {
                         showsSignOutConfirmation = true
                     } label: {
@@ -232,6 +168,25 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                }
+
+                if store.repositoryMode == .localDemo {
+                    sectionDivider
+
+                    profileSection("Development") {
+                        NavigationLink {
+                            DeveloperToolsView(isShowingOnboarding: $isShowingOnboarding)
+                                .toolbar(.visible, for: .navigationBar)
+                        } label: {
+                            profileMenuRow(
+                                "Developer Lab & Tools",
+                                subtitle: "Demo Lab, Emblem Gallery, Widget Studio",
+                                symbol: "testtube.2",
+                                color: .purple
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
 
                 Text(buildFooter)
@@ -328,6 +283,22 @@ struct ProfileView: View {
     private var profilePresenceText: String {
         guard store.currentCity != nil else { return "No shared city" }
         return store.snapshot.currentPresence.cityDisplay
+    }
+
+    private var citySharingSubtitle: LocalizedStringKey {
+        if !store.snapshot.sharingPreferences.citySharingEnabled {
+            return "Sharing is paused"
+        }
+        if let currentCity = store.currentCity {
+            return "\(currentCity)"
+        }
+        return "Choose who can see your current city"
+    }
+
+    private var sameCityMomentsSubtitle: LocalizedStringKey {
+        store.snapshot.colocationEvents.isEmpty
+            ? "Timeline of times you shared a city"
+            : "\(store.snapshot.colocationEvents.count) moments recorded"
     }
 
     private var buildFooter: String {
@@ -862,34 +833,6 @@ private struct NotificationSettingsView: View {
                     }
                 }
 
-                NavigationLink {
-                    NotificationHistoryView()
-                } label: {
-                    HStack(spacing: 15) {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .font(.headline)
-                            .foregroundStyle(WIFTheme.fresh)
-                            .frame(width: 46, height: 46)
-                            .background(WIFTheme.fresh.opacity(0.10), in: Circle())
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("View same-city history")
-                                .font(.headline)
-                            Text("Every same-city moment stays available here.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "chevron.right")
-                            .font(.subheadline.bold())
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                }
-                .buttonStyle(.plain)
-
                 Text("Notification delivery is handled automatically in the background.")
                     .font(.footnote)
                     .foregroundStyle(.tertiary)
@@ -1271,6 +1214,127 @@ private struct EditProfileView: View {
         } catch {
             validationMessage = error.localizedDescription
         }
+    }
+}
+
+// MARK: - Developer Tools
+
+private struct DeveloperToolsView: View {
+    @Binding var isShowingOnboarding: Bool
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                WIFSettingsPageHero(
+                    symbol: "testtube.2",
+                    title: "Developer Lab & Tools",
+                    detail: "Simulate data states, browse 3D landmarks, and preview widgets."
+                )
+
+                VStack(spacing: 0) {
+                    NavigationLink {
+                        DemoLabView()
+                            .toolbar(.visible, for: .navigationBar)
+                    } label: {
+                        devToolRow(
+                            title: "Demo Lab",
+                            subtitle: "Simulate invites, stale data and alerts",
+                            symbol: "testtube.2",
+                            color: .purple
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider().overlay(WIFTheme.border).padding(.leading, 56)
+
+                    NavigationLink {
+                        CityEmblemGalleryView()
+                            .toolbar(.visible, for: .navigationBar)
+                    } label: {
+                        devToolRow(
+                            title: "City Emblem Gallery",
+                            subtitle: "Browse 150+ 3D city landmarks",
+                            symbol: "building.2.crop.circle.fill",
+                            color: WIFTheme.fresh
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider().overlay(WIFTheme.border).padding(.leading, 56)
+
+                    NavigationLink {
+                        WidgetShowcaseView()
+                            .toolbar(.visible, for: .navigationBar)
+                    } label: {
+                        devToolRow(
+                            title: "Widget Studio",
+                            subtitle: "Interactive 3D diorama widget preview",
+                            symbol: "square.grid.2x2.fill",
+                            color: .cyan
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Divider().overlay(WIFTheme.border).padding(.leading, 56)
+
+                    Button {
+                        isShowingOnboarding = true
+                    } label: {
+                        devToolRow(
+                            title: "Preview onboarding",
+                            subtitle: "A quick introduction before you start",
+                            symbol: "sparkles",
+                            color: .yellow,
+                            showsDisclosure: false
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .wifSettingsGlassCard()
+            }
+            .padding(WIFTheme.screenInset)
+            .padding(.bottom, 30)
+        }
+        .scrollIndicators(.hidden)
+        .wifAmbientBackground()
+        .navigationTitle("Developer Tools")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+    }
+
+    private func devToolRow(
+        title: LocalizedStringKey,
+        subtitle: LocalizedStringKey,
+        symbol: String,
+        color: Color,
+        showsDisclosure: Bool = true
+    ) -> some View {
+        HStack(spacing: 14) {
+            Image(systemName: symbol)
+                .font(.headline)
+                .foregroundStyle(color)
+                .frame(width: 42, height: 42)
+                .background(color.opacity(0.12), in: Circle())
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+
+            Spacer(minLength: 8)
+
+            if showsDisclosure {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
+        }
+        .contentShape(Rectangle())
+        .padding(.vertical, 6)
     }
 }
 

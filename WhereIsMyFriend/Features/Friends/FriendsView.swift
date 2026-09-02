@@ -47,19 +47,30 @@ struct FriendsView: View {
         )
     }
 
+    private var friendGridColumns: [GridItem] {
+        if dynamicTypeSize.isAccessibilitySize {
+            return [GridItem(.flexible())]
+        }
+
+        return [
+            GridItem(.flexible(), spacing: 12),
+            GridItem(.flexible(), spacing: 12)
+        ]
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
                 cityContextCard
-                    .padding(.top, 20)
+                    .padding(.top, 16)
 
                 Text("Around the world")
                     .font(.caption.weight(.semibold))
                     .textCase(.uppercase)
                     .tracking(1.1)
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .padding(.top, 26)
+                    .padding(.top, 22)
                     .padding(.bottom, 9)
                     .padding(.leading, 3)
 
@@ -82,11 +93,8 @@ struct FriendsView: View {
                     )
                 } else {
                     LazyVGrid(
-                        columns: [
-                            GridItem(.flexible(), spacing: 12),
-                            GridItem(.flexible(), spacing: 12)
-                        ],
-                        spacing: 14
+                        columns: friendGridColumns,
+                        spacing: 12
                     ) {
                         ForEach(friends) { friend in
                             NavigationLink(value: friend) {
@@ -142,7 +150,12 @@ struct FriendsView: View {
 
     private var title: some View {
         Text("Friends")
-            .font(.system(.largeTitle, design: .rounded, weight: .bold))
+            .font(
+                dynamicTypeSize.isAccessibilitySize
+                    ? .largeTitle.bold()
+                    : .system(size: 44, weight: .bold, design: .rounded)
+            )
+            .tracking(-0.8)
             .foregroundStyle(WIFTheme.primaryText)
     }
 
@@ -182,60 +195,97 @@ struct FriendsView: View {
 
     private var cityContextCard: some View {
         Button(action: onOpenCitySharing) {
-            HStack(spacing: 12) {
-                Image(systemName: sharingIsEnabled ? "location.fill" : "location.slash.fill")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .frame(width: 46, height: 46)
-                    .background(WIFTheme.fresh.opacity(0.14), in: Circle())
-                    .contentTransition(.symbolEffect(.replace))
+            HStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Your city")
+                        .font(.system(size: 10, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(1.35)
+                        .foregroundStyle(WIFTheme.fresh)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 7) {
-                        Text(store.snapshot.currentPresence.cityDisplay)
-                            .font(.body.weight(.bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-
-                        Text("My city")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(WIFTheme.fresh)
-                            .padding(.horizontal, 7)
-                            .padding(.vertical, 4)
-                            .background(WIFTheme.fresh.opacity(0.12), in: Capsule())
-                    }
-
-                    HStack(spacing: 5) {
-                        if !sameCityFriends.isEmpty {
-                            Image(systemName: "person.2.fill")
-                                .font(.caption2.weight(.bold))
-                                .foregroundStyle(WIFTheme.fresh)
-                        }
-
-                        Text(cityContextText)
-                            .font(.caption)
-                            .foregroundStyle(WIFTheme.secondaryText)
-                            .lineLimit(1)
-                    }
+                    Text(currentCityLabel)
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.82)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer(minLength: 6)
+                Rectangle()
+                    .fill(WIFTheme.border.opacity(0.62))
+                    .frame(width: 1, height: 48)
+                    .padding(.horizontal, 16)
+
+                cityContextMetric
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(WIFTheme.secondaryText)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
+                    .padding(.leading, 12)
             }
-            .padding(15)
+            .padding(.horizontal, 17)
+            .padding(.vertical, 15)
+            .frame(minHeight: 98)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .wifGlassSurface(
-            tint: WIFTheme.fresh.opacity(0.17),
+            tint: WIFTheme.fresh.opacity(0.11),
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
-        .accessibilityLabel("Your city, \(store.snapshot.currentPresence.cityDisplay), \(cityContextText)")
+        .accessibilityLabel("Your city, \(currentCityLabel), \(cityContextText)")
         .accessibilityIdentifier("myCitySharingCard")
+    }
+
+    @ViewBuilder
+    private var cityContextMetric: some View {
+        if sharingIsEnabled, store.currentCity != nil {
+            HStack(alignment: .center, spacing: 7) {
+                Text(verbatim: "\(sameCityFriends.count)")
+                    .font(.system(size: 39, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(WIFTheme.fresh)
+                    .contentTransition(.numericText())
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(sameCityFriendUnit)
+                    Text(sameCityLocationPhrase)
+                }
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(WIFTheme.secondaryText)
+                .lineLimit(1)
+            }
+        } else {
+            HStack(spacing: 7) {
+                Image(systemName: sharingIsEnabled ? "location" : "location.slash")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(WIFTheme.fresh)
+
+                Text(sharingMetricLabel)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: 118, alignment: .leading)
+        }
+    }
+
+    private var currentCityLabel: String {
+        store.currentCity ?? String(localized: "Location unavailable")
+    }
+
+    private var sameCityFriendUnit: LocalizedStringKey {
+        sameCityFriends.count == 1 ? "friend" : "friends"
+    }
+
+    private var sameCityLocationPhrase: LocalizedStringKey {
+        sameCityFriends.isEmpty ? "in your city" : "here too"
+    }
+
+    private var sharingMetricLabel: LocalizedStringKey {
+        sharingIsEnabled ? "Choose a city to start sharing" : "Sharing paused"
     }
 
     private var sharingIsEnabled: Bool {
@@ -269,67 +319,59 @@ struct FriendsView: View {
         let freshness = friend.freshness(at: referenceDate)
         let isSameCity = isFriendInSameCity(friend)
 
-        return VStack(spacing: 8) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 112)
-                .padding(.top, 10)
+        return VStack(spacing: 6) {
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 88)
+                .padding(.top, 9)
 
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 Text(friend.displayName)
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .font(.system(size: 17, weight: .semibold, design: .rounded))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.82)
 
                 Text(friend.cityDisplay)
-                    .font(.caption.weight(.medium))
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(1)
 
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(freshness == .fresh ? WIFTheme.fresh : Color.secondary.opacity(0.4))
+                        .fill(isSameCity ? WIFTheme.fresh : freshnessDotColor(freshness))
                         .frame(width: 5, height: 5)
 
+                    if isSameCity {
+                        Text("Same city")
+                            .foregroundStyle(WIFTheme.fresh)
+
+                        Text("·")
+                            .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
+                    }
+
                     Text(friend.relativeUpdateText(at: referenceDate))
-                        .font(.caption2.weight(.medium))
                         .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
-                .padding(.top, 2)
+                .font(.system(size: 11, weight: .medium))
+                .lineLimit(1)
+                .padding(.top, 3)
             }
             .padding(.horizontal, 8)
-            .padding(.bottom, 14)
+            .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity)
-        .overlay(alignment: .topTrailing) {
-            if isSameCity {
-                HStack(spacing: 3) {
-                    Image(systemName: "person.2.fill")
-                        .font(.system(size: 8.5, weight: .bold))
-                    Text("Together")
-                        .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                }
-                .foregroundStyle(WIFTheme.fresh)
-                .padding(.horizontal, 7)
-                .padding(.vertical, 3.5)
-                .background(
-                    Capsule()
-                        .fill(WIFTheme.fresh.opacity(0.18))
-                        .overlay(
-                            Capsule()
-                                .strokeBorder(WIFTheme.fresh.opacity(0.40), lineWidth: 1)
-                        )
-                )
-                .padding(8)
-            }
-        }
         .wifGlassSurface(
-            tint: isSameCity ? WIFTheme.fresh.opacity(0.16) : WIFTheme.surface.opacity(0.10),
+            tint: isSameCity ? WIFTheme.fresh.opacity(0.12) : WIFTheme.surface.opacity(0.07),
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "Together in same city, " : "")\(friend.relativeUpdateLongText(at: referenceDate))"
+            "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "\(String(localized: "Same city")), " : "")\(friend.relativeUpdateLongText(at: referenceDate))"
         )
+    }
+
+    private func freshnessDotColor(_ freshness: PresenceFreshness) -> Color {
+        freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.42)
     }
 
     private var uniqueCityCount: Int {

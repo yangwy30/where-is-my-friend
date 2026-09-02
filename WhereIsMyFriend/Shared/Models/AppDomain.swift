@@ -516,7 +516,7 @@ enum ColocationEvaluator {
         guard snapshot.sharingPreferences.citySharingEnabled,
               let currentCity = snapshot.currentPresence.city,
               let currentUpdatedAt = snapshot.currentPresence.updatedAt,
-              max(0, now.timeIntervalSince(currentUpdatedAt)) < 2 * 60 * 60 else {
+              max(0, now.timeIntervalSince(currentUpdatedAt)) < 14 * 24 * 60 * 60 else {
             closeActiveSessions(snapshot: &snapshot, now: now)
             return
         }

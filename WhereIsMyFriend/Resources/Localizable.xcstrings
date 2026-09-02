@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "·" : {
+
+    },
+    "· ☀️ 15:00" : {
+
+    },
     "@%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -203,6 +209,9 @@
         }
       }
     },
+    "%lld moments recorded" : {
+
+    },
     "%lld together" : {
 
     },
@@ -338,6 +347,7 @@
       }
     },
     "Account" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -348,6 +358,7 @@
       }
     },
     "Account & privacy" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -368,6 +379,19 @@
         }
       }
     },
+    "Across oceans and time zones, feel quietly connected to the people who matter." : {
+
+    },
+    "Across time zones, the people who matter still feel close." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨越时区，重要的人依然近在身边。"
+          }
+        }
+      }
+    },
     "Across Us" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -375,6 +399,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Across Us"
+          }
+        }
+      }
+    },
+    "ACROSS US" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我们之间"
           }
         }
       }
@@ -605,6 +639,9 @@
         }
       }
     },
+    "Automatic background updates" : {
+
+    },
     "Automatic city changes are available." : {
       "localizations" : {
         "zh-Hans" : {
@@ -807,6 +844,16 @@
         }
       }
     },
+    "Chloe" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "克洛伊"
+          }
+        }
+      }
+    },
     "Choose a city to start sharing" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1000,6 +1047,19 @@
         }
       }
     },
+    "City sharing only · Pause anytime" : {
+
+    },
+    "City-level sharing. Pause anytime." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只分享城市，可随时暂停。"
+          }
+        }
+      }
+    },
     "City source" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1026,6 +1086,27 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "天生只到城市级"
+          }
+        }
+      }
+    },
+    "City-Level Only" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只知同城"
+          }
+        }
+      }
+    },
+    "City-Level Only · Zero Tracking" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只知同城 · 零精确追踪"
           }
         }
       }
@@ -1098,7 +1179,6 @@
       }
     },
     "Continue" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1142,6 +1222,7 @@
       }
     },
     "Control automatic city updates" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1276,6 +1357,9 @@
         }
       }
     },
+    "Demo Lab, Emblem Gallery, Widget Studio" : {
+
+    },
     "Demo mode schedules same-city alerts directly on this iPhone." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1309,6 +1393,22 @@
     },
     "Design Architecture" : {
 
+    },
+    "Developer Lab & Tools" : {
+
+    },
+    "Developer Tools" : {
+
+    },
+    "Different cities. Still close." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不同城市，依然靠近。"
+          }
+        }
+      }
     },
     "Development" : {
       "localizations" : {
@@ -1384,6 +1484,7 @@
       }
     },
     "Every same-city moment stays available here." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1462,6 +1563,16 @@
     },
     "Format" : {
 
+    },
+    "friend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位朋友"
+          }
+        }
+      }
     },
     "Friend" : {
       "localizations" : {
@@ -1585,6 +1696,16 @@
         }
       }
     },
+    "friends" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "位朋友"
+          }
+        }
+      }
+    },
     "Friends" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1670,6 +1791,16 @@
         }
       }
     },
+    "Get Started" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始使用"
+          }
+        }
+      }
+    },
     "Global sharing" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1677,6 +1808,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全局共享"
+          }
+        }
+      }
+    },
+    "Grab coffee? You're both in the city right now." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要不要喝杯咖啡？你们此刻都在这座城市。"
+          }
+        }
+      }
+    },
+    "here too" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "也在这里"
           }
         }
       }
@@ -1718,6 +1869,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "身份、好友关系、共享选择、当前城市与更新时间"
+          }
+        }
+      }
+    },
+    "in your city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与你同城"
           }
         }
       }
@@ -1797,8 +1958,25 @@
         }
       }
     },
-    "Lin" : {
-
+    "Life moved us apart." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后来，我们去了不同的城市。"
+          }
+        }
+      }
+    },
+    "Lin Zhao" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "林昭"
+          }
+        }
+      }
     },
     "Live simulator for iOS Home Screen & StandBy widgets." : {
 
@@ -1815,6 +1993,7 @@
       }
     },
     "Location & automatic updates" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -1918,6 +2097,16 @@
         }
       }
     },
+    "London" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伦敦"
+          }
+        }
+      }
+    },
     "Make it yours" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1948,8 +2137,25 @@
         }
       }
     },
+    "Mia" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "米娅"
+          }
+        }
+      }
+    },
     "Mia · 2 together" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "米娅 · 2 人同城"
+          }
+        }
+      }
     },
     "Mia Chen" : {
 
@@ -1978,6 +2184,7 @@
       }
     },
     "My city" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2031,7 +2238,14 @@
       }
     },
     "New York" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "纽约"
+          }
+        }
+      }
     },
     "Night Jade" : {
       "localizations" : {
@@ -2252,6 +2466,16 @@
         }
       }
     },
+    "NOW" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "现在"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2282,12 +2506,32 @@
         }
       }
     },
+    "Once, we were all in one place." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初，我们都在同一个地方。"
+          }
+        }
+      }
+    },
     "Only your city and update time are shared. Precise location and routes are never stored." : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "只共享你的城市和更新时间。绝不会存储精确位置或路线。"
+          }
+        }
+      }
+    },
+    "Only Your City, Never Your Steps" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只知同城，不窥行踪"
           }
         }
       }
@@ -2351,6 +2595,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "或者分享你的邀请链接"
+          }
+        }
+      }
+    },
+    "Paris" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "巴黎"
           }
         }
       }
@@ -2468,6 +2722,9 @@
         }
       }
     },
+    "Preferences" : {
+
+    },
     "Preview onboarding" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2488,6 +2745,9 @@
           }
         }
       }
+    },
+    "Privacy & Account" : {
+
     },
     "Privacy & data" : {
       "localizations" : {
@@ -2590,6 +2850,9 @@
       }
     },
     "Refresh now" : {
+
+    },
+    "Refresh when your city meaningfully changes" : {
 
     },
     "Register this iPhone" : {
@@ -2751,6 +3014,26 @@
         }
       }
     },
+    "Same city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城"
+          }
+        }
+      }
+    },
+    "SAME CITY" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城"
+          }
+        }
+      }
+    },
     "Same-city alert" : {
       "localizations" : {
         "zh-Hans" : {
@@ -2762,6 +3045,7 @@
       }
     },
     "Same-city alerts and moment history" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -2770,6 +3054,9 @@
           }
         }
       }
+    },
+    "Same-city alerts and sound" : {
+
     },
     "Same-city alerts are off" : {
       "extractionState" : "stale",
@@ -3047,6 +3334,9 @@
         }
       }
     },
+    "Sharing & City" : {
+
+    },
     "Sharing is on" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3150,6 +3440,9 @@
         }
       }
     },
+    "Simulate data states, browse 3D landmarks, and preview widgets." : {
+
+    },
     "Simulate invites, stale data and alerts" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3169,6 +3462,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "日光翡翠"
+          }
+        }
+      }
+    },
+    "Spark Moments in the Same City" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同城相聚，不期而遇"
           }
         }
       }
@@ -3246,6 +3549,9 @@
         }
       }
     },
+    "Tap to begin" : {
+
+    },
     "Temporary" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3272,6 +3578,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "这位好友已不可用。"
+          }
+        }
+      }
+    },
+    "Then life took us elsewhere." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "后来，生活把我们带向远方。"
           }
         }
       }
@@ -3494,6 +3810,9 @@
         }
       }
     },
+    "Timeline of times you shared a city" : {
+
+    },
     "Together" : {
 
     },
@@ -3529,7 +3848,14 @@
       }
     },
     "Tokyo" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "东京"
+          }
+        }
+      }
     },
     "Try again" : {
       "extractionState" : "stale",
@@ -3691,6 +4017,7 @@
       }
     },
     "View same-city history" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -3803,6 +4130,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "删除账户时"
+          }
+        }
+      }
+    },
+    "When your paths cross, Across Us gently captures the reunion." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当你们的轨迹再次交汇，系统会轻轻记下这次重逢。"
           }
         }
       }
@@ -3928,6 +4265,16 @@
         }
       }
     },
+    "You and Mia are in New York together 📍" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你和米娅此刻都在纽约 📍"
+          }
+        }
+      }
+    },
     "You appear to be offline. The city update was saved and will retry automatically." : {
       "localizations" : {
         "zh-Hans" : {
@@ -3990,6 +4337,16 @@
         }
       }
     },
+    "Your city" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的城市"
+          }
+        }
+      }
+    },
     "Your city is ready" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4033,6 +4390,16 @@
     },
     "Your friends see the city you choose, never a precise location." : {
 
+    },
+    "Your Friends, Around the World" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跨越时区的静默陪伴"
+          }
+        }
+      }
     },
     "Your name and username are the only identity details friends need." : {
       "localizations" : {
@@ -4106,6 +4473,7 @@
       }
     },
     "Your world" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -4115,35 +4483,15 @@
         }
       }
     },
-    "不查轨迹，知道你平安便好。" : {
-
-    },
-    "只分享城市 · 随时可暂停" : {
-
-    },
-    "只知城市，不添打扰" : {
-
-    },
-    "同一座城，偶然重逢" : {
-
-    },
-    "山海相隔，依然相连。" : {
-
-    },
-    "左右轻扫浏览" : {
-
-    },
-    "开启" : {
-
-    },
-    "当轨迹重叠，点亮这一刻。" : {
-
-    },
-    "散落世界的朋友" : {
-
-    },
-    "继续" : {
-
+    "Zero precise tracking. Zero social pressure. Your exact steps stay entirely yours." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不记录实时轨迹，不索取精准坐标。零追踪，零社交压力。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

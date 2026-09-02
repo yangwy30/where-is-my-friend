@@ -408,7 +408,6 @@ public struct CityEmblemView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: size, height: size)
-                    .shadow(color: Color.black.opacity(0.14), radius: size * 0.08, x: 0, y: size * 0.05)
             } else {
                 proceduralFallback
             }
