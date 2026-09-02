@@ -488,7 +488,9 @@
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriend.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
 			INFOPLIST_KEY_CFBundleDisplayName = "Across Us";
@@ -497,7 +499,7 @@
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-			MARKETING_VERSION = 0.1.0;
+			MARKETING_VERSION = 1.0.0;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend;
 			PRODUCT_MODULE_NAME = WhereIsMyFriend;
 			PRODUCT_NAME = "Where Is My Friend";
@@ -505,13 +507,14 @@
 			SWIFT_EMIT_LOC_STRINGS = YES;
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
+			VALIDATE_PRODUCT = YES;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
 			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "";
-			WIF_INVITE_HOST = invite.example.invalid;
+			WIF_INVITE_HOST = "";
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
 			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
@@ -541,12 +544,14 @@
 		800000000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
 			APPLICATION_EXTENSION_API_ONLY = YES;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
+			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", );
-			MARKETING_VERSION = 0.1.0;
+			MARKETING_VERSION = 1.0.0;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.widget;
 			PRODUCT_NAME = "Where Is My Friend Widget";
 			SKIP_INSTALL = YES;
