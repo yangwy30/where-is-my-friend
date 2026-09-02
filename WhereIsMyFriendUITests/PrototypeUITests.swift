@@ -124,50 +124,76 @@ final class PrototypeUITests: XCTestCase {
         let shot1 = XCUIScreen.main.screenshot()
         try? shot1.pngRepresentation.write(to: dir.appendingPathComponent("01_friends_main.png"))
 
-        // Tap Lin Zhao or Mia Chen for detail
-        let miaCard = app.buttons.matching(NSPredicate(format: "label CONTAINS 'Mia Chen'")).firstMatch
-        if miaCard.waitForExistence(timeout: 3) {
-            miaCard.tap()
-            sleep(2)
-            let shot2 = XCUIScreen.main.screenshot()
-            try? shot2.pngRepresentation.write(to: dir.appendingPathComponent("02_friend_detail.png"))
-            app.navigationBars.buttons.element(boundBy: 0).tap()
-            sleep(1)
-        }
-
-        // Tap City Sharing card
+        // 2. City Sharing Sheet
         let cityCard = app.buttons["myCitySharingCard"]
         if cityCard.waitForExistence(timeout: 3) {
             cityCard.tap()
             sleep(2)
-            let shot3 = XCUIScreen.main.screenshot()
-            try? shot3.pngRepresentation.write(to: dir.appendingPathComponent("03_city_sharing_privacy.png"))
-            app.swipeDown()
+            let shot2 = XCUIScreen.main.screenshot()
+            try? shot2.pngRepresentation.write(to: dir.appendingPathComponent("02_city_sharing_privacy.png"))
+            let doneButton = app.buttons["Done"]
+            if doneButton.waitForExistence(timeout: 2) {
+                doneButton.tap()
+            }
             sleep(1)
         }
 
-        // Profile -> City Emblem Gallery
-        app.tabBars.buttons.element(boundBy: 1).tap()
-        sleep(1)
-        let galleryButton = app.buttons.matching(NSPredicate(format: "label CONTAINS 'City Emblem Gallery'")).firstMatch
-        if !galleryButton.isHittable {
-            app.scrollViews["profileSettingsScreen"].swipeUp()
-            sleep(1)
-        }
-        if galleryButton.waitForExistence(timeout: 3) {
-            galleryButton.tap()
+        // 3. Tap Friend Detail (Lin Zhao)
+        let linZhaoText = app.staticTexts["Lin Zhao"]
+        if linZhaoText.waitForExistence(timeout: 3) {
+            linZhaoText.tap()
             sleep(2)
-            let shot4 = XCUIScreen.main.screenshot()
-            try? shot4.pngRepresentation.write(to: dir.appendingPathComponent("04_city_emblems.png"))
+            let shot3 = XCUIScreen.main.screenshot()
+            try? shot3.pngRepresentation.write(to: dir.appendingPathComponent("03_friend_detail.png"))
+            if app.navigationBars.buttons.firstMatch.exists {
+                app.navigationBars.buttons.firstMatch.tap()
+            }
+            sleep(1)
         }
 
-        // Fresh Onboarding
-        let onboardingApp = XCUIApplication()
-        onboardingApp.launchArguments = ["-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
-        onboardingApp.launch()
+        // 4. City Emblem Gallery via direct navigation
+        let profileTab = app.tabBars.buttons.element(boundBy: 1)
+        if profileTab.waitForExistence(timeout: 3) {
+            profileTab.tap()
+            sleep(1)
+            let profileScreen = app.scrollViews["profileSettingsScreen"]
+            if profileScreen.waitForExistence(timeout: 3) {
+                profileScreen.swipeUp()
+                profileScreen.swipeUp()
+                sleep(1)
+            }
+            let galleryButton = app.buttons["cityEmblemGalleryLink"]
+            if galleryButton.waitForExistence(timeout: 3) {
+                galleryButton.tap()
+                sleep(2)
+                let shot4 = XCUIScreen.main.screenshot()
+                try? shot4.pngRepresentation.write(to: dir.appendingPathComponent("04_city_emblems.png"))
+            }
+        }
+
+        // 5. Onboarding Step 0
+        let ob0 = XCUIApplication()
+        ob0.launchArguments = ["-previewOnboarding", "-previewOnboardingStep=0", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        ob0.launch()
         sleep(2)
-        let shot5 = XCUIScreen.main.screenshot()
-        try? shot5.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding.png"))
+        let shot5_0 = XCUIScreen.main.screenshot()
+        try? shot5_0.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding_step0.png"))
+
+        // 6. Onboarding Step 1 (Privacy)
+        let ob1 = XCUIApplication()
+        ob1.launchArguments = ["-previewOnboarding", "-previewOnboardingStep=1", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        ob1.launch()
+        sleep(2)
+        let shot5_1 = XCUIScreen.main.screenshot()
+        try? shot5_1.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding_step1.png"))
+
+        // 7. Onboarding Step 2 (Same-city Reunion)
+        let ob2 = XCUIApplication()
+        ob2.launchArguments = ["-previewOnboarding", "-previewOnboardingStep=2", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        ob2.launch()
+        sleep(2)
+        let shot5_2 = XCUIScreen.main.screenshot()
+        try? shot5_2.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding_step2.png"))
     }
 }
 

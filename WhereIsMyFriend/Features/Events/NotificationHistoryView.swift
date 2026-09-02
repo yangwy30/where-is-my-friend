@@ -8,7 +8,18 @@ struct NotificationHistoryView: View {
         store.currentCity
     }
 
-    private var activeSameCityFriends: [(friend: FriendPresence, session: ColocationSession?)] {
+    private struct ActiveStayInfo: Identifiable {
+        let friend: FriendPresence
+        let city: String
+        let countryCode: String?
+        let startDate: Date
+        let durationText: String
+        let sinceText: String
+
+        var id: UUID { friend.id }
+    }
+
+    private var activeStays: [ActiveStayInfo] {
         guard let myCity = currentCity, !myCity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               store.snapshot.sharingPreferences.citySharingEnabled else {
             return []
@@ -29,17 +40,72 @@ struct NotificationHistoryView: View {
             let session = store.snapshot.colocationSessions.first {
                 $0.friendID == friend.id && $0.isActive
             }
-            return (friend, session)
+
+            let matchingEvents = store.snapshot.colocationEvents.filter { event in
+                event.friendIDs.contains(friend.id)
+                    && CityIdentity.matches(
+                        city: event.city,
+                        countryCode: nil,
+                        otherCity: myCity,
+                        otherCountryCode: store.snapshot.currentPresence.countryCode
+                    )
+            }
+
+            let candidateDates = [session?.enteredAt].compactMap { $0 } + matchingEvents.map(\.createdAt)
+            let startDate = candidateDates.min() ?? friend.updatedAt ?? referenceDate
+
+            let interval = max(0, referenceDate.timeIntervalSince(startDate))
+            let days = Int(interval / (24 * 60 * 60))
+            let hours = Int(interval / (60 * 60))
+
+            let durationText: String
+            if days >= 1 {
+                durationText = String(format: String(localized: "Together for %lld days"), Int64(days))
+            } else if hours >= 1 {
+                durationText = String(format: String(localized: "Together for %lld hours"), Int64(hours))
+            } else {
+                let minutes = max(1, Int(interval / 60))
+                durationText = String(format: String(localized: "Together for %lldm"), Int64(minutes))
+            }
+
+            let sinceText = String(
+                format: String(localized: "Since %@"),
+                startDate.formatted(date: .abbreviated, time: .omitted)
+            )
+
+            return ActiveStayInfo(
+                friend: friend,
+                city: myCity,
+                countryCode: store.snapshot.currentPresence.countryCode,
+                startDate: startDate,
+                durationText: durationText,
+                sinceText: sinceText
+            )
         }
     }
 
-    /// Intelligently coalesces consecutive duplicate events for the same friend & city
+    /// Past completed events, excluding events belonging to the current active stay
     private var pastEvents: [ColocationEvent] {
+        let activeFriendIDs = Set(activeStays.map(\.friend.id))
         let sorted = store.snapshot.colocationEvents.sorted(by: { $0.createdAt > $1.createdAt })
-        var uniqueMoments: [ColocationEvent] = []
 
-        for event in sorted {
-            // Check if we already have an event for this exact city and friend group within 24 hours
+        let filtered = sorted.filter { event in
+            if let myCity = currentCity,
+               CityIdentity.matches(
+                   city: event.city,
+                   countryCode: nil,
+                   otherCity: myCity,
+                   otherCountryCode: store.snapshot.currentPresence.countryCode
+               ),
+               event.friendIDs.contains(where: { activeFriendIDs.contains($0) }) {
+                // Belong to current active stay; exclude from past moments
+                return false
+            }
+            return true
+        }
+
+        var uniqueMoments: [ColocationEvent] = []
+        for event in filtered {
             let isDuplicate = uniqueMoments.contains { existing in
                 existing.city.lowercased() == event.city.lowercased()
                     && Set(existing.friendIDs) == Set(event.friendIDs)
@@ -55,10 +121,10 @@ struct NotificationHistoryView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                if activeSameCityFriends.isEmpty && pastEvents.isEmpty {
+                if activeStays.isEmpty && pastEvents.isEmpty {
                     emptyState
                 } else {
-                    if !activeSameCityFriends.isEmpty {
+                    if !activeStays.isEmpty {
                         activeSection
                     }
 
@@ -104,45 +170,48 @@ struct NotificationHistoryView: View {
             }
             .padding(.leading, 4)
 
-            ForEach(activeSameCityFriends, id: \.friend.id) { item in
-                activeMomentCard(friend: item.friend, session: item.session)
+            ForEach(activeStays) { stay in
+                activeMomentCard(stay: stay)
             }
         }
     }
 
-    private func activeMomentCard(friend: FriendPresence, session: ColocationSession?) -> some View {
+    private func activeMomentCard(stay: ActiveStayInfo) -> some View {
         HStack(spacing: 14) {
             ZStack(alignment: .bottomTrailing) {
                 CityEmblemView(
-                    city: currentCity,
-                    countryCode: store.snapshot.currentPresence.countryCode,
+                    city: stay.city,
+                    countryCode: stay.countryCode,
                     size: 58
                 )
 
-                FriendAvatarView(friend: friend, size: 28)
+                FriendAvatarView(friend: stay.friend, size: 28)
                     .overlay(Circle().stroke(Color.white, lineWidth: 2))
                     .offset(x: 4, y: 4)
             }
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("Together in \(currentCity ?? "")")
+                Text("Together in \(stay.city)")
                     .font(.headline)
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
 
-                Text("You and \(friend.displayName)")
+                Text("You and \(stay.friend.displayName)")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(1)
 
-                if let enteredAt = session?.enteredAt {
-                    Text("Since \(enteredAt.formatted(date: .abbreviated, time: .omitted))")
-                        .font(.caption.weight(.medium))
+                HStack(spacing: 6) {
+                    Text(stay.durationText)
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(WIFTheme.fresh)
-                } else {
-                    Text("In the same city")
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(WIFTheme.fresh)
+
+                    Text("·")
+                        .foregroundStyle(WIFTheme.secondaryText)
+
+                    Text(stay.sinceText)
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
                 }
             }
 
@@ -160,7 +229,7 @@ struct NotificationHistoryView: View {
                 .tracking(1.2)
                 .foregroundStyle(WIFTheme.secondaryText)
                 .padding(.leading, 4)
-                .padding(.top, activeSameCityFriends.isEmpty ? 0 : 8)
+                .padding(.top, activeStays.isEmpty ? 0 : 8)
 
             VStack(spacing: 10) {
                 ForEach(pastEvents) { event in

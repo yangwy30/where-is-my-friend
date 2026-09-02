@@ -206,7 +206,7 @@ final class AppStore: ObservableObject {
 
     @discardableResult
     func setSharingPreferences(_ preferences: SharingPreferences) async -> Bool {
-        await perform(successMessage: nil) {
+        await perform(successMessage: nil, showsActivity: false) {
             try await self.repository.setSharingPreferences(preferences)
         }
     }

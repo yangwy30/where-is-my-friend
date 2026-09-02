@@ -27,7 +27,6 @@ struct CitySharingSheet: View {
                             }
                         }
                         .tint(WIFTheme.fresh)
-                        .disabled(store.isWorking)
                         .accessibilityIdentifier("citySharingToggle")
 
                         Divider()
@@ -45,7 +44,6 @@ struct CitySharingSheet: View {
                             }
                         }
                         .tint(WIFTheme.fresh)
-                        .disabled(store.isWorking)
                         .accessibilityIdentifier("backgroundUpdatesToggle")
                     }
                     .wifSettingsGlassCard()

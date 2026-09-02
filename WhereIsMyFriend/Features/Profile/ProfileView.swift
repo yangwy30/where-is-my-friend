@@ -1259,6 +1259,7 @@ private struct DeveloperToolsView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("cityEmblemGalleryLink")
 
                     Divider().overlay(WIFTheme.border).padding(.leading, 56)
 
