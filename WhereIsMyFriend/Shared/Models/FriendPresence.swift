@@ -84,9 +84,7 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
         guard sharingState == .active, let city, !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return false
         }
-        guard let updatedAt else { return false }
-        let age = max(0, referenceDate.timeIntervalSince(updatedAt))
-        return age < 14 * 24 * 60 * 60
+        return true
     }
 
     func relativeUpdateText(at referenceDate: Date = Date()) -> String {

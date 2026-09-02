@@ -24,9 +24,9 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(cityCard.waitForExistence(timeout: 3))
         cityCard.tap()
         XCTAssertTrue(app.descendants(matching: .any)["citySharingSheet"].waitForExistence(timeout: 3))
-        app.buttons["citySourceButton"].tap()
-        app.buttons["chooseCityManuallyButton"].firstMatch.tap()
-        XCTAssertTrue(app.descendants(matching: .any)["cityPickerScreen"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.switches["backgroundUpdatesToggle"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["refreshLocationButton"].waitForExistence(timeout: 3))
     }
 
     func testProfileEditingAndWidgetPrivacyControls() {
