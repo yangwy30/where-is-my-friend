@@ -4,33 +4,599 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>Across Us</title>
-  <meta name="description" content="Privacy and support information for Across Us.">
+  <title>Across Us — Friends, city by city</title>
+  <meta name="description" content="A private, low-friction iPhone app for sharing your latest city with close friends—without live maps, precise GPS trails, or social pressure.">
+  <link rel="icon" href="assets/app_icon.png" type="image/png">
   <style>
-    :root { --ink:#17221d; --muted:#5d6a64; --accent:#217a55; --line:rgba(23,34,29,.12); --card:rgba(255,255,255,.72); --bg:#edf4ef; }
-    @media (prefers-color-scheme:dark) { :root { --ink:#edf7f1; --muted:#adbbb3; --accent:#72d5a3; --line:rgba(237,247,241,.13); --card:rgba(28,42,34,.76); --bg:#101813; } }
-    * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; color:var(--ink); background:radial-gradient(circle at 80% 5%, rgba(76,169,123,.22), transparent 34rem),var(--bg); font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    main { width:min(760px,calc(100% - 40px)); margin:0 auto; padding:12vh 0 10vh; }
-    .mark { width:72px; height:72px; display:grid; place-items:center; border-radius:24px; background:rgba(52,148,98,.18); font-size:34px; }
-    h1 { margin:24px 0 8px; font-size:clamp(38px,7vw,62px); line-height:1.05; letter-spacing:-.04em; }
-    p { color:var(--muted); max-width:620px; }
-    nav { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:42px; }
-    a { color:inherit; text-decoration:none; }
-    .card { padding:22px; border:1px solid var(--line); border-radius:24px; background:var(--card); backdrop-filter:blur(20px); }
-    .card strong { display:block; color:var(--accent); font-size:20px; margin-bottom:4px; }
-    .card span { color:var(--muted); }
+    :root {
+      --bg-base: #0c1410;
+      --bg-gradient: radial-gradient(circle at 50% -20%, rgba(38, 166, 107, 0.28), transparent 70%),
+                     radial-gradient(circle at 85% 25%, rgba(45, 120, 200, 0.18), transparent 50%),
+                     #0c1410;
+      --text-main: #f0f7f3;
+      --text-muted: #95a89e;
+      --text-dim: #60756a;
+      --accent: #34d399;
+      --accent-glow: rgba(52, 211, 153, 0.35);
+      --accent-surface: rgba(52, 211, 153, 0.12);
+      --glass-bg: rgba(20, 32, 26, 0.68);
+      --glass-card: rgba(24, 38, 31, 0.62);
+      --glass-border: rgba(240, 247, 243, 0.12);
+      --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg-base: #f3f8f5;
+        --bg-gradient: radial-gradient(circle at 50% -10%, rgba(52, 211, 153, 0.3), transparent 65%),
+                       radial-gradient(circle at 85% 30%, rgba(56, 140, 220, 0.18), transparent 55%),
+                       #f3f8f5;
+        --text-main: #13221a;
+        --text-muted: #4e6558;
+        --text-dim: #7d9688;
+        --accent: #15803d;
+        --accent-glow: rgba(21, 128, 61, 0.25);
+        --accent-surface: rgba(21, 128, 61, 0.09);
+        --glass-bg: rgba(255, 255, 255, 0.78);
+        --glass-card: rgba(255, 255, 255, 0.82);
+        --glass-border: rgba(19, 34, 26, 0.10);
+        --card-shadow: 0 16px 36px rgba(19, 34, 26, 0.08);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-stack);
+      color: var(--text-main);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1080px, calc(100% - 48px)); margin: 0 auto; }
+
+    /* Nav */
+    header.site-header {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      margin-top: 16px;
+    }
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 999px;
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .nav-links a:hover { color: var(--text-main); }
+    .nav-cta {
+      background: var(--text-main);
+      color: var(--bg-base) !important;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: scale(1.02); }
+
+    /* Hero */
+    section.hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: var(--accent-surface);
+      border: 1px solid var(--accent-glow);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    h1.hero-title {
+      font-size: clamp(40px, 7vw, 76px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.06;
+      margin-bottom: 20px;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    p.hero-subtitle {
+      font-size: clamp(18px, 2.4vw, 22px);
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.5;
+    }
+    .cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--text-main);
+      color: var(--bg-base);
+      padding: 14px 28px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.3);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 14px 26px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: background 0.15s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* Live Preview Mockup */
+    .hero-mockup-wrapper {
+      margin-top: 56px;
+      display: flex;
+      justify-content: center;
+    }
+    .mockup-card {
+      width: min(440px, 100%);
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 36px;
+      padding: 24px;
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      box-shadow: var(--card-shadow);
+      text-align: left;
+    }
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .mockup-header-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .mockup-header-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .moment-pill-card {
+      background: var(--accent-surface);
+      border: 1px solid var(--accent-glow);
+      border-radius: 22px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .moment-emblem {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    }
+    .moment-info strong {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .moment-info span {
+      display: block;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .moment-tag {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+    .friends-mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .friend-mini-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .friend-mini-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .friend-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Emblem Showcase */
+    section.emblems-section {
+      padding: 80px 0;
+    }
+    .section-title-wrap {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-title {
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .emblems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .emblem-card {
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 24px 20px;
+      text-align: center;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .emblem-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+    .emblem-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.3));
+    }
+    .emblem-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .emblem-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Features 3-Column Grid */
+    section.features-section {
+      padding: 60px 0 100px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--glass-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      padding: 32px 28px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .feature-icon-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: var(--accent-surface);
+      border: 1px solid var(--accent-glow);
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      color: var(--accent);
+    }
+    .feature-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer.site-footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 60px 0 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a:hover { color: var(--text-main); }
   </style>
 </head>
 <body>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav-bar">
+        <a class="brand" href="./">
+          <img class="brand-icon" src="assets/app_icon.png" alt="Across Us icon">
+          <span>Across Us</span>
+        </a>
+        <div class="nav-links">
+          <a href="#emblems">Emblems</a>
+          <a href="#features">Features</a>
+          <a href="privacy/">Privacy</a>
+          <a href="support/">Support</a>
+          <a class="nav-cta" href="https://testflight.apple.com">Get Beta</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <main>
-    <div class="mark" aria-hidden="true">◎</div>
-    <h1>Across Us</h1>
-    <p>A privacy-first iPhone app for sharing your latest city with accepted friends—without live maps, precise-coordinate uploads, or route history.</p>
-    <nav aria-label="Legal and support">
-      <a class="card" href="privacy/"><strong>Privacy Policy</strong><span>What the app collects, why, and your choices.</span></a>
-      <a class="card" href="support/"><strong>Support</strong><span>Testing help, feedback, and account deletion.</span></a>
-    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="badge-pill">✨ iOS 18 · Lock Screen & Home Screen Widgets</div>
+        <h1 class="hero-title">Friends, city by city.</h1>
+        <p class="hero-subtitle">
+          Stay loosely connected across cities. Mutual presence, tactile 3D emblems, glanceable widgets, and zero precise GPS tracking.
+        </p>
+
+        <div class="cta-group">
+          <a class="btn-primary" href="https://testflight.apple.com">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.66 1.38-.56.65-1.06 1.71-.93 2.74 1.04.08 2.07-.5 2.67-1.25z"/></svg>
+            Join TestFlight Beta
+          </a>
+          <a class="btn-secondary" href="privacy/">
+            🛡️ Privacy Guarantees
+          </a>
+        </div>
+
+        <!-- Live Mockup Card -->
+        <div class="hero-mockup-wrapper">
+          <div class="mockup-card">
+            <div class="mockup-header">
+              <div>
+                <div class="mockup-header-title">Friends</div>
+                <div class="mockup-header-sub">5 friends · 4 cities</div>
+              </div>
+              <div style="font-size:24px;">📍</div>
+            </div>
+
+            <div class="moment-pill-card">
+              <img class="moment-emblem" src="assets/emblems/new_york.png" alt="New York Emblem">
+              <div class="moment-info">
+                <strong>Together in New York</strong>
+                <span>You and Qiuer Chen</span>
+                <div class="moment-tag">🟢 Together for 6 days · Since Aug 26</div>
+              </div>
+            </div>
+
+            <div class="friends-mini-grid">
+              <div class="friend-mini-box">
+                <div class="friend-mini-top">
+                  <div class="friend-avatar" style="background:linear-gradient(135deg, #10b981, #059669);">LZ</div>
+                  <span style="font-size:11px;color:var(--accent);font-weight:700;">2m ago</span>
+                </div>
+                <strong style="font-size:14px;margin-top:6px;">Lin Zhao</strong>
+                <span style="font-size:12px;color:var(--text-muted);">🇯🇵 Tokyo</span>
+              </div>
+              <div class="friend-mini-box">
+                <div class="friend-mini-top">
+                  <div class="friend-avatar" style="background:linear-gradient(135deg, #6366f1, #4f46e5);">CM</div>
+                  <span style="font-size:11px;color:var(--text-dim);">1h ago</span>
+                </div>
+                <strong style="font-size:14px;margin-top:6px;">Chloe Martin</strong>
+                <span style="font-size:12px;color:var(--text-muted);">🇫🇷 Paris</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3D Emblem Showcase -->
+    <section class="emblems-section" id="emblems">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Tactile 3D Dioramas</h2>
+          <p class="section-subtitle">Every city is uniquely hand-crafted with architectural miniature dioramas.</p>
+        </div>
+
+        <div class="emblems-grid">
+          <div class="emblem-card">
+            <img src="assets/emblems/new_york.png" alt="New York">
+            <h3>New York</h3>
+            <p>Empire State & Yellow Cab</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/tokyo.png" alt="Tokyo">
+            <h3>Tokyo</h3>
+            <p>Tokyo Tower & Torii Gate</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/paris.png" alt="Paris">
+            <h3>Paris</h3>
+            <p>Eiffel Tower & Bistro</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/london.png" alt="London">
+            <h3>London</h3>
+            <p>Big Ben & Red Phone Box</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/san_francisco.png" alt="San Francisco">
+            <h3>San Francisco</h3>
+            <p>Golden Gate & Cable Car</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/kyoto.png" alt="Kyoto">
+            <h3>Kyoto</h3>
+            <p>Five-Story Pagoda & Sakura</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/sydney.png" alt="Sydney">
+            <h3>Sydney</h3>
+            <p>Sydney Opera House & Harbor</p>
+          </div>
+          <div class="emblem-card">
+            <img src="assets/emblems/zurich.png" alt="Zurich">
+            <h3>Zurich</h3>
+            <p>Alpine Peaks & Clock Tower</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <div class="section-title-wrap">
+          <h2 class="section-title">Designed for Calm Sociality</h2>
+          <p class="section-subtitle">No endless chat groups, no precise tracking, zero social anxiety.</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon-badge">🏙️</div>
+            <h3>City-Level Presence</h3>
+            <p>Only coarse city names are shared with mutual friends. Precise GPS coordinates are reverse-geocoded entirely on-device and never sent to our servers.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon-badge">📱</div>
+            <h3>Lock Screen & Widgets</h3>
+            <p>Glance at your closest friends’ whereabouts right from your Home Screen and Lock Screen with small, medium, and circular widgets.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon-badge">✨</div>
+            <h3>Same-City Moments</h3>
+            <p>When you and a friend's travel paths cross in the same city, Across Us celebrates the reunion with an ongoing shared moment and single alert.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon-badge">🔒</div>
+            <h3>Sign in with Apple</h3>
+            <p>One-tap authentication with Apple. No phone numbers, no address book uploads, and immediate one-tap account deletion whenever you choose.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon-badge">🔋</div>
+            <h3>Opportunistic & Low Energy</h3>
+            <p>Uses Apple’s Significant Location Changes and Visits APIs. Zero battery-draining continuous GPS polling in the background.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon-badge">👁️</div>
+            <h3>Granular Privacy Modes</h3>
+            <p>Pause city sharing globally anytime, or customize visibility per-friend. Choose to hide names or details on your Lock Screen widget.</p>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© 2026 Across Us. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="privacy/">Privacy Policy</a>
+        <a href="support/">Support & FAQ</a>
+        <a href="https://github.com/yangwy30/where-is-my-friend">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>
