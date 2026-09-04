@@ -151,23 +151,40 @@ final class PrototypeUITests: XCTestCase {
             sleep(1)
         }
 
-        // 4. City Emblem Gallery via direct navigation
+        // 4. Same-city moments / Co-presence days screen
         let profileTab = app.tabBars.buttons.element(boundBy: 1)
         if profileTab.waitForExistence(timeout: 3) {
             profileTab.tap()
             sleep(1)
+            let momentsLink = app.buttons["sameCityMomentsLink"]
+            if momentsLink.waitForExistence(timeout: 3) {
+                momentsLink.tap()
+                sleep(2)
+                let shotMoments = XCUIScreen.main.screenshot()
+                try? shotMoments.pngRepresentation.write(to: dir.appendingPathComponent("06_same_city_moments_days.png"))
+                if app.navigationBars.buttons.firstMatch.exists {
+                    app.navigationBars.buttons.firstMatch.tap()
+                }
+                sleep(1)
+            }
+
+            // 4b. Widget Studio
             let profileScreen = app.scrollViews["profileSettingsScreen"]
             if profileScreen.waitForExistence(timeout: 3) {
                 profileScreen.swipeUp()
                 profileScreen.swipeUp()
                 sleep(1)
             }
-            let galleryButton = app.buttons["cityEmblemGalleryLink"]
-            if galleryButton.waitForExistence(timeout: 3) {
-                galleryButton.tap()
+            let widgetStudioBtn = app.buttons["widgetStudioLink"]
+            if widgetStudioBtn.waitForExistence(timeout: 3) {
+                widgetStudioBtn.tap()
                 sleep(2)
-                let shot4 = XCUIScreen.main.screenshot()
-                try? shot4.pngRepresentation.write(to: dir.appendingPathComponent("04_city_emblems.png"))
+                let shotWidget = XCUIScreen.main.screenshot()
+                try? shotWidget.pngRepresentation.write(to: dir.appendingPathComponent("07_widget_studio.png"))
+                if app.navigationBars.buttons.firstMatch.exists {
+                    app.navigationBars.buttons.firstMatch.tap()
+                }
+                sleep(1)
             }
         }
 
@@ -194,6 +211,14 @@ final class PrototypeUITests: XCTestCase {
         sleep(2)
         let shot5_2 = XCUIScreen.main.screenshot()
         try? shot5_2.pngRepresentation.write(to: dir.appendingPathComponent("05_onboarding_step2.png"))
+
+        // 8. 3D Diorama Widget Studio
+        let widgetApp = XCUIApplication()
+        widgetApp.launchArguments = ["-previewWidgets", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        widgetApp.launch()
+        sleep(2)
+        let shotWidget = XCUIScreen.main.screenshot()
+        try? shotWidget.pngRepresentation.write(to: dir.appendingPathComponent("07_widget_studio.png"))
     }
 }
 

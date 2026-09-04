@@ -120,10 +120,14 @@ final class AppStore: ObservableObject {
     }
 
     func signOut() async {
-        let signedOut = await perform(successMessage: nil) {
+        pendingCityUpdate = nil
+        notice = nil
+        let signedOut = await perform(successMessage: nil, presentsErrors: false) {
             try await self.repository.signOut()
         }
         if signedOut {
+            notice = nil
+            pendingCityUpdate = nil
             notificationService.unregisterRemoteNotifications()
             resetPushRegistration()
             SharedAppStateStore.reset()
@@ -132,10 +136,14 @@ final class AppStore: ObservableObject {
     }
 
     func deleteAccount() async {
-        let deleted = await perform(successMessage: nil) {
+        pendingCityUpdate = nil
+        notice = nil
+        let deleted = await perform(successMessage: nil, presentsErrors: false) {
             try await self.repository.deleteAccount()
         }
         if deleted {
+            notice = nil
+            pendingCityUpdate = nil
             notificationService.unregisterRemoteNotifications()
             resetPushRegistration()
             SharedAppStateStore.reset()
@@ -212,6 +220,7 @@ final class AppStore: ObservableObject {
     }
 
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async {
+        guard snapshot.isAuthenticated else { return }
         if activeOperationCount > 0 {
             pendingCityUpdate = PendingCityUpdate(city: city, countryCode: countryCode, source: source)
             return
@@ -407,10 +416,15 @@ final class AppStore: ObservableObject {
             }
             await refreshPendingOperationCount()
             if presentsErrors {
-                notice = AppNotice(
-                    title: String(localized: "Couldn’t complete that"),
-                    message: error.localizedDescription
-                )
+                let isUnauthenticated = (error as? RepositoryError) == .notAuthenticated
+                if isUnauthenticated && !snapshot.isAuthenticated {
+                    // Intentionally signed out; suppress notice
+                } else {
+                    notice = AppNotice(
+                        title: String(localized: "Couldn’t complete that"),
+                        message: error.localizedDescription
+                    )
+                }
             }
             result = false
         }
@@ -445,6 +459,10 @@ final class AppStore: ObservableObject {
     }
 
     private func refreshPendingOperationCount() async {
+        guard snapshot.isAuthenticated else {
+            pendingOperationCount = 0
+            return
+        }
         pendingOperationCount = await repository.pendingOperationCount()
     }
 

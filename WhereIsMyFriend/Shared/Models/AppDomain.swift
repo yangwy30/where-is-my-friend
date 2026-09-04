@@ -375,18 +375,39 @@ enum DemoData {
             city: MockFriendData.currentUserCity,
             friendIDs: sameCity.map(\.id),
             friendNames: sameCity.map(\.displayName),
-            createdAt: now,
+            createdAt: now.addingTimeInterval(-14 * 24 * 3600),
             wasNotified: true
         )
+        let pastTokyoEvent = ColocationEvent(
+            id: UUID(),
+            deduplicationKey: "seed-tokyo",
+            city: "Tokyo",
+            friendIDs: [UUID(uuidString: "10000000-0000-0000-0000-000000000002")!],
+            friendNames: ["Lin Zhao"],
+            createdAt: now.addingTimeInterval(-45 * 24 * 3600),
+            wasNotified: true
+        )
+        let pastParisEvent = ColocationEvent(
+            id: UUID(),
+            deduplicationKey: "seed-paris",
+            city: "Paris",
+            friendIDs: [UUID(uuidString: "10000000-0000-0000-0000-000000000003")!],
+            friendNames: ["Chloe Martin"],
+            createdAt: now.addingTimeInterval(-90 * 24 * 3600),
+            wasNotified: true
+        )
+
         let initialSessions = sameCity.map { friend in
             ColocationSession(
                 id: UUID(),
                 friendID: friend.id,
                 cityKey: CityIdentity.key(city: MockFriendData.currentUserCity, countryCode: "US"),
-                enteredAt: now,
+                enteredAt: now.addingTimeInterval(-14 * 24 * 3600),
                 leftAt: nil
             )
         }
+
+        let allColocationEvents = (sameCity.isEmpty ? [] : [initialEvent]) + [pastTokyoEvent, pastParisEvent]
 
         return AppSnapshot(
             schemaVersion: 2,
@@ -406,7 +427,7 @@ enum DemoData {
             friends: friends,
             friendRequests: incoming,
             friendPreferences: preferences,
-            colocationEvents: sameCity.isEmpty ? [] : [initialEvent],
+            colocationEvents: allColocationEvents,
             colocationSessions: initialSessions,
             blockedPeople: [],
             lastSyncedAt: now,

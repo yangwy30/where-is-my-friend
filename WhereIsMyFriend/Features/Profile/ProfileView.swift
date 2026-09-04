@@ -1275,6 +1275,7 @@ private struct DeveloperToolsView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("widgetStudioLink")
 
                     Divider().overlay(WIFTheme.border).padding(.leading, 56)
 
@@ -1756,6 +1757,180 @@ struct WidgetShowcaseView: View {
                     .foregroundStyle(WIFTheme.secondaryText)
             }
         }
+    }
+}
+
+// MARK: - App Store Marketing: Home & Lock Screen Widgets Showcase
+struct HomeScreenWidgetMarketingView: View {
+    @EnvironmentObject private var store: AppStore
+
+    var body: some View {
+        ZStack {
+            // Subtle ambient wallpaper
+            LinearGradient(
+                colors: [
+                    Color(red: 0.94, green: 0.96, blue: 0.93),
+                    Color(red: 0.88, green: 0.92, blue: 0.89)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 22) {
+                // 1. Lock Screen / Dynamic Island Pill Widget
+                HStack(spacing: 8) {
+                    Image(systemName: "location.fill")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(WIFTheme.fresh)
+                    Text("Mia Chen · In New York with you")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(Color.white.opacity(0.90))
+                        .shadow(color: Color.black.opacity(0.08), radius: 10, y: 4)
+                )
+                .padding(.top, 24)
+
+                // 2. Medium Widget (Cross-City Dual Orbit: New York <-> Tokyo)
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Label("ACROSS US", systemImage: "sparkles")
+                            .font(.system(size: 10, weight: .heavy, design: .rounded))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                        Spacer()
+                        Text("LIVE ORBIT")
+                            .font(.system(size: 9, weight: .bold, design: .rounded))
+                            .foregroundStyle(WIFTheme.fresh)
+                    }
+
+                    HStack(spacing: 0) {
+                        // Left: New York
+                        VStack(spacing: 4) {
+                            CityEmblemView(city: "New York", countryCode: "US", size: 68)
+                            Text("New York")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(WIFTheme.primaryText)
+                            Text("You")
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        .frame(maxWidth: .infinity)
+
+                        // Center: Orbit bridge
+                        VStack(spacing: 2) {
+                            HStack(spacing: 4) {
+                                Circle().fill(WIFTheme.fresh).frame(width: 4, height: 4)
+                                Rectangle()
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [WIFTheme.fresh, WIFTheme.fresh.opacity(0.3)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .frame(width: 32, height: 2)
+                                Circle().fill(WIFTheme.fresh).frame(width: 4, height: 4)
+                            }
+                            Text("6,740 mi")
+                                .font(.system(size: 8, weight: .bold, design: .monospaced))
+                                .foregroundStyle(WIFTheme.secondaryText.opacity(0.8))
+                        }
+                        .padding(.horizontal, 4)
+
+                        // Right: Tokyo
+                        VStack(spacing: 4) {
+                            CityEmblemView(city: "Tokyo", countryCode: "JP", size: 68)
+                            Text("Tokyo")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(WIFTheme.primaryText)
+                            Text("Lin Zhao")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .foregroundStyle(WIFTheme.fresh)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .padding(18)
+                .frame(width: 340, height: 168)
+                .background(
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color.white.opacity(0.92))
+                        .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
+                )
+
+                // 3. Side-by-Side Small Widgets (Paris & SF)
+                HStack(spacing: 16) {
+                    // Small Widget 1: Paris
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: "Paris", countryCode: "FR", size: 64)
+                        Text("Paris")
+                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                        Text("Chloe Martin")
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .frame(width: 162, height: 162)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.white.opacity(0.92))
+                            .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
+                    )
+
+                    // Small Widget 2: San Francisco
+                    VStack(spacing: 4) {
+                        CityEmblemView(city: "San Francisco", countryCode: "US", size: 64)
+                        Text("San Francisco")
+                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                        Text("David Kim")
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .frame(width: 162, height: 162)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.white.opacity(0.92))
+                            .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
+                    )
+                }
+
+                // 4. Lock Screen Rectangular Widget Mockup
+                HStack(spacing: 12) {
+                    Image(systemName: "globe.europe.africa.fill")
+                        .font(.title2)
+                        .foregroundStyle(WIFTheme.fresh)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("ACROSS US · 12 CITIES")
+                            .font(.system(size: 9, weight: .heavy, design: .rounded))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                        Text("Lin in Tokyo · Chloe in Paris · David in SF")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(WIFTheme.primaryText)
+                            .lineLimit(1)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .frame(width: 340)
+                .background(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(Color.white.opacity(0.92))
+                        .shadow(color: Color.black.opacity(0.08), radius: 12, y: 4)
+                )
+
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+        }
+        .accessibilityIdentifier("homeScreenWidgetMarketingScreen")
     }
 }
 

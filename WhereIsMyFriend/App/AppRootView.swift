@@ -12,6 +12,10 @@ struct AppRootView: View {
         ProcessInfo.processInfo.arguments.contains("-skipOnboarding")
     }
 
+    private var previewsWidgets: Bool {
+        ProcessInfo.processInfo.arguments.contains("-previewWidgets")
+    }
+
     private var previewsOnboarding: Bool {
         ProcessInfo.processInfo.arguments.contains("-previewOnboarding")
     }
@@ -27,7 +31,9 @@ struct AppRootView: View {
 
     var body: some View {
         Group {
-            if previewsOnboarding {
+            if previewsWidgets {
+                HomeScreenWidgetMarketingView()
+            } else if previewsOnboarding {
                 OnboardingView(initialStep: onboardingPreviewStep, onComplete: {})
             } else if store.snapshot.isAuthenticated {
                 AppShellView {
@@ -47,11 +53,12 @@ struct AppRootView: View {
         .tint(WIFTheme.fresh)
         .preferredColorScheme(appearanceController.appearance.colorScheme)
         .task {
+            guard store.snapshot.isAuthenticated else { return }
             await store.refresh()
             await store.preparePushRegistrationIfAuthorized()
         }
         .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
+            guard phase == .active, store.snapshot.isAuthenticated else { return }
             Task {
                 await store.refresh()
                 await store.preparePushRegistrationIfAuthorized()
@@ -65,6 +72,7 @@ struct AppRootView: View {
         }
         .onOpenURL { _ = store.handleIncomingURL($0) }
         .onReceive(locationService.$latestCity.compactMap { $0 }.removeDuplicates()) { update in
+            guard store.snapshot.isAuthenticated else { return }
             Task {
                 await store.updateCurrentCity(
                     city: update.city,
