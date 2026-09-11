@@ -207,14 +207,14 @@
     <div id="lang-en" class="lang-block active">
       <div class="policy-header">
         <h1 class="policy-title">Privacy Policy</h1>
-        <p class="policy-meta">Effective Date & Last Updated: August 27, 2026</p>
+        <p class="policy-meta">Effective Date &amp; Last Updated: September 11, 2026</p>
       </div>
 
       <div class="highlight-card">
         <div class="highlight-icon">🛡️</div>
         <div>
           <h3>Privacy at a Glance</h3>
-          <p>Across Us is designed to share your current city with accepted friends, never a precise GPS trail. Geocoding is resolved entirely on-device. We never sell personal data, never track you across apps, and never serve ads.</p>
+          <p>Across Us shares city-level presence with accepted friends and the trip and flight information you choose to add with authorized trip members. City geocoding is performed on-device; we do not collect a continuous GPS trail. We do not sell personal data, track you across apps, or serve ads.</p>
         </div>
       </div>
 
@@ -226,31 +226,38 @@
       <section class="policy-section">
         <h2>2. Information We Process</h2>
         <ul>
-          <li><strong>Account & Authentication:</strong> An anonymous user identifier connected to Sign in with Apple, your chosen display name and username, and avatar palette. We never access your contacts or phone number.</li>
+          <li><strong>Account &amp; Authentication:</strong> Your account identifier associated with Sign in with Apple, your provided display name and username, avatar palette, and authentication/session information. These records are linked to your account, not anonymous. We do not request your phone address book or phone number.</li>
           <li><strong>City-Level Presence:</strong> Coarse city name and country code resolved on-device (e.g., "New York, US"). Precise coordinates used by Apple's CoreLocation stay strictly on your iPhone and are never sent to our servers.</li>
           <li><strong>Friend Connections & Preferences:</strong> Friend requests, accepted friends, per-friend sharing toggles, and notification settings.</li>
-          <li><strong>Notifications:</strong> APNs device token for delivering background same-city moments. Device tokens are securely encrypted at rest.</li>
+          <li><strong>Trips &amp; Flights:</strong> Trip names, destinations, dates, membership and invitations; the flights you add, including flight number, travel date, airports, scheduled/updated times and status. Shared trip content and any previously submitted coordination notes or check-ins may be stored with the trip. Each signed-in member manages their own flight information.</li>
+          <li><strong>Flight Queries:</strong> Flight number and departure date used to look up flight information, cached provider responses, and request counts used to enforce service limits.</li>
+          <li><strong>Notifications &amp; Devices:</strong> Installation identifier, APNs device token, delivery records, and notification preferences, including per-trip flight alerts. APNs tokens are encrypted by our backend before database storage.</li>
+          <li><strong>Service Operation:</strong> Authentication, request/error and security records needed to operate the service, diagnose failures and prevent abuse. The app does not include advertising or cross-app tracking.</li>
         </ul>
       </section>
 
       <section class="policy-section">
         <h2>3. How We Use Information</h2>
-        <p>We process information solely to authenticate your session, maintain friend connections, display city presence in widgets, and generate same-city notifications when you and an accepted friend enter the same city.</p>
+        <p>We use this information to authenticate accounts, maintain friend connections and sharing choices, display city presence and Widgets, synchronize shared trips across devices, process invitations, retrieve flight information, and deliver permitted notifications. Flight alerts are optional and off by default for each trip. Flight checks are periodic, not continuous; confirm travel decisions with your airline.</p>
       </section>
 
       <section class="policy-section">
         <h2>4. Data Sharing & Third Parties</h2>
         <ul>
-          <li><strong>Accepted Friends:</strong> Receive only your current city name and update timestamp according to your sharing settings.</li>
+          <li><strong>Accepted Friends:</strong> See your profile identity and the city presence you permit them to see. City-sharing settings control city presence, not information you separately share within a trip.</li>
+          <li><strong>Authorized Trip Members:</strong> Can see the shared trip, participant identities and added flight details. Pausing city sharing does not automatically remove previously shared trip or flight content.</li>
           <li><strong>Apple:</strong> Provides Sign in with Apple and Apple Push Notification service (APNs).</li>
           <li><strong>Cloud Infrastructure (Supabase):</strong> Encrypted database storage and serverless edge functions.</li>
+          <li><strong>Flight Data (AeroDataBox through RapidAPI):</strong> Our server sends the requested flight number and departure date to obtain flight schedules/status. This lookup does not send your profile name, Apple account identifier or APNs token. The provider also receives technical request information from our server.</li>
         </ul>
         <p>We do not sell, rent, or monetize your personal data in any way.</p>
       </section>
 
       <section class="policy-section">
         <h2>5. Account Deletion & Your Rights</h2>
-        <p>You can pause city sharing globally at any time. You can delete your account and all associated server records with a single tap in <strong>You → Delete account</strong>.</p>
+        <p>You can pause city sharing, change notification preferences, and edit or remove your own flights using the app. Account deletion is available at <strong>You → Delete account</strong> and removes the authentication account and account-linked city, friendship and device records.</p>
+        <p>Shared trip records are separate: participant display information and previously added itineraries may remain in shared trips for other members after account deletion. Remove your own flights before deleting your account if you do not want them retained. Already delivered notifications or copies made by recipients cannot be recalled.</p>
+        <p>Records are retained to provide these features until removed through the applicable controls; operational records and infrastructure backups may remain subject to their retention cycles. For privacy or shared-record removal requests, contact us through our <a href="../support/">Support page</a>.</p>
       </section>
     </div>
 
@@ -258,14 +265,14 @@
     <div id="lang-zh" class="lang-block">
       <div class="policy-header">
         <h1 class="policy-title">隐私政策</h1>
-        <p class="policy-meta">生效与更新日期：2026 年 8 月 27 日</p>
+        <p class="policy-meta">生效与更新日期：2026 年 9 月 11 日</p>
       </div>
 
       <div class="highlight-card">
         <div class="highlight-icon">🛡️</div>
         <div>
           <h3>隐私要点速览</h3>
-          <p>Across Us 旨在向双向好友共享你的当前城市，而非实时精准轨迹。地理逆编码完全在 iPhone 端侧完成。我们绝不出售个人数据、绝不跨 App 追踪用户，且无任何广告推广。</p>
+          <p>Across Us 向已接受的好友共享城市级状态，并向有权访问行程的成员共享你主动添加的行程和航班信息。城市地理编码在设备上完成，我们不收集连续 GPS 轨迹，不出售个人数据，不进行跨 App 追踪，也不展示广告。</p>
         </div>
       </div>
 
@@ -277,31 +284,38 @@
       <section class="policy-section">
         <h2>2. 我们处理的信息</h2>
         <ul>
-          <li><strong>账户与身份认证：</strong> 关联至 Apple 登录（Sign in with Apple）的匿名标识符、你填写的昵称与用户名、头像配色方案。我们不索取通讯录或手机号。</li>
+          <li><strong>账户与身份认证：</strong> 与 Apple 登录关联的账户标识符、你提供的显示名称与用户名、头像配色，以及认证和会话信息。这些记录关联至你的账户，并非匿名数据。我们不索取手机通讯录或手机号。</li>
           <li><strong>城市级状态（Presence）：</strong> 端侧地理编码解析出的粗粒度城市与国家代码（如 "New York, US"）及更新时间戳。精准 GPS 坐标保留在设备端，绝不上云。</li>
           <li><strong>好友关系与偏好：</strong> 好友申请、好友列表、单人/全局共享开关及小组件隐私模式。</li>
-          <li><strong>通知服务：</strong> 用于发送同城提醒的加密 APNs Token。</li>
+          <li><strong>行程与航班：</strong> 行程名称、目的地、日期、成员和邀请；你添加的航班号、出行日期、机场、计划与更新后的时间及状态。共享行程内容及此前提交的集合备注或签到信息可能随行程保存。每位已登录成员管理自己的航班信息。</li>
+          <li><strong>航班查询：</strong> 用于查找航班信息的航班号与出发日期、缓存的供应商结果，以及用于限制服务用量的请求次数。</li>
+          <li><strong>通知与设备：</strong> 安装标识符、APNs 推送令牌、投递记录及通知偏好，包括逐行程的航班提醒。APNs 令牌由后端加密后存入数据库。</li>
+          <li><strong>服务运行：</strong> 用于运行服务、排查故障及防止滥用的认证、请求、错误和安全记录。App 不包含广告或跨 App 追踪。</li>
         </ul>
       </section>
 
       <section class="policy-section">
         <h2>3. 信息的使用目的</h2>
-        <p>所收集的信息仅用于维护账户、好友连接、主屏幕/锁屏小组件展示，以及在好友同城时生成相聚时刻。</p>
+        <p>信息用于账户认证、维护好友和共享设置、展示城市状态与小组件、跨设备同步共享行程、处理邀请、查询航班信息及发送允许的通知。每个行程的航班提醒由用户自愿开启，默认关闭。航班检查是周期性的，并非连续实时追踪；请以航空公司信息确认出行安排。</p>
       </section>
 
       <section class="policy-section">
         <h2>4. 信息共享与第三方服务</h2>
         <ul>
-          <li><strong>已接受的好友：</strong> 仅能查看你授权共享的城市名及更新时间。</li>
+          <li><strong>已接受的好友：</strong> 可见你的资料身份及你允许共享的城市状态。城市共享设置不控制你另外在行程中共享的信息。</li>
+          <li><strong>有权访问行程的成员：</strong> 可见共享行程、参与者身份及所添加的航班详情。暂停城市共享不会自动移除已经共享的行程或航班内容。</li>
           <li><strong>Apple：</strong> 提供 Apple 登录与 APNs 推送基础设施。</li>
           <li><strong>云端服务（Supabase）：</strong> 提供加密数据库与无服务器计算支持。</li>
+          <li><strong>航班数据（通过 RapidAPI 使用 AeroDataBox）：</strong> 后端发送所查询的航班号和出发日期以获取时刻及状态，不会在此查询中发送你的显示名称、Apple 账户标识或 APNs 令牌。供应商也会接收来自后端的技术请求信息。</li>
         </ul>
         <p>我们绝不出售、出租任何个人数据，亦不用于广告投放。</p>
       </section>
 
       <section class="policy-section">
         <h2>5. 你的权利与一键注销</h2>
-        <p>你可随时全局或针对单独好友暂停共享。在 App 的 <strong>You（个人）→ Delete account（注销账号）</strong> 中，可一键彻底删除全部账号与云端记录。</p>
+        <p>你可以在 App 中暂停城市共享、调整通知偏好，以及修改或删除自己的航班。通过 <strong>You（个人）→ Delete account（注销账号）</strong> 删除账户，会移除认证账户及与账户关联的城市、好友和设备记录。</p>
+        <p>共享行程单独保存：注销账户后，参与者显示信息及此前添加的行程航班仍可能保留在其他成员的共享行程中。如果不希望保留自己的航班，请先删除航班再注销账户。已经送达的通知或接收者保存的副本无法撤回。</p>
+        <p>相关记录会为提供上述功能而保留，直至通过相应操作移除；运行记录与基础设施备份可能按各自保留周期继续保存。如需咨询隐私或移除共享记录，请通过<a href="../support/">支持页面</a>联系我们。</p>
       </section>
     </div>
 
