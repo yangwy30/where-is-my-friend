@@ -416,9 +416,21 @@ public struct CityEmblemView: View {
     }
 
     private var loadedImage: UIImage? {
-        guard let assetName = emblem.assetName else { return nil }
-        if let direct = UIImage(named: assetName) { return direct }
-        if let namespaced = UIImage(named: "CityEmblems/\(assetName)") { return namespaced }
+        if let assetName = emblem.assetName {
+            if let direct = UIImage(named: assetName) { return direct }
+            if let namespaced = UIImage(named: "CityEmblems/\(assetName)") { return namespaced }
+        }
+
+        // Unknown location or private/unspecified:
+        if emblem.cityID == "unknown" {
+            if let direct = UIImage(named: "City_unknown_location") { return direct }
+            if let namespaced = UIImage(named: "CityEmblems/City_unknown_location") { return namespaced }
+        } else {
+            // Known city without dedicated 3D landmark: use universal 3D neighborhood diorama
+            if let direct = UIImage(named: "City_generic_block") { return direct }
+            if let namespaced = UIImage(named: "CityEmblems/City_generic_block") { return namespaced }
+        }
+
         return nil
     }
 
@@ -440,40 +452,11 @@ public struct CityEmblemView: View {
 
     private var proceduralFallback: some View {
         ZStack {
-            // Tactile aluminum base pedestal
-            RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(white: 0.94),
-                            Color(white: 0.82),
-                            Color(white: 0.88)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
-                        .stroke(Color.white.opacity(0.85), lineWidth: 1.5)
-                )
-                .shadow(color: Color.black.opacity(0.14), radius: size * 0.07, x: 0, y: size * 0.04)
-
-            // Frosted glass inner platform
-            RoundedRectangle(cornerRadius: size * 0.16, style: .continuous)
-                .fill(emblem.archetype.themeColor.opacity(0.15))
-                .padding(size * 0.10)
-
-            // Archetype symbol and city initial
-            VStack(spacing: size * 0.02) {
-                Image(systemName: emblem.archetype.iconSymbol)
-                    .font(.system(size: size * 0.30, weight: .semibold, design: .rounded))
-                    .foregroundStyle(emblem.archetype.themeColor)
-
-                Text(String(emblem.displayName.prefix(3)).uppercased())
-                    .font(.system(size: size * 0.14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.secondary)
-            }
+            Circle()
+                .fill(Color(uiColor: .tertiarySystemFill))
+            Image(systemName: emblem.cityID == "unknown" ? "globe.americas.fill" : "building.2.fill")
+                .font(.system(size: size * 0.40, weight: .medium, design: .rounded))
+                .foregroundStyle(.secondary)
         }
     }
 }

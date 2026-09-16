@@ -1069,6 +1069,40 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertNil(fallbackKorean.assetName)
     }
 
+    func testUniversalCityFallbackAndUnknownLocationAssets() throws {
+        let bakersfield = CityEmblem.resolve(city: "Bakersfield", countryCode: "US")
+        XCTAssertEqual(bakersfield.cityID, "bakersfield")
+        XCTAssertNil(bakersfield.assetName)
+        XCTAssertEqual(bakersfield.displayName, "Bakersfield")
+
+        let fremont = CityEmblem.resolve(city: "Fremont", countryCode: "US")
+        XCTAssertEqual(fremont.cityID, "fremont")
+        XCTAssertNil(fremont.assetName)
+        XCTAssertEqual(fremont.displayName, "Fremont")
+
+        let unknown = CityEmblem.resolve(city: nil)
+        XCTAssertEqual(unknown.cityID, "unknown")
+        XCTAssertEqual(unknown.displayName, "Somewhere")
+
+        for assetName in ["City_generic_block", "City_unknown_location"] {
+            let image = try XCTUnwrap(UIImage(named: assetName)?.cgImage, "Missing bundled asset: \(assetName)")
+            var pixels = [UInt8](repeating: 0, count: 16 * 16 * 4)
+            try pixels.withUnsafeMutableBytes { bytes in
+                let context = try XCTUnwrap(CGContext(
+                    data: bytes.baseAddress, width: 16, height: 16,
+                    bitsPerComponent: 8, bytesPerRow: 64, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                ))
+                context.draw(image, in: CGRect(x: 0, y: 0, width: 16, height: 16))
+            }
+            for corner in [0, 15, 240, 255] {
+                XCTAssertLessThan(pixels[corner * 4 + 3], 5, "Opaque background corner in \(assetName)")
+            }
+            XCTAssertTrue(stride(from: 3, to: pixels.count, by: 4).contains { pixels[$0] > 200 },
+                          "Asset must contain visible opaque content: \(assetName)")
+        }
+    }
+
     private func makeFriend(
         name: String = "Test Friend",
         city: String = "New York",

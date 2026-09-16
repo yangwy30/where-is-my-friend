@@ -18,7 +18,25 @@ actor LocalDemoRepository: AppRepository {
                 ?? DemoData.initialSnapshot()
         }
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-previewCityRegions") {
+        if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackCompare") {
+            self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield",
+                countryCode: "US", updatedAt: Date(), source: .foregroundLocation)
+            let places: [(String, String?, String?)] = [
+                ("New York", "NY", "US"),
+                ("Bakersfield", "CA", "US"),
+                ("Fremont", "CA", "US"),
+                ("Tokyo", nil, "JP")
+            ]
+            for (index, place) in places.enumerated() where index < self.snapshot.friends.count {
+                self.snapshot.friends[index].city = place.0
+                self.snapshot.friends[index].administrativeArea = place.1
+                self.snapshot.friends[index].countryCode = place.2
+            }
+            self.snapshot.colocationEvents = []
+            self.snapshot.colocationSessions = []
+            self.snapshot.isAuthenticated = true
+            SharedAppStateStore.save(self.snapshot, origin: storageScope)
+        } else if ProcessInfo.processInfo.arguments.contains("-previewCityRegions") {
             self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Milpitas",
                 countryCode: "US", updatedAt: Date(), source: .foregroundLocation)
             let places = [("Santa Clara", "CA"), ("Burbank", "CA"), ("Hoboken", "NJ")]

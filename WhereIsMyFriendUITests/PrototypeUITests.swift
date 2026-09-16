@@ -1139,6 +1139,29 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(edit.exists)
     }
 
+    func testCityEmblemFallbackSideBySideVisual() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments += [
+            "-skipOnboarding",
+            "-resetDemoData",
+            "-previewCityFallbackCompare",
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
+        app.launch()
+
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+        Thread.sleep(forTimeInterval: 2.0)
+
+        let screenshot = XCUIScreen.main.screenshot()
+        let dir = URL(fileURLWithPath: "/Users/wangyang/.gemini/antigravity-insiders/brain/8387052e-6911-492e-8636-61f65eebeb0c")
+        let shotURL = dir.appendingPathComponent("city_fallback_side_by_side.png")
+        try? screenshot.pngRepresentation.write(to: shotURL)
+
+        capture("City fallback visual side-by-side comparison")
+    }
+
     private func tripsApp(seedExamples: Bool = true, asMember: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-previewTrips",
