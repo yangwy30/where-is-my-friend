@@ -166,8 +166,9 @@ enum TripInvitationLink {
             return UUID(uuidString: parts[1])
         }
         if url.scheme == "https", let host = url.host?.lowercased(), hosts.contains(host),
-           parts.count >= 3, Array(parts.suffix(3).prefix(2)) == ["trips", "join"] {
-            return UUID(uuidString: parts.last!)
+           parts.count >= 3, Array(parts.suffix(3).prefix(2)) == ["trips", "join"],
+           let last = parts.last {
+            return UUID(uuidString: last)
         }
         return nil
     }

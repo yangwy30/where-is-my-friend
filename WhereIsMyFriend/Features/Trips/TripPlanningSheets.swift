@@ -69,9 +69,9 @@ struct TripPlanningSheet: View {
         _name = State(initialValue: existing?.name ?? "")
         _isCustomName = State(initialValue: existing != nil)
         _destination = State(initialValue: existing?.destinationAirport ?? "")
-        let nextWeek = Calendar.current.date(byAdding: .day, value: 7, to: Date())!
+        let nextWeek = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
         _start = State(initialValue: existing?.startDay.pickerDate ?? nextWeek)
-        _end = State(initialValue: existing?.endDay.pickerDate ?? Calendar.current.date(byAdding: .day, value: 3, to: nextWeek)!)
+        _end = State(initialValue: existing?.endDay.pickerDate ?? (Calendar.current.date(byAdding: .day, value: 3, to: nextWeek) ?? nextWeek))
     }
 
     private var cleanName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }

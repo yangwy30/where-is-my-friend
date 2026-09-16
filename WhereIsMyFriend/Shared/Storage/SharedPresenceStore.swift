@@ -11,9 +11,13 @@ enum SharedAppLink {
     }
 
     static func make(host: String, path: String? = nil) -> URL {
-        var value = "\(urlScheme)://\(host)"
-        if let path { value += "/\(path)" }
-        return URL(string: value)!
+        var components = URLComponents()
+        components.scheme = urlScheme
+        components.host = host
+        if let path {
+            components.path = path.hasPrefix("/") ? path : "/\(path)"
+        }
+        return components.url ?? URL(string: "\(urlScheme)://\(host)") ?? URL(fileURLWithPath: "/")
     }
 }
 

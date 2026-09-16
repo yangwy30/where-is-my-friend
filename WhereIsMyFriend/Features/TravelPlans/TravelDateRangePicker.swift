@@ -46,10 +46,10 @@ struct TravelDateRangePicker: View {
         let validStart = TripDay(start, timeZone: .gmt).value
         self._selection = State(initialValue: TravelDateRangeSelection(start: validStart, end: max(validStart, endDay)))
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = .gmt
-        self._month = State(initialValue: calendar.date(from: calendar.dateComponents([.year, .month], from: start))!)
+        self._month = State(initialValue: calendar.date(from: calendar.dateComponents([.year, .month], from: start)) ?? start)
         let today = TripDay(Date(), timeZone: TimeZone(identifier: timeZone ?? "") ?? .current).value
         self.minimumDay = futurePlansOnly ? min(today, validStart) : nil
-        self.maximumStart = futurePlansOnly ? TripDay(PersonalTravelPlan.parseDay(today)!.addingTimeInterval(730 * 86400), timeZone: .gmt).value : nil
+        self.maximumStart = futurePlansOnly ? (PersonalTravelPlan.parseDay(today).map { TripDay($0.addingTimeInterval(730 * 86400), timeZone: .gmt).value } ?? nil) : nil
         self.maximumSpan = futurePlansOnly ? 366 : nil
         self.onSelect = onSelect
     }
@@ -62,7 +62,7 @@ struct TravelDateRangePicker: View {
 
     private var cells: [Date?] {
         let offset = (calendar.component(.weekday, from: month) - calendar.firstWeekday + 7) % 7
-        let count = calendar.range(of: .day, in: .month, for: month)!.count
+        let count = calendar.range(of: .day, in: .month, for: month)?.count ?? 30
         return Array(repeating: nil, count: offset) + (0..<count).map { calendar.date(byAdding: .day, value: $0, to: month) }
     }
 

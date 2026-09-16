@@ -40,16 +40,15 @@ struct AirportLocation: Identifiable, Sendable, Hashable {
     }
 
     var flag: String {
-        let base: UInt32 = 127397
-        var s = ""
-        for v in countryCode.uppercased().unicodeScalars {
-            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
-        }
-        return s
+        guard countryCode.count == 2 else { return "" }
+        let base: UInt32 = 127_397
+        return countryCode.uppercased().unicodeScalars.compactMap { scalar in
+            UnicodeScalar(base + scalar.value).map(String.init)
+        }.joined()
     }
 
     var timeZone: TimeZone {
-        TimeZone(identifier: timeZoneIdentifier) ?? TimeZone(identifier: "UTC")!
+        TimeZone(identifier: timeZoneIdentifier) ?? TimeZone(secondsFromGMT: 0) ?? .gmt
     }
 
     func matches(_ query: String) -> Bool {

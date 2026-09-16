@@ -610,13 +610,13 @@ actor RemoteAppRepository: AppRepository {
             path: "/v1/trip-invitations/\(id.uuidString)/\(revoke ? "revoke" : "decline")", method: "POST", body: EmptyBody())
     }
 
-    private func requestSnapshot<Body: Encodable>(
+    private func requestSnapshot<Body: Encodable & Sendable>(
         path: String, method: String, body: Body?, allowsAuthTransition: Bool = false
     ) async throws -> AppSnapshot {
         try await authorizedRequest(path: path, method: method, body: body, allowsAuthTransition: allowsAuthTransition)
     }
 
-    private func authorizedRequest<Response: Decodable, Body: Encodable>(
+    private func authorizedRequest<Response: Decodable & Sendable, Body: Encodable & Sendable>(
         path: String, method: String, body: Body?, allowsAuthTransition: Bool = false
     ) async throws -> Response {
         let context = try requestContext(authentication: allowsAuthTransition)
@@ -814,8 +814,8 @@ actor RESTClient {
                 ?? "Server request failed (\(http.statusCode))."
             throw RepositoryError.message(message)
         }
-        if Response.self == EmptyResponse.self, data.isEmpty {
-            return EmptyResponse() as! Response
+        if let empty = EmptyResponse() as? Response, data.isEmpty {
+            return empty
         }
         return try decoder.decode(Response.self, from: data)
     }

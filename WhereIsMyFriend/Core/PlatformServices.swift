@@ -30,7 +30,7 @@ enum CityLocationPolicy {
         return CLLocationCoordinate2DIsValid(location.coordinate)
             && location.horizontalAccuracy >= 0 && location.horizontalAccuracy <= 10_000
             && age >= -30 && age <= 120
-            && (newerThan == nil || location.timestamp > newerThan!)
+            && (newerThan.map { location.timestamp > $0 } ?? true)
     }
 }
 

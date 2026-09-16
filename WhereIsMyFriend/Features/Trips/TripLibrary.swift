@@ -11,7 +11,7 @@ struct TripDay: Codable, Hashable, Comparable {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         let parts = calendar.dateComponents([.year, .month, .day], from: date)
-        value = String(format: "%04d-%02d-%02d", parts.year!, parts.month!, parts.day!)
+        value = String(format: "%04d-%02d-%02d", parts.year ?? 1970, parts.month ?? 1, parts.day ?? 1)
     }
 
     var pickerDate: Date {
