@@ -1,6 +1,71 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testTripOwnerRemovesMemberCancelsAndDeletesWithConfirmation() {
+        continueAfterFailure = false
+        let app = tripsApp()
+        let trip = app.buttons["tripCard-example-west"]
+        XCTAssertTrue(trip.waitForExistence(timeout: 8)); trip.tap()
+        app.buttons["tripPeopleButton"].tap()
+        let remove = app.buttons["removeTripMember-example-mia"]
+        XCTAssertTrue(remove.waitForExistence(timeout: 4)); remove.tap()
+        XCTAssertTrue(app.buttons["Keep member"].waitForExistence(timeout: 3))
+        app.buttons["Keep member"].tap()
+        XCTAssertTrue(remove.exists); remove.tap()
+        capture("trip-remove-member-confirmation")
+        app.buttons["Remove member"].tap()
+        XCTAssertTrue(remove.waitForNonExistence(timeout: 4))
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.buttons["tripPeopleButton"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["tripPeopleButton"].label.contains("4 people"))
+        app.buttons["tripOptionsButton"].tap()
+        app.buttons["cancelTripButton"].tap()
+        app.buttons["Keep trip"].tap()
+        XCTAssertFalse(app.descendants(matching: .any)["cancelledTripStatus"].exists)
+        app.buttons["tripOptionsButton"].tap()
+        app.buttons["cancelTripButton"].tap()
+        capture("trip-cancel-confirmation")
+        app.buttons["Cancel trip"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["cancelledTripStatus"].waitForExistence(timeout: 4))
+        XCTAssertFalse(app.buttons["addBoardFlightButton"].exists)
+        capture("trip-cancelled-read-only")
+        app.buttons["tripOptionsButton"].tap()
+        XCTAssertFalse(app.buttons["Undo completion"].exists)
+        XCTAssertFalse(app.buttons["Edit trip"].exists)
+        app.buttons["deleteTripButton"].tap()
+        capture("trip-delete-confirmation")
+        app.buttons["Keep trip"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["cancelledTripStatus"].exists)
+        app.buttons["tripOptionsButton"].tap()
+        app.buttons["deleteTripButton"].tap()
+        app.buttons["Delete trip"].tap()
+        XCTAssertTrue(app.buttons["tripCard-example-new-york"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["tripCard-example-west"].exists)
+    }
+
+    func testTripMemberCanLeaveButCannotManageOthers() {
+        continueAfterFailure = false
+        let app = tripsApp(asMember: true)
+        let trip = app.buttons["tripCard-example-west"]
+        XCTAssertTrue(trip.waitForExistence(timeout: 8)); trip.tap()
+        app.buttons["tripPeopleButton"].tap()
+        XCTAssertTrue(app.staticTexts["In this trip"].waitForExistence(timeout: 4))
+        XCTAssertFalse(app.buttons["removeTripMember-example-mia"].exists)
+        app.buttons["Done"].tap()
+        app.buttons["tripOptionsButton"].tap()
+        XCTAssertFalse(app.buttons["deleteTripButton"].exists)
+        XCTAssertFalse(app.buttons["cancelTripButton"].exists)
+        app.buttons["leaveTripButton"].tap()
+        capture("trip-leave-confirmation")
+        app.buttons["Keep trip"].tap()
+        XCTAssertTrue(app.buttons["tripPeopleButton"].exists)
+        app.buttons["tripOptionsButton"].tap()
+        app.buttons["leaveTripButton"].tap()
+        app.buttons["Leave trip"].tap()
+        XCTAssertTrue(app.buttons["tripCard-example-new-york"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["tripCard-example-west"].exists)
+    }
+
     func testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates() {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -1074,12 +1139,13 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(edit.exists)
     }
 
-    private func tripsApp(seedExamples: Bool = true) -> XCUIApplication {
+    private func tripsApp(seedExamples: Bool = true, asMember: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-skipOnboarding", "-resetDemoData", "-previewTrips",
                                 "-tripTestNamespace=\(UUID().uuidString)",
                                 "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         if seedExamples { app.launchArguments.append("-seedTripExamples") }
+        if asMember { app.launchArguments.append("-previewTripMember") }
         app.launch()
         return app
     }

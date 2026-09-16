@@ -333,6 +333,7 @@ struct DestinationSearchSheet: View {
 struct TripPeopleSheet: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
+    @ObservedObject var library: TripLibrary
     let trip: TripPlan
     let currentUserID: String?
     var isCloud = false
@@ -340,20 +341,36 @@ struct TripPeopleSheet: View {
     @State private var isWorking = false
     @State private var message: String?
     @State private var revokeTarget: TripInvitation?
+    @State private var removeTarget: TripParticipant?
+    @State private var removalRevision: Int?
 
-    private var canInvite: Bool { isCloud && trip.creatorUserID == currentUserID }
+    private var currentTrip: TripPlan { library.trips.first { $0.id == trip.id } ?? trip }
+    private var canInvite: Bool { isCloud && library.canEdit(currentTrip) }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("In this trip") {
-                    ForEach(trip.participants) { person in
+                    ForEach(currentTrip.participants) { person in
                         HStack {
                             Label(person.name, systemImage: "person.crop.circle")
                             Spacer()
                             Text(person.userID != nil && person.userID == currentUserID ? "You" :
                                  (trip.isExample ? "Example" : (person.userID == nil ? "Unclaimed" : "Member")))
                                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            if library.canManage(currentTrip), person.userID == nil || person.userID != currentUserID {
+                                Button(role: .destructive) {
+                                    removalRevision = currentTrip.revision
+                                    removeTarget = person
+                                } label: {
+                                    Image(systemName: "person.crop.circle.badge.minus")
+                                        .frame(minWidth: 44, minHeight: 44)
+                                }
+                                .buttonStyle(.borderless)
+                                .disabled(isWorking || library.isSaving)
+                                .accessibilityLabel("Remove \(person.name)")
+                                .accessibilityIdentifier("removeTripMember-\(person.id)")
+                            }
                         }
                     }
                 }
@@ -382,7 +399,7 @@ struct TripPeopleSheet: View {
                 if canInvite {
                     Section("Invite a friend") {
                         let available = store.friends.filter { friend in
-                            !trip.participants.contains { $0.userID?.lowercased() == friend.id.uuidString.lowercased() }
+                            !currentTrip.participants.contains { $0.userID?.lowercased() == friend.id.uuidString.lowercased() }
                             && !outgoing.contains { $0.recipient_id == friend.id }
                         }
                         if available.isEmpty {
@@ -408,7 +425,7 @@ struct TripPeopleSheet: View {
                                     Spacer()
                                     Image(systemName: "person.badge.plus")
                                 }
-                            }.disabled(isWorking)
+                            }.disabled(isWorking || library.isSaving)
                         }
                     }.listRowBackground(WIFTheme.surface)
                 }
@@ -425,9 +442,27 @@ struct TripPeopleSheet: View {
             do { outgoing = try await store.tripRepository.tripInvitations(tripID: trip.id) }
             catch { message = error.localizedDescription }
         }
-        .alert("Invitation", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
+        .interactiveDismissDisabled(isWorking || library.isSaving)
+        .onChange(of: library.trips.map(\.id)) { _, ids in if !ids.contains(trip.id) { dismiss() } }
+        .alert("Trip people", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(message ?? "") }
+        .alert("Remove this member?", isPresented: Binding(get: { removeTarget != nil }, set: { if !$0 { removeTarget = nil } }), presenting: removeTarget) { person in
+            Button("Remove member", role: .destructive) {
+                isWorking = true
+                Task {
+                    let saved = await library.changeLifecycle(.removeMember, tripID: trip.id, participantID: person.id, revision: removalRevision)
+                    if !saved {
+                        message = library.errorMessage ?? String(localized: "The member could not be removed. Refresh and try again.")
+                        library.errorMessage = nil
+                    }
+                    isWorking = false
+                }
+            }
+            Button("Keep member", role: .cancel) {}
+        } message: { person in
+            Text("\(person.name) will lose access to this trip. Their shared flights will be removed, and they will need a new invitation to rejoin.")
+        }
         .confirmationDialog("Revoke this invitation?", isPresented: Binding(get: { revokeTarget != nil }, set: { if !$0 { revokeTarget = nil } }), titleVisibility: .visible) {
             Button("Revoke invitation", role: .destructive) {
                 guard let target = revokeTarget else { return }

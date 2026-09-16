@@ -78,6 +78,7 @@ struct TripPlan: Identifiable, Codable {
     var revision: Int? = nil
     var flightAlertsEnabled: Bool? = nil
     var meetingPoint: String? = nil
+    var cancelledAt: Date? = nil
 
     var destination: AirportLocation? { AirportLocation.location(for: destinationAirport) }
     var destinationName: String { destination?.city ?? destinationAirport }
@@ -98,6 +99,9 @@ struct TripPlan: Identifiable, Codable {
     }
 
     func arrivalOverview(direction: TripDirection, at now: Date = Date()) -> TripArrivalOverview {
+        if cancelledAt != nil {
+            return TripArrivalOverview(title: String(localized: "Trip cancelled"), detail: String(localized: "People and flights are kept for reference. Updates have stopped."), progressCount: 0)
+        }
         let memberIDs = Set(participants.map(\.id))
         let flightsInDirection = flights.filter { $0.direction == direction }
         let added = Set(flightsInDirection.compactMap(\.travelerID)).intersection(memberIDs).count
@@ -141,7 +145,7 @@ struct TripPlan: Identifiable, Codable {
     }
 
     func phase(at now: Date = Date()) -> TripPhase {
-        if completedAt != nil { return .past }
+        if completedAt != nil || cancelledAt != nil { return .past }
         let today = TripDay(now, timeZone: destination?.timeZone ?? .current)
         if today < startDay { return .upcoming }
         if today > endDay { return .past }
@@ -205,6 +209,7 @@ final class TripLibrary: ObservableObject {
     @Published private(set) var deviceDrafts: [TripPlan] = []
     private var remote: (any AppRepository)?
     private var generation = 0
+    private var lifecycleRequests: [String: UUID] = [:]
     private var importedDraftIDs: Set<String> = []
     var isCloud: Bool { remote != nil }
     var syncLabel: String {
@@ -236,6 +241,7 @@ final class TripLibrary: ObservableObject {
         guard scope != newScope || currentUserID != userID else { return }
         trips = []
         generation += 1
+        lifecycleRequests = [:]
         errorMessage = nil
         scope = newScope
         cacheEpoch = AccountLocalData.epoch(for: newScope)
@@ -310,8 +316,10 @@ final class TripLibrary: ObservableObject {
         currentUserID != nil && trip.creatorUserID == currentUserID && selfParticipant(in: trip) != nil
     }
 
+    func canEdit(_ trip: TripPlan) -> Bool { canManage(trip) && trip.cancelledAt == nil }
+
     func owns(_ flight: TripFlight, in trip: TripPlan) -> Bool {
-        guard let person = selfParticipant(in: trip) else { return false }
+        guard trip.cancelledAt == nil, let person = selfParticipant(in: trip) else { return false }
         return flight.travelerID == person.id
     }
 
@@ -333,19 +341,28 @@ final class TripLibrary: ObservableObject {
 
     @discardableResult
     func editTrip(_ id: String, name: String, airport: String, start: TripDay, end: TripDay) -> Bool {
-        guard let trip = trips.first(where: { $0.id == id }), canManage(trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == id }), canEdit(trip) else { return false }
         return update(id) { $0.name = name; $0.destinationAirport = airport; $0.startDay = start; $0.endDay = end }
     }
 
     @discardableResult
     func complete(_ id: String, at date: Date?) -> Bool {
-        guard let trip = trips.first(where: { $0.id == id }), canManage(trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == id }), canEdit(trip) else { return false }
         return update(id) { $0.completedAt = date }
     }
 
     func addExamples(owner: TripParticipant) {
         guard !isCloud, trips.isEmpty, let currentUserID, owner.userID == currentUserID else { return }
-        _ = save(TripPlan.examples(owner: owner))
+        var examples = TripPlan.examples(owner: owner)
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-previewTripMember"), !examples.isEmpty {
+            examples[0].creatorUserID = "example-other-owner"
+            if let index = examples[0].participants.firstIndex(where: { $0.id == "example-mia" }) {
+                examples[0].participants[index].userID = "example-other-owner"
+            }
+        }
+        #endif
+        _ = save(examples)
     }
 
     private func save(_ next: [TripPlan]) -> Bool {
@@ -398,10 +415,11 @@ final class TripLibrary: ObservableObject {
         let capturedScope = scope
         isSaving = true
         generation += 1
+        let capturedGeneration = generation
         defer { isSaving = false }
         do {
             let result = try await operation(remote)
-            guard scope == capturedScope, currentUserID == userID else { return false }
+            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return false }
             let plan = result.plan(userID: userID)
             let next = trips.filter { $0.id != plan.id } + [plan]
             if !save(next) { trips = next; errorMessage = "Saved to your account, but the offline cache couldn't be updated." }
@@ -409,7 +427,7 @@ final class TripLibrary: ObservableObject {
             lastSyncedAt = Date()
             return true
         } catch {
-            guard scope == capturedScope else { return false }
+            guard scope == capturedScope, generation == capturedGeneration else { return false }
             syncFailed = true
             let reason = error as? RepositoryError == .networkUnavailable ? "You're offline. Reconnect and try again; this change isn't queued." : error.localizedDescription
             errorMessage = "Cloud save wasn't confirmed. Your form has been kept. \(reason)"
@@ -430,7 +448,7 @@ final class TripLibrary: ObservableObject {
     }
 
     func saveMeetingPoint(_ point: String, tripID: String, revision: Int?) async -> Bool {
-        guard let trip = trips.first(where: { $0.id == tripID }), canManage(trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == tripID }), canEdit(trip) else { return false }
         if !isCloud {
             var edited = trip; edited.meetingPoint = point
             return save(trips.map { $0.id == tripID ? edited : $0 })
@@ -439,7 +457,7 @@ final class TripLibrary: ObservableObject {
     }
 
     func checkIn(_ state: TripCheckIn, tripID: String) async -> Bool {
-        guard let trip = trips.first(where: { $0.id == tripID }), let person = selfParticipant(in: trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == tripID }), trip.cancelledAt == nil, let person = selfParticipant(in: trip) else { return false }
         if !isCloud {
             var edited = trip
             edited.participants = trip.participants.map { source in
@@ -454,14 +472,14 @@ final class TripLibrary: ObservableObject {
 
     func saveDetails(_ id: String, name: String, airport: String, start: TripDay, end: TripDay, revision: Int?) async -> Bool {
         guard isCloud else { return editTrip(id, name: name, airport: airport, start: start, end: end) }
-        guard let trip = trips.first(where: { $0.id == id }), canManage(trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == id }), canEdit(trip) else { return false }
         return await cloudSave { try await $0.mutateTrip(id: id, mutation: TripMutation(kind: "details",
             payload: TripPayload(name: name, destinationAirport: airport, startDate: start.value, endDate: end.value), revision: revision)) }
     }
 
     func setComplete(_ id: String, at date: Date?) async -> Bool {
         guard isCloud else { return complete(id, at: date) }
-        guard let trip = trips.first(where: { $0.id == id }), canManage(trip) else { return false }
+        guard let trip = trips.first(where: { $0.id == id }), canEdit(trip) else { return false }
         return await cloudSave { try await $0.mutateTrip(id: id, mutation: TripMutation(kind: "completion",
             payload: TripPayload(completed: date != nil), revision: trip.revision)) }
     }
@@ -485,6 +503,58 @@ final class TripLibrary: ObservableObject {
         let success = await cloudSave { try await $0.acceptTripInvitation(id: invitation.id) }
         if success { invitations.removeAll { $0.id == invitation.id } }
         return success
+    }
+
+    func changeLifecycle(_ action: TripLifecycleAction, tripID: String, participantID: String? = nil, revision: Int?) async -> Bool {
+        guard let trip = trips.first(where: { $0.id == tripID }), let userID = currentUserID,
+              selfParticipant(in: trip) != nil, !isSaving else { return false }
+        if action == .leave {
+            guard !canManage(trip), participantID == nil else { return false }
+        } else {
+            guard canManage(trip) else { return false }
+        }
+        if action == .removeMember {
+            guard let person = trip.participants.first(where: { $0.id == participantID }), person.userID != userID else { return false }
+        }
+        guard let remote else {
+            switch action {
+            case .delete, .leave: return save(trips.filter { $0.id != tripID })
+            case .cancel:
+                return update(tripID) { $0.cancelledAt = Date(); $0.completedAt = $0.completedAt ?? Date() }
+            case .removeMember:
+                return update(tripID) {
+                    $0.flights.removeAll { $0.travelerID == participantID }
+                    $0.participants.removeAll { $0.id == participantID }
+                }
+            }
+        }
+        let key = "\(tripID)|\(action.rawValue)|\(participantID ?? "")|\(revision ?? 0)"
+        let requestID = lifecycleRequests[key] ?? UUID()
+        lifecycleRequests[key] = requestID
+        let capturedScope = scope
+        generation += 1
+        let capturedGeneration = generation
+        isSaving = true
+        errorMessage = nil
+        defer { isSaving = false }
+        do {
+            let result = try await remote.changeTripLifecycle(id: tripID, payload: .init(action: action,
+                requestID: requestID, revision: action == .leave ? nil : revision, participantID: participantID))
+            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return false }
+            guard result.success else { throw RepositoryError.message(String(localized: "The trip change was not confirmed.")) }
+            let next = trips.filter { $0.id != tripID } + (result.trip.map { [$0.plan(userID: userID)] } ?? [])
+            if !save(next) { trips = next; errorMessage = "Saved to your account, but the offline cache couldn't be updated." }
+            lifecycleRequests.removeValue(forKey: key)
+            invitations.removeAll { $0.trip_id == tripID }
+            lastSyncedAt = Date()
+            syncFailed = false
+            return true
+        } catch {
+            guard scope == capturedScope, generation == capturedGeneration else { return false }
+            syncFailed = true
+            errorMessage = String(localized: "The trip change wasn’t confirmed. Refresh or retry when connected. \(error.localizedDescription)")
+            return false
+        }
     }
 
     func decline(_ invitation: TripInvitation) async {

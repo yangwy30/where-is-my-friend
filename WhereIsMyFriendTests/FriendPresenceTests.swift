@@ -662,6 +662,58 @@ final class TripMapTests: XCTestCase {
 final class TripLibraryTests: XCTestCase {
     private let owner = TripParticipant(id: "owner", name: "Wang Yang", userID: "owner")
 
+    func testLifecycleRemovesOnlyTargetFlightsAndCancelledTripStaysReadOnlyAfterReload() async throws {
+        let (library, directory) = try temporaryLibrary()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        library.addExamples(owner: owner)
+        let original = try XCTUnwrap(library.trips.first { $0.id == "example-west" })
+        let cannotLeave = await library.changeLifecycle(.leave, tripID: original.id, revision: nil)
+        XCTAssertFalse(cannotLeave)
+        let cannotRemoveOwner = await library.changeLifecycle(.removeMember, tripID: original.id, participantID: owner.id, revision: nil)
+        XCTAssertFalse(cannotRemoveOwner)
+        let removed = await library.changeLifecycle(.removeMember, tripID: original.id, participantID: "example-mia", revision: nil)
+        XCTAssertTrue(removed)
+        var plan = try XCTUnwrap(library.trips.first { $0.id == original.id })
+        XCTAssertFalse(plan.participants.contains { $0.id == "example-mia" })
+        XCTAssertFalse(plan.flights.contains { $0.travelerID == "example-mia" })
+        XCTAssertEqual(plan.flights.count, original.flights.filter { $0.travelerID != "example-mia" }.count)
+        let cancelled = await library.changeLifecycle(.cancel, tripID: plan.id, revision: nil)
+        XCTAssertTrue(cancelled)
+        let restored = TripLibrary(directory: directory)
+        restored.load(scope: "demo-owner", userID: owner.userID)
+        plan = try XCTUnwrap(restored.trips.first { $0.id == original.id })
+        XCTAssertNotNil(plan.cancelledAt)
+        XCTAssertEqual(plan.phase(), .past)
+        XCTAssertFalse(restored.complete(plan.id, at: nil))
+        XCTAssertFalse(restored.deleteFlight(try XCTUnwrap(plan.flights.first { $0.travelerID == owner.id }).id, in: plan.id))
+        let deleted = await restored.changeLifecycle(.delete, tripID: plan.id, revision: nil)
+        XCTAssertTrue(deleted)
+        XCTAssertEqual(restored.trips.count, 3)
+        XCTAssertFalse(restored.trips.contains { $0.id == plan.id })
+    }
+
+    func testMemberCanLeaveButCannotCancelDeleteOrRemoveAnyone() async throws {
+        let (library, directory) = try temporaryLibrary()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        var plan = trip()
+        plan.creatorUserID = "another-owner"
+        plan.participants.append(.init(id: "another-owner", name: "Creator", userID: "another-owner"))
+        struct Archive: Encodable { let version = 1; let trips: [TripPlan] }
+        try JSONEncoder().encode(Archive(trips: [plan])).write(to: directory.appendingPathComponent("demo-owner.json"))
+        library.load(scope: "signed-out", userID: nil)
+        library.load(scope: "demo-owner", userID: owner.userID)
+        for action in [TripLifecycleAction.cancel, .delete, .removeMember] {
+            let saved = await library.changeLifecycle(action, tripID: plan.id, participantID: action == .removeMember ? "another-owner" : nil, revision: nil)
+            XCTAssertFalse(saved)
+        }
+        XCTAssertEqual(library.trips.count, 1)
+        let left = await library.changeLifecycle(.leave, tripID: plan.id, revision: nil)
+        XCTAssertTrue(left)
+        let restored = TripLibrary(directory: directory)
+        restored.load(scope: "demo-owner", userID: owner.userID)
+        XCTAssertTrue(restored.trips.isEmpty)
+    }
+
     private func instant(_ value: String) -> Date { ISO8601DateFormatter().date(from: value)! }
     private func day(_ value: String) -> TripDay {
         TripDay(instant(value + "T12:00:00Z"), timeZone: TimeZone(secondsFromGMT: 0)!)
@@ -1322,6 +1374,46 @@ final class RemoteAppRepositoryTests: XCTestCase {
             XCTFail("Expected access denied")
         } catch { XCTAssertEqual(error as? RepositoryError, .message("Trip access denied.")) }
         XCTAssertEqual(setup.tokenStore.load(), "token")
+    }
+
+    @MainActor
+    func testTripLifecycleWaitsForConfirmationAndReusesRequestIDAfterLostResponse() async throws {
+        let setup = try makeRepository()
+        let response = Data("{\"trips\":[\(cloudTripJSON)]}".utf8)
+        StubURLProtocol.setHandler { request in
+            .response(statusCode: 200, data: request.url?.path == "/v1/trip-invitations" ? Data(#"{"invitations":[]}"#.utf8) : response)
+        }
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("TripLifecycleTest-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let library = TripLibrary(directory: directory)
+        let userID = "10000000-0000-0000-0000-000000000001"
+        library.connect(setup.repository)
+        library.load(scope: "remote-one-\(userID)", userID: userID)
+        await library.refresh()
+        var requestIDs: [String] = []
+        var attempt = 0
+        StubURLProtocol.setHandler { request in
+            XCTAssertEqual(request.url?.path, "/v1/trips/cloud-one/lifecycle")
+            let body = (try? JSONSerialization.jsonObject(with: requestBodyData(request) ?? Data())) as? [String: Any]
+            requestIDs.append(body?["requestID"] as? String ?? "")
+            XCTAssertNil(body?["userID"])
+            XCTAssertNil(body?["participantID"])
+            XCTAssertEqual(body?["revision"] as? Int, 4)
+            attempt += 1
+            return attempt == 1 ? .failure(URLError(.networkConnectionLost)) : .response(statusCode: 200, data: Data(#"{"success":true,"trip":null}"#.utf8))
+        }
+        let first = await library.changeLifecycle(.delete, tripID: "cloud-one", revision: 4)
+        XCTAssertFalse(first)
+        XCTAssertEqual(library.trips.count, 1)
+        let second = await library.changeLifecycle(.delete, tripID: "cloud-one", revision: 4)
+        XCTAssertTrue(second)
+        XCTAssertTrue(library.trips.isEmpty)
+        XCTAssertEqual(requestIDs.count, 2)
+        XCTAssertEqual(requestIDs.first, requestIDs.last)
+        XCTAssertFalse(requestIDs.first?.isEmpty ?? true)
+        let restored = TripLibrary(directory: directory)
+        restored.load(scope: "remote-one-\(userID)", userID: userID)
+        XCTAssertTrue(restored.trips.isEmpty)
     }
 
     @MainActor

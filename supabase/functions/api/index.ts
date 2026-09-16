@@ -251,6 +251,21 @@ async function handle(request: Request): Promise<Response> {
     if (segments[0] === "v1" && segments[1] === "trips" && segments.length >= 3) {
         const tripID = segments[2];
         if (!/^[A-Za-z0-9_-]{1,100}$/.test(tripID)) throw new APIError(400, "Invalid trip ID.");
+        if (request.method === "POST" && segments.length === 4 && segments[3] === "lifecycle") {
+            const body = await readBody(request);
+            const action = requiredString(body, "action");
+            if (!["leave", "cancel", "delete", "removeMember"].includes(action)
+                || Object.keys(body).some(key => !["action", "requestID", "revision", "participantID"].includes(key))
+                || !isUUID(body.requestID)
+                || (action === "removeMember" ? !isUUID(body.participantID) : body.participantID !== undefined)
+                || (action !== "leave" && (!Number.isSafeInteger(body.revision) || (body.revision as number) < 1))
+                || (action === "leave" && body.revision !== undefined)) {
+                throw new APIError(400, "Invalid trip lifecycle fields.");
+            }
+            return json(await rpc("wif_trip_lifecycle", { p_user_id: userID, p_trip_id: tripID,
+                p_action: action, p_request_id: body.requestID, p_revision: body.revision ?? null,
+                p_participant_id: body.participantID ?? null }));
+        }
         if (request.method === "POST" && segments.length === 4 && ["preferences", "meeting", "check-in"].includes(segments[3])) {
             const body = await readBody(request);
             const fields: Record<string, string[]> = { preferences:["enabled"], meeting:["point","revision"], "check-in":["state"] };

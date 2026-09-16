@@ -1,6 +1,236 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Cancel trip": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "取消行程"
+        }
+      }
+    }
+  },
+  "Delete trip": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "删除行程"
+        }
+      }
+    }
+  },
+  "Leave trip": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "退出行程"
+        }
+      }
+    }
+  },
+  "Remove member": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "移除成员"
+        }
+      }
+    }
+  },
+  "Keep trip": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "保留行程"
+        }
+      }
+    }
+  },
+  "Keep member": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "保留成员"
+        }
+      }
+    }
+  },
+  "Cancel this trip?": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "要取消这个行程吗？"
+        }
+      }
+    }
+  },
+  "Delete this trip for everyone?": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "要为所有成员删除这个行程吗？"
+        }
+      }
+    }
+  },
+  "Leave this trip?": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "要退出这个行程吗？"
+        }
+      }
+    }
+  },
+  "Remove this member?": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "要移除这位成员吗？"
+        }
+      }
+    }
+  },
+  "Trip people": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程成员"
+        }
+      }
+    }
+  },
+  "Trip cancelled · Read-only": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程已取消 · 仅供查看"
+        }
+      }
+    }
+  },
+  "Trip cancelled": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程已取消"
+        }
+      }
+    }
+  },
+  "Cancelled": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已取消"
+        }
+      }
+    }
+  },
+  "People and flights are kept for reference. Updates have stopped.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "成员和航班记录已保留供查看，动态更新已停止。"
+        }
+      }
+    }
+  },
+  "Everyone will see this trip as cancelled in Past. Records are kept, but editing, invitations and flight alerts stop. This does not cancel airline reservations.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所有成员都会在「过去的行程」中看到此行程已取消。记录会保留，但编辑、邀请和航班提醒将停止。这不会取消航空公司的机票预订。"
+        }
+      }
+    }
+  },
+  "This permanently deletes the trip, shared flights and invitations for everyone. This cannot be undone and does not cancel airline reservations.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "这会为所有成员永久删除行程、共享航班和邀请。此操作无法撤销，也不会取消航空公司的机票预订。"
+        }
+      }
+    }
+  },
+  "Your flights will be removed from this trip and you will lose access and stop receiving its alerts. You will need a new invitation to rejoin.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你的航班将从此行程中移除，你将无法继续访问，也不会再收到此行程的提醒。重新加入需要新的邀请。"
+        }
+      }
+    }
+  },
+  "%@ will lose access to this trip. Their shared flights will be removed, and they will need a new invitation to rejoin.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%@ 将无法继续访问此行程。对方的共享航班会被移除，重新加入需要新的邀请。"
+        }
+      }
+    }
+  },
+  "Remove %@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "移除 %@"
+        }
+      }
+    }
+  },
+  "The member could not be removed. Refresh and try again.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "未能移除成员，请刷新后重试。"
+        }
+      }
+    }
+  },
+  "The trip change was not confirmed.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "尚未确认行程更改。"
+        }
+      }
+    }
+  },
+  "The trip change wasn’t confirmed. Refresh or retry when connected. %@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "尚未确认行程更改，请联网后刷新或重试。%@"
+        }
+      }
+    }
+  },
     "Tap a date to choose a new start." : {
       "localizations": {
         "zh-Hans": {

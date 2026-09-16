@@ -225,7 +225,7 @@ struct TripsView: View {
                     }
                     Spacer()
                     if trip.phase(at: now) == .past {
-                        Text(trip.completedAt == nil ? "Finished" : "Marked complete")
+                        Text(trip.cancelledAt != nil ? String(localized: "Cancelled") : (trip.completedAt == nil ? "Finished" : "Marked complete"))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     } else {
                         Text(trip.flights.isEmpty ? "Ready to plan" : "\(trip.addedTravelerCount) of \(trip.participants.count) flights added")
@@ -254,6 +254,7 @@ private struct TripInvitationPermissionHint: View {
 }
 
 private struct TripDetailView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var library: TripLibrary
     let tripID: String
     @State private var addRequest: FlightRequest?
@@ -262,6 +263,8 @@ private struct TripDetailView: View {
     @State private var showsNotifications = false
     @State private var showsCompleteConfirmation = false
     @State private var deleteRequest: TripFlight?
+    @State private var lifecycleAction: TripLifecycleAction?
+    @State private var lifecycleRevision: Int?
 
     private struct FlightRequest: Identifiable {
         let id = UUID()
@@ -280,26 +283,59 @@ private struct TripDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("People", systemImage: "person.2") { showsPeople = true }
-                        if library.isCloud {
+                        if library.isCloud, trip.cancelledAt == nil {
                             Button("Notifications", systemImage: "bell") { showsNotifications = true }
                         }
-                        if library.canManage(trip) {
+                        if library.canEdit(trip) {
                             Button("Edit trip", systemImage: "pencil") { showsEdit = true }
                         }
-                        if library.canManage(trip), trip.completedAt != nil {
+                        if library.canEdit(trip), trip.completedAt != nil {
                             Button("Undo completion", systemImage: "arrow.uturn.backward") {
                                 Task { _ = await library.setComplete(tripID, at: nil) }
                             }
-                        } else if library.canManage(trip), trip.phase() != .past {
+                        } else if library.canEdit(trip), trip.phase() != .past {
                             Button("Mark complete", systemImage: "checkmark.circle") { showsCompleteConfirmation = true }
+                        }
+                        Divider()
+                        if library.canManage(trip) {
+                            if trip.cancelledAt == nil {
+                                Button("Cancel trip", systemImage: "xmark.circle", role: .destructive) {
+                                    lifecycleRevision = trip.revision; lifecycleAction = .cancel
+                                }
+                                .accessibilityIdentifier("cancelTripButton")
+                            }
+                            Button("Delete trip", systemImage: "trash", role: .destructive) {
+                                lifecycleRevision = trip.revision; lifecycleAction = .delete
+                            }
+                            .accessibilityIdentifier("deleteTripButton")
+                        } else if library.selfParticipant(in: trip) != nil {
+                            Button("Leave trip", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                                lifecycleRevision = nil; lifecycleAction = .leave
+                            }
+                            .accessibilityIdentifier("leaveTripButton")
                         }
                     } label: {
                         Image(systemName: "ellipsis")
                     }
                     .accessibilityLabel("Trip options")
                     .accessibilityIdentifier("tripOptionsButton")
+                    .disabled(library.isSaving)
                 }
             }
+            .refreshable { await library.refresh() }
+            .alert(lifecycleTitle, isPresented: Binding(get: { lifecycleAction != nil }, set: { if !$0 { lifecycleAction = nil } }), presenting: lifecycleAction) { action in
+                Button(lifecycleButton(action), role: .destructive) {
+                    Task {
+                        if await library.changeLifecycle(action, tripID: tripID, revision: lifecycleRevision), action == .leave || action == .delete {
+                            dismiss()
+                        }
+                    }
+                }
+                Button("Keep trip", role: .cancel) {}
+            } message: { action in
+                Text(lifecycleMessage(action))
+            }
+            .overlay { if library.isSaving { ProgressView("Saving…").padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)) } }
             .confirmationDialog("Finish this trip?", isPresented: $showsCompleteConfirmation, titleVisibility: .visible) {
                 Button("Mark complete") { Task { _ = await library.setComplete(tripID, at: Date()) } }
             } message: {
@@ -352,7 +388,7 @@ private struct TripDetailView: View {
                 }
             } message: { _ in Text("This removes your flight from this trip. Other travelers' flights stay unchanged.") }
             .sheet(isPresented: $showsPeople) {
-                TripPeopleSheet(trip: trip, currentUserID: library.currentUserID, isCloud: library.isCloud)
+                TripPeopleSheet(library: library, trip: trip, currentUserID: library.currentUserID, isCloud: library.isCloud)
             }
             .sheet(isPresented: $showsEdit) {
                 TripPlanningSheet(existing: trip, isCloud: library.isCloud, saveError: { library.errorMessage }) { name, airport, start, end, revision in
@@ -365,6 +401,30 @@ private struct TripDetailView: View {
         } else {
             ContentUnavailableView("Trip unavailable", systemImage: "suitcase",
                                    description: Text("Go back to Trips to choose a trip for this account."))
+        }
+    }
+
+    private var lifecycleTitle: LocalizedStringKey {
+        switch lifecycleAction {
+        case .cancel: "Cancel this trip?"
+        case .delete: "Delete this trip for everyone?"
+        default: "Leave this trip?"
+        }
+    }
+
+    private func lifecycleButton(_ action: TripLifecycleAction) -> LocalizedStringKey {
+        switch action {
+        case .cancel: "Cancel trip"
+        case .delete: "Delete trip"
+        default: "Leave trip"
+        }
+    }
+
+    private func lifecycleMessage(_ action: TripLifecycleAction) -> LocalizedStringKey {
+        switch action {
+        case .cancel: "Everyone will see this trip as cancelled in Past. Records are kept, but editing, invitations and flight alerts stop. This does not cancel airline reservations."
+        case .delete: "This permanently deletes the trip, shared flights and invitations for everyone. This cannot be undone and does not cancel airline reservations."
+        default: "Your flights will be removed from this trip and you will lose access and stop receiving its alerts. You will need a new invitation to rejoin."
         }
     }
 }
@@ -395,7 +455,11 @@ private struct FullTripArrivalBoard: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 header
-                if selfParticipant == nil {
+                if trip.cancelledAt != nil {
+                    Label("Trip cancelled · Read-only", systemImage: "xmark.circle")
+                        .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                        .accessibilityIdentifier("cancelledTripStatus")
+                } else if selfParticipant == nil {
                     Label("Read-only trip", systemImage: "lock.shield")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 }
@@ -409,7 +473,7 @@ private struct FullTripArrivalBoard: View {
                 }
                 arrivalList
 
-                if visibleFlights.isEmpty {
+                if visibleFlights.isEmpty, library.canEdit(trip) {
                     Button(action: onPeople) {
                         Label("Invite friends", systemImage: "person.badge.plus")
                             .font(.subheadline.weight(.medium)).frame(minHeight: 44)
@@ -437,7 +501,7 @@ private struct FullTripArrivalBoard: View {
         .toolbarBackground(WIFTheme.canvas, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                if selfParticipant != nil {
+                if selfParticipant != nil, trip.cancelledAt == nil {
                     Button("Add flight") { onAddFlight(direction) }
                         .font(.subheadline.weight(.medium))
                         .accessibilityLabel("Add my flight").accessibilityIdentifier("addBoardFlightButton")
@@ -528,7 +592,7 @@ private struct FullTripArrivalBoard: View {
                             selectedFlightID = selectedFlightID == flight.id ? nil : flight.id
                         }
                     }
-                    if selectedFlightID == flight.id, let selfParticipant, flight.travelerID == selfParticipant.id {
+                    if trip.cancelledAt == nil, selectedFlightID == flight.id, let selfParticipant, flight.travelerID == selfParticipant.id {
                         HStack(spacing: 20) {
                             Button("Edit my flight", systemImage: "pencil") { onEditFlight(flight) }
                                 .accessibilityIdentifier("editMyTripFlightButton")
@@ -566,7 +630,7 @@ private struct FullTripArrivalBoard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 4)
-            if person.id == selfParticipant?.id {
+            if person.id == selfParticipant?.id, trip.cancelledAt == nil {
                 Button("Add flight") { onAddFlight(direction) }
                     .font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
                     .frame(minWidth: 44, minHeight: 44)

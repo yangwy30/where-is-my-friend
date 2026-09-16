@@ -4,6 +4,22 @@ struct TripCloudList: Decodable { let trips: [CloudTrip] }
 struct TripInvitationList: Decodable { let invitations: [TripInvitation] }
 struct TripActionResult: Decodable { let success: Bool }
 
+enum TripLifecycleAction: String, Encodable, Sendable {
+    case leave, cancel, delete, removeMember
+}
+
+struct TripLifecyclePayload: Encodable, Sendable {
+    let action: TripLifecycleAction
+    let requestID: UUID
+    let revision: Int?
+    let participantID: String?
+}
+
+struct TripLifecycleResult: Decodable, Sendable {
+    let success: Bool
+    let trip: CloudTrip?
+}
+
 struct TripCollaborationPayload: Encodable, Sendable {
     var enabled: Bool? = nil
     var point: String? = nil
@@ -44,6 +60,7 @@ struct CloudTrip: Decodable, Sendable {
     let flights: [Flight]
     var flight_alerts_enabled: Bool? = nil
     var meeting_point: String? = nil
+    var cancelled_at: String? = nil
 
     struct Person: Decodable, Sendable {
         let id: String
@@ -92,7 +109,8 @@ struct CloudTrip: Decodable, Sendable {
         return TripPlan(id: id, name: name, destinationAirport: destination_airport,
             startDay: TripDay(value: start_date), endDay: TripDay(value: end_date), participants: people,
             flights: mappedFlights, completedAt: Self.timestamp(completed_at), creatorUserID: my_role == "owner" ? userID : nil,
-            revision: revision, flightAlertsEnabled: flight_alerts_enabled, meetingPoint: meeting_point)
+            revision: revision, flightAlertsEnabled: flight_alerts_enabled, meetingPoint: meeting_point,
+            cancelledAt: Self.timestamp(cancelled_at))
     }
 
     static func timestamp(_ value: String?) -> Date? {

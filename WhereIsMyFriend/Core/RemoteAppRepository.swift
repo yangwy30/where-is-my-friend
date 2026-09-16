@@ -582,6 +582,10 @@ actor RemoteAppRepository: AppRepository {
         try await authorizedRequest(path: "/v1/trips/\(id)/mutations", method: "POST", body: mutation)
     }
 
+    func changeTripLifecycle(id: String, payload: TripLifecyclePayload) async throws -> TripLifecycleResult {
+        try await authorizedRequest(path: "/v1/trips/\(id)/lifecycle", method: "POST", body: payload)
+    }
+
     func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip {
         guard ["preferences", "meeting", "check-in"].contains(action) else { throw RepositoryError.unsupportedInCurrentMode }
         return try await authorizedRequest(path: "/v1/trips/\(id)/\(action)", method: "POST", body: payload)

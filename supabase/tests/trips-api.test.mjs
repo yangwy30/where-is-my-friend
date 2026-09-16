@@ -228,3 +228,28 @@ test("removed public lookup never spends provider quota with a public key or mis
     assert.equal((await request('POST', path, body)).status, 404);
     assert.equal(calls.filter(call => call.name === 'provider').length, 0);
 });
+
+test('lifecycle HTTP actions reject spoofed actors and malformed fields and bind retries to the authenticated actor',async()=>{
+ const {request,calls}=await harness();
+ const path='/v1/trips/trip-one/lifecycle';
+ const requestID='40000000-0000-0000-0000-000000000001';
+ for(const action of ['leave','cancel','delete','removeMember']) {
+  const body={action,requestID,...(action==='leave'?{}:{revision:4}),...(action==='removeMember'?{participantID}:{})};
+  assert.equal((await request('POST',path,body,'')).status,401);
+  assert.equal((await request('POST',path,{...body,userID:participantID})).status,400);
+  assert.equal((await request('POST',path,{...body,requestID:'bad-id'})).status,400);
+  assert.equal((await request('POST',path,body)).status,200);
+  assert.equal(calls.at(-1).name,'wif_trip_lifecycle');
+  assert.equal(calls.at(-1).parameters.p_user_id,userID);
+  assert.equal(calls.at(-1).parameters.p_action,action);
+  assert.equal(calls.at(-1).parameters.p_request_id,requestID);
+ }
+ for(const body of [{action:'delete',requestID},{action:'removeMember',requestID,revision:4},
+  {action:'leave',requestID,participantID},{action:'leave',requestID,revision:4},
+  {action:'cancel',requestID,revision:0},{action:'restore',requestID,revision:4}])
+  assert.equal((await request('POST',path,body)).status,400);
+ const denied=await harness({databaseError:{code:'P0001',message:'Trip access denied.'}});
+ assert.equal((await denied.request('POST',path,{action:'delete',requestID,revision:4})).status,403);
+ const stale=await harness({databaseError:{code:'P0001',message:'Trip conflict. Refresh before trying again.'}});
+ assert.equal((await stale.request('POST',path,{action:'delete',requestID,revision:4})).status,409);
+});
