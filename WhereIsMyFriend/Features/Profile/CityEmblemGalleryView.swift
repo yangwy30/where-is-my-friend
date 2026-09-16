@@ -191,12 +191,11 @@ struct CatalogCityItem: Identifiable, Sendable {
     let archetype: CityArchetype
 
     var flag: String {
-        let base : UInt32 = 127397
-        var s = ""
-        for v in countryCode.uppercased().unicodeScalars {
-            s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
-        }
-        return s
+        guard countryCode.count == 2 else { return "" }
+        let base: UInt32 = 127_397
+        return countryCode.uppercased().unicodeScalars.compactMap { scalar in
+            UnicodeScalar(base + scalar.value).map(String.init)
+        }.joined()
     }
 
     var hasCustomAsset: Bool {
