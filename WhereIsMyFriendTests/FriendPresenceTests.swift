@@ -4,6 +4,35 @@ import UIKit
 import XCTest
 @testable import WhereIsMyFriend
 
+final class CityLocationLabelTests: XCTestCase {
+    func testUSStateNamesAndCodesShareCompactAndFullLabels() {
+        for area in ["CA", "ca", " California "] {
+            XCTAssertEqual(CityLocationLabel.compact(city: "Bakersfield", countryCode: "US", administrativeArea: area), "Bakersfield, CA")
+            XCTAssertEqual(CityLocationLabel.full(city: "Bakersfield", countryCode: "US", administrativeArea: area, locale: Locale(identifier: "en_US")), "Bakersfield, California, United States")
+        }
+        XCTAssertEqual(CityLocationLabel.compact(city: "New York", countryCode: "US", administrativeArea: "New York"), "New York, NY")
+    }
+
+    func testMissingAndForeignRegionsAreNotGuessedOrConvertedToUSStates() {
+        XCTAssertEqual(CityLocationLabel.compact(city: "Bakersfield", countryCode: "US", administrativeArea: nil), "Bakersfield")
+        XCTAssertEqual(CityLocationLabel.full(city: "Bakersfield", countryCode: "US", administrativeArea: " ", locale: Locale(identifier: "en_US")), "Bakersfield, United States")
+        XCTAssertEqual(CityLocationLabel.compact(city: "Cambridge", countryCode: "GB", administrativeArea: "England"), "Cambridge, England")
+        XCTAssertEqual(CityLocationLabel.compact(city: "Example", countryCode: "CA", administrativeArea: "California"), "Example, California")
+        XCTAssertNil(CityLocationLabel.compact(city: " ", countryCode: "US", administrativeArea: "CA"))
+    }
+
+    func testHiddenFriendLocationDoesNotLeakThroughFullDetailLabel() {
+        var friend = FriendPresence(displayName: "Example", username: "example", city: "Bakersfield", countryCode: "US", updatedAt: Date(), administrativeArea: "CA")
+        XCTAssertEqual(friend.cityDisplay, "Bakersfield, CA")
+        for state in [PresenceSharingState.paused, .unavailable] {
+            friend.sharingState = state
+            XCTAssertEqual(friend.fullCityDisplay, friend.cityDisplay)
+            XCTAssertFalse(friend.fullCityDisplay.contains("Bakersfield"))
+            XCTAssertFalse(friend.fullCityDisplay.contains("California"))
+        }
+    }
+}
+
 private final class StubCityManager: CLLocationManager {
     var permission: CLAuthorizationStatus = .authorizedWhenInUse
     var requests = 0

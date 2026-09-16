@@ -336,7 +336,7 @@ struct FriendsView: View {
     }
 
     private var currentCityLabel: String {
-        store.currentCity ?? String(localized: "Location unavailable")
+        store.snapshot.currentPresence.cityDisplay
     }
 
     private var sameCityFriendUnit: LocalizedStringKey {
@@ -402,6 +402,7 @@ struct FriendsView: View {
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.82)
 
                 HStack(spacing: 4) {
                     Circle()

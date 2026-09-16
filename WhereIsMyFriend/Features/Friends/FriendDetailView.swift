@@ -169,7 +169,7 @@ struct FriendDetailView: View {
             CityEmblemView(city: currentFriend.city, countryCode: currentFriend.countryCode, administrativeArea: currentFriend.administrativeArea, size: 84)
 
             VStack(spacing: 4) {
-                Text(currentFriend.cityDisplay)
+                Text(currentFriend.fullCityDisplay)
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)

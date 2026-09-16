@@ -70,9 +70,15 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
         case .unavailable:
             return String(localized: "Location unavailable")
         case .active:
-            guard let city else { return String(localized: "Location unavailable") }
-            return [countryFlag, city].filter { !$0.isEmpty }.joined(separator: " ")
+            return CityLocationLabel.compact(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
+                ?? String(localized: "Location unavailable")
         }
+    }
+
+    var fullCityDisplay: String {
+        guard sharingState == .active else { return cityDisplay }
+        return CityLocationLabel.full(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
+            ?? String(localized: "Location unavailable")
     }
 
     func freshness(at referenceDate: Date = Date()) -> PresenceFreshness {

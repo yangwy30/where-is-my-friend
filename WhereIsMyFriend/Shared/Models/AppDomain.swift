@@ -99,9 +99,13 @@ struct CurrentUserPresence: Codable, Hashable, Sendable {
     var source: PresenceSource
 
     var cityDisplay: String {
-        guard let city else { return String(localized: "Location unavailable") }
-        let flag = countryCode?.countryFlag ?? ""
-        return [flag, city].filter { !$0.isEmpty }.joined(separator: " ")
+        CityLocationLabel.compact(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
+            ?? String(localized: "Location unavailable")
+    }
+
+    var fullCityDisplay: String {
+        CityLocationLabel.full(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
+            ?? String(localized: "Location unavailable")
     }
 }
 

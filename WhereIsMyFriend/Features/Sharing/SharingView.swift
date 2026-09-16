@@ -132,7 +132,7 @@ struct CitySharingSheet: View {
                 )
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(store.snapshot.currentPresence.cityDisplay)
+                    Text(store.snapshot.currentPresence.fullCityDisplay)
                         .font(.title2.bold())
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(2)
