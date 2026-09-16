@@ -18,7 +18,7 @@ actor LocalDemoRepository: AppRepository {
                 ?? DemoData.initialSnapshot()
         }
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackCompare") {
+        if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackCompare") || ProcessInfo.processInfo.arguments.contains("-previewCityFallbackStates") {
             self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield",
                 countryCode: "US", updatedAt: Date(), source: .foregroundLocation)
             let places: [(String, String?, String?)] = [
@@ -32,10 +32,18 @@ actor LocalDemoRepository: AppRepository {
                 self.snapshot.friends[index].administrativeArea = place.1
                 self.snapshot.friends[index].countryCode = place.2
             }
+            if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackStates") {
+                // Keep cached geography deliberately: paused/unavailable artwork must not expose it.
+                self.snapshot.friends[2].sharingState = .paused
+                self.snapshot.friends[3].sharingState = .unavailable
+                self.snapshot.currentPresence.city = nil
+                self.snapshot.currentPresence.countryCode = nil
+                self.snapshot.currentPresence.administrativeArea = nil
+            }
+            self.snapshot.friends = Array(self.snapshot.friends.prefix(4))
             self.snapshot.colocationEvents = []
             self.snapshot.colocationSessions = []
             self.snapshot.isAuthenticated = true
-            SharedAppStateStore.save(self.snapshot, origin: storageScope)
         } else if ProcessInfo.processInfo.arguments.contains("-previewCityRegions") {
             self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Milpitas",
                 countryCode: "US", updatedAt: Date(), source: .foregroundLocation)

@@ -82,6 +82,11 @@ enum SolarAmbience {
 // MARK: - Presentation Helpers
 
 enum WidgetCityPresentation {
+    static func cityLabel(_ city: String) -> String {
+        let name = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        return name.isEmpty ? String(localized: "Location unavailable") : name
+    }
+
     static func sameCityFriends(in entry: FriendWidgetEntry) -> [FriendPresence] {
         let presence = CurrentUserPresence(administrativeArea: entry.currentAdministrativeArea,
             city: entry.currentCity, countryCode: entry.currentCountryCode,
@@ -115,7 +120,7 @@ private struct MediumFriendWidget: View {
     }
 
     private var userCity: String {
-        entry.currentCity.isEmpty ? "New York" : entry.currentCity
+        entry.currentCity
     }
 
     private var isSameCity: Bool {
@@ -137,7 +142,7 @@ private struct MediumFriendWidget: View {
 
     // 🟢 Same-City: Single Unified Hero Stage (Zero Redundancy)
     private var sameCityMergedView: some View {
-        let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+        let city = entry.currentCity
         let count = max(1, sameCityFriends.count)
         let friendNames = sameCityFriends.isEmpty
             ? (primaryFriend != nil ? WidgetCityPresentation.firstName(primaryFriend!) : "Friend")
@@ -152,7 +157,7 @@ private struct MediumFriendWidget: View {
             )
 
             VStack(alignment: .leading, spacing: 5) {
-                Text(city)
+                Text(WidgetCityPresentation.cityLabel(city))
                     .font(.system(.title3, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
@@ -190,7 +195,7 @@ private struct MediumFriendWidget: View {
 
     // ✈️ Cross-City: Dual 3D Orbit (Clean Bridge)
     private func crossCityOrbitView(friend: FriendPresence) -> some View {
-        let friendCity = friend.city ?? "Tokyo"
+        let friendCity = friend.cityDisplay
         let friendName = entry.privacyMode == .full
             ? WidgetCityPresentation.firstName(friend)
             : "Friend"
@@ -205,7 +210,7 @@ private struct MediumFriendWidget: View {
                     size: 68
                 )
 
-                Text(userCity)
+                Text(WidgetCityPresentation.cityLabel(userCity))
                     .font(.system(.caption, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
@@ -242,12 +247,7 @@ private struct MediumFriendWidget: View {
 
             // Right: Friend City
             VStack(spacing: 4) {
-                CityEmblemView(
-                    city: friend.city,
-                    countryCode: friend.countryCode,
-                    administrativeArea: friend.administrativeArea,
-                    size: 68
-                )
+                CityEmblemView(friend: friend, size: 68)
 
                 VStack(spacing: 1) {
                     Text(friendCity)
@@ -284,7 +284,7 @@ private struct SmallFriendWidget: View {
         Link(destination: SharedAppLink.make(host: "home")) {
             if !sameCityFriends.isEmpty {
                 // Same city state
-                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                let city = entry.currentCity
                 let name = WidgetCityPresentation.firstName(sameCityFriends[0])
                 VStack(spacing: 3) {
                     CityEmblemView(
@@ -294,7 +294,7 @@ private struct SmallFriendWidget: View {
                         size: 70
                     )
 
-                    Text(city)
+                    Text(WidgetCityPresentation.cityLabel(city))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
@@ -307,17 +307,12 @@ private struct SmallFriendWidget: View {
                 .padding(8)
             } else if let friend = targetFriend {
                 // Focus on friend's city
-                let city = friend.city ?? friend.cityDisplay
+                let city = friend.cityDisplay
                 let name = entry.privacyMode == .full ? WidgetCityPresentation.firstName(friend) : "Friend"
                 VStack(spacing: 3) {
-                    CityEmblemView(
-                        city: friend.city,
-                        countryCode: friend.countryCode,
-                        administrativeArea: friend.administrativeArea,
-                        size: 70
-                    )
+                    CityEmblemView(friend: friend, size: 70)
 
-                    Text(city)
+                    Text(WidgetCityPresentation.cityLabel(city))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
@@ -354,14 +349,9 @@ private struct LargeFriendWidget: View {
                 // Top Hero Centerpiece
                 if let hero = heroFriend {
                     VStack(spacing: 4) {
-                        CityEmblemView(
-                            city: hero.city,
-                            countryCode: hero.countryCode,
-                            administrativeArea: hero.administrativeArea,
-                            size: 80
-                        )
+                        CityEmblemView(friend: hero, size: 80)
 
-                        Text(hero.city ?? hero.cityDisplay)
+                        Text(hero.cityDisplay)
                             .font(.system(.headline, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
@@ -384,14 +374,9 @@ private struct LargeFriendWidget: View {
                     HStack(spacing: 8) {
                         ForEach(companionFriends) { friend in
                             VStack(spacing: 2) {
-                                CityEmblemView(
-                                    city: friend.city,
-                                    countryCode: friend.countryCode,
-                                    administrativeArea: friend.administrativeArea,
-                                    size: 48
-                                )
+                                CityEmblemView(friend: friend, size: 48)
 
-                                Text(friend.city ?? "—")
+                                Text(friend.cityDisplay)
                                     .font(.system(size: 9.5, weight: .bold, design: .rounded))
                                     .foregroundStyle(WIFTheme.primaryText)
                                     .lineLimit(1)
@@ -432,7 +417,7 @@ private struct SmallSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
-                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                let city = entry.currentCity
                 VStack(spacing: 3) {
                     CityEmblemView(
                         city: entry.currentCity,
@@ -441,7 +426,7 @@ private struct SmallSameCityWidget: View {
                         size: 70
                     )
 
-                    Text(city)
+                    Text(WidgetCityPresentation.cityLabel(city))
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
@@ -469,7 +454,7 @@ private struct MediumSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
-                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                let city = entry.currentCity
                 HStack(spacing: 16) {
                     CityEmblemView(
                         city: entry.currentCity,
@@ -479,7 +464,7 @@ private struct MediumSameCityWidget: View {
                     )
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(city)
+                        Text(WidgetCityPresentation.cityLabel(city))
                             .font(.system(.title3, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
@@ -516,7 +501,7 @@ private struct LargeSameCityWidget: View {
             if friends.isEmpty {
                 WidgetTogetherEmptyState(entry: entry)
             } else {
-                let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+                let city = entry.currentCity
                 VStack(spacing: 8) {
                     CityEmblemView(
                         city: entry.currentCity,
@@ -525,7 +510,7 @@ private struct LargeSameCityWidget: View {
                         size: 112
                     )
 
-                    Text(city)
+                    Text(WidgetCityPresentation.cityLabel(city))
                         .font(.system(.title2, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(1)
@@ -553,7 +538,7 @@ private struct WidgetTogetherEmptyState: View {
     let entry: FriendWidgetEntry
 
     var body: some View {
-        let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+        let city = entry.currentCity
         HStack(spacing: 12) {
             CityEmblemView(
                 city: entry.currentCity,
@@ -563,7 +548,7 @@ private struct WidgetTogetherEmptyState: View {
             )
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(city)
+                Text(WidgetCityPresentation.cityLabel(city))
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(WIFTheme.primaryText)
                 Text("No friends here yet")
@@ -628,7 +613,7 @@ private struct LockScreenFriendColumn: View {
     }
 
     private var location: String {
-        friend.city ?? friend.cityDisplay
+        friend.cityDisplay
     }
 
     var body: some View {
@@ -779,7 +764,7 @@ private struct WidgetEmptyState: View {
 
     var body: some View {
         Link(destination: SharedAppLink.make(host: "home")) {
-            let city = entry.currentCity.isEmpty ? "New York" : entry.currentCity
+            let city = entry.currentCity
             VStack(spacing: 6) {
                 CityEmblemView(
                     city: city,
@@ -788,7 +773,7 @@ private struct WidgetEmptyState: View {
                     size: 68
                 )
 
-                Text(city)
+                Text(WidgetCityPresentation.cityLabel(city))
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .multilineTextAlignment(.center)

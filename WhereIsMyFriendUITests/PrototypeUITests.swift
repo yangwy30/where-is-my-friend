@@ -1152,14 +1152,28 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        Thread.sleep(forTimeInterval: 2.0)
-
-        let screenshot = XCUIScreen.main.screenshot()
-        let dir = URL(fileURLWithPath: "/Users/wangyang/.gemini/antigravity-insiders/brain/8387052e-6911-492e-8636-61f65eebeb0c")
-        let shotURL = dir.appendingPathComponent("city_fallback_side_by_side.png")
-        try? screenshot.pngRepresentation.write(to: shotURL)
-
+        XCTAssertTrue(app.buttons["myCitySharingCard"].label.contains("Bakersfield, CA"))
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Fremont, CA")).firstMatch.waitForExistence(timeout: 3))
         capture("City fallback visual side-by-side comparison")
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        let appearance = app.buttons["appearanceSettingsButton"]
+        if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        XCTAssertTrue(appearance.waitForExistence(timeout: 3)); appearance.tap()
+        app.buttons["nightJadeAppearance"].tap()
+        app.buttons["appearanceDoneButton"].tap()
+        app.tabBars.buttons.element(boundBy: 0).tap()
+        capture("City fallback comparison Night Jade")
+    }
+
+    func testCityArtworkHandlesPausedAndUnavailableLocations() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityFallbackStates", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["myCitySharingCard"].label.contains("Location unavailable"))
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Sharing paused")).firstMatch.waitForExistence(timeout: 3))
+        capture("City artwork paused and unavailable")
     }
 
     private func tripsApp(seedExamples: Bool = true, asMember: Bool = false) -> XCUIApplication {

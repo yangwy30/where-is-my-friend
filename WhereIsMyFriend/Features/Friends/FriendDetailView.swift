@@ -166,7 +166,7 @@ struct FriendDetailView: View {
 
     private var citySurface: some View {
         VStack(spacing: 12) {
-            CityEmblemView(city: currentFriend.city, countryCode: currentFriend.countryCode, administrativeArea: currentFriend.administrativeArea, size: 84)
+            CityEmblemView(friend: currentFriend, size: 84)
 
             VStack(spacing: 4) {
                 Text(currentFriend.fullCityDisplay)

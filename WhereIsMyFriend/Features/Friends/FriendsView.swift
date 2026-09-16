@@ -39,7 +39,7 @@ struct FriendsView: View {
     }
 
     private var sameCityFriends: [FriendPresence] {
-        guard let city = store.currentCity else { return [] }
+        guard store.currentCity != nil else { return [] }
         return store.snapshot.sharingPreferences.citySharingEnabled
             ? friends.filter { PresenceMatchPolicy.matches(store.snapshot.currentPresence, $0, at: referenceDate) } : []
     }
@@ -388,7 +388,7 @@ struct FriendsView: View {
         let isSameCity = isFriendInSameCity(friend)
 
         return VStack(spacing: 6) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 88)
+            CityEmblemView(friend: friend, size: 88)
                 .padding(.top, 9)
 
             VStack(spacing: 2) {

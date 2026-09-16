@@ -1074,6 +1074,7 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertEqual(bakersfield.cityID, "bakersfield")
         XCTAssertNil(bakersfield.assetName)
         XCTAssertEqual(bakersfield.displayName, "Bakersfield")
+        XCTAssertEqual(bakersfield.fallbackAssetName, "City_generic_block")
 
         let fremont = CityEmblem.resolve(city: "Fremont", countryCode: "US")
         XCTAssertEqual(fremont.cityID, "fremont")
@@ -1083,6 +1084,7 @@ final class FriendPresenceTests: XCTestCase {
         let unknown = CityEmblem.resolve(city: nil)
         XCTAssertEqual(unknown.cityID, "unknown")
         XCTAssertEqual(unknown.displayName, "Somewhere")
+        XCTAssertEqual(unknown.fallbackAssetName, "City_unknown_location")
 
         for assetName in ["City_generic_block", "City_unknown_location"] {
             let image = try XCTUnwrap(UIImage(named: assetName)?.cgImage, "Missing bundled asset: \(assetName)")
@@ -1101,6 +1103,23 @@ final class FriendPresenceTests: XCTestCase {
             XCTAssertTrue(stride(from: 3, to: pixels.count, by: 4).contains { pixels[$0] > 200 },
                           "Asset must contain visible opaque content: \(assetName)")
         }
+    }
+
+    func testHiddenPresenceNeverRevealsCachedGeographyThroughArtwork() {
+        var friend = FriendPresence(displayName: "Example", username: "example", city: "New York",
+                                    countryCode: "US", updatedAt: Date(), administrativeArea: "NY")
+        XCTAssertEqual(CityEmblem.resolve(friend: friend).assetName, "City_new_york")
+        for state in [PresenceSharingState.paused, .unavailable] {
+            friend.sharingState = state
+            let artwork = CityEmblemView(friend: friend, size: 36).emblem
+            XCTAssertNil(artwork.assetName)
+            XCTAssertNil(artwork.countryCode)
+            XCTAssertEqual(artwork.fallbackAssetName, "City_unknown_location")
+            XCTAssertEqual(artwork.displayName, friend.cityDisplay)
+            XCTAssertFalse(artwork.displayName.contains("New York"))
+        }
+        let empty = CityEmblem.resolve(city: "  ", countryCode: "US")
+        XCTAssertEqual(empty.fallbackAssetName, "City_unknown_location")
     }
 
     private func makeFriend(

@@ -1417,7 +1417,7 @@ struct WidgetShowcaseView: View {
     }
 
     private var myCity: String {
-        store.currentCity ?? "New York"
+        store.currentCity ?? ""
     }
 
     private var featuredFriend: FriendPresence {
@@ -1543,7 +1543,7 @@ struct WidgetShowcaseView: View {
                     CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(myCity)
+                        Text(store.snapshot.currentPresence.cityDisplay)
                             .font(.system(.title3, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
@@ -1573,7 +1573,7 @@ struct WidgetShowcaseView: View {
                     VStack(spacing: 4) {
                         CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 68)
 
-                        Text(myCity)
+                        Text(store.snapshot.currentPresence.cityDisplay)
                             .font(.system(.caption, design: .rounded, weight: .bold))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
@@ -1610,10 +1610,10 @@ struct WidgetShowcaseView: View {
 
                     // Right: Friend City Stage
                     VStack(spacing: 4) {
-                        CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 68)
+                        CityEmblemView(friend: featuredFriend, size: 68)
 
                         VStack(spacing: 1) {
-                            Text(featuredFriend.city ?? "Tokyo")
+                            Text(featuredFriend.cityDisplay)
                                 .font(.system(.caption, design: .rounded, weight: .bold))
                                 .foregroundStyle(WIFTheme.primaryText)
                                 .lineLimit(1)
@@ -1633,9 +1633,9 @@ struct WidgetShowcaseView: View {
 
     private var heroSmallWidgetView: some View {
         VStack(spacing: 3) {
-            CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 70)
+            CityEmblemView(friend: featuredFriend, size: 70)
 
-            Text(featuredFriend.city ?? "Tokyo")
+            Text(featuredFriend.cityDisplay)
                 .font(.system(.subheadline, design: .rounded, weight: .bold))
                 .foregroundStyle(WIFTheme.primaryText)
                 .lineLimit(1)
@@ -1652,9 +1652,9 @@ struct WidgetShowcaseView: View {
         VStack(spacing: 12) {
             // Top Hero Stage
             VStack(spacing: 4) {
-                CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 80)
+                CityEmblemView(friend: featuredFriend, size: 80)
 
-                Text(featuredFriend.city ?? "Tokyo")
+                Text(featuredFriend.cityDisplay)
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
@@ -1675,8 +1675,8 @@ struct WidgetShowcaseView: View {
             HStack(spacing: 8) {
                 ForEach(store.friends.dropFirst().prefix(3)) { friend in
                     VStack(spacing: 2) {
-                        CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 48)
-                        Text(friend.city ?? "—")
+                        CityEmblemView(friend: friend, size: 48)
+                        Text(friend.cityDisplay)
                             .font(.system(size: 9.5, weight: .bold, design: .rounded))
                             .foregroundStyle(WIFTheme.primaryText)
                             .lineLimit(1)
@@ -1704,7 +1704,7 @@ struct WidgetShowcaseView: View {
             CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
 
             VStack(alignment: .leading, spacing: 5) {
-                Text(myCity)
+                Text(store.snapshot.currentPresence.cityDisplay)
                     .font(.system(.title3, design: .rounded, weight: .bold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)

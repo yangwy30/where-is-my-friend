@@ -22,6 +22,18 @@ public struct CityEmblem: Hashable, Sendable {
         self.archetype = archetype
     }
 
+    /// A generic illustration is presentation only, never a geographic identity.
+    var fallbackAssetName: String {
+        cityID == "unknown" ? "City_unknown_location" : "City_generic_block"
+    }
+
+    static func resolve(friend: FriendPresence) -> CityEmblem {
+        guard friend.sharingState == .active else {
+            return CityEmblem(cityID: "unknown", displayName: friend.cityDisplay, countryCode: nil)
+        }
+        return resolve(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea)
+    }
+
     /// Resolves a city name and optional country code into a standardized `CityEmblem`.
     public static func resolve(city: String?, countryCode: String? = nil, administrativeArea: String? = nil) -> CityEmblem {
         guard let city = city?.trimmingCharacters(in: .whitespacesAndNewlines), !city.isEmpty else {
@@ -415,21 +427,19 @@ public struct CityEmblemView: View {
         self.size = size
     }
 
+    init(friend: FriendPresence, size: CGFloat = 84) {
+        self.emblem = CityEmblem.resolve(friend: friend)
+        self.size = size
+    }
+
     private var loadedImage: UIImage? {
         if let assetName = emblem.assetName {
             if let direct = UIImage(named: assetName) { return direct }
             if let namespaced = UIImage(named: "CityEmblems/\(assetName)") { return namespaced }
         }
 
-        // Unknown location or private/unspecified:
-        if emblem.cityID == "unknown" {
-            if let direct = UIImage(named: "City_unknown_location") { return direct }
-            if let namespaced = UIImage(named: "CityEmblems/City_unknown_location") { return namespaced }
-        } else {
-            // Known city without dedicated 3D landmark: use universal 3D neighborhood diorama
-            if let direct = UIImage(named: "City_generic_block") { return direct }
-            if let namespaced = UIImage(named: "CityEmblems/City_generic_block") { return namespaced }
-        }
+        if let direct = UIImage(named: emblem.fallbackAssetName) { return direct }
+        if let namespaced = UIImage(named: "CityEmblems/\(emblem.fallbackAssetName)") { return namespaced }
 
         return nil
     }
