@@ -1,4 +1,112 @@
 import SwiftUI
+import UIKit
+import UserNotifications
+
+struct InvitationNotificationStatusView: View {
+    @EnvironmentObject private var store: AppStore
+    @ObservedObject var service: LocalNotificationService
+
+    private var needsSetup: Bool {
+        if !service.allowsNotifications { return true }
+        if case .registered = store.pushRegistrationState { return false }
+        return true
+    }
+
+    var body: some View {
+        if store.repositoryMode == .remote && needsSetup {
+            HStack(spacing: 12) {
+                Image(systemName: "bell.badge").foregroundStyle(WIFTheme.fresh)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(service.allowsNotifications ? "Finish notification setup" : "Get invitation notifications")
+                        .font(.subheadline.weight(.semibold))
+                    Text(service.allowsNotifications
+                         ? (store.pushRegistrationError ?? "Connecting this device for friend and Trip invitations…")
+                         : "Invitations stay in the app even when notifications are off.")
+                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                }
+                Spacer(minLength: 4)
+                if store.pushRegistrationState.isInProgress {
+                    ProgressView()
+                } else {
+                    Button(service.authorizationStatus == .notDetermined ? "Enable" : service.allowsNotifications ? "Retry" : "Settings") {
+                        if service.authorizationStatus == .notDetermined {
+                            Task { await store.requestNotificationAuthorization() }
+                        } else if service.allowsNotifications {
+                            Task { await store.retryPushRegistration() }
+                        } else if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }.font(.subheadline.weight(.semibold)).frame(minHeight: 44)
+                    .accessibilityIdentifier("invitationNotificationSetupButton")
+                }
+            }
+            .padding(16).background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+            .accessibilityIdentifier("invitationNotificationSetup")
+            .task { await store.preparePushRegistrationIfAuthorized() }
+        }
+    }
+}
+
+struct FriendRequestNotificationSheet: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let requestID: UUID
+    @State private var loading = true
+    private var request: FriendRequest? { store.snapshot.incomingRequests.first { $0.id == requestID } }
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                if loading {
+                    ProgressView("Loading friend request…")
+                } else if let request {
+                    Image(systemName: "person.crop.circle.badge.plus").font(.system(size: 48)).foregroundStyle(WIFTheme.fresh)
+                    Text(request.displayName).font(.title2.bold())
+                    Text("@\(request.username) wants to connect with you.")
+                        .foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
+                    Text("Your city-sharing preferences still apply after you accept.")
+                        .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
+                    Button("Accept") { respond(.accept) }
+                        .controlSize(.large)
+                        .wifGlassButton(tint: WIFTheme.fresh, prominent: true)
+                        .disabled(store.isResponding(to: requestID))
+                        .accessibilityIdentifier("acceptNotificationFriendRequest")
+                    Button("Decline", role: .destructive) { respond(.decline) }
+                        .frame(minHeight: 44)
+                        .disabled(store.isResponding(to: requestID))
+                        .accessibilityIdentifier("declineNotificationFriendRequest")
+                } else {
+                    Text(store.snapshot.syncState == .offline
+                         ? "Couldn’t refresh this request. Check your connection and retry."
+                         : "This request is no longer pending, or belongs to another account.")
+                        .multilineTextAlignment(.center).foregroundStyle(WIFTheme.secondaryText)
+                    Button("Retry") { Task { await refresh() } }
+                }
+                InvitationNotificationStatusView(service: store.notificationService)
+            }
+            .padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).wifAmbientBackground()
+            .navigationTitle("Friend request").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                Button("Not now") { store.discardFriendRequestLink(); dismiss() }
+            } }
+        }
+        .accessibilityIdentifier("friendRequestNotificationSheet")
+        .task(id: requestID) { await refresh() }
+    }
+
+    private func refresh() async {
+        loading = true
+        await store.refresh()
+        loading = false
+    }
+    private func respond(_ response: FriendRequestResponse) {
+        Task {
+            if await store.respond(to: requestID, response: response) {
+                store.discardFriendRequestLink(); dismiss()
+            }
+        }
+    }
+}
 
 struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
@@ -10,6 +118,7 @@ struct AddFriendView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     yourUsernameCard
+                    InvitationNotificationStatusView(service: store.notificationService)
                     shareLink
                     inviteForm
 

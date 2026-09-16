@@ -8,6 +8,10 @@
         ],
         "components": [
           {
+            "/": "*/trips/join/*",
+            "comment": "Account-bound trip invitations; login and explicit acceptance required"
+          },
+          {
             "/": "/invite/*",
             "comment": "Trusted friend invitation links"
           }

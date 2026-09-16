@@ -28,6 +28,23 @@ async function migrate(database) {
     }
 }
 
+test("profile name and username save atomically; duplicate handles leave the original profile intact", async () => {
+    const database = new PGlite();
+    try {
+        await migrate(database);
+        await database.exec(await readFile(new URL("../seed.sql", import.meta.url), "utf8"));
+        const updated = await scalar(database,
+            "select public.wif_update_profile($1::uuid, $2, $3, 1)", [aliceID, "New Name", "new_username"]);
+        assert.equal(updated.currentUser.displayName, "New Name");
+        assert.equal(updated.currentUser.username, "new_username");
+        await assert.rejects(scalar(database,
+            "select public.wif_update_profile($1::uuid, $2, $3, 1)", [aliceID, "Must not persist", "bob"]), /already taken/);
+        const persisted = await scalar(database, "select public.wif_snapshot($1::uuid)", [aliceID]);
+        assert.equal(persisted.currentUser.displayName, "New Name");
+        assert.equal(persisted.currentUser.username, "new_username");
+    } finally { await database.close(); }
+});
+
 test("migration supports the complete two-user same-city vertical slice", async () => {
     const database = new PGlite();
     try {
@@ -69,12 +86,12 @@ test("migration supports the complete two-user same-city vertical slice", async 
         const timestamp = new Date().toISOString();
         await scalar(
             database,
-            "select public.wif_update_presence($1::uuid, 'New York', 'US', 'manual', $2::timestamptz)",
+            "select public.wif_update_presence_v2($1::uuid, 'New York', 'US', 'manual', $2::timestamptz, 'NY')",
             [aliceID, timestamp],
         );
         await scalar(
             database,
-            "select public.wif_update_presence($1::uuid, 'New York', 'US', 'manual', $2::timestamptz)",
+            "select public.wif_update_presence_v2($1::uuid, 'New York', 'US', 'manual', $2::timestamptz, 'NY')",
             [bobID, timestamp],
         );
 
@@ -87,7 +104,7 @@ test("migration supports the complete two-user same-city vertical slice", async 
 
         await scalar(
             database,
-            "select public.wif_update_presence($1::uuid, 'New York', 'US', 'manual', $2::timestamptz)",
+            "select public.wif_update_presence_v2($1::uuid, 'New York', 'US', 'manual', $2::timestamptz, 'NY')",
             [aliceID, timestamp],
         );
         assert.equal(await scalar(database, "select count(*)::int from public.colocation_events"), 2);
@@ -259,8 +276,8 @@ test("notification deliveries are claimed once and completed per device", async 
         const requestID = await scalar(database, "select id from public.friendships where status = 'pending'");
         await scalar(database, "select public.wif_respond_friend_request($1::uuid, $2::uuid, 'accept')", [bobID, requestID]);
         const timestamp = new Date().toISOString();
-        await scalar(database, "select public.wif_update_presence($1::uuid, 'New York', 'US', 'manual', $2::timestamptz)", [aliceID, timestamp]);
-        await scalar(database, "select public.wif_update_presence($1::uuid, 'New York', 'US', 'manual', $2::timestamptz)", [bobID, timestamp]);
+        await scalar(database, "select public.wif_update_presence_v2($1::uuid, 'New York', 'US', 'manual', $2::timestamptz, 'NY')", [aliceID, timestamp]);
+        await scalar(database, "select public.wif_update_presence_v2($1::uuid, 'New York', 'US', 'manual', $2::timestamptz, 'NY')", [bobID, timestamp]);
 
         const claimed = await database.query(
             "select * from public.wif_claim_notification_deliveries(20, $1::uuid)",

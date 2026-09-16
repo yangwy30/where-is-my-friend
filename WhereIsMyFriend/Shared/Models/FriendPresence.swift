@@ -19,6 +19,7 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
     var username: String
     var city: String?
     var countryCode: String?
+    var administrativeArea: String?
     var updatedAt: Date?
     var sharingState: PresenceSharingState
     var avatarPalette: Int
@@ -33,12 +34,14 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
         updatedAt: Date?,
         sharingState: PresenceSharingState = .active,
         avatarPalette: Int = 0,
-        isFavorite: Bool = false
+        isFavorite: Bool = false,
+        administrativeArea: String? = nil
     ) {
         self.id = id
         self.displayName = displayName
         self.username = username
         self.city = city
+        self.administrativeArea = administrativeArea
         self.countryCode = countryCode
         self.updatedAt = updatedAt
         self.sharingState = sharingState
@@ -84,7 +87,7 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
         guard sharingState == .active, let city, !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return false
         }
-        return true
+        return PresenceMatchPolicy.isRecent(updatedAt, at: referenceDate)
     }
 
     func relativeUpdateText(at referenceDate: Date = Date()) -> String {

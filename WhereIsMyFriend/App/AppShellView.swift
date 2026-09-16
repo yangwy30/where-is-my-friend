@@ -2,6 +2,7 @@ import SwiftUI
 
 private enum AppTab: Hashable {
     case friends
+    case trips
     case profile
 }
 
@@ -12,23 +13,43 @@ private enum ProfileRoute: Hashable {
 struct AppShellView: View {
     @EnvironmentObject private var store: AppStore
     let onReplayOnboarding: () -> Void
-    @State private var selection: AppTab = .friends
+    @State private var selection: AppTab = ProcessInfo.processInfo.arguments.contains("-previewTrips")
+        ? .trips
+        : .friends
     @State private var friendsPath = NavigationPath()
     @State private var profilePath = NavigationPath()
+    @State private var tripsPath = NavigationPath()
     @State private var showsCitySharing = false
+    @State private var sameCityEventID: UUID?
+    @State private var upcomingID: String?
+    @State private var sameCityPresentationID = UUID()
+
+    init(onReplayOnboarding: @escaping () -> Void) {
+        self.onReplayOnboarding = onReplayOnboarding
+    }
 
     var body: some View {
         TabView(selection: $selection) {
             NavigationStack(path: $friendsPath) {
-                FriendsView {
+                FriendsView(selectedSameCityEventID: $sameCityEventID, selectedUpcomingID: $upcomingID) {
                     showsCitySharing = true
                 }
+                .id(sameCityPresentationID)
             }
             .tabItem {
                 Label("Friends", systemImage: "person.2.fill")
                     .accessibilityIdentifier("friendsTab")
             }
             .tag(AppTab.friends)
+
+            NavigationStack(path: $tripsPath) {
+                TripsView()
+            }
+            .tabItem {
+                Label("Trips", systemImage: "airplane")
+                    .accessibilityIdentifier("tripsTab")
+            }
+            .tag(AppTab.trips)
 
             NavigationStack(path: $profilePath) {
                 ProfileView(
@@ -48,6 +69,37 @@ struct AppShellView: View {
             .tag(AppTab.profile)
         }
         .wifTabBarMinimizeOnScroll()
+        .onChange(of: store.pendingSameCityEventID, initial: true) { _, id in
+            if let id {
+                selection = .friends
+                friendsPath = NavigationPath()
+                sameCityEventID = id
+                upcomingID = nil
+                sameCityPresentationID = UUID()
+                store.pendingSameCityEventID = nil
+            }
+        }
+        .onChange(of: store.pendingTripInvitationID, initial: true) { _, id in
+            if id != nil { selection = .trips }
+        }
+        .onChange(of: store.pendingFriendRequestID, initial: true) { _, id in
+            if id != nil { selection = .friends }
+        }
+        .onChange(of: store.pendingUpcomingID, initial: true) { _, id in
+            if let id {
+                selection = .friends; friendsPath = NavigationPath()
+                sameCityEventID = nil; upcomingID = id; sameCityPresentationID = UUID()
+                store.pendingUpcomingID = nil
+            }
+        }
+        .onChange(of: store.pendingTripViewID, initial: true) { _, id in
+            if let id {
+                selection = .trips
+                tripsPath = NavigationPath()
+                tripsPath.append(id)
+                store.pendingTripViewID = nil
+            }
+        }
         .onOpenURL(perform: openDeepLink)
         .sheet(isPresented: $showsCitySharing) {
             CitySharingSheet()
@@ -55,6 +107,8 @@ struct AppShellView: View {
     }
 
     private func openDeepLink(_ url: URL) {
+        // AppStore routes event links even on a cold launch or before sign-in.
+        if SameCityAlertLink.eventID(from: url) != nil || UpcomingTravelLink.parse(url) != nil { return }
         if url.scheme == SharedAppLink.urlScheme, url.host == "home" {
             selection = .friends
             friendsPath = NavigationPath()
@@ -90,7 +144,9 @@ struct AppShellView: View {
 }
 
 #Preview {
+    let store = AppStore()
     AppShellView(onReplayOnboarding: {})
-        .environmentObject(AppStore())
+        .environmentObject(store)
+        .environmentObject(store.travelPlans)
         .environmentObject(CityLocationService())
 }

@@ -50,3 +50,14 @@ test("APNs response policy disables only invalid devices and backs off transient
         outcome: "failed", disableDevice: false, retryAfterSeconds: null,
     });
 });
+
+test('provider environment mismatches stop retrying the delivery without disabling a valid device',()=>{
+    for(const reason of ['BadEnvironmentKeyInToken','BadEnvironmentKeyIdInToken','BadCertificateEnvironment']) {
+        assert.deepEqual(classifyAPNsResponse(403,reason),{
+            outcome:'failed',disableDevice:false,retryAfterSeconds:null,
+        });
+    }
+    assert.equal(classifyAPNsResponse(403,'ExpiredProviderToken').outcome,'retry');
+    assert.equal(classifyAPNsResponse(503,'ServiceUnavailable').outcome,'retry');
+    assert.equal(classifyAPNsResponse(429,'TooManyRequests').outcome,'retry');
+});

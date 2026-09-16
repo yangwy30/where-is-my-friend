@@ -5,9 +5,14 @@ struct FriendsView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
     @State private var referenceDate = Date()
+    @Binding private var selectedSameCityEventID: UUID?
+    @Binding private var selectedUpcomingID: String?
+    @EnvironmentObject private var travelPlans: TravelPlanLibrary
     let onOpenCitySharing: () -> Void
 
-    init(onOpenCitySharing: @escaping () -> Void = {}) {
+    init(selectedSameCityEventID: Binding<UUID?> = .constant(nil), selectedUpcomingID: Binding<String?> = .constant(nil), onOpenCitySharing: @escaping () -> Void = {}) {
+        self._selectedSameCityEventID = selectedSameCityEventID
+        self._selectedUpcomingID = selectedUpcomingID
         self.onOpenCitySharing = onOpenCitySharing
     }
 
@@ -15,12 +20,8 @@ struct FriendsView: View {
         guard let myCity = store.currentCity, !myCity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return false
         }
-        return CityIdentity.matches(
-            city: friend.city,
-            countryCode: friend.countryCode,
-            otherCity: myCity,
-            otherCountryCode: store.snapshot.currentPresence.countryCode
-        ) && friend.isSameCityEligible(at: referenceDate)
+        return store.snapshot.sharingPreferences.citySharingEnabled
+            && PresenceMatchPolicy.matches(store.snapshot.currentPresence, friend, at: referenceDate)
     }
 
     private var friends: [FriendPresence] {
@@ -39,12 +40,8 @@ struct FriendsView: View {
 
     private var sameCityFriends: [FriendPresence] {
         guard let city = store.currentCity else { return [] }
-        return MockFriendData.sameCityFriends(
-            from: friends,
-            currentCity: city,
-            currentCountryCode: store.snapshot.currentPresence.countryCode,
-            now: referenceDate
-        )
+        return store.snapshot.sharingPreferences.citySharingEnabled
+            ? friends.filter { PresenceMatchPolicy.matches(store.snapshot.currentPresence, $0, at: referenceDate) } : []
     }
 
     private var friendGridColumns: [GridItem] {
@@ -59,17 +56,33 @@ struct FriendsView: View {
     }
 
     var body: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
                 cityContextCard
                     .padding(.top, 16)
+                if store.snapshot.friends.isEmpty || store.incomingRequestCount > 0 {
+                    InvitationNotificationStatusView(service: store.notificationService)
+                        .padding(.top, 12)
+                }
 
-                Text("Around the world")
-                    .font(.caption.weight(.semibold))
-                    .textCase(.uppercase)
-                    .tracking(1.1)
-                    .foregroundStyle(WIFTheme.secondaryText)
+                SameCityReunionCard(referenceDate: referenceDate, eventID: $selectedSameCityEventID)
+                    .id("sameCityReunion")
+                UpcomingTogetherCard(selectedID: $selectedUpcomingID)
+                    .id("upcomingTogether")
+
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .center, spacing: 12) {
+                        worldSectionTitle
+                        Spacer(minLength: 4)
+                        friendPlansLink
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        worldSectionTitle
+                        friendPlansLink
+                    }
+                }
                     .padding(.top, 22)
                     .padding(.bottom, 9)
                     .padding(.leading, 3)
@@ -121,6 +134,56 @@ struct FriendsView: View {
             AddFriendView()
         }
         .accessibilityIdentifier("friendsScreen")
+        .onChange(of: selectedSameCityEventID, initial: true) { _, id in
+            guard let id else { return }
+            Task {
+                await store.refresh()
+                referenceDate = Date()
+                guard selectedSameCityEventID == id else { return }
+                proxy.scrollTo("sameCityReunion", anchor: .top)
+            }
+        }
+        .task {
+            while !Task.isCancelled {
+                referenceDate = Date()
+                await travelPlans.refresh()
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            }
+        }
+        .onChange(of: selectedUpcomingID, initial: true) { _, id in
+            guard let id else { return }
+            Task {
+                await travelPlans.refresh()
+                guard selectedUpcomingID == id else { return }
+                proxy.scrollTo("upcomingTogether", anchor: .top)
+            }
+        }
+        }
+    }
+
+    private var worldSectionTitle: some View {
+        Text("Around the world")
+            .font(.caption.weight(.semibold)).textCase(.uppercase).tracking(1.1)
+            .foregroundStyle(WIFTheme.secondaryText).fixedSize(horizontal: true, vertical: false)
+    }
+
+    private var friendPlansLink: some View {
+        let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
+        let count = travelPlans.visibleFriendPlans(friendIDs: allowed, at: referenceDate).count
+        return NavigationLink { FriendTravelPlansView() } label: {
+            HStack(spacing: 5) {
+                Text("Friend plans")
+                if count > 0 {
+                    Text(count, format: .number)
+                        .font(.caption2).padding(.horizontal, 5).padding(.vertical, 2)
+                        .background(WIFTheme.fresh.opacity(0.10), in: Capsule())
+                }
+                Image(systemName: "chevron.right").font(.caption2)
+            }
+            .font(.caption.weight(.medium)).foregroundStyle(WIFTheme.fresh)
+            .frame(minHeight: 44).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain).accessibilityIdentifier("friendPlansLink")
     }
 
     private var header: some View {
@@ -295,6 +358,11 @@ struct FriendsView: View {
     private var cityContextText: String {
         guard sharingIsEnabled else { return String(localized: "Friends cannot see your city") }
         guard store.currentCity != nil else { return String(localized: "Choose a city to start sharing") }
+        if CityIdentity.presenceKey(city: store.currentCity, countryCode: store.snapshot.currentPresence.countryCode,
+                                    administrativeArea: store.snapshot.currentPresence.administrativeArea) == nil
+            || !PresenceMatchPolicy.isRecent(store.snapshot.currentPresence.updatedAt, at: referenceDate) {
+            return String(localized: "Refresh location to check who’s here")
+        }
 
         if sameCityFriends.count == 1, let friend = sameCityFriends.first {
             return String(
@@ -320,7 +388,7 @@ struct FriendsView: View {
         let isSameCity = isFriendInSameCity(friend)
 
         return VStack(spacing: 6) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 88)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 88)
                 .padding(.top, 9)
 
             VStack(spacing: 2) {
@@ -380,8 +448,10 @@ struct FriendsView: View {
 }
 
 #Preview {
+    let store = AppStore()
     NavigationStack {
         FriendsView()
     }
-    .environmentObject(AppStore())
+    .environmentObject(store)
+    .environmentObject(store.travelPlans)
 }

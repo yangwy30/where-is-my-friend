@@ -392,6 +392,11 @@ enabled = true
 verify_jwt = false
 entrypoint = "./functions/push-worker/index.ts"
 
+[functions.trip-worker]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/trip-worker/index.ts"
+
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 

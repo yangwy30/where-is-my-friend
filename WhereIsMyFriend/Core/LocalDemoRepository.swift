@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 actor LocalDemoRepository: AppRepository {
     nonisolated let mode: RepositoryMode = .localDemo
@@ -6,6 +7,7 @@ actor LocalDemoRepository: AppRepository {
 
     private var snapshot: AppSnapshot
     private let persistsChanges: Bool
+    private var personalPlans: [PersonalTravelPlan] = []
 
     init(snapshot: AppSnapshot? = nil, persistsChanges: Bool = true) {
         self.persistsChanges = persistsChanges
@@ -15,6 +17,88 @@ actor LocalDemoRepository: AppRepository {
             self.snapshot = SharedAppStateStore.load(expectedOrigin: storageScope)
                 ?? DemoData.initialSnapshot()
         }
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-previewCityRegions") {
+            self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Milpitas",
+                countryCode: "US", updatedAt: Date(), source: .foregroundLocation)
+            let places = [("Santa Clara", "CA"), ("Burbank", "CA"), ("Hoboken", "NJ")]
+            for (index, place) in places.enumerated() where index < self.snapshot.friends.count {
+                self.snapshot.friends[index].city = place.0
+                self.snapshot.friends[index].countryCode = "US"
+                self.snapshot.friends[index].administrativeArea = place.1
+            }
+            self.snapshot.colocationEvents = []
+            self.snapshot.colocationSessions = []
+        }
+        #endif
+    }
+
+    func fetchTravelPlans() async throws -> TravelPlanSnapshot {
+        try requireAuthentication()
+        if personalPlans.isEmpty, persistsChanges, !ProcessInfo.processInfo.arguments.contains("-resetDemoData"),
+           let data = UserDefaults.standard.data(forKey: "travel-plans.v1.\(storageScope).\(snapshot.currentUser.id)") {
+            personalPlans = (try? JSONDecoder().decode([PersonalTravelPlan].self, from: data)) ?? []
+        }
+        return personalTravelSnapshot()
+    }
+
+    func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {
+        try requireAuthentication()
+        var saved = try plan.validated()
+        let allowed = Set(snapshot.friends.map(\.id)).subtracting(snapshot.blockedUserIDs)
+        guard Set(saved.audience).isSubset(of: allowed) else { throw RepositoryError.message("Choose current friends only.") }
+        if let index = personalPlans.firstIndex(where: { $0.id == plan.id }) {
+            guard personalPlans[index].revision == plan.revision else { throw RepositoryError.message("Travel plan conflict. Refresh and try again.") }
+            saved.revision += 1; personalPlans[index] = saved
+        } else {
+            guard plan.revision == 0, personalPlans.count < 100 else { throw RepositoryError.message("Travel plan unavailable or limit reached.") }
+            saved.revision = 1; personalPlans.append(saved)
+        }
+        persistPersonalPlans()
+        return personalTravelSnapshot()
+    }
+
+    func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot {
+        try requireAuthentication()
+        guard let index = personalPlans.firstIndex(where: { $0.id == id }), personalPlans[index].revision == revision else {
+            throw RepositoryError.message("Travel plan conflict. Refresh and try again.")
+        }
+        personalPlans.remove(at: index); persistPersonalPlans()
+        return personalTravelSnapshot()
+    }
+
+    private func persistPersonalPlans() {
+        guard persistsChanges, let data = try? JSONEncoder().encode(personalPlans) else { return }
+        UserDefaults.standard.set(data, forKey: "travel-plans.v1.\(storageScope).\(snapshot.currentUser.id)")
+    }
+
+    private func personalTravelSnapshot() -> TravelPlanSnapshot {
+        // Explicit demo fixture; production uses the reciprocal cloud query.
+        let today = TripDay(Date(), timeZone: TimeZone(identifier: "Asia/Tokyo")!).value
+        let last = TripDay(Date().addingTimeInterval(7 * 86400), timeZone: TimeZone(identifier: "Asia/Tokyo")!).value
+        var overlaps: [TravelOverlap] = []
+        for plan in personalPlans where !plan.isPast() && plan.destination.id == TravelCity.examples[0].id {
+            for friend in snapshot.friends where friend.username == "lin" && plan.audience.contains(friend.id)
+                && !snapshot.blockedUserIDs.contains(friend.id) {
+                let start = max(today, plan.startDay), end = min(last, plan.endDay)
+                guard start <= end else { continue }
+                let key = "\(snapshot.currentUser.id):\(friend.id):\(plan.destination.id):\(start):\(end)"
+                let id = SHA256.hash(data: Data(key.utf8)).map { String(format: "%02x", $0) }.joined().prefix(32)
+                let overlap = TravelOverlap(id: String(id), friendID: friend.id, friendName: friend.displayName,
+                    city: plan.city, countryCode: plan.countryCode, region: plan.region, timeZone: plan.timeZone, startDay: start, endDay: end)
+                if !overlaps.contains(where: { $0.id == overlap.id }) { overlaps.append(overlap) }
+            }
+        }
+        let sharedPlans = snapshot.friends.compactMap { friend -> FriendTravelPlan? in
+            guard !snapshot.blockedUserIDs.contains(friend.id), ["lin", "chloe"].contains(friend.username) else { return nil }
+            let isTokyo = friend.username == "lin"
+            let id = UUID(uuidString: isTokyo ? "a7150000-0000-0000-0000-000000000001" : "a7150000-0000-0000-0000-000000000002")!
+            return FriendTravelPlan(id: id, friendID: friend.id, friendName: friend.displayName,
+                city: isTokyo ? "Tokyo" : "Paris", countryCode: isTokyo ? "JP" : "FR",
+                region: isTokyo ? "Tokyo" : "Île-de-France", timeZone: isTokyo ? "Asia/Tokyo" : "Europe/Paris",
+                startDay: today, endDay: last)
+        }
+        return TravelPlanSnapshot(plans: personalPlans.sorted { $0.startDay < $1.startDay }, overlaps: overlaps, friendPlans: sharedPlans)
     }
 
     func loadSnapshot() async throws -> AppSnapshot {
@@ -42,11 +126,17 @@ actor LocalDemoRepository: AppRepository {
     }
 
     func signOut() async throws -> AppSnapshot {
+        personalPlans = []
         snapshot = signedOutSnapshot()
         return commit()
     }
 
     func deleteAccount() async throws -> AppSnapshot {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testAccountDeletionFailure") { throw RepositoryError.networkUnavailable }
+        #endif
+        personalPlans = []
+        persistPersonalPlans()
         snapshot = signedOutSnapshot()
         return commit()
     }
@@ -198,12 +288,13 @@ actor LocalDemoRepository: AppRepository {
         return commit()
     }
 
-    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot {
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date, administrativeArea: String? = nil) async throws -> AppSnapshot {
         try requireAuthentication()
         snapshot.currentPresence = CurrentUserPresence(
+            administrativeArea: administrativeArea,
             city: CityIdentity.canonicalCity(city),
             countryCode: countryCode?.uppercased(),
-            updatedAt: Date(),
+            updatedAt: observedAt,
             source: source
         )
         ColocationEvaluator.evaluate(snapshot: &snapshot)
@@ -260,6 +351,46 @@ actor LocalDemoRepository: AppRepository {
             snapshot = DemoData.initialSnapshot()
         }
         return commit()
+    }
+
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate] {
+        let clean = flightNumber.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().replacingOccurrences(of: " ", with: "")
+        guard !clean.isEmpty else { return [] }
+
+        // Demo data never contacts a billable provider or falls back from failed live data.
+        if clean == "UA353" {
+            return [
+                FlightCandidate(
+                    id: "EWR|LAX|\(date) 18:30-04:00",
+                    flightNumber: "UA 353",
+                    date: date,
+                    airline: "United Airlines",
+                    departure: FlightEndpoint(
+                        code: "EWR",
+                        icao: "KEWR",
+                        city: "New York",
+                        name: "Newark Liberty Intl",
+                        timeZone: "America/New_York",
+                        scheduledTime: FlightTimePair(local: "\(date) 18:30-04:00", utc: "\(date) 22:30Z"),
+                        terminal: "C"
+                    ),
+                    arrival: FlightEndpoint(
+                        code: "LAX",
+                        icao: "KLAX",
+                        city: "Los Angeles",
+                        name: "Los Angeles Intl",
+                        timeZone: "America/Los_Angeles",
+                        scheduledTime: FlightTimePair(local: "\(date) 21:33-07:00", utc: "\(date) 04:33Z"),
+                        terminal: "7"
+                    ),
+                    status: "landed",
+                    providerStatus: "Arrived"
+                )
+            ]
+        }
+
+        // 3. No fictitious flights! Never invent random routes for real flight numbers.
+        return []
     }
 
     private func requireAuthentication() throws {

@@ -29,7 +29,7 @@ struct FriendRowView: View {
 
     private var standardLayout: some View {
         HStack(spacing: 12) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 48)
 
             identity
 
@@ -37,14 +37,14 @@ struct FriendRowView: View {
 
             VStack(alignment: .trailing, spacing: 4) {
                 updateText
-                CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 36)
+                CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 36)
             }
         }
     }
 
     private var accessibilityLayout: some View {
         HStack(alignment: .top, spacing: 12) {
-            CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
+            CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 48)
 
             VStack(alignment: .leading, spacing: 8) {
                 identity

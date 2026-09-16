@@ -89,6 +89,10 @@ enum PresenceSource: String, Codable, Hashable, Sendable {
 }
 
 struct CurrentUserPresence: Codable, Hashable, Sendable {
+    var administrativeArea: String? = nil
+    var artworkRegion: CityRegion? {
+        CityRegionCatalog.bundled.resolve(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
+    }
     var city: String?
     var countryCode: String?
     var updatedAt: Date?
@@ -130,6 +134,7 @@ struct FriendRequest: Identifiable, Codable, Hashable, Sendable {
 }
 
 struct ColocationEvent: Identifiable, Codable, Hashable, Sendable {
+    var cityKey: String? = nil
     let id: UUID
     let deduplicationKey: String
     let city: String
@@ -143,6 +148,72 @@ struct ColocationEvent: Identifiable, Codable, Hashable, Sendable {
     var message: String {
         let names = friendNames.joined(separator: ", ")
         return String(localized: "You and \(names) are now in the same city.")
+    }
+}
+
+/// Notification links contain an identifier, never trusted display/location data.
+enum FriendRequestNotificationLink {
+    static func parse(_ url: URL, scheme: String = SharedAppLink.urlScheme) -> UUID? {
+        guard url.scheme == scheme, url.host == "friend-requests", url.user == nil, url.password == nil,
+              url.port == nil, url.query == nil, url.fragment == nil else { return nil }
+        let path = url.pathComponents.filter { $0 != "/" }
+        guard path.count == 1 else { return nil }
+        return UUID(uuidString: path[0])
+    }
+}
+
+enum SameCityAlertLink {
+    static func eventID(from url: URL, scheme: String = SharedAppLink.urlScheme) -> UUID? {
+        guard url.scheme?.lowercased() == scheme.lowercased(), url.host == "events",
+              url.user == nil, url.password == nil, url.port == nil,
+              url.query == nil, url.fragment == nil else { return nil }
+        let path = url.pathComponents.filter { $0 != "/" }
+        guard path.count == 1 else { return nil }
+        return UUID(uuidString: path[0])
+    }
+}
+
+enum SameCityAlertPolicy {
+    // A saved city is not live location. Older updates remain in history, but do
+    // not get the stronger "here together" treatment in the new alert UI.
+    static let freshnessWindow: TimeInterval = PresenceMatchPolicy.freshnessWindow
+
+    static func visibleFriends(in snapshot: AppSnapshot) -> [FriendPresence] {
+        guard snapshot.isAuthenticated, snapshot.sharingPreferences.citySharingEnabled else { return [] }
+        let blocked = Set(snapshot.blockedUserIDs)
+        return snapshot.friends.filter {
+            let preference = snapshot.preference(for: $0.id)
+            return !blocked.contains($0.id) && $0.sharingState == .active
+                && preference.sharesMyCity && preference.sameCityAlertEnabled
+        }
+    }
+
+    static func currentFriends(in snapshot: AppSnapshot, at now: Date = Date()) -> [FriendPresence] {
+        guard isRecent(snapshot.currentPresence.updatedAt, at: now) else { return [] }
+        return visibleFriends(in: snapshot).filter { friend in
+            PresenceMatchPolicy.matches(snapshot.currentPresence, friend, at: now)
+        }.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+    }
+
+    static func event(_ id: UUID, in snapshot: AppSnapshot) -> ColocationEvent? {
+        let visible = Set(visibleFriends(in: snapshot).map(\.id))
+        guard let event = snapshot.colocationEvents.first(where: { $0.id == id }),
+              !event.friendIDs.isEmpty, event.friendIDs.allSatisfy(visible.contains) else { return nil }
+        return event
+    }
+
+    static func isCurrent(_ event: ColocationEvent, in snapshot: AppSnapshot, at now: Date = Date()) -> Bool {
+        guard self.event(event.id, in: snapshot) != nil, isRecent(event.createdAt, at: now),
+              let key = CityIdentity.presenceKey(city: snapshot.currentPresence.city,
+                  countryCode: snapshot.currentPresence.countryCode, administrativeArea: snapshot.currentPresence.administrativeArea),
+              event.cityKey == key else { return false }
+        let current = Set(currentFriends(in: snapshot, at: now).map(\.id))
+        return event.friendIDs.allSatisfy(current.contains)
+    }
+
+    private static func isRecent(_ date: Date?, at now: Date) -> Bool {
+        guard let date else { return false }
+        return date <= now.addingTimeInterval(60) && now.timeIntervalSince(date) < freshnessWindow
     }
 }
 
@@ -367,7 +438,7 @@ enum DemoData {
         let sameCity = MockFriendData.sameCityFriends(
             from: friends,
             currentCountryCode: "US",
-            now: now
+            now: now, currentAdministrativeArea: "NY", currentUpdatedAt: now
         )
         let initialEvent = ColocationEvent(
             id: UUID(),
@@ -414,6 +485,7 @@ enum DemoData {
             isAuthenticated: true,
             currentUser: currentUser,
             currentPresence: CurrentUserPresence(
+                administrativeArea: "NY",
                 city: MockFriendData.currentUserCity,
                 countryCode: "US",
                 updatedAt: now,
@@ -454,7 +526,37 @@ enum DemoData {
     }
 }
 
+enum PresenceMatchPolicy {
+    static let freshnessWindow: TimeInterval = 24 * 60 * 60
+    static func isRecent(_ date: Date?, at now: Date) -> Bool {
+        guard let date else { return false }
+        return date <= now.addingTimeInterval(60) && now.timeIntervalSince(date) < freshnessWindow
+    }
+    static func matches(_ presence: CurrentUserPresence, _ friend: FriendPresence, at now: Date) -> Bool {
+        guard friend.sharingState == .active,
+              isRecent(presence.updatedAt, at: now), isRecent(friend.updatedAt, at: now),
+              let lhs = CityIdentity.presenceKey(city: presence.city, countryCode: presence.countryCode, administrativeArea: presence.administrativeArea),
+              let rhs = CityIdentity.presenceKey(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea)
+        else { return false }
+        return lhs == rhs
+    }
+}
+
 enum CityIdentity {
+    // Exact geographic identity, separate from artwork aliases. SQL uses the same alphanumeric normalization.
+    static func presencePart(_ value: String) -> String {
+        String(value.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) })
+    }
+    static func presenceKey(city: String?, countryCode: String?, administrativeArea: String?) -> String? {
+        guard let city, let countryCode, let administrativeArea else { return nil }
+        let country = countryCode.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let name = presencePart(canonicalCity(city))
+        var area = presencePart(administrativeArea)
+        area = CityRegionCatalog.bundled.administrativeAliases?[country]?[area] ?? area
+        guard country.range(of: "^[A-Z]{2}$", options: .regularExpression) != nil, !name.isEmpty, !area.isEmpty else { return nil }
+        return "v2|\(country)|\(area)|\(name)"
+    }
+
     static func normalize(_ city: String) -> String {
         cityNameKey(city)
     }
@@ -492,12 +594,7 @@ enum CityIdentity {
             return true
         }
 
-        // Emblem alias matching (e.g. "NYC" vs "New York", "SF" vs "San Francisco")
-        let emblem1 = CityEmblem.resolve(city: c1, countryCode: countryCode)
-        let emblem2 = CityEmblem.resolve(city: c2, countryCode: otherCountryCode)
-        if emblem1.cityID != "unknown" && emblem1.cityID == emblem2.cityID {
-            return true
-        }
+        // Artwork aliases are presentation only, never evidence of co-location.
 
         // Base name matching (e.g. "New York, NY" vs "New York")
         let base1 = canonicalCity(c1)
@@ -541,20 +638,16 @@ enum ColocationEvaluator {
             return
         }
 
-        let cityKey = CityIdentity.key(
-            city: currentCity,
-            countryCode: snapshot.currentPresence.countryCode
-        )
+        guard let cityKey = CityIdentity.presenceKey(city: currentCity,
+            countryCode: snapshot.currentPresence.countryCode,
+            administrativeArea: snapshot.currentPresence.administrativeArea) else {
+            closeActiveSessions(snapshot: &snapshot, now: now); return
+        }
         let matches = snapshot.friends.filter { friend in
             snapshot.preference(for: friend.id).sharesMyCity
-                && snapshot.preference(for: friend.id).sameCityAlertEnabled
-                && friend.isSameCityEligible(at: now)
-                && CityIdentity.matches(
-                    city: friend.city,
-                    countryCode: friend.countryCode,
-                    otherCity: currentCity,
-                    otherCountryCode: snapshot.currentPresence.countryCode
-                )
+                && friend.sharingState == .active
+                && CityIdentity.presenceKey(city: friend.city, countryCode: friend.countryCode,
+                                           administrativeArea: friend.administrativeArea) == cityKey
         }
         let matchingIDs = Set(matches.map(\.id))
 
@@ -571,7 +664,8 @@ enum ColocationEvaluator {
             let isAlreadyActive = snapshot.colocationSessions.contains {
                 $0.friendID == friend.id && $0.cityKey == cityKey && $0.isActive
             }
-            guard !isAlreadyActive else { continue }
+            guard !isAlreadyActive,
+                  PresenceMatchPolicy.matches(snapshot.currentPresence, friend, at: now) else { continue }
 
             let lastExit = snapshot.colocationSessions
                 .filter { $0.friendID == friend.id && $0.cityKey == cityKey }
@@ -587,8 +681,10 @@ enum ColocationEvaluator {
                 leftAt: nil
             )
             snapshot.colocationSessions.append(session)
-            enteredFriends.append(friend)
-            enteredSessionIDs.append(session.id)
+            if snapshot.preference(for: friend.id).sameCityAlertEnabled {
+                enteredFriends.append(friend)
+                enteredSessionIDs.append(session.id)
+            }
         }
 
         snapshot.colocationSessions.removeAll { session in
@@ -600,6 +696,7 @@ enum ColocationEvaluator {
         let key = ([cityKey] + enteredSessionIDs.map(\.uuidString).sorted()).joined(separator: "|")
         snapshot.colocationEvents.insert(
             ColocationEvent(
+                cityKey: cityKey,
                 id: UUID(),
                 deduplicationKey: key,
                 city: CityIdentity.canonicalCity(currentCity),

@@ -67,6 +67,17 @@ enum RepositoryError: LocalizedError, Equatable {
 }
 
 protocol AppRepository: Sendable {
+    func fetchTravelPlans() async throws -> TravelPlanSnapshot
+    func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot
+    func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot
+    func fetchTrips() async throws -> [CloudTrip]
+    func createTrip(_ payload: TripPayload) async throws -> CloudTrip
+    func mutateTrip(id: String, mutation: TripMutation) async throws -> CloudTrip
+    func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip
+    func tripInvitations(tripID: String?) async throws -> [TripInvitation]
+    func inviteToTrip(id: String, username: String) async throws -> CreatedTripInvitation
+    func acceptTripInvitation(id: UUID) async throws -> CloudTrip
+    func dismissTripInvitation(id: UUID, revoke: Bool) async throws
     var mode: RepositoryMode { get }
     var storageScope: String { get }
 
@@ -86,17 +97,36 @@ protocol AppRepository: Sendable {
     func setFriendPreference(_ preference: FriendAccessPreference) async throws -> AppSnapshot
 
     func setSharingPreferences(_ preferences: SharingPreferences) async throws -> AppSnapshot
-    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date, administrativeArea: String?) async throws -> AppSnapshot
     func registerPushToken(_ token: String) async throws
     func retryPendingOperations() async throws -> AppSnapshot
     func pendingOperationCount() async -> Int
     func isPushRegistrationPending() async -> Bool
 
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate]
+}
+
+extension AppRepository {
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date = Date()) async throws -> AppSnapshot {
+        try await updateCurrentCity(city: city, countryCode: countryCode, source: source, observedAt: observedAt, administrativeArea: nil)
+    }
+    func fetchTravelPlans() async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
+    func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
+    func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
+    func fetchTrips() async throws -> [CloudTrip] { throw RepositoryError.unsupportedInCurrentMode }
+    func createTrip(_ payload: TripPayload) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
+    func mutateTrip(id: String, mutation: TripMutation) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
+    func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
+    func tripInvitations(tripID: String?) async throws -> [TripInvitation] { throw RepositoryError.unsupportedInCurrentMode }
+    func inviteToTrip(id: String, username: String) async throws -> CreatedTripInvitation { throw RepositoryError.unsupportedInCurrentMode }
+    func acceptTripInvitation(id: UUID) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
+    func dismissTripInvitation(id: UUID, revoke: Bool) async throws { throw RepositoryError.unsupportedInCurrentMode }
 }
 
 extension AppRepository {
     func isPushRegistrationPending() async -> Bool { false }
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate] { [] }
 }
 
 enum AppEnvironment {
@@ -138,9 +168,10 @@ actor UnavailableAppRepository: AppRepository {
     func setFavorite(friendID: UUID, isFavorite: Bool) async throws -> AppSnapshot { try unavailable() }
     func setFriendPreference(_ preference: FriendAccessPreference) async throws -> AppSnapshot { try unavailable() }
     func setSharingPreferences(_ preferences: SharingPreferences) async throws -> AppSnapshot { try unavailable() }
-    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot { try unavailable() }
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date, administrativeArea: String?) async throws -> AppSnapshot { try unavailable() }
     func registerPushToken(_ token: String) async throws { try unavailable() }
     func retryPendingOperations() async throws -> AppSnapshot { try unavailable() }
     func pendingOperationCount() async -> Int { 0 }
     func runDemoScenario(_ scenario: DemoScenario) async throws -> AppSnapshot { try unavailable() }
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate] { try unavailable() }
 }

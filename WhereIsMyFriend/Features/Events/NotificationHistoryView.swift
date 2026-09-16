@@ -28,27 +28,19 @@ struct NotificationHistoryView: View {
         let matchingFriends = store.friends.filter { friend in
             friend.sharingState == .active
                 && store.preference(for: friend.id).sharesMyCity
-                && CityIdentity.matches(
-                    city: friend.city,
-                    countryCode: friend.countryCode,
-                    otherCity: myCity,
-                    otherCountryCode: store.snapshot.currentPresence.countryCode
-                )
+                && PresenceMatchPolicy.matches(store.snapshot.currentPresence, friend, at: referenceDate)
         }
 
+        let currentKey = CityIdentity.presenceKey(city: myCity, countryCode: store.snapshot.currentPresence.countryCode,
+            administrativeArea: store.snapshot.currentPresence.administrativeArea)
         return matchingFriends.map { friend in
             let session = store.snapshot.colocationSessions.first {
-                $0.friendID == friend.id && $0.isActive
+                $0.friendID == friend.id && $0.isActive && $0.cityKey == currentKey
             }
 
             let matchingEvents = store.snapshot.colocationEvents.filter { event in
                 event.friendIDs.contains(friend.id)
-                    && CityIdentity.matches(
-                        city: event.city,
-                        countryCode: nil,
-                        otherCity: myCity,
-                        otherCountryCode: store.snapshot.currentPresence.countryCode
-                    )
+                    && event.cityKey == currentKey
             }
 
             let candidateDates = [session?.enteredAt].compactMap { $0 } + matchingEvents.map(\.createdAt)
@@ -90,13 +82,9 @@ struct NotificationHistoryView: View {
         let sorted = store.snapshot.colocationEvents.sorted(by: { $0.createdAt > $1.createdAt })
 
         let filtered = sorted.filter { event in
-            if let myCity = currentCity,
-               CityIdentity.matches(
-                   city: event.city,
-                   countryCode: nil,
-                   otherCity: myCity,
-                   otherCountryCode: store.snapshot.currentPresence.countryCode
-               ),
+            if let key = CityIdentity.presenceKey(city: currentCity, countryCode: store.snapshot.currentPresence.countryCode,
+                   administrativeArea: store.snapshot.currentPresence.administrativeArea),
+               event.cityKey == key,
                event.friendIDs.contains(where: { activeFriendIDs.contains($0) }) {
                 // Belong to current active stay; exclude from past moments
                 return false
@@ -107,7 +95,8 @@ struct NotificationHistoryView: View {
         var uniqueMoments: [ColocationEvent] = []
         for event in filtered {
             let isDuplicate = uniqueMoments.contains { existing in
-                existing.city.lowercased() == event.city.lowercased()
+                event.cityKey != nil && existing.cityKey == event.cityKey
+                    && existing.city.lowercased() == event.city.lowercased()
                     && Set(existing.friendIDs) == Set(event.friendIDs)
                     && abs(existing.createdAt.timeIntervalSince(event.createdAt)) < 24 * 60 * 60
             }

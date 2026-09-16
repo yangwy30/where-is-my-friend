@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C91500000000000000000001 = {isa = PBXBuildFile; fileRef = C91500000000000000000003; };
+		C91500000000000000000002 = {isa = PBXBuildFile; fileRef = C91500000000000000000003; };
+		C91500000000000000000004 = {isa = PBXBuildFile; fileRef = C91500000000000000000006; };
+		C91500000000000000000005 = {isa = PBXBuildFile; fileRef = C91500000000000000000006; };
 		400000000000000000000001 /* WhereIsMyFriendApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000008 /* WhereIsMyFriendApp.swift */; };
 		400000000000000000000002 /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000009 /* AppRootView.swift */; };
 		400000000000000000000003 /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000010 /* AppShellView.swift */; };
@@ -55,6 +59,17 @@
 		400000000000000000000046 /* CityEmblem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000048 /* CityEmblem.swift */; };
 		400000000000000000000047 /* CityEmblemGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000049 /* CityEmblemGalleryView.swift */; };
 		400000000000000000000048 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000025 /* Assets.xcassets */; };
+		400000000000000000000049 /* TripsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000050 /* TripsView.swift */; };
+		400000000000000000000050 /* TripLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000051 /* TripLibrary.swift */; };
+		400000000000000000000051 /* TripPlanningSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000052 /* TripPlanningSheets.swift */; };
+		400000000000000000000052 /* TripFlightLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000053 /* TripFlightLookupService.swift */; };
+		400000000000000000000054 /* TripCloudModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000055 /* TripCloudModels.swift */; };
+		400000000000000000000057 /* AirportLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000057 /* AirportLocation.swift */; };
+		400000000000000000000053 /* TripFlightLookupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000054 /* TripFlightLookupTests.swift */; };
+		A71100000000000000000001 /* TravelPlans.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71100000000000000000002; };
+		A71100000000000000000003 /* TravelPlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71100000000000000000004; };
+		A71500000000000000000001 /* FriendTravelPlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71500000000000000000002; };
+		A71600000000000000000001 /* TravelDateRangePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71600000000000000000002; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +111,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C91500000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Shared/Models/CityRegions.swift; sourceTree = SOURCE_ROOT; };
+		C91500000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "supabase/functions/_shared/city-regions.v1.json"; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* Where Is My Friend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Where Is My Friend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000002 /* Where Is My Friend Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Where Is My Friend Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000003 /* WhereIsMyFriendTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhereIsMyFriendTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -145,6 +162,17 @@
 		300000000000000000000047 /* FriendWidgetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendWidgetConfiguration.swift; sourceTree = "<group>"; };
 		300000000000000000000048 /* CityEmblem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityEmblem.swift; sourceTree = "<group>"; };
 		300000000000000000000049 /* CityEmblemGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityEmblemGalleryView.swift; sourceTree = "<group>"; };
+		300000000000000000000050 /* TripsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripsView.swift; sourceTree = "<group>"; };
+		300000000000000000000051 /* TripLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripLibrary.swift; sourceTree = "<group>"; };
+		300000000000000000000052 /* TripPlanningSheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripPlanningSheets.swift; sourceTree = "<group>"; };
+		300000000000000000000053 /* TripFlightLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripFlightLookupService.swift; sourceTree = "<group>"; };
+		300000000000000000000055 /* TripCloudModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCloudModels.swift; sourceTree = "<group>"; };
+		300000000000000000000057 /* AirportLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirportLocation.swift; sourceTree = "<group>"; };
+		300000000000000000000054 /* TripFlightLookupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripFlightLookupTests.swift; sourceTree = "<group>"; };
+		A71100000000000000000002 /* TravelPlans.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Core/TravelPlans.swift; sourceTree = SOURCE_ROOT; };
+		A71100000000000000000004 /* TravelPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/TravelPlansView.swift; sourceTree = SOURCE_ROOT; };
+		A71500000000000000000002 /* FriendTravelPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/FriendTravelPlansView.swift; sourceTree = SOURCE_ROOT; };
+		A71600000000000000000002 /* TravelDateRangePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/TravelDateRangePicker.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +224,10 @@
 			isa = PBXGroup;
 			children = (
 				300000000000000000000008 /* WhereIsMyFriendApp.swift */,
+				A71100000000000000000002 /* TravelPlans.swift */,
+				A71100000000000000000004 /* TravelPlansView.swift */,
+				A71500000000000000000002 /* FriendTravelPlansView.swift */,
+				A71600000000000000000002 /* TravelDateRangePicker.swift */,
 				300000000000000000000009 /* AppRootView.swift */,
 				300000000000000000000010 /* AppShellView.swift */,
 				300000000000000000000011 /* WhereIsMyFriend.entitlements */,
@@ -210,6 +242,7 @@
 				200000000000000000000021 /* Auth */,
 				200000000000000000000006 /* Onboarding */,
 				200000000000000000000007 /* Friends */,
+				200000000000000000000024 /* Trips */,
 				200000000000000000000008 /* Sharing */,
 				200000000000000000000009 /* Profile */,
 				200000000000000000000022 /* Events */,
@@ -221,6 +254,7 @@
 		200000000000000000000007 /* Friends */ = {isa = PBXGroup; children = (300000000000000000000020 /* FriendsView.swift */, 300000000000000000000021 /* FriendDetailView.swift */, 300000000000000000000022 /* AddFriendView.swift */, ); path = Friends; sourceTree = "<group>"; };
 		200000000000000000000008 /* Sharing */ = {isa = PBXGroup; children = (300000000000000000000023 /* SharingView.swift */, ); path = Sharing; sourceTree = "<group>"; };
 		200000000000000000000009 /* Profile */ = {isa = PBXGroup; children = (300000000000000000000024 /* ProfileView.swift */, 300000000000000000000043 /* DemoLabView.swift */, 300000000000000000000049 /* CityEmblemGalleryView.swift */, ); path = Profile; sourceTree = "<group>"; };
+		200000000000000000000024 /* Trips */ = {isa = PBXGroup; children = (300000000000000000000057 /* AirportLocation.swift */, 300000000000000000000050 /* TripsView.swift */, 300000000000000000000051 /* TripLibrary.swift */, 300000000000000000000052 /* TripPlanningSheets.swift */, 300000000000000000000053 /* TripFlightLookupService.swift */, 300000000000000000000055 /* TripCloudModels.swift */, ); path = Trips; sourceTree = "<group>"; };
 		200000000000000000000010 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -234,7 +268,7 @@
 			sourceTree = "<group>";
 		};
 		200000000000000000000011 /* DesignSystem */ = {isa = PBXGroup; children = (300000000000000000000012 /* AppTheme.swift */, ); path = DesignSystem; sourceTree = "<group>"; };
-		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (300000000000000000000013 /* FriendPresence.swift */, 300000000000000000000035 /* AppDomain.swift */, 300000000000000000000048 /* CityEmblem.swift */, ); path = Models; sourceTree = "<group>"; };
+		200000000000000000000012 /* Models */ = {isa = PBXGroup; children = (C91500000000000000000003, C91500000000000000000006, 300000000000000000000013 /* FriendPresence.swift */, 300000000000000000000035 /* AppDomain.swift */, 300000000000000000000048 /* CityEmblem.swift */, ); path = Models; sourceTree = "<group>"; };
 		200000000000000000000013 /* Mock */ = {isa = PBXGroup; children = (300000000000000000000014 /* MockFriendData.swift */, ); path = Mock; sourceTree = "<group>"; };
 		200000000000000000000014 /* Storage */ = {isa = PBXGroup; children = (300000000000000000000015 /* SharedPresenceStore.swift */, ); path = Storage; sourceTree = "<group>"; };
 		200000000000000000000015 /* Components */ = {isa = PBXGroup; children = (300000000000000000000016 /* FriendAvatarView.swift */, 300000000000000000000017 /* FriendRowView.swift */, 300000000000000000000018 /* SameCityMomentCard.swift */, ); path = Components; sourceTree = "<group>"; };
@@ -253,7 +287,7 @@
 			path = WhereIsMyFriendWidget;
 			sourceTree = "<group>";
 		};
-		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
+		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, 300000000000000000000054 /* TripFlightLookupTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
 		200000000000000000000019 /* WhereIsMyFriendUITests */ = {isa = PBXGroup; children = (300000000000000000000033 /* PrototypeUITests.swift */, ); path = WhereIsMyFriendUITests; sourceTree = "<group>"; };
 		200000000000000000000020 /* docs */ = {isa = PBXGroup; children = (300000000000000000000007 /* DESIGN_SPEC.md */, ); path = docs; sourceTree = "<group>"; };
 		200000000000000000000021 /* Auth */ = {isa = PBXGroup; children = (300000000000000000000041 /* AuthenticationView.swift */, ); path = Auth; sourceTree = "<group>"; };
@@ -360,8 +394,8 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
-		500000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000017 /* Assets.xcassets in Resources */, 400000000000000000000018 /* Localizable.xcstrings in Resources */, 400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
-		500000000000000000000007 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000048 /* Assets.xcassets in Resources */, 400000000000000000000029 /* Localizable.xcstrings in Resources */, 400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (C91500000000000000000004, 400000000000000000000017 /* Assets.xcassets in Resources */, 400000000000000000000018 /* Localizable.xcstrings in Resources */, 400000000000000000000040 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000007 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (C91500000000000000000005, 400000000000000000000048 /* Assets.xcassets in Resources */, 400000000000000000000029 /* Localizable.xcstrings in Resources */, 400000000000000000000041 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000010 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000013 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
@@ -376,6 +410,10 @@
 				400000000000000000000032 /* LocalDemoRepository.swift in Sources */,
 				400000000000000000000033 /* RemoteAppRepository.swift in Sources */,
 				400000000000000000000034 /* AppStore.swift in Sources */,
+				A71100000000000000000001 /* TravelPlans.swift in Sources */,
+				A71100000000000000000003 /* TravelPlansView.swift in Sources */,
+				A71500000000000000000001 /* FriendTravelPlansView.swift in Sources */,
+				A71600000000000000000001 /* TravelDateRangePicker.swift in Sources */,
 				400000000000000000000035 /* PlatformServices.swift in Sources */,
 				400000000000000000000036 /* AuthenticationView.swift in Sources */,
 				400000000000000000000037 /* NotificationHistoryView.swift in Sources */,
@@ -398,12 +436,19 @@
 				400000000000000000000015 /* SharingView.swift in Sources */,
 				400000000000000000000016 /* ProfileView.swift in Sources */,
 				400000000000000000000045 /* CityEmblem.swift in Sources */,
+				C91500000000000000000001,
 				400000000000000000000047 /* CityEmblemGalleryView.swift in Sources */,
+				400000000000000000000049 /* TripsView.swift in Sources */,
+				400000000000000000000050 /* TripLibrary.swift in Sources */,
+				400000000000000000000051 /* TripPlanningSheets.swift in Sources */,
+				400000000000000000000052 /* TripFlightLookupService.swift in Sources */,
+				400000000000000000000054 /* TripCloudModels.swift in Sources */,
+				400000000000000000000057 /* AirportLocation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
-		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (C91500000000000000000002, 400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, 400000000000000000000053 /* TripFlightLookupTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
@@ -487,9 +532,9 @@
 		800000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriend.entitlements;
+			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriendTestFlight.entitlements;
 			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 2;
+			CURRENT_PROJECT_VERSION = 12;
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
@@ -499,7 +544,7 @@
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-			MARKETING_VERSION = 1.0.0;
+			MARKETING_VERSION = 1.0.2;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend;
 			PRODUCT_MODULE_NAME = WhereIsMyFriend;
 			PRODUCT_NAME = "Where Is My Friend";
@@ -545,13 +590,13 @@
 			APPLICATION_EXTENSION_API_ONLY = YES;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
 			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 2;
+			CURRENT_PROJECT_VERSION = 12;
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", );
-			MARKETING_VERSION = 1.0.0;
+			MARKETING_VERSION = 1.0.2;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.widget;
 			PRODUCT_NAME = "Where Is My Friend Widget";
 			SKIP_INSTALL = YES;

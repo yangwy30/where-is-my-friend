@@ -116,7 +116,13 @@ enum MockFriendData {
                 updatedAt: now.addingTimeInterval(-7 * 3600),
                 avatarPalette: 4
             )
-        ]
+        ].map { source in
+            var friend = source
+            let areas = ["New York":"NY","San Francisco":"CA","Seattle":"WA","Tokyo":"Tokyo","London":"England",
+                         "Paris":"Île-de-France","Sydney":"New South Wales","Beijing":"Beijing","Berlin":"Berlin"]
+            friend.administrativeArea = areas[friend.city ?? ""]
+            return friend
+        }
     }
 
     static var featuredFriend: FriendPresence {
@@ -127,16 +133,12 @@ enum MockFriendData {
         from friends: [FriendPresence],
         currentCity: String = currentUserCity,
         currentCountryCode: String? = nil,
-        now: Date = Date()
+        now: Date = Date(),
+        currentAdministrativeArea: String? = nil,
+        currentUpdatedAt: Date? = nil
     ) -> [FriendPresence] {
-        friends.filter { friend in
-            CityIdentity.matches(
-                city: friend.city,
-                countryCode: friend.countryCode,
-                otherCity: currentCity,
-                otherCountryCode: currentCountryCode
-            )
-                && friend.isSameCityEligible(at: now)
-        }
+        let presence = CurrentUserPresence(administrativeArea: currentAdministrativeArea, city: currentCity,
+            countryCode: currentCountryCode, updatedAt: currentUpdatedAt, source: .foregroundLocation)
+        return friends.filter { PresenceMatchPolicy.matches(presence, $0, at: now) }
     }
 }

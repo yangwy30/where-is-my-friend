@@ -44,7 +44,8 @@ select cron.schedule(
                 where name = 'wif_push_worker_secret'
             )
         ),
-        body := jsonb_build_object('scheduledAt', now())
+        body := jsonb_build_object('scheduledAt', now()),
+        timeout_milliseconds := 120000
     );
     $schedule$
 );

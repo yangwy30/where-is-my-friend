@@ -75,14 +75,17 @@ enum FriendWidgetOrdering {
         currentCity: String,
         currentCountryCode: String?,
         selectedFriendIDs: [UUID],
-        now: Date
+        now: Date,
+        currentAdministrativeArea: String? = nil,
+        currentPresenceUpdatedAt: Date? = nil
     ) -> [FriendPresence] {
         let sameCityIDs = Set(
             MockFriendData.sameCityFriends(
                 from: friends,
                 currentCity: currentCity,
                 currentCountryCode: currentCountryCode,
-                now: now
+                now: now, currentAdministrativeArea: currentAdministrativeArea,
+                currentUpdatedAt: currentPresenceUpdatedAt
             ).map(\.id)
         )
 

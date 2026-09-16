@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "version": "2026-09-15.1",
+  "regionMatchingEnabled": false,
+  "description": "Reviewed artwork groups, not official metropolitan boundaries. Missing country or administrative area never infers membership.",
+  "regions": [
+    {
+      "id": "us-ca-silicon-valley",
+      "displayName": "Silicon Valley",
+      "countryCode": "US",
+      "artworkCity": "San Jose",
+      "sourceURLs": [
+        "https://www.milpitas.gov/780/About-Milpitas",
+        "https://tigerweb.geo.census.gov/tigerwebmain/Files/bas26/tigerweb_bas26_metro_cbsa_us.html"
+      ],
+      "scopeNote": "Reviewed core Silicon Valley municipalities; not the complete San Jose CBSA or the entire Bay Area.",
+      "members": [
+        {
+          "administrativeArea": "CA",
+          "administrativeAliases": [
+            "California"
+          ],
+          "cities": [
+            "Milpitas",
+            "San Jose",
+            "Santa Clara",
+            "Sunnyvale",
+            "Mountain View",
+            "Cupertino"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "us-ca-los-angeles",
+      "displayName": "Los Angeles Area",
+      "countryCode": "US",
+      "artworkCity": "Los Angeles",
+      "sourceURLs": [
+        "https://auditor.lacounty.gov/incorporated-areas-cities/"
+      ],
+      "scopeNote": "Reviewed LA-area municipalities; does not automatically absorb Orange County, Inland Empire, or the full statistical metro.",
+      "members": [
+        {
+          "administrativeArea": "CA",
+          "administrativeAliases": [
+            "California"
+          ],
+          "cities": [
+            "Los Angeles",
+            "Santa Monica",
+            "Burbank",
+            "Pasadena",
+            "Beverly Hills",
+            "Culver City",
+            "West Hollywood",
+            "Glendale"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "us-ny-new-york",
+      "displayName": "New York Area",
+      "countryCode": "US",
+      "artworkCity": "New York",
+      "sourceURLs": [
+        "https://www.census.gov/programs-surveys/metro-micro/about/delineation-files.html",
+        "https://www.nj.gov/state/bac/planning/mapping/quad-maps/mapping-muni-quad-list.shtml"
+      ],
+      "scopeNote": "Reviewed NYC and Hudson waterfront sample, not the complete tri-state metropolitan area.",
+      "members": [
+        {
+          "administrativeArea": "NY",
+          "administrativeAliases": [
+            "New York"
+          ],
+          "cities": [
+            "New York",
+            "New York City"
+          ]
+        },
+        {
+          "administrativeArea": "NJ",
+          "administrativeAliases": [
+            "New Jersey"
+          ],
+          "cities": [
+            "Jersey City",
+            "Hoboken"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "us-ca-san-francisco",
+      "displayName": "San Francisco Area",
+      "countryCode": "US",
+      "artworkCity": "San Francisco",
+      "sourceURLs": [
+        "https://www.census.gov/programs-surveys/metro-micro/about/delineation-files.html"
+      ],
+      "scopeNote": "San Francisco is deliberately separate from Silicon Valley; no whole-Bay-Area merge.",
+      "members": [
+        {
+          "administrativeArea": "CA",
+          "administrativeAliases": [
+            "California"
+          ],
+          "cities": [
+            "San Francisco"
+          ]
+        }
+      ]
+    }
+  ],
+  "administrativeAliases": {
+    "US": {
+      "alabama": "al",
+      "alaska": "ak",
+      "arizona": "az",
+      "arkansas": "ar",
+      "california": "ca",
+      "colorado": "co",
+      "connecticut": "ct",
+      "delaware": "de",
+      "districtofcolumbia": "dc",
+      "florida": "fl",
+      "georgia": "ga",
+      "hawaii": "hi",
+      "idaho": "id",
+      "illinois": "il",
+      "indiana": "in",
+      "iowa": "ia",
+      "kansas": "ks",
+      "kentucky": "ky",
+      "louisiana": "la",
+      "maine": "me",
+      "maryland": "md",
+      "massachusetts": "ma",
+      "michigan": "mi",
+      "minnesota": "mn",
+      "mississippi": "ms",
+      "missouri": "mo",
+      "montana": "mt",
+      "nebraska": "ne",
+      "nevada": "nv",
+      "newhampshire": "nh",
+      "newjersey": "nj",
+      "newmexico": "nm",
+      "newyork": "ny",
+      "northcarolina": "nc",
+      "northdakota": "nd",
+      "ohio": "oh",
+      "oklahoma": "ok",
+      "oregon": "or",
+      "pennsylvania": "pa",
+      "rhodeisland": "ri",
+      "southcarolina": "sc",
+      "southdakota": "sd",
+      "tennessee": "tn",
+      "texas": "tx",
+      "utah": "ut",
+      "vermont": "vt",
+      "virginia": "va",
+      "washington": "wa",
+      "westvirginia": "wv",
+      "wisconsin": "wi",
+      "wyoming": "wy",
+      "puertorico": "pr",
+      "usvirginislands": "vi",
+      "guam": "gu"
+    }
+  }
+}

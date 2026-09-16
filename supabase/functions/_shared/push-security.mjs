@@ -85,6 +85,12 @@ const invalidDeviceReasons = new Set([
 
 export function classifyAPNsResponse(status, reason = "") {
     if (status === 200) return { outcome: "delivered", disableDevice: false, retryAfterSeconds: null };
+    // A valid device cannot repair a provider key/environment mismatch. Retrying
+    // the same delivery indefinitely only creates load. Retain the failed job
+    // for diagnosis; do NOT disable the device or alter production credentials.
+    if (status === 403 && ['BadEnvironmentKeyInToken', 'BadEnvironmentKeyIdInToken', 'BadCertificateEnvironment'].includes(reason)) {
+        return { outcome: "failed", disableDevice: false, retryAfterSeconds: null };
+    }
     if (status === 410 || invalidDeviceReasons.has(reason)) {
         return { outcome: "failed", disableDevice: true, retryAfterSeconds: null };
     }

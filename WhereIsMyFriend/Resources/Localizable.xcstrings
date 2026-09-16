@@ -1,6 +1,726 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Tap a date to choose a new start." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点选日期，重新选择开始日。"
+          }
+        }
+      }
+    },
+    "Choose an end date" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择结束日期"
+          }
+        }
+      }
+    },
+    "Previous month" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上个月"
+          }
+        }
+      }
+    },
+    "Next month" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下个月"
+          }
+        }
+      }
+    },
+    "%lld days selected" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已选择 %lld 天"
+          }
+        }
+      }
+    },
+    "Use these dates" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用这段日期"
+          }
+        }
+      }
+    },
+    "Choose dates" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择日期"
+          }
+        }
+      }
+    },
+    "Start date" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始日期"
+          }
+        }
+      }
+    },
+    "End date" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束日期"
+          }
+        }
+      }
+    },
+    "In selected range" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在所选日期范围内"
+          }
+        }
+      }
+    },
+    "Use device location" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用设备定位"
+          }
+        }
+      }
+    },
+    "Set city manually" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手动选择城市"
+          }
+        }
+      }
+    },
+    "Set manually. Use device location to resume automatic city detection." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "当前为手动设置。使用设备定位可恢复自动更新城市。"
+          }
+        }
+      }
+    },
+  "City": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "城市"
+        }
+      }
+    }
+  },
+    "Friend plans" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好友计划"
+          }
+        }
+      }
+    },
+    "Where are friends going?" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "朋友接下来去哪"
+          }
+        }
+      }
+    },
+    "Future cities your friends chose to share with you." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好友主动与你分享的未来城市安排。"
+          }
+        }
+      }
+    },
+    "Add my plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加我的计划"
+          }
+        }
+      }
+    },
+    "Private until you choose to share." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "由你决定分享，默认仅自己可见。"
+          }
+        }
+      }
+    },
+    "Shared plans are unavailable" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "暂时无法查看好友计划"
+          }
+        }
+      }
+    },
+    "Retry sync" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重新同步"
+          }
+        }
+      }
+    },
+    "Loading shared plans…" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在加载好友计划…"
+          }
+        }
+      }
+    },
+    "No shared plans yet" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有好友分享计划"
+          }
+        }
+      }
+    },
+    "Plans appear here when a friend chooses to share their full city and dates with you. You don’t need a matching plan." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好友选择与你分享完整城市和日期后，计划就会显示在这里。你不必先填写重叠的计划。"
+          }
+        }
+      }
+    },
+    "Friends’ upcoming cities" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好友的未来城市"
+          }
+        }
+      }
+    },
+    "By start date" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按开始日期"
+          }
+        }
+      }
+    },
+    "My plans" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我的计划"
+          }
+        }
+      }
+    },
+    "Shared with you" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "与你分享"
+          }
+        }
+      }
+    },
+    "I’ll be there too" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我也会去"
+          }
+        }
+      }
+    },
+    "This is a future plan shared with you. Dates may change." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这是一份与你分享的未来安排，日期可能调整。"
+          }
+        }
+      }
+    },
+    "Copying dates creates a private draft. Choose who can see it before saving." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "复制日期会新建一份私密草稿，保存前可自行选择分享给谁。"
+          }
+        }
+      }
+    },
+    "This plan is unavailable" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "这份计划已不可用"
+          }
+        }
+      }
+    },
+    "The plan may have ended, or its owner changed sharing. Connect to refresh." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划可能已结束，或对方调整了分享范围。请联网刷新。"
+          }
+        }
+      }
+    },
+    "Friend’s plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "好友的计划"
+          }
+        }
+      }
+    },
+    "I saw you’ll be in %@ on %@. Want to meet up?" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "看到你会在 %2$@ 前往 %1$@，有机会见一面吗？"
+          }
+        }
+      }
+    },
+    "Let selected friends view this plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "允许所选好友浏览这份计划"
+          }
+        }
+      }
+    },
+    "Selected friends can see your full city and dates in Friend plans, even without a matching plan. No announcement is sent." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选好友可以在“好友计划”查看完整城市和日期，无需先有重叠安排。不会群发通知。"
+          }
+        }
+      }
+    },
+    "Only matching dates are shown when both of you share overlapping plans. Your full plan stays out of Friend plans." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅当双方相互分享且日期重叠时，展示重叠日期。完整计划不会出现在“好友计划”。"
+          }
+        }
+      }
+    },
+    "Selected friends can match with this plan. If you enable plan browsing, they can also see its full city and dates. Changes take effect when you save the plan." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "所选好友可与你匹配重叠日期。若允许浏览计划，他们也能查看完整城市和日期。保存后生效。"
+          }
+        }
+      }
+    },
+    "Couldn’t refresh shared dates. Check your connection and retry." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法刷新共享日期，请检查网络后重试。"
+          }
+        }
+      }
+    },
+    "Travel plans" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未来城市计划"
+          }
+        }
+      }
+    },
+    "Where to next?" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下一站去哪？"
+          }
+        }
+      }
+    },
+    "Upcoming" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即将到来"
+          }
+        }
+      }
+    },
+    "Past" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "过去的计划"
+          }
+        }
+      }
+    },
+    "No past plans" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有过去的计划"
+          }
+        }
+      }
+    },
+    "A city. A few dates.\nA chance to meet." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一座城市，几个日期，\n一次相聚的机会。"
+          }
+        }
+      }
+    },
+    "Choose when you’ll be somewhere and who can see your plan." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "填写你将到访的城市与日期，决定分享给谁。"
+          }
+        }
+      }
+    },
+    "Add a plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加计划"
+          }
+        }
+      }
+    },
+    "Only you" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅自己可见"
+          }
+        }
+      }
+    },
+    "Shared with %lld friends" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "与 %lld 位好友分享"
+          }
+        }
+      }
+    },
+    "Delete plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除计划"
+          }
+        }
+      }
+    },
+    "Use dates from a Trip" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用共同行程的日期"
+          }
+        }
+      }
+    },
+    "Plans don’t change your current city. Only the friends you choose can match with you." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "计划不会改变当前城市，只有你选择的好友可以与你匹配。"
+          }
+        }
+      }
+    },
+    "Add travel plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加未来城市计划"
+          }
+        }
+      }
+    },
+    "Delete this plan?" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除这份计划？"
+          }
+        }
+      }
+    },
+    "Its shared dates and upcoming matches will be removed." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已分享的日期及对应的重叠提示会一并移除。"
+          }
+        }
+      }
+    },
+    "I’ll be in…" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "我将会在…"
+          }
+        }
+      }
+    },
+    "Search a city" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "搜索城市"
+          }
+        }
+      }
+    },
+    "Dates" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "日期"
+          }
+        }
+      }
+    },
+    "Local dates in %@" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@当地日期"
+          }
+        }
+      }
+    },
+    "Share this plan with" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分享这份计划"
+          }
+        }
+      }
+    },
+    "Only me · choose friends" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅自己 · 选择好友"
+          }
+        }
+      }
+    },
+    "%lld selected friends" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已选择 %lld 位好友"
+          }
+        }
+      }
+    },
+    "Remind me about overlaps" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "提醒我重叠安排"
+          }
+        }
+      }
+    },
+    "When both of you share matching plans, reminders can arrive within 14 days of the overlap. No live location is shared." : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "双方相互分享重叠计划后，可在重叠日期开始前14天内收到提醒。不会共享实时位置。"
+          }
+        }
+      }
+    },
+    "Save plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存计划"
+          }
+        }
+      }
+    },
+    "New plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新计划"
+          }
+        }
+      }
+    },
+    "Edit plan" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "编辑计划"
+          }
+        }
+      }
+    },
+    "Share with friends" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择分享好友"
+          }
+        }
+      }
+    },
+    "Say hello" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "打个招呼"
+          }
+        }
+      }
+    },
+    "From" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始"
+          }
+        }
+      }
+    },
+    "Until" : {
+      "localizations": {
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "结束"
+          }
+        }
+      }
+    },
     "·" : {
 
     },

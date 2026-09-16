@@ -31,6 +31,8 @@ enum SharedPresenceStore {
     private static let friendsKey = "prototype.friend-presence.snapshot"
     private static let currentCityKey = "widget.current-user-city"
     private static let currentCountryCodeKey = "widget.current-user-country-code"
+    private static let currentAdministrativeAreaKey = "widget.current-user-administrative-area"
+    private static let currentPresenceUpdatedAtKey = "widget.current-presence-updated-at"
     private static let lastUpdatedKey = "widget.snapshot-updated-at"
 
     private static var defaults: UserDefaults {
@@ -60,6 +62,14 @@ enum SharedPresenceStore {
         defaults.string(forKey: currentCountryCodeKey)
     }
 
+    static func loadCurrentAdministrativeArea() -> String? {
+        defaults.string(forKey: currentAdministrativeAreaKey)
+    }
+
+    static func loadCurrentPresenceUpdatedAt() -> Date? {
+        defaults.object(forKey: currentPresenceUpdatedAtKey) as? Date
+    }
+
     static func loadLastUpdatedAt() -> Date? {
         defaults.object(forKey: lastUpdatedKey) as? Date
     }
@@ -73,9 +83,13 @@ enum SharedPresenceStore {
         _ friends: [FriendPresence],
         currentCity: String?,
         currentCountryCode: String? = nil,
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        currentAdministrativeArea: String? = nil,
+        currentPresenceUpdatedAt: Date? = nil
     ) {
         save(friends)
+        defaults.set(currentAdministrativeArea, forKey: currentAdministrativeAreaKey)
+        defaults.set(currentPresenceUpdatedAt, forKey: currentPresenceUpdatedAtKey)
         if let currentCity {
             defaults.set(currentCity, forKey: currentCityKey)
         } else {
@@ -94,6 +108,8 @@ enum SharedPresenceStore {
         defaults.removeObject(forKey: currentCityKey)
         defaults.removeObject(forKey: currentCountryCodeKey)
         defaults.removeObject(forKey: lastUpdatedKey)
+        defaults.removeObject(forKey: currentAdministrativeAreaKey)
+        defaults.removeObject(forKey: currentPresenceUpdatedAtKey)
     }
 }
 
@@ -125,7 +141,9 @@ enum SharedAppStateStore {
             snapshot.isAuthenticated ? snapshot.friends : [],
             currentCity: snapshot.isAuthenticated ? snapshot.currentPresence.city : nil,
             currentCountryCode: snapshot.isAuthenticated ? snapshot.currentPresence.countryCode : nil,
-            updatedAt: snapshot.lastSyncedAt ?? Date()
+            updatedAt: snapshot.lastSyncedAt ?? Date(),
+            currentAdministrativeArea: snapshot.isAuthenticated ? snapshot.currentPresence.administrativeArea : nil,
+            currentPresenceUpdatedAt: snapshot.isAuthenticated && snapshot.sharingPreferences.citySharingEnabled ? snapshot.currentPresence.updatedAt : nil
         )
     }
 

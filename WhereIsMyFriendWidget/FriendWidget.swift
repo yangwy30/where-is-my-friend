@@ -8,6 +8,8 @@ struct FriendWidgetEntry: TimelineEntry {
     let currentCountryCode: String?
     let snapshotUpdatedAt: Date?
     let privacyMode: WidgetPrivacyMode
+    var currentAdministrativeArea: String? = nil
+    var currentPresenceUpdatedAt: Date? = nil
 }
 
 struct FriendTimelineProvider: AppIntentTimelineProvider {
@@ -57,7 +59,9 @@ private enum FriendEntryFactory {
             currentCountryCode: SharedPresenceStore.loadCurrentCountryCode(),
             snapshotUpdatedAt: SharedPresenceStore.loadLastUpdatedAt(),
             privacyMode: SharedWidgetPreferences.privacyMode(),
-            selectedFriendIDs: selectedFriendIDs
+            selectedFriendIDs: selectedFriendIDs,
+            currentAdministrativeArea: SharedPresenceStore.loadCurrentAdministrativeArea(),
+            currentPresenceUpdatedAt: SharedPresenceStore.loadCurrentPresenceUpdatedAt()
         )
     }
 
@@ -68,7 +72,9 @@ private enum FriendEntryFactory {
         currentCountryCode: String?,
         snapshotUpdatedAt: Date?,
         privacyMode: WidgetPrivacyMode,
-        selectedFriendIDs: [UUID]
+        selectedFriendIDs: [UUID],
+        currentAdministrativeArea: String? = nil,
+        currentPresenceUpdatedAt: Date? = nil
     ) -> FriendWidgetEntry {
         FriendWidgetEntry(
             date: date,
@@ -77,12 +83,15 @@ private enum FriendEntryFactory {
                 currentCity: currentCity,
                 currentCountryCode: currentCountryCode,
                 selectedFriendIDs: selectedFriendIDs,
-                now: date
+                now: date, currentAdministrativeArea: currentAdministrativeArea,
+                currentPresenceUpdatedAt: currentPresenceUpdatedAt
             ),
             currentCity: currentCity,
             currentCountryCode: currentCountryCode,
             snapshotUpdatedAt: snapshotUpdatedAt,
-            privacyMode: privacyMode
+            privacyMode: privacyMode,
+            currentAdministrativeArea: currentAdministrativeArea,
+            currentPresenceUpdatedAt: currentPresenceUpdatedAt
         )
     }
 }

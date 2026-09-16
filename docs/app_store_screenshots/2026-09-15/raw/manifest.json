@@ -1,0 +1,94 @@
+[
+  {
+    "attachments": [
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-06-widgets.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-06-widgets_0_31B94148-932E-4B18-A449-ABAD3D414DCE.png",
+        "timestamp": 1789498069.859,
+        "originalExportedFileName": "EE26DF05-5357-4612-9C0A-BC45E65F6FD7.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-07-sharing.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-07-sharing_0_62B81D58-6E61-4810-9C33-B70979490AE8.png",
+        "timestamp": 1789498064.91,
+        "originalExportedFileName": "7E1FFC68-4361-4E45-BAC0-7E80F276D00E.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-05-arrivals.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-05-arrivals_0_758B5C5B-0DB2-40D8-A601-36B0A4CAA21B.png",
+        "timestamp": 1789498055.79,
+        "originalExportedFileName": "17EBBC1F-5179-46B3-B2AA-12BB2F9540ED.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-04-trips.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-04-trips_0_05CDD971-F403-4B12-8BE0-96D626497C85.png",
+        "timestamp": 1789498052.222,
+        "originalExportedFileName": "5A371C81-70D4-4826-978B-C553F554FA5F.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-02-same-city.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-02-same-city_0_08F9DA1D-A5FD-4BA3-BEA1-5BEA1C2D18F9.png",
+        "timestamp": 1789498045.597,
+        "originalExportedFileName": "6D8E77AA-2B04-4E1E-86D4-82112153CC2A.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "marketing-01-friends.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "marketing-01-friends_0_CD33B98B-43B8-4AC4-A2F3-7E72DB0307EE.png",
+        "timestamp": 1789498042.692,
+        "originalExportedFileName": "30332B54-D011-47AE-BDFE-F1A5DE33E98D.png"
+      }
+    ],
+    "testIdentifier": "PrototypeUITests/testCaptureSeptemberMarketingScreenshots()",
+    "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testCaptureSeptemberMarketingScreenshots"
+  },
+  {
+    "attachments": [
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "upcoming-together-expanded.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "upcoming-together-expanded_0_0473166C-242D-47DE-85E1-31C345AE9BF5.png",
+        "timestamp": 1789498103.121,
+        "originalExportedFileName": "902314F3-9AD9-4675-83BA-187586A95D79.png"
+      },
+      {
+        "configurationName": "Test Scheme Action",
+        "deviceId": "CD12743C-30DA-4C61-B485-BFFBBFE6DF32",
+        "deviceName": "iPhone 17 Pro Max",
+        "exportedFileName": "travel-plan-private-editor.png",
+        "isAssociatedWithFailure": false,
+        "suggestedHumanReadableName": "travel-plan-private-editor_0_3551AE84-0051-4809-AFA2-35EBD5A2411E.png",
+        "timestamp": 1789498087.07,
+        "originalExportedFileName": "1592C5B5-1BED-4B31-8F77-2D27001210BB.png"
+      }
+    ],
+    "testIdentifier": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+    "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt"
+  }
+]

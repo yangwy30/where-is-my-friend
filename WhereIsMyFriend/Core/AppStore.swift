@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import UIKit
 import WidgetKit
 
@@ -14,10 +15,53 @@ struct AppToast: Identifiable, Equatable {
     let systemImage: String
 }
 
+/// A bounded UI request, including Auth token refresh. Late responses cannot
+/// resume the waiter or apply a stale snapshot after a timeout/retry.
+@MainActor
+private final class ProfileSaveRequest {
+    private var continuation: CheckedContinuation<AppSnapshot, Error>?
+    private var request: Task<Void, Never>?
+    private var timer: Task<Void, Never>?
+
+    static func run(timeout: Duration, operation: @escaping @MainActor () async throws -> AppSnapshot) async throws -> AppSnapshot {
+        let attempt = ProfileSaveRequest()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                attempt.continuation = continuation
+                attempt.request = Task {
+                    do { attempt.finish(.success(try await operation())) }
+                    catch { attempt.finish(.failure(error)) }
+                }
+                attempt.timer = Task {
+                    do {
+                        try await Task.sleep(for: timeout)
+                        attempt.finish(.failure(RepositoryError.message("Saving took too long. Your changes may have reached the server. Check your profile before trying again.")))
+                    } catch { }
+                }
+                if Task.isCancelled { attempt.finish(.failure(CancellationError())) }
+            }
+        } onCancel: {
+            Task { @MainActor in attempt.finish(.failure(CancellationError())) }
+        }
+    }
+
+    private func finish(_ result: Result<AppSnapshot, Error>) {
+        guard let continuation else { return }
+        self.continuation = nil
+        request?.cancel(); timer?.cancel()
+        request = nil; timer = nil
+        continuation.resume(with: result)
+    }
+}
+
 private struct PendingCityUpdate: Sendable {
     let city: String
     let countryCode: String?
     let source: PresenceSource
+    let observedAt: Date
+    let automaticOwnerID: UUID?
+    let expectedOwnerID: UUID
+    let administrativeArea: String?
 }
 
 enum PushRegistrationState: Equatable {
@@ -42,19 +86,41 @@ enum PushRegistrationState: Equatable {
 final class AppStore: ObservableObject {
     @Published private(set) var snapshot: AppSnapshot
     @Published private(set) var isWorking = false
+    @Published private(set) var isSavingProfile = false
+    @Published private(set) var profileSaveError: String?
+    private let profileSaveTimeout: Duration
     @Published private(set) var pendingOperationCount = 0
     @Published private(set) var pushRegistrationState: PushRegistrationState = .notStarted
+    @Published private(set) var pushRegistrationError: String?
+    @Published private(set) var invitationRefreshRevision = 0
+    private let pushRegistrationTimeout: Duration
+    private var pushRegistrationGeneration = UUID()
+    private var pushRegistrationDeadline: Task<Void, Never>?
     @Published private(set) var respondingRequestIDs: Set<UUID> = []
     @Published private(set) var isSendingFriendRequest = false
     @Published var pendingInvite: PendingInvite?
     @Published private(set) var widgetPrivacyMode: WidgetPrivacyMode
     @Published var notice: AppNotice?
     @Published var toast: AppToast?
+    @Published var pendingSameCityEventID: UUID?
+    @Published private(set) var sameCityBannerEventID: UUID?
+    let travelPlans = TravelPlanLibrary()
+    @Published var pendingUpcomingID: String?
+    @Published private(set) var upcomingBanner: TravelOverlap?
+    private var pendingUpcomingNotificationID: String?
+    private var travelObservation: AnyCancellable?
+    private var upcomingDismissTask: Task<Void, Never>?
+    private var pendingForegroundSameCityIDs: Set<UUID> = []
+    private var bannerDismissTask: Task<Void, Never>?
 
     let repositoryMode: RepositoryMode
     let notificationService: LocalNotificationService
 
     private let repository: any AppRepository
+    var tripRepository: any AppRepository { repository }
+    @Published var pendingTripInvitationID: UUID? = UserDefaults.standard.string(forKey: "pending-trip-invitation.v1").flatMap(UUID.init(uuidString:))
+    @Published var pendingTripViewID: String?
+    @Published var pendingFriendRequestID: UUID? = UserDefaults.standard.string(forKey: "pending-friend-request.v1").flatMap(UUID.init(uuidString:))
     private var pendingCityUpdate: PendingCityUpdate?
     private var latestPushToken: String?
     private var celebratesNextPushRegistration = false
@@ -64,7 +130,9 @@ final class AppStore: ObservableObject {
     private var latestAppliedOperationSequence = 0
     private var refreshIsInFlight = false
 
-    init(repository: (any AppRepository)? = nil) {
+    init(repository: (any AppRepository)? = nil, profileSaveTimeout: Duration = .seconds(25), pushRegistrationTimeout: Duration = .seconds(20)) {
+        self.pushRegistrationTimeout = pushRegistrationTimeout
+        self.profileSaveTimeout = profileSaveTimeout
         if ProcessInfo.processInfo.arguments.contains("-resetDemoData") {
             SharedAppStateStore.reset()
         }
@@ -77,6 +145,26 @@ final class AppStore: ObservableObject {
         pendingInvite = PendingInviteStore.load()
         widgetPrivacyMode = SharedWidgetPreferences.privacyMode()
         synchronizeWidget()
+        notificationService.onSameCityForeground = { [weak self] id in
+            self?.receiveSameCityNotification(id)
+        }
+        notificationService.onInvitationForeground = { [weak self] in
+            guard let self, self.snapshot.isAuthenticated else { return }
+            self.invitationRefreshRevision += 1
+            Task { await self.refresh() }
+        }
+        notificationService.onNotificationOpen = { [weak self] url in
+            self?.handleIncomingURL(url) ?? false
+        }
+        travelPlans.connect(repository: selectedRepository, userID: snapshot.isAuthenticated ? snapshot.currentUser.id : nil)
+        notificationService.onUpcomingForeground = { [weak self] id in
+            guard let self, snapshot.isAuthenticated else { return }
+            pendingUpcomingNotificationID = id
+            Task { await self.travelPlans.refresh() }
+        }
+        travelObservation = travelPlans.$overlaps.sink { [weak self] values in
+            self?.reconcileUpcomingNotifications(values)
+        }
     }
 
     var currentCity: String? { snapshot.currentPresence.city }
@@ -92,19 +180,39 @@ final class AppStore: ObservableObject {
     }
 
     func refresh() async {
-        guard !refreshIsInFlight else { return }
+        // A refresh started after a profile PATCH can return the pre-write snapshot
+        // first, advance latestAppliedOperationSequence, and discard the save result.
+        guard !refreshIsInFlight, !isSavingProfile, !isDeletingAccount else { return }
         refreshIsInFlight = true
         defer { refreshIsInFlight = false }
         await perform(successMessage: nil, showsActivity: false, presentsErrors: false) {
             try await self.repository.loadSnapshot()
         }
+        await travelPlans.refresh()
     }
 
     func updateProfile(_ update: ProfileUpdate) async -> Bool {
-        await perform(successMessage: String(localized: "Profile updated.")) {
-            try await self.repository.updateProfile(update)
+        guard !isSavingProfile else { return false }
+        isSavingProfile = true
+        profileSaveError = nil
+        defer { isSavingProfile = false }
+        return await perform(successMessage: String(localized: "Profile updated."), showsActivity: false,
+                             presentsErrors: false, waitsForPendingCityUpdate: false) {
+            do {
+                let validated = try update.validated()
+                return try await ProfileSaveRequest.run(timeout: self.profileSaveTimeout) {
+                    try await self.repository.updateProfile(validated)
+                }
+            } catch {
+                self.profileSaveError = error as? RepositoryError == .networkUnavailable
+                    ? "Couldn’t confirm your changes. Check your connection and try again."
+                    : error.localizedDescription
+                throw error
+            }
         }
     }
+
+    func clearProfileSaveError() { profileSaveError = nil }
 
     func signInDemo() async {
         await perform(successMessage: nil) {
@@ -120,12 +228,14 @@ final class AppStore: ObservableObject {
     }
 
     func signOut() async {
+        let previousOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
         pendingCityUpdate = nil
         notice = nil
         let signedOut = await perform(successMessage: nil, presentsErrors: false) {
             try await self.repository.signOut()
         }
         if signedOut {
+            if repositoryMode == .localDemo, let previousOwner { AccountLocalData.clear(origin: repository.storageScope, ownerID: previousOwner) }
             notice = nil
             pendingCityUpdate = nil
             notificationService.unregisterRemoteNotifications()
@@ -135,19 +245,30 @@ final class AppStore: ObservableObject {
         }
     }
 
+    @Published private(set) var isDeletingAccount = false
+
     func deleteAccount() async {
+        guard !isDeletingAccount else { return }
+        let previousOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
+        isDeletingAccount = true
+        defer { isDeletingAccount = false }
         pendingCityUpdate = nil
         notice = nil
-        let deleted = await perform(successMessage: nil, presentsErrors: false) {
+        let deleted = await perform(successMessage: nil, presentsErrors: true, allowsDuringAccountDeletion: true) {
             try await self.repository.deleteAccount()
         }
         if deleted {
+            if repositoryMode == .localDemo, let previousOwner { AccountLocalData.clear(origin: repository.storageScope, ownerID: previousOwner) }
             notice = nil
             pendingCityUpdate = nil
             notificationService.unregisterRemoteNotifications()
             resetPushRegistration()
             SharedAppStateStore.reset()
             WidgetCenter.shared.reloadAllTimelines()
+        }
+        if !deleted {
+            notice = AppNotice(title: "Couldn’t confirm account deletion",
+                message: notice?.message ?? "Please check your connection and try again. Your account deletion has not been confirmed.")
         }
     }
 
@@ -207,32 +328,66 @@ final class AppStore: ObservableObject {
     }
 
     func setFriendPreference(_ preference: FriendAccessPreference) async {
+        guard friendPreferenceSaves[preference.friendID] == nil else { return }
+        let saveID = UUID()
+        friendPreferenceSaves[preference.friendID] = saveID
+        defer {
+            if friendPreferenceSaves[preference.friendID] == saveID { friendPreferenceSaves[preference.friendID] = nil }
+        }
         await perform(successMessage: nil) {
             try await self.repository.setFriendPreference(preference)
         }
     }
 
+    @Published private var friendPreferenceSaves: [UUID: UUID] = [:]
+    func isSavingFriendPreference(for id: UUID) -> Bool { friendPreferenceSaves[id] != nil }
+
     @discardableResult
     func setSharingPreferences(_ preferences: SharingPreferences) async -> Bool {
-        await perform(successMessage: nil, showsActivity: false) {
+        guard !isSavingSharingPreferences else { return false }
+        let saveID = UUID()
+        sharingSaveID = saveID
+        isSavingSharingPreferences = true
+        defer {
+            if sharingSaveID == saveID { isSavingSharingPreferences = false; sharingSaveID = nil }
+        }
+        return await perform(successMessage: nil, showsActivity: false, waitsForPendingCityUpdate: false) {
             try await self.repository.setSharingPreferences(preferences)
         }
     }
 
-    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async {
+    @Published private(set) var isSavingSharingPreferences = false
+    private var sharingSaveID: UUID?
+
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource,
+                           observedAt: Date = Date(), automaticOwnerID: UUID? = nil,
+                           expectedOwnerID: UUID? = nil, administrativeArea: String? = nil) async {
         guard snapshot.isAuthenticated else { return }
+        let ownerID = expectedOwnerID ?? snapshot.currentUser.id
+        guard ownerID == snapshot.currentUser.id else { return }
+        if let automaticOwnerID {
+            guard automaticOwnerID == snapshot.currentUser.id,
+                  CityLocationPolicy.automaticAllowed(sharingEnabled: snapshot.sharingPreferences.citySharingEnabled,
+                                                      presence: snapshot.currentPresence),
+                  snapshot.currentPresence.updatedAt.map({ observedAt > $0 }) ?? true else { return }
+        }
         if activeOperationCount > 0 {
-            pendingCityUpdate = PendingCityUpdate(city: city, countryCode: countryCode, source: source)
+            if automaticOwnerID != nil, let pending = pendingCityUpdate,
+               pending.automaticOwnerID == nil || pending.observedAt >= observedAt { return }
+            pendingCityUpdate = PendingCityUpdate(city: city, countryCode: countryCode, source: source,
+                observedAt: observedAt, automaticOwnerID: automaticOwnerID, expectedOwnerID: ownerID, administrativeArea: administrativeArea)
             return
         }
         let message = source == .manual
             ? String(format: String(localized: "Your shared city is now %@."), city)
             : nil
-        await perform(successMessage: message) {
+        await perform(successMessage: message, showsActivity: automaticOwnerID == nil, presentsErrors: automaticOwnerID == nil) {
             try await self.repository.updateCurrentCity(
                 city: city,
                 countryCode: countryCode,
-                source: source
+                source: source,
+                observedAt: observedAt,
+                administrativeArea: administrativeArea
             )
         }
     }
@@ -250,6 +405,10 @@ final class AppStore: ObservableObject {
         }
     }
 
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate] {
+        try await repository.lookupFlight(tripID: tripID, flightNumber: flightNumber, date: date)
+    }
+
     func requestNotificationAuthorization() async {
         celebratesNextPushRegistration = true
         let isAllowed = await notificationService.requestAuthorization()
@@ -265,66 +424,95 @@ final class AppStore: ObservableObject {
         force: Bool = false,
         userInitiated: Bool = false
     ) async {
-        guard snapshot.isAuthenticated else {
+        guard snapshot.isAuthenticated, !isDeletingAccount else {
             resetPushRegistration()
             return
         }
-
+        let owner = snapshot.currentUser.id
         await notificationService.refreshAuthorizationStatus()
+        guard snapshot.isAuthenticated, snapshot.currentUser.id == owner else { return }
         guard notificationService.allowsNotifications else {
-            if !pushRegistrationState.isInProgress {
-                pushRegistrationState = .notStarted
-            }
+            resetPushRegistration()
             return
         }
-
         if !force {
             switch pushRegistrationState {
-            case .waitingForDeviceToken, .registering, .registered:
-                return
-            case .notStarted, .waitingForNetwork, .failed:
-                break
+            case .waitingForDeviceToken, .registering: return
+            case .registered(let time) where Date().timeIntervalSince(time) < 300: return
+            default: break
             }
         }
-
         if userInitiated { celebratesNextPushRegistration = true }
         pushRegistrationState = .waitingForDeviceToken
+        pushRegistrationError = nil
+        beginPushDeadline(owner: owner)
         notificationService.registerForRemoteNotifications()
     }
 
     func retryPushRegistration() async {
-        celebratesNextPushRegistration = true
-        if let latestPushToken {
-            await registerPushToken(latestPushToken)
-        } else {
-            await preparePushRegistrationIfAuthorized(force: true, userInitiated: true)
+        // Re-check permission and obtain the current device token, not just a cached one.
+        await preparePushRegistrationIfAuthorized(force: true, userInitiated: true)
+    }
+
+    private func beginPushDeadline(owner: UUID) {
+        pushRegistrationGeneration = UUID()
+        let ticket = pushRegistrationGeneration
+        pushRegistrationDeadline?.cancel()
+        pushRegistrationDeadline = Task { [weak self] in
+            guard let delay = self?.pushRegistrationTimeout else { return }
+            do { try await Task.sleep(for: delay) } catch { return }
+            guard let self, self.pushRegistrationGeneration == ticket,
+                  self.snapshot.isAuthenticated, self.snapshot.currentUser.id == owner,
+                  self.pushRegistrationState.isInProgress else { return }
+            self.pushRegistrationGeneration = UUID()
+            self.pushRegistrationError = self.pushRegistrationState == .waitingForDeviceToken
+                ? "Couldn’t obtain a device token from Apple. Please retry."
+                : "Device registration wasn’t confirmed in time. Please retry."
+            self.pushRegistrationState = .failed
+            self.celebratesNextPushRegistration = false
         }
     }
 
     func handlePushRegistrationFailure() {
+        guard snapshot.isAuthenticated, pushRegistrationState == .waitingForDeviceToken else { return }
+        pushRegistrationGeneration = UUID()
+        pushRegistrationDeadline?.cancel()
         celebratesNextPushRegistration = false
+        pushRegistrationError = "Couldn’t register this device for notifications. Please retry."
         pushRegistrationState = .failed
     }
 
     func registerPushToken(_ token: String) async {
+        guard snapshot.isAuthenticated, !isDeletingAccount, !token.isEmpty else { return }
+        if latestPushToken == token, pushRegistrationState == .registering { return }
+        let owner = snapshot.currentUser.id
         latestPushToken = token
         pushRegistrationState = .registering
+        pushRegistrationError = nil
+        beginPushDeadline(owner: owner)
+        let ticket = pushRegistrationGeneration
         do {
             try await repository.registerPushToken(token)
+            guard ticket == pushRegistrationGeneration, snapshot.isAuthenticated, snapshot.currentUser.id == owner else { return }
             await refreshPendingOperationCount()
-            if await repository.isPushRegistrationPending() {
+            let queued = await repository.isPushRegistrationPending()
+            guard ticket == pushRegistrationGeneration, snapshot.isAuthenticated, snapshot.currentUser.id == owner else { return }
+            pushRegistrationDeadline?.cancel()
+            if queued {
                 pushRegistrationState = .waitingForNetwork
+                pushRegistrationError = "Device registration is waiting for a connection."
             } else {
-                let registeredAt = Date()
-                pushRegistrationState = .registered(registeredAt)
-                if celebratesNextPushRegistration {
-                    UINotificationFeedbackGenerator().notificationOccurred(.success)
-                }
+                pushRegistrationState = .registered(Date())
+                if celebratesNextPushRegistration { UINotificationFeedbackGenerator().notificationOccurred(.success) }
             }
         } catch {
+            guard ticket == pushRegistrationGeneration, snapshot.isAuthenticated, snapshot.currentUser.id == owner else { return }
+            pushRegistrationDeadline?.cancel()
             applySessionExpirationIfNeeded(error)
-            await refreshPendingOperationCount()
-            pushRegistrationState = .failed
+            if snapshot.isAuthenticated {
+                pushRegistrationError = "Couldn’t confirm notification setup. Please check your connection and retry."
+                pushRegistrationState = .failed
+            }
         }
         celebratesNextPushRegistration = false
     }
@@ -342,7 +530,38 @@ final class AppStore: ObservableObject {
 
     @discardableResult
     func handleIncomingURL(_ url: URL) -> Bool {
+        if let id = FriendRequestNotificationLink.parse(url) {
+            discardTripInvitationLink()
+            discardPendingInvite()
+            pendingFriendRequestID = id
+            UserDefaults.standard.set(id.uuidString, forKey: "pending-friend-request.v1")
+            return true
+        }
+        if let id = UpcomingTravelLink.parse(url) {
+            discardFriendRequestLink()
+            pendingUpcomingID = id
+            dismissUpcomingBanner()
+            return true
+        }
+        if let id = SameCityAlertLink.eventID(from: url) {
+            discardFriendRequestLink()
+            pendingSameCityEventID = id
+            dismissSameCityBanner()
+            return true
+        }
+        if let id = TripInvitationLink.parseTripView(url) {
+            discardFriendRequestLink()
+            pendingTripViewID = id
+            return true
+        }
+        if let id = TripInvitationLink.parse(url) {
+            discardFriendRequestLink()
+            UserDefaults.standard.set(id.uuidString, forKey: "pending-trip-invitation.v1")
+            pendingTripInvitationID = id
+            return true
+        }
         guard let invite = InviteLinkParser.parse(url) else { return false }
+        discardFriendRequestLink()
         PendingInviteStore.save(invite)
         pendingInvite = invite
         return true
@@ -360,6 +579,16 @@ final class AppStore: ObservableObject {
         pendingInvite = nil
     }
 
+    func discardFriendRequestLink() {
+        pendingFriendRequestID = nil
+        UserDefaults.standard.removeObject(forKey: "pending-friend-request.v1")
+    }
+
+    func discardTripInvitationLink() {
+        pendingTripInvitationID = nil
+        UserDefaults.standard.removeObject(forKey: "pending-trip-invitation.v1")
+    }
+
     func setWidgetPrivacyMode(_ mode: WidgetPrivacyMode) {
         widgetPrivacyMode = mode
         SharedWidgetPreferences.setPrivacyMode(mode)
@@ -371,8 +600,12 @@ final class AppStore: ObservableObject {
         successMessage: String?,
         showsActivity: Bool = true,
         presentsErrors: Bool = true,
+        waitsForPendingCityUpdate: Bool = true,
+        allowsDuringAccountDeletion: Bool = false,
         operation: @escaping () async throws -> AppSnapshot
     ) async -> Bool {
+        // A later refresh/profile result must not supersede a confirmed account deletion.
+        guard !isDeletingAccount || allowsDuringAccountDeletion else { return false }
         operationSequence += 1
         let currentOperationSequence = operationSequence
         activeOperationCount += 1
@@ -390,7 +623,28 @@ final class AppStore: ObservableObject {
             if currentOperationSequence >= latestAppliedOperationSequence {
                 latestAppliedOperationSequence = currentOperationSequence
                 let existingEventIDs = Set(snapshot.colocationEvents.map(\.id))
+                let previousOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
                 snapshot = updated
+                travelPlans.connect(repository: repository, userID: updated.isAuthenticated ? updated.currentUser.id : nil)
+                if !updated.isAuthenticated || (previousOwner != nil && previousOwner != updated.currentUser.id) {
+                    friendPreferenceSaves.removeAll()
+                    sharingSaveID = nil
+                    isSavingSharingPreferences = false
+                    resetPushRegistration()
+                    discardFriendRequestLink()
+                    pendingSameCityEventID = nil
+                    pendingForegroundSameCityIDs.removeAll()
+                    dismissSameCityBanner()
+                    pendingUpcomingID = nil
+                    pendingUpcomingNotificationID = nil
+                    dismissUpcomingBanner()
+                }
+                reconcileSameCityBanner()
+                if let banner = upcomingBanner,
+                   friend(id: banner.friendID) == nil || snapshot.blockedUserIDs.contains(banner.friendID)
+                    || !preference(for: banner.friendID).sameCityAlertEnabled {
+                    dismissUpcomingBanner()
+                }
                 SharedAppStateStore.save(updated, origin: repository.storageScope)
                 synchronizeWidget()
                 await deliverNewNotifications(excluding: existingEventIDs)
@@ -415,7 +669,7 @@ final class AppStore: ObservableObject {
                 SharedAppStateStore.save(snapshot, origin: repository.storageScope)
             }
             await refreshPendingOperationCount()
-            if presentsErrors {
+            if presentsErrors && !(error is CancellationError) {
                 let isUnauthenticated = (error as? RepositoryError) == .notAuthenticated
                 if isUnauthenticated && !snapshot.isAuthenticated {
                     // Intentionally signed out; suppress notice
@@ -434,7 +688,11 @@ final class AppStore: ObservableObject {
             visibleOperationCount = max(0, visibleOperationCount - 1)
             isWorking = visibleOperationCount > 0
         }
-        await flushPendingCityUpdateIfNeeded()
+        if waitsForPendingCityUpdate {
+            await flushPendingCityUpdateIfNeeded()
+        } else {
+            Task { await self.flushPendingCityUpdateIfNeeded() }
+        }
         return result
     }
 
@@ -447,13 +705,29 @@ final class AppStore: ObservableObject {
         await updateCurrentCity(
             city: pending.city,
             countryCode: pending.countryCode,
-            source: pending.source
+            source: pending.source,
+            observedAt: pending.observedAt,
+            automaticOwnerID: pending.automaticOwnerID,
+            expectedOwnerID: pending.expectedOwnerID,
+            administrativeArea: pending.administrativeArea
         )
     }
 
     private func applySessionExpirationIfNeeded(_ error: Error) {
         guard error as? RepositoryError == .sessionExpired else { return }
+        friendPreferenceSaves.removeAll()
+        sharingSaveID = nil
+        isSavingSharingPreferences = false
+        resetPushRegistration()
+        discardFriendRequestLink()
         snapshot = DemoData.signedOutSnapshot()
+        travelPlans.connect(repository: repository, userID: nil)
+        pendingUpcomingID = nil
+        pendingUpcomingNotificationID = nil
+        dismissUpcomingBanner()
+        pendingSameCityEventID = nil
+        pendingForegroundSameCityIDs.removeAll()
+        dismissSameCityBanner()
         SharedAppStateStore.save(snapshot, origin: repository.storageScope)
         synchronizeWidget()
     }
@@ -470,9 +744,97 @@ final class AppStore: ObservableObject {
         // Remote same-city events are delivered by APNs. Re-scheduling events from
         // a bootstrap response would replay history on sign-in and duplicate pushes.
         guard repositoryMode == .localDemo else { return }
-        guard snapshot.sharingPreferences.notificationPreviewEnabled else { return }
         for event in snapshot.colocationEvents where !existingEventIDs.contains(event.id) {
-            await notificationService.schedule(event)
+            guard SameCityAlertPolicy.isCurrent(event, in: snapshot) else { continue }
+            await notificationService.schedule(event, previewsEnabled: snapshot.sharingPreferences.notificationPreviewEnabled)
+        }
+    }
+
+    var sameCityBannerEvent: ColocationEvent? {
+        guard let id = sameCityBannerEventID,
+              let event = SameCityAlertPolicy.event(id, in: snapshot),
+              SameCityAlertPolicy.isCurrent(event, in: snapshot) else { return nil }
+        return event
+    }
+
+    func dismissSameCityBanner() {
+        bannerDismissTask?.cancel()
+        bannerDismissTask = nil
+        sameCityBannerEventID = nil
+    }
+
+    func openSameCityEvent(_ id: UUID) {
+        dismissSameCityBanner()
+        pendingSameCityEventID = id
+    }
+
+    private func receiveSameCityNotification(_ id: UUID) {
+        guard snapshot.isAuthenticated else { return }
+        pendingForegroundSameCityIDs.insert(id)
+        let owner = snapshot.currentUser.id
+        Task { [weak self] in
+            guard let self else { return }
+            await refresh()
+            guard snapshot.isAuthenticated, snapshot.currentUser.id == owner else { return }
+            reconcileSameCityBanner()
+        }
+    }
+
+    private func reconcileSameCityBanner() {
+        if sameCityBannerEventID != nil, sameCityBannerEvent == nil { dismissSameCityBanner() }
+        guard snapshot.isAuthenticated else { return }
+        let key = "same-city.seen.v1.\(repository.storageScope).\(snapshot.currentUser.id)"
+        var seen = UserDefaults.standard.stringArray(forKey: key) ?? []
+        let candidates = snapshot.colocationEvents.filter { pendingForegroundSameCityIDs.contains($0.id) }
+            .sorted { $0.createdAt < $1.createdAt }
+        for event in candidates {
+            pendingForegroundSameCityIDs.remove(event.id)
+            guard !seen.contains(event.id.uuidString) else { continue }
+            seen.append(event.id.uuidString)
+            guard SameCityAlertPolicy.isCurrent(event, in: snapshot) else { continue }
+            dismissSameCityBanner()
+            sameCityBannerEventID = event.id
+            if !UIAccessibility.isVoiceOverRunning {
+                bannerDismissTask = Task { [weak self] in
+                    do { try await Task.sleep(for: .seconds(9)) } catch { return }
+                    guard self?.sameCityBannerEventID == event.id else { return }
+                    self?.sameCityBannerEventID = nil
+                }
+            }
+        }
+        UserDefaults.standard.set(Array(seen.suffix(100)), forKey: key)
+    }
+
+    func dismissUpcomingBanner() {
+        upcomingDismissTask?.cancel()
+        upcomingDismissTask = nil
+        upcomingBanner = nil
+    }
+
+    func openUpcomingOverlap(_ id: String) {
+        dismissUpcomingBanner()
+        pendingUpcomingID = id
+    }
+
+    private func reconcileUpcomingNotifications(_ overlaps: [TravelOverlap]) {
+        if let banner = upcomingBanner, !overlaps.contains(where: { $0.id == banner.id }) { dismissUpcomingBanner() }
+        guard snapshot.isAuthenticated, let id = pendingUpcomingNotificationID,
+              let overlap = overlaps.first(where: { $0.id == id && !$0.isPast() }),
+              friend(id: overlap.friendID) != nil, !snapshot.blockedUserIDs.contains(overlap.friendID),
+              preference(for: overlap.friendID).sameCityAlertEnabled else { return }
+        pendingUpcomingNotificationID = nil
+        let key = "upcoming.seen.v1.\(repository.storageScope).\(snapshot.currentUser.id)"
+        var seen = UserDefaults.standard.stringArray(forKey: key) ?? []
+        guard !seen.contains(id) else { return }
+        seen.append(id); UserDefaults.standard.set(Array(seen.suffix(100)), forKey: key)
+        dismissUpcomingBanner()
+        upcomingBanner = overlap
+        if !UIAccessibility.isVoiceOverRunning {
+            upcomingDismissTask = Task { [weak self] in
+                do { try await Task.sleep(for: .seconds(9)) } catch { return }
+                guard self?.upcomingBanner?.id == id else { return }
+                self?.upcomingBanner = nil
+            }
         }
     }
 
@@ -497,7 +859,9 @@ final class AppStore: ObservableObject {
             snapshot.isAuthenticated ? snapshot.friends : [],
             currentCity: snapshot.isAuthenticated ? snapshot.currentPresence.city : nil,
             currentCountryCode: snapshot.isAuthenticated ? snapshot.currentPresence.countryCode : nil,
-            updatedAt: snapshot.lastSyncedAt ?? Date()
+            updatedAt: snapshot.lastSyncedAt ?? Date(),
+            currentAdministrativeArea: snapshot.isAuthenticated ? snapshot.currentPresence.administrativeArea : nil,
+            currentPresenceUpdatedAt: snapshot.isAuthenticated && snapshot.sharingPreferences.citySharingEnabled ? snapshot.currentPresence.updatedAt : nil
         )
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -510,6 +874,10 @@ final class AppStore: ObservableObject {
     }
 
     private func resetPushRegistration() {
+        pushRegistrationGeneration = UUID()
+        pushRegistrationDeadline?.cancel()
+        pushRegistrationDeadline = nil
+        pushRegistrationError = nil
         latestPushToken = nil
         celebratesNextPushRegistration = false
         pushRegistrationState = .notStarted

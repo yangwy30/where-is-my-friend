@@ -12,3 +12,19 @@ supabase/.branches/
 .env.*
 !.env.example
 award_tickets/
+.migration-backups/
+
+# Local release bundles and diagnostic captures (marketing demo assets are versioned).
+*.ipa
+*.xcarchive/
+*.xcresult/
+docs/AcrossUs-Marketing-*.zip
+docs/multi-trips-preview/
+docs/personal-travel-preview/
+docs/same-city-alerts-preview/
+docs/trips-jade-preview/
+docs/trips-self-service-preview/
+docs/trips_feedback_*.png
+docs/trips_mapkit_radar.png
+docs/trips_tab_mock.png
+docs/trips_tab_preview.png

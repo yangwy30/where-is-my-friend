@@ -56,6 +56,12 @@ struct ProfileView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("sameCityMomentsLink")
+
+                    menuDivider
+                    NavigationLink { TravelPlansView() } label: {
+                        profileMenuRow("Travel plans", subtitle: "Where you’ll be next",
+                                       symbol: "calendar", color: WIFTheme.fresh)
+                    }.buttonStyle(.plain).accessibilityIdentifier("travelPlansLink")
                 }
 
                 sectionDivider
@@ -159,7 +165,7 @@ struct ProfileView: View {
                         showsDeleteConfirmation = true
                     } label: {
                         profileMenuRow(
-                            "Delete account",
+                            store.isDeletingAccount ? "Deleting account…" : "Delete account",
                             subtitle: nil,
                             symbol: "trash.fill",
                             color: WIFTheme.destructive,
@@ -168,6 +174,7 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .disabled(store.isDeletingAccount)
                 }
 
                 if store.repositoryMode == .localDemo {
@@ -228,6 +235,7 @@ struct ProfileView: View {
         }
         .confirmationDialog("Delete your account?", isPresented: $showsDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete account", role: .destructive) { Task { await store.deleteAccount() } }
+                .disabled(store.isDeletingAccount)
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(store.repositoryMode == .localDemo
@@ -531,7 +539,7 @@ private struct LocationAccessView: View {
                     }
                 }
                 .tint(WIFTheme.fresh)
-                .disabled(store.isWorking)
+                .disabled(store.isWorking || store.isSavingSharingPreferences)
                 .wifSettingsGlassCard(tint: WIFTheme.fresh.opacity(0.08))
                 .accessibilityIdentifier("backgroundUpdatesToggle")
 
@@ -765,7 +773,7 @@ private struct WidgetPrivacyView: View {
 private struct NotificationSettingsView: View {
     @EnvironmentObject private var store: AppStore
     @ObservedObject var notificationService: LocalNotificationService
-    @State private var pendingAlertPreference: Bool?
+    @State private var pendingPreviewPreference: Bool?
 
     var body: some View {
         ScrollView {
@@ -785,32 +793,32 @@ private struct NotificationSettingsView: View {
                         .font(.title2.bold())
                         .multilineTextAlignment(.center)
 
-                    Text("We’ll let you know when you and a friend are in the same city.")
+                    Text("Friend and Trip invitations, plus the updates you choose.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .padding(.vertical, 16)
 
-                Toggle(isOn: sameCityAlertsBinding) {
+                Toggle(isOn: notificationPreviewsBinding) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Same-city notifications")
+                        Text("Show notification previews")
                             .font(.headline)
-                        Text(alertsEnabled ? "On" : "Paused")
+                        Text(previewsEnabled ? "Show names and invitation details" : "Keep names and details private")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                 }
                 .tint(WIFTheme.fresh)
-                .disabled(store.isWorking)
+                .disabled(store.isWorking || store.isSavingSharingPreferences)
                 .padding(18)
                 .wifGlassSurface(
                     tint: WIFTheme.fresh.opacity(0.08),
                     in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
                 )
-                .accessibilityIdentifier("sameCityNotificationsToggle")
+                .accessibilityIdentifier("notificationPreviewsToggle")
 
-                if alertsEnabled {
+                Group {
                     permissionStatusRow
 
                     if notificationService.authorizationStatus == .notDetermined {
@@ -820,7 +828,7 @@ private struct NotificationSettingsView: View {
                         .font(.headline)
                         .controlSize(.large)
                         .buttonBorderShape(.capsule)
-                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.30), prominent: true)
+                        .wifGlassButton(tint: WIFTheme.fresh, prominent: true)
                         .disabled(store.pushRegistrationState.isInProgress)
                         .accessibilityIdentifier("allowNotificationsButton")
                     } else if notificationService.authorizationStatus == .denied {
@@ -833,7 +841,9 @@ private struct NotificationSettingsView: View {
                     }
                 }
 
-                Text("Notification delivery is handled automatically in the background.")
+                deviceRegistrationCard
+
+                Text("Invitations don’t depend on location sharing. Same-city and flight alerts follow your friend and Trip settings.")
                     .font(.footnote)
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
@@ -849,6 +859,39 @@ private struct NotificationSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .accessibilityIdentifier("notificationSettingsScreen")
+        .task { await store.preparePushRegistrationIfAuthorized() }
+    }
+
+    private var deviceRegistrationCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "iphone.radiowaves.left.and.right").foregroundStyle(WIFTheme.fresh)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Device registration").font(.headline)
+                Text(registrationDetail).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }
+            Spacer(minLength: 4)
+            if store.pushRegistrationState.isInProgress { ProgressView() }
+            else if notificationService.allowsNotifications && store.repositoryMode == .remote {
+                Button("Retry") { Task { await store.retryPushRegistration() } }
+                    .font(.subheadline.weight(.semibold))
+                    .accessibilityIdentifier("retryPushRegistrationButton")
+            }
+        }
+        .padding(18).wifSettingsGlassCard()
+        .accessibilityIdentifier("devicePushRegistrationCard")
+    }
+
+    private var registrationDetail: String {
+        if store.repositoryMode == .localDemo { return "Demo mode · no remote delivery." }
+        if !notificationService.allowsNotifications { return "Enable iOS notification access to connect this device." }
+        switch store.pushRegistrationState {
+        case .notStarted: return "Not connected yet."
+        case .waitingForDeviceToken: return "Obtaining this device’s token from Apple…"
+        case .registering: return "Confirming registration with your account…"
+        case .waitingForNetwork: return "Waiting for a connection. You can retry."
+        case .registered: return "Registered with your account. iOS still controls notification delivery."
+        case .failed: return store.pushRegistrationError ?? "Setup could not be confirmed. Please retry."
+        }
     }
 
     private var permissionStatusRow: some View {
@@ -877,25 +920,22 @@ private struct NotificationSettingsView: View {
         .accessibilityIdentifier("notificationPermissionCard")
     }
 
-    private var sameCityAlertsBinding: Binding<Bool> {
+    private var notificationPreviewsBinding: Binding<Bool> {
         Binding {
-            alertsEnabled
+            previewsEnabled
         } set: { newValue in
-            pendingAlertPreference = newValue
+            pendingPreviewPreference = newValue
             var preferences = store.snapshot.sharingPreferences
             preferences.notificationPreviewEnabled = newValue
             Task {
-                let saved = await store.setSharingPreferences(preferences)
-                pendingAlertPreference = nil
-                if saved, newValue {
-                    await store.requestNotificationAuthorization()
-                }
+                _ = await store.setSharingPreferences(preferences)
+                pendingPreviewPreference = nil
             }
         }
     }
 
-    private var alertsEnabled: Bool {
-        pendingAlertPreference ?? store.snapshot.sharingPreferences.notificationPreviewEnabled
+    private var previewsEnabled: Bool {
+        pendingPreviewPreference ?? store.snapshot.sharingPreferences.notificationPreviewEnabled
     }
 
     private var permissionStatusText: LocalizedStringKey {
@@ -911,10 +951,10 @@ private struct NotificationSettingsView: View {
 
     private var permissionDetail: LocalizedStringKey {
         switch notificationService.authorizationStatus {
-        case .notDetermined: "Allow notifications to receive same-city updates."
+        case .notDetermined: "Allow notifications for friend and Trip invitations."
         case .denied: "Notifications are turned off in iOS Settings."
-        case .authorized: "City alerts can appear as banners and play sounds."
-        case .provisional: "City alerts arrive quietly in Notification Center."
+        case .authorized: "Invitations and selected updates can appear as notifications."
+        case .provisional: "Notifications arrive quietly in Notification Center."
         case .ephemeral: "Notification access is temporarily available."
         @unknown default: "Notification access is unavailable on this device."
         }
@@ -982,7 +1022,7 @@ private struct BlockedPeopleView: View {
                                 Task { await store.unblockUser(id: person.id) }
                             }
                             .wifGlassButton(tint: WIFTheme.fresh.opacity(0.14))
-                            .disabled(store.isWorking)
+                            .disabled(store.isWorking || store.isSavingSharingPreferences)
                         }
                         .wifSettingsGlassCard()
                     }
@@ -1136,7 +1176,7 @@ private struct EditProfileView: View {
                         .foregroundStyle(WIFTheme.secondaryText)
                         .padding(.horizontal, 4)
 
-                    if let validationMessage {
+                    if let validationMessage = validationMessage ?? store.profileSaveError {
                         Label(validationMessage, systemImage: "exclamationmark.triangle.fill")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(WIFTheme.destructive)
@@ -1145,7 +1185,7 @@ private struct EditProfileView: View {
 
                     Button(action: save) {
                         HStack {
-                            if store.isWorking { ProgressView() }
+                            if store.isSavingProfile { ProgressView() }
                             Text("Save changes")
                                 .frame(maxWidth: .infinity)
                         }
@@ -1154,7 +1194,7 @@ private struct EditProfileView: View {
                     }
                     .foregroundStyle(WIFTheme.primaryText)
                     .wifGlassButton(tint: WIFTheme.fresh.opacity(0.34), prominent: true)
-                    .disabled(store.isWorking)
+                    .disabled(store.isSavingProfile)
                     .accessibilityIdentifier("saveProfileButton")
                 }
                 .padding(WIFTheme.screenInset)
@@ -1170,6 +1210,7 @@ private struct EditProfileView: View {
                 }
             }
             .onAppear {
+                store.clearProfileSaveError()
                 displayName = store.snapshot.currentUser.displayName
                 username = store.snapshot.currentUser.username
             }
@@ -1194,6 +1235,7 @@ private struct EditProfileView: View {
                 .textContentType(contentType)
                 .textInputAutocapitalization(usernameStyle ? .never : .words)
                 .autocorrectionDisabled(usernameStyle)
+                .disabled(store.isSavingProfile)
                 .accessibilityIdentifier(identifier)
         }
         .padding(.vertical, 7)
@@ -1392,12 +1434,8 @@ struct WidgetShowcaseView: View {
     }
 
     private var isSameCity: Bool {
-        CityIdentity.matches(
-            city: featuredFriend.city,
-            countryCode: featuredFriend.countryCode,
-            otherCity: store.currentCity,
-            otherCountryCode: store.snapshot.currentPresence.countryCode
-        )
+        store.snapshot.sharingPreferences.citySharingEnabled
+            && PresenceMatchPolicy.matches(store.snapshot.currentPresence, featuredFriend, at: Date())
     }
 
     var body: some View {
@@ -1502,7 +1540,7 @@ struct WidgetShowcaseView: View {
         Group {
             if isSameCity {
                 HStack(spacing: 16) {
-                    CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 86)
+                    CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(myCity)
@@ -1533,7 +1571,7 @@ struct WidgetShowcaseView: View {
                 HStack(spacing: 0) {
                     // Left: User City Stage
                     VStack(spacing: 4) {
-                        CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 68)
+                        CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 68)
 
                         Text(myCity)
                             .font(.system(.caption, design: .rounded, weight: .bold))
@@ -1572,7 +1610,7 @@ struct WidgetShowcaseView: View {
 
                     // Right: Friend City Stage
                     VStack(spacing: 4) {
-                        CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 68)
+                        CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 68)
 
                         VStack(spacing: 1) {
                             Text(featuredFriend.city ?? "Tokyo")
@@ -1595,7 +1633,7 @@ struct WidgetShowcaseView: View {
 
     private var heroSmallWidgetView: some View {
         VStack(spacing: 3) {
-            CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 70)
+            CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 70)
 
             Text(featuredFriend.city ?? "Tokyo")
                 .font(.system(.subheadline, design: .rounded, weight: .bold))
@@ -1614,7 +1652,7 @@ struct WidgetShowcaseView: View {
         VStack(spacing: 12) {
             // Top Hero Stage
             VStack(spacing: 4) {
-                CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, size: 80)
+                CityEmblemView(city: featuredFriend.city, countryCode: featuredFriend.countryCode, administrativeArea: featuredFriend.administrativeArea, size: 80)
 
                 Text(featuredFriend.city ?? "Tokyo")
                     .font(.system(.headline, design: .rounded, weight: .bold))
@@ -1637,7 +1675,7 @@ struct WidgetShowcaseView: View {
             HStack(spacing: 8) {
                 ForEach(store.friends.dropFirst().prefix(3)) { friend in
                     VStack(spacing: 2) {
-                        CityEmblemView(city: friend.city, countryCode: friend.countryCode, size: 48)
+                        CityEmblemView(city: friend.city, countryCode: friend.countryCode, administrativeArea: friend.administrativeArea, size: 48)
                         Text(friend.city ?? "—")
                             .font(.system(size: 9.5, weight: .bold, design: .rounded))
                             .foregroundStyle(WIFTheme.primaryText)
@@ -1663,7 +1701,7 @@ struct WidgetShowcaseView: View {
 
     private var togetherWidgetView: some View {
         HStack(spacing: 16) {
-            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, size: 86)
+            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(myCity)

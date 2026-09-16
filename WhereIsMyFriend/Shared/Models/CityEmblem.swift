@@ -23,19 +23,40 @@ public struct CityEmblem: Hashable, Sendable {
     }
 
     /// Resolves a city name and optional country code into a standardized `CityEmblem`.
-    public static func resolve(city: String?, countryCode: String? = nil) -> CityEmblem {
+    public static func resolve(city: String?, countryCode: String? = nil, administrativeArea: String? = nil) -> CityEmblem {
         guard let city = city?.trimmingCharacters(in: .whitespacesAndNewlines), !city.isEmpty else {
             return CityEmblem(cityID: "unknown", displayName: "Somewhere", countryCode: countryCode, archetype: .metropolis)
         }
 
         let normalized = CityIdentity.normalize(city)
+        if let region = CityRegionCatalog.bundled.resolve(city: city, countryCode: countryCode, administrativeArea: administrativeArea) {
+            let artwork = resolve(city: region.artworkCity, countryCode: region.countryCode)
+            // Reuse only the artwork. Preserve the actual city and its accessibility name.
+            return CityEmblem(cityID: normalized.replacingOccurrences(of: " ", with: "_"), displayName: city,
+                              countryCode: countryCode, assetName: artwork.assetName, archetype: artwork.archetype)
+        }
 
-        if let match = registeredCities[normalized] {
+        if let administrativeArea, !CityRegionCatalog.normalize(administrativeArea).isEmpty,
+           let countryCode,
+           CityRegionCatalog.bundled.regions.contains(where: { region in
+               CityRegionCatalog.normalize(region.countryCode) == CityRegionCatalog.normalize(countryCode)
+                   && region.members.contains { $0.cities.contains { CityRegionCatalog.normalize($0) == CityRegionCatalog.normalize(city) } }
+           }) {
+            // A known namesake in another state must not inherit this region's legacy city asset.
+            return CityEmblem(cityID: normalized.replacingOccurrences(of: " ", with: "_"), displayName: city,
+                              countryCode: countryCode, archetype: CityArchetype.infer(from: city, countryCode: countryCode))
+        }
+
+        let country = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        func accepts(_ match: CityEmblem) -> Bool {
+            country == nil || country == "" || country == match.countryCode
+        }
+        if let match = registeredCities[normalized], accepts(match) {
             return match
         }
 
         // Check aliases
-        for (alias, match) in cityAliases where normalized.contains(alias) || alias.contains(normalized) {
+        for (alias, match) in cityAliases where normalized == CityIdentity.normalize(alias) && accepts(match) {
             return match
         }
 
@@ -384,8 +405,8 @@ public struct CityEmblemView: View {
     public let emblem: CityEmblem
     public var size: CGFloat
 
-    public init(city: String?, countryCode: String? = nil, size: CGFloat = 84) {
-        self.emblem = CityEmblem.resolve(city: city, countryCode: countryCode)
+    public init(city: String?, countryCode: String? = nil, administrativeArea: String? = nil, size: CGFloat = 84) {
+        self.emblem = CityEmblem.resolve(city: city, countryCode: countryCode, administrativeArea: administrativeArea)
         self.size = size
     }
 

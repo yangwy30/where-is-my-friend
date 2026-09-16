@@ -141,6 +141,7 @@ enum PendingInviteStore {
 }
 
 struct PendingPresenceUpload: Codable, Equatable, Sendable {
+    var administrativeArea: String? = nil
     let city: String
     let countryCode: String?
     let source: PresenceSource
@@ -191,13 +192,15 @@ actor OfflineMutationQueue {
         }
     }
 
-    func enqueue(_ payload: PendingRemoteMutationPayload, ownerID: UUID, now: Date = Date()) {
+    @discardableResult
+    func enqueue(_ payload: PendingRemoteMutationPayload, ownerID: UUID, now: Date = Date()) -> UUID {
         mutations.removeAll {
             $0.ownerID == ownerID && $0.payload.coalescingKey == payload.coalescingKey
         }
+        let id = UUID()
         mutations.append(
             QueuedRemoteMutation(
-                id: UUID(),
+                id: id,
                 ownerID: ownerID,
                 payload: payload,
                 createdAt: now,
@@ -205,6 +208,12 @@ actor OfflineMutationQueue {
                 nextAttemptAt: now
             )
         )
+        persist()
+        return id
+    }
+
+    func removeSuperseded(ownerID: UUID, key: String) {
+        mutations.removeAll { $0.ownerID == ownerID && $0.payload.coalescingKey == key }
         persist()
     }
 
@@ -246,5 +255,33 @@ actor OfflineMutationQueue {
     private func persist() {
         guard let data = try? JSONEncoder().encode(mutations) else { return }
         defaults.set(data, forKey: storageKey)
+    }
+}
+
+/// Account-scoped cache invalidation. Epochs also stop an in-flight read from
+/// recreating a deleted cache after logout or confirmed account deletion.
+enum AccountLocalData {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var epochs: [String: Int] = [:]
+    static func epoch(for scope: String) -> Int {
+        lock.withLock { epochs[scope, default: 0] }
+    }
+
+    static func clear(origin: String, ownerID: UUID) {
+        let planScope = "travel-plans.v1.\(origin).\(ownerID)"
+        invalidate(planScope)
+        UserDefaults.standard.removeObject(forKey: planScope)
+        let tripScopes = ["\(origin)-\(ownerID)", "\(origin.hasPrefix("remote:") ? "remote" : origin)-\(ownerID)"]
+        let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("TripLibrary", isDirectory: true)
+        for scope in Set(tripScopes) {
+            invalidate(scope)
+            let safe = scope.replacingOccurrences(of: "[^a-zA-Z0-9_-]", with: "_", options: .regularExpression)
+            try? FileManager.default.removeItem(at: directory.appendingPathComponent("\(safe).json"))
+        }
+    }
+
+    private static func invalidate(_ scope: String) {
+        lock.withLock { epochs[scope, default: 0] += 1 }
     }
 }

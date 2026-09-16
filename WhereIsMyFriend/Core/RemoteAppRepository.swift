@@ -81,6 +81,7 @@ enum APNsEnvironment: String, Codable, Sendable {
 struct APNsRegistrationConfiguration: Equatable, Sendable {
     let environment: APNsEnvironment
     let installationID: UUID
+    var bundleID: String = "com.yangwy30.whereismyfriend"
 
     static func fromBundle(
         bundle: Bundle = .main,
@@ -96,7 +97,8 @@ struct APNsRegistrationConfiguration: Equatable, Sendable {
             installationID = UUID()
             defaults.set(installationID.uuidString.lowercased(), forKey: storageKey)
         }
-        return APNsRegistrationConfiguration(environment: environment, installationID: installationID)
+        return APNsRegistrationConfiguration(environment: environment, installationID: installationID,
+                                             bundleID: bundle.bundleIdentifier ?? "com.yangwy30.whereismyfriend")
     }
 }
 
@@ -106,6 +108,7 @@ private struct UsernameBody: Encodable { let username: String }
 private struct RequestResponseBody: Encodable { let response: FriendRequestResponse }
 private struct FavoriteBody: Encodable { let isFavorite: Bool }
 private struct CityBody: Encodable {
+    var administrativeArea: String? = nil
     let city: String
     let countryCode: String?
     let source: PresenceSource
@@ -113,11 +116,13 @@ private struct CityBody: Encodable {
 }
 private struct PushTokenBody: Encodable {
     let token: String
+    var bundleID: String = "com.yangwy30.whereismyfriend"
     let environment: APNsEnvironment
     let installationID: UUID
     let platform = "ios"
 }
 private struct PushTokenRemovalBody: Encodable {
+    var bundleID: String = "com.yangwy30.whereismyfriend"
     let environment: APNsEnvironment
     let installationID: UUID
     let platform = "ios"
@@ -152,7 +157,7 @@ private actor SupabaseRemoteAuthentication: RemoteAuthenticationProviding {
         do {
             return try await client.auth.session.accessToken
         } catch {
-            throw RepositoryError.notAuthenticated
+            throw Self.sessionError(error)
         }
     }
 
@@ -173,7 +178,17 @@ private actor SupabaseRemoteAuthentication: RemoteAuthenticationProviding {
     }
 
     func refreshAccessToken() async throws -> String {
-        try await client.auth.refreshSession().accessToken
+        do { return try await client.auth.refreshSession().accessToken }
+        catch { throw Self.sessionError(error) }
+    }
+
+    private static func sessionError(_ error: Error) -> Error {
+        if let auth = error as? AuthError,
+           [.sessionNotFound, .refreshTokenNotFound, .refreshTokenAlreadyUsed, .userNotFound, .badJWT].contains(auth.errorCode) {
+            return RepositoryError.sessionExpired
+        }
+        if let network = error as? URLError, network.code != .cancelled { return RepositoryError.networkUnavailable }
+        return error
     }
 
     func signOut() async throws {
@@ -189,6 +204,55 @@ actor RemoteAppRepository: AppRepository {
     private let authentication: any RemoteAuthenticationProviding
     private let mutationQueue: OfflineMutationQueue
     private let pushConfiguration: APNsRegistrationConfiguration
+
+    private var sessionGeneration = 0
+    private var authenticationTransition = false
+    private var sessionIsUsable = true
+    private var sessionOwnerID: UUID?
+    private var mutationLocked = false
+    private var mutationWaiters: [CheckedContinuation<Void, Never>] = []
+
+    private struct RequestContext {
+        let generation: Int
+        let ownerID: UUID?
+        let isAuthentication: Bool
+    }
+
+    private func requestContext(authentication allowed: Bool = false) throws -> RequestContext {
+        guard allowed || (!authenticationTransition && sessionIsUsable) else { throw CancellationError() }
+        let owner = cachedSnapshot().flatMap { $0.isAuthenticated ? $0.currentUser.id : nil }
+        if !allowed, let sessionOwnerID, sessionOwnerID != owner { throw CancellationError() }
+        return RequestContext(generation: sessionGeneration, ownerID: owner, isAuthentication: allowed)
+    }
+
+    private func check(_ context: RequestContext) throws {
+        try Task.checkCancellation()
+        guard context.generation == sessionGeneration else { throw CancellationError() }
+        if !context.isAuthentication {
+            guard !authenticationTransition,
+                  context.ownerID == cachedSnapshot().flatMap({ $0.isAuthenticated ? $0.currentUser.id : nil }),
+                  sessionOwnerID == nil || sessionOwnerID == context.ownerID else { throw CancellationError() }
+        }
+    }
+
+    private func lockMutations() async {
+        if mutationLocked {
+            await withCheckedContinuation { mutationWaiters.append($0) }
+        } else { mutationLocked = true }
+    }
+
+    private func unlockMutations() {
+        if mutationWaiters.isEmpty { mutationLocked = false }
+        else { mutationWaiters.removeFirst().resume() }
+    }
+
+    private func queue(_ payload: PendingRemoteMutationPayload, context: RequestContext) async throws {
+        try check(context)
+        guard let owner = context.ownerID else { throw RepositoryError.notAuthenticated }
+        let id = await mutationQueue.enqueue(payload, ownerID: owner)
+        do { try check(context) }
+        catch { await mutationQueue.remove(id: id); throw error }
+    }
 
     init(
         configuration: APIConfiguration,
@@ -215,6 +279,7 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func loadSnapshot() async throws -> AppSnapshot {
+        let context = try requestContext()
         do {
             try await flushPendingOperations()
             return try await requestSnapshot(
@@ -223,6 +288,7 @@ actor RemoteAppRepository: AppRepository {
                 body: BootstrapBody(displayName: nil)
             )
         } catch where isRetryable(error) {
+            try check(context)
             guard var cached = SharedAppStateStore.load(expectedOrigin: storageScope),
                   cached.isAuthenticated else { throw error }
             cached.syncState = .offline
@@ -235,41 +301,72 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot {
-        _ = try await authentication.signInWithApple(payload)
-        let snapshot: AppSnapshot = try await authorizedRequest(
-            path: "/v1/auth/bootstrap",
-            method: "POST",
-            body: BootstrapBody(displayName: payload.displayName)
-        )
-        let previousUserID = cachedSnapshot()?.currentUser.id
-        if previousUserID != snapshot.currentUser.id {
-            await mutationQueue.reset()
+        guard !authenticationTransition else { throw CancellationError() }
+        sessionGeneration += 1
+        authenticationTransition = true
+        sessionIsUsable = false
+        defer { authenticationTransition = false }
+        do {
+            _ = try await authentication.signInWithApple(payload)
+            let snapshot: AppSnapshot = try await authorizedRequest(
+                path: "/v1/auth/bootstrap",
+                method: "POST",
+                body: BootstrapBody(displayName: payload.displayName), allowsAuthTransition: true
+            )
+            let previousUserID = cachedSnapshot()?.currentUser.id
+            sessionOwnerID = snapshot.currentUser.id
+            sessionIsUsable = true
+            if previousUserID != snapshot.currentUser.id {
+                await mutationQueue.reset()
+            }
+            return snapshot
+        } catch {
+            // An Auth exchange that succeeded without an application bootstrap
+            // must not leave a new token paired with an old account cache.
+            try? await authentication.signOut()
+            sessionOwnerID = nil
+            sessionIsUsable = false
+            SharedAppStateStore.reset()
+            throw error
         }
-        return snapshot
     }
 
     func signOut() async throws -> AppSnapshot {
+        guard !authenticationTransition else { throw CancellationError() }
+        sessionGeneration += 1
+        authenticationTransition = true
+        sessionIsUsable = false
+        defer { authenticationTransition = false }
         let ownerID = cachedSnapshot()?.currentUser.id
         try? await unregisterPushDevice()
         let result: AppSnapshot
         do {
-            result = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody())
+            result = try await requestSnapshot(path: "/v1/auth/logout", method: "POST", body: EmptyBody(), allowsAuthTransition: true)
         } catch {
             result = DemoData.signedOutSnapshot()
         }
         try? await authentication.signOut()
         await mutationQueue.reset(ownerID: ownerID)
+        if let ownerID { AccountLocalData.clear(origin: storageScope, ownerID: ownerID) }
+        sessionOwnerID = nil
         return result
     }
 
     func deleteAccount() async throws -> AppSnapshot {
+        guard !authenticationTransition else { throw CancellationError() }
         let ownerID = try activeUserID()
-        let snapshot = try await requestSnapshot(path: "/v1/account", method: "DELETE", body: EmptyBody())
+        sessionGeneration += 1
+        authenticationTransition = true
+        defer { authenticationTransition = false }
+        let snapshot = try await requestSnapshot(path: "/v1/account", method: "DELETE", body: EmptyBody(), allowsAuthTransition: true)
         // Supabase Auth deletes its local session before contacting the server.
         // The server identity has already been removed, so a 401/404 is expected
         // and handled by the SDK during this cleanup call.
-        try await authentication.signOut()
+        try? await authentication.signOut()
         await mutationQueue.reset(ownerID: ownerID)
+        AccountLocalData.clear(origin: storageScope, ownerID: ownerID)
+        sessionOwnerID = nil
+        sessionIsUsable = false
         return snapshot
     }
 
@@ -334,11 +431,19 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func setSharingPreferences(_ preferences: SharingPreferences) async throws -> AppSnapshot {
+        let context = try requestContext()
+        guard let owner = context.ownerID else { throw RepositoryError.notAuthenticated }
+        await lockMutations()
+        defer { unlockMutations() }
+        try check(context)
+        // Retire old intent before trying the new one, regardless of connectivity.
+        await mutationQueue.removeSuperseded(ownerID: owner, key: "sharing-preferences")
+        try check(context)
         do {
             return try await requestSnapshot(path: "/v1/sharing", method: "PATCH", body: preferences)
         } catch where isRetryable(error) {
-            let ownerID = try activeUserID()
-            await mutationQueue.enqueue(.sharingPreferences(preferences), ownerID: ownerID)
+            try await queue(.sharingPreferences(preferences), context: context)
+            try check(context)
             var cached = try authenticatedCachedSnapshot()
             cached.sharingPreferences = preferences
             if !preferences.citySharingEnabled {
@@ -349,18 +454,27 @@ actor RemoteAppRepository: AppRepository {
         }
     }
 
-    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource) async throws -> AppSnapshot {
+    func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date, administrativeArea: String? = nil) async throws -> AppSnapshot {
+        let context = try requestContext()
+        guard let owner = context.ownerID else { throw RepositoryError.notAuthenticated }
+        await lockMutations()
+        defer { unlockMutations() }
+        try check(context)
+        await mutationQueue.removeSuperseded(ownerID: owner, key: "presence")
+        try check(context)
         let upload = PendingPresenceUpload(
+            administrativeArea: administrativeArea,
             city: CityIdentity.canonicalCity(city),
             countryCode: countryCode?.uppercased(),
             source: source,
-            clientUpdatedAt: Date()
+            clientUpdatedAt: observedAt
         )
         do {
             return try await requestSnapshot(
                 path: "/v1/presence/current",
                 method: "PUT",
                 body: CityBody(
+                    administrativeArea: upload.administrativeArea,
                     city: upload.city,
                     countryCode: upload.countryCode,
                     source: upload.source,
@@ -368,10 +482,11 @@ actor RemoteAppRepository: AppRepository {
                 )
             )
         } catch where isRetryable(error) {
-            let ownerID = try activeUserID()
-            await mutationQueue.enqueue(.presence(upload), ownerID: ownerID)
+            try await queue(.presence(upload), context: context)
+            try check(context)
             var cached = try authenticatedCachedSnapshot()
             cached.currentPresence = CurrentUserPresence(
+                administrativeArea: upload.administrativeArea,
                 city: upload.city,
                 countryCode: upload.countryCode,
                 updatedAt: upload.clientUpdatedAt,
@@ -383,18 +498,26 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func registerPushToken(_ pushToken: String) async throws {
+        let context = try requestContext()
+        guard let owner = context.ownerID else { throw RepositoryError.notAuthenticated }
+        await lockMutations()
+        defer { unlockMutations() }
+        try check(context)
+        await mutationQueue.removeSuperseded(ownerID: owner, key: "push-token")
+        try check(context)
         do {
             let _: EmptyResponse = try await authorizedRequest(
                 path: "/v1/devices/push-token",
                 method: "PUT",
                 body: PushTokenBody(
                     token: pushToken,
+                    bundleID: pushConfiguration.bundleID,
                     environment: pushConfiguration.environment,
                     installationID: pushConfiguration.installationID
                 )
             )
         } catch where isRetryable(error) {
-            await mutationQueue.enqueue(.pushToken(pushToken), ownerID: try activeUserID())
+            try await queue(.pushToken(pushToken), context: context)
         }
     }
 
@@ -423,46 +546,119 @@ actor RemoteAppRepository: AppRepository {
         throw RepositoryError.unsupportedInCurrentMode
     }
 
+    func lookupFlight(tripID: String, flightNumber: String, date: String) async throws -> [FlightCandidate] {
+        let cleanNumber = flightNumber.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().replacingOccurrences(of: " ", with: "")
+        let response: FlightLookupResponse = try await authorizedRequest(
+            path: "/v1/trips/\(tripID)/flight-lookup",
+            method: "POST",
+            body: FlightLookupRequestBody(flightNumber: cleanNumber, date: date)
+        )
+        return response.flights
+    }
+
+    func fetchTrips() async throws -> [CloudTrip] {
+        let result: TripCloudList = try await authorizedRequest(path: "/v1/trips", method: "GET", body: Optional<EmptyBody>.none)
+        return result.trips
+    }
+
+    func fetchTravelPlans() async throws -> TravelPlanSnapshot {
+        try await authorizedRequest(path: "/v1/travel-plans", method: "GET", body: Optional<EmptyBody>.none)
+    }
+
+    func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {
+        try await authorizedRequest(path: "/v1/travel-plans/\(plan.id.uuidString)", method: "PUT", body: TravelPlanPayload(plan))
+    }
+
+    func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot {
+        struct DeleteBody: Encodable { let revision: Int }
+        return try await authorizedRequest(path: "/v1/travel-plans/\(id.uuidString)", method: "DELETE", body: DeleteBody(revision: revision))
+    }
+
+    func createTrip(_ payload: TripPayload) async throws -> CloudTrip {
+        try await authorizedRequest(path: "/v1/trips", method: "POST", body: payload)
+    }
+
+    func mutateTrip(id: String, mutation: TripMutation) async throws -> CloudTrip {
+        try await authorizedRequest(path: "/v1/trips/\(id)/mutations", method: "POST", body: mutation)
+    }
+
+    func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip {
+        guard ["preferences", "meeting", "check-in"].contains(action) else { throw RepositoryError.unsupportedInCurrentMode }
+        return try await authorizedRequest(path: "/v1/trips/\(id)/\(action)", method: "POST", body: payload)
+    }
+
+    func tripInvitations(tripID: String?) async throws -> [TripInvitation] {
+        let path = tripID.map { "/v1/trips/\($0)/invitations" } ?? "/v1/trip-invitations"
+        let result: TripInvitationList = try await authorizedRequest(path: path, method: "GET", body: Optional<EmptyBody>.none)
+        return result.invitations
+    }
+
+    func inviteToTrip(id: String, username: String) async throws -> CreatedTripInvitation {
+        try await authorizedRequest(path: "/v1/trips/\(id)/invitations", method: "POST", body: UsernameBody(username: username))
+    }
+
+    func acceptTripInvitation(id: UUID) async throws -> CloudTrip {
+        try await authorizedRequest(path: "/v1/trip-invitations/\(id.uuidString)/accept", method: "POST", body: EmptyBody())
+    }
+
+    func dismissTripInvitation(id: UUID, revoke: Bool) async throws {
+        let _: TripActionResult = try await authorizedRequest(
+            path: "/v1/trip-invitations/\(id.uuidString)/\(revoke ? "revoke" : "decline")", method: "POST", body: EmptyBody())
+    }
+
     private func requestSnapshot<Body: Encodable>(
-        path: String,
-        method: String,
-        body: Body?
+        path: String, method: String, body: Body?, allowsAuthTransition: Bool = false
     ) async throws -> AppSnapshot {
-        try await authorizedRequest(path: path, method: method, body: body)
+        try await authorizedRequest(path: path, method: method, body: body, allowsAuthTransition: allowsAuthTransition)
     }
 
     private func authorizedRequest<Response: Decodable, Body: Encodable>(
-        path: String,
-        method: String,
-        body: Body?
+        path: String, method: String, body: Body?, allowsAuthTransition: Bool = false
     ) async throws -> Response {
+        let context = try requestContext(authentication: allowsAuthTransition)
         let token = try await authentication.accessToken()
+        try check(context)
         do {
-            return try await client.request(path: path, method: method, body: body, bearerToken: token)
+            let response: Response = try await client.request(path: path, method: method, body: body, bearerToken: token)
+            try check(context)
+            return response
         } catch RepositoryError.sessionExpired {
+            try check(context)
             do {
                 let refreshedToken = try await authentication.refreshAccessToken()
-                return try await client.request(
-                    path: path,
-                    method: method,
-                    body: body,
-                    bearerToken: refreshedToken
-                )
-            } catch {
+                try check(context)
+                let response: Response = try await client.request(path: path, method: method, body: body, bearerToken: refreshedToken)
+                try check(context)
+                return response
+            } catch RepositoryError.sessionExpired {
+                try check(context)
                 try? await authentication.signOut()
+                try check(context)
                 throw RepositoryError.sessionExpired
+            } catch {
+                try check(context)
+                throw error
             }
+        } catch {
+            try check(context)
+            throw error
         }
     }
 
     private func flushPendingOperations(force: Bool = false) async throws {
-        guard (try? await authentication.accessToken()) != nil,
-              let ownerID = try? activeUserID() else { return }
+        let context = try requestContext()
+        guard let ownerID = context.ownerID else { return }
+        await lockMutations()
+        defer { unlockMutations() }
+        try check(context)
+        guard (try? await authentication.accessToken()) != nil else { return }
+        try check(context)
         let pending = force
             ? await mutationQueue.all(ownerID: ownerID)
             : await mutationQueue.due(ownerID: ownerID)
         var terminalError: Error?
         for mutation in pending {
+            try check(context)
             do {
                 switch mutation.payload {
                 case .presence(let upload):
@@ -470,6 +666,7 @@ actor RemoteAppRepository: AppRepository {
                         path: "/v1/presence/current",
                         method: "PUT",
                         body: CityBody(
+                            administrativeArea: upload.administrativeArea,
                             city: upload.city,
                             countryCode: upload.countryCode,
                             source: upload.source,
@@ -482,6 +679,7 @@ actor RemoteAppRepository: AppRepository {
                         method: "PUT",
                         body: PushTokenBody(
                             token: pushToken,
+                            bundleID: pushConfiguration.bundleID,
                             environment: pushConfiguration.environment,
                             installationID: pushConfiguration.installationID
                         )
@@ -497,6 +695,7 @@ actor RemoteAppRepository: AppRepository {
             } catch RepositoryError.sessionExpired {
                 throw RepositoryError.sessionExpired
             } catch {
+                try check(context)
                 if isRetryable(error) {
                     await mutationQueue.markFailed(id: mutation.id)
                     throw error
@@ -513,9 +712,10 @@ actor RemoteAppRepository: AppRepository {
             path: "/v1/devices/push-token",
             method: "DELETE",
             body: PushTokenRemovalBody(
+                bundleID: pushConfiguration.bundleID,
                 environment: pushConfiguration.environment,
                 installationID: pushConfiguration.installationID
-            )
+            ), allowsAuthTransition: true
         )
     }
 
@@ -570,6 +770,7 @@ actor RESTClient {
             throw RepositoryError.serverNotConfigured
         }
         var request = URLRequest(url: url)
+        if path == "/v1/profile" || path == "/v1/devices/push-token" { request.timeoutInterval = 15 }
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(publishableKey, forHTTPHeaderField: "apikey")
@@ -598,7 +799,8 @@ actor RESTClient {
             throw RepositoryError.invalidServerResponse
         }
         guard (200..<300).contains(http.statusCode) else {
-            if http.statusCode == 401 || http.statusCode == 403 {
+            // Trip 403 means membership/ownership denial, not an expired Auth session.
+            if http.statusCode == 401 || (http.statusCode == 403 && !path.hasPrefix("/v1/trip")) {
                 throw RepositoryError.sessionExpired
             }
             if http.statusCode == 408 || http.statusCode == 429 || (500..<600).contains(http.statusCode) {

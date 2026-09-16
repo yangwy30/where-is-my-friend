@@ -83,12 +83,10 @@ enum SolarAmbience {
 
 enum WidgetCityPresentation {
     static func sameCityFriends(in entry: FriendWidgetEntry) -> [FriendPresence] {
-        MockFriendData.sameCityFriends(
-            from: entry.friends,
-            currentCity: entry.currentCity,
-            currentCountryCode: entry.currentCountryCode,
-            now: entry.date
-        )
+        let presence = CurrentUserPresence(administrativeArea: entry.currentAdministrativeArea,
+            city: entry.currentCity, countryCode: entry.currentCountryCode,
+            updatedAt: entry.currentPresenceUpdatedAt, source: .foregroundLocation)
+        return entry.friends.filter { PresenceMatchPolicy.matches(presence, $0, at: entry.date) }
     }
 
     static func firstName(_ friend: FriendPresence) -> String {
@@ -122,12 +120,7 @@ private struct MediumFriendWidget: View {
 
     private var isSameCity: Bool {
         guard let friend = primaryFriend else { return false }
-        return CityIdentity.matches(
-            city: friend.city,
-            countryCode: friend.countryCode,
-            otherCity: entry.currentCity,
-            otherCountryCode: entry.currentCountryCode
-        ) || !sameCityFriends.isEmpty
+        return sameCityFriends.contains { $0.id == friend.id } || !sameCityFriends.isEmpty
     }
 
     var body: some View {
@@ -154,6 +147,7 @@ private struct MediumFriendWidget: View {
             CityEmblemView(
                 city: city,
                 countryCode: entry.currentCountryCode,
+                administrativeArea: entry.currentAdministrativeArea,
                 size: 86
             )
 
@@ -207,6 +201,7 @@ private struct MediumFriendWidget: View {
                 CityEmblemView(
                     city: userCity,
                     countryCode: entry.currentCountryCode,
+                    administrativeArea: entry.currentAdministrativeArea,
                     size: 68
                 )
 
@@ -250,6 +245,7 @@ private struct MediumFriendWidget: View {
                 CityEmblemView(
                     city: friend.city,
                     countryCode: friend.countryCode,
+                    administrativeArea: friend.administrativeArea,
                     size: 68
                 )
 
@@ -294,6 +290,7 @@ private struct SmallFriendWidget: View {
                     CityEmblemView(
                         city: city,
                         countryCode: entry.currentCountryCode,
+                        administrativeArea: entry.currentAdministrativeArea,
                         size: 70
                     )
 
@@ -316,6 +313,7 @@ private struct SmallFriendWidget: View {
                     CityEmblemView(
                         city: friend.city,
                         countryCode: friend.countryCode,
+                        administrativeArea: friend.administrativeArea,
                         size: 70
                     )
 
@@ -359,6 +357,7 @@ private struct LargeFriendWidget: View {
                         CityEmblemView(
                             city: hero.city,
                             countryCode: hero.countryCode,
+                            administrativeArea: hero.administrativeArea,
                             size: 80
                         )
 
@@ -388,6 +387,7 @@ private struct LargeFriendWidget: View {
                                 CityEmblemView(
                                     city: friend.city,
                                     countryCode: friend.countryCode,
+                                    administrativeArea: friend.administrativeArea,
                                     size: 48
                                 )
 
@@ -437,6 +437,7 @@ private struct SmallSameCityWidget: View {
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
+                        administrativeArea: entry.currentAdministrativeArea,
                         size: 70
                     )
 
@@ -473,6 +474,7 @@ private struct MediumSameCityWidget: View {
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
+                        administrativeArea: entry.currentAdministrativeArea,
                         size: 86
                     )
 
@@ -519,6 +521,7 @@ private struct LargeSameCityWidget: View {
                     CityEmblemView(
                         city: entry.currentCity,
                         countryCode: entry.currentCountryCode,
+                        administrativeArea: entry.currentAdministrativeArea,
                         size: 112
                     )
 
@@ -555,6 +558,7 @@ private struct WidgetTogetherEmptyState: View {
             CityEmblemView(
                 city: entry.currentCity,
                 countryCode: entry.currentCountryCode,
+                administrativeArea: entry.currentAdministrativeArea,
                 size: 68
             )
 
@@ -651,12 +655,7 @@ private struct LockScreenCircularFriendWidget: View {
     let entry: FriendWidgetEntry
 
     private var sameCityFriends: [FriendPresence] {
-        MockFriendData.sameCityFriends(
-            from: entry.friends,
-            currentCity: entry.currentCity,
-            currentCountryCode: entry.currentCountryCode,
-            now: entry.date
-        )
+        WidgetCityPresentation.sameCityFriends(in: entry)
     }
 
     private var city: String {
@@ -785,6 +784,7 @@ private struct WidgetEmptyState: View {
                 CityEmblemView(
                     city: city,
                     countryCode: entry.currentCountryCode,
+                    administrativeArea: entry.currentAdministrativeArea,
                     size: 68
                 )
 

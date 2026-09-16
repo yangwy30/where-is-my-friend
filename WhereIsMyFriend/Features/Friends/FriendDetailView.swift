@@ -37,6 +37,7 @@ struct FriendDetailView: View {
                     Toggle(isOn: sharesMyCityBinding) {
                         settingLabel("Share my city", note: "\(currentFriend.displayName) can see your latest city")
                     }
+                    .disabled(store.isSavingFriendPreference(for: friend.id))
                     .tint(WIFTheme.fresh)
                     .padding(15)
 
@@ -45,6 +46,7 @@ struct FriendDetailView: View {
                     Toggle(isOn: sameCityAlertBinding) {
                         settingLabel("Same-city alert", note: "Notify me when your cities overlap")
                     }
+                    .disabled(store.isSavingFriendPreference(for: friend.id))
                     .tint(WIFTheme.fresh)
                     .padding(15)
 
@@ -164,7 +166,7 @@ struct FriendDetailView: View {
 
     private var citySurface: some View {
         VStack(spacing: 12) {
-            CityEmblemView(city: currentFriend.city, countryCode: currentFriend.countryCode, size: 84)
+            CityEmblemView(city: currentFriend.city, countryCode: currentFriend.countryCode, administrativeArea: currentFriend.administrativeArea, size: 84)
 
             VStack(spacing: 4) {
                 Text(currentFriend.cityDisplay)

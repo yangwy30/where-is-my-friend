@@ -142,6 +142,25 @@ enum WIFTheme {
     }
 }
 
+/// Small travel accents that carry a little of TripFlights' energy without
+/// replacing Across Us' adaptive jade surfaces and typography.
+enum WIFTripTheme {
+    static let sky = Color.adaptive(
+        light: UIColor(red: 0.176, green: 0.502, blue: 0.710, alpha: 1),
+        dark: UIColor(red: 0.357, green: 0.741, blue: 0.922, alpha: 1)
+    )
+
+    static let warm = Color.adaptive(
+        light: UIColor(red: 0.773, green: 0.357, blue: 0.204, alpha: 1),
+        dark: UIColor(red: 0.973, green: 0.604, blue: 0.420, alpha: 1)
+    )
+
+    static let violet = Color.adaptive(
+        light: UIColor(red: 0.424, green: 0.357, blue: 0.690, alpha: 1),
+        dark: UIColor(red: 0.706, green: 0.620, blue: 0.933, alpha: 1)
+    )
+}
+
 /// A content backdrop with enough depth and color for Liquid Glass to refract.
 /// Controls float above this layer; the backdrop itself never behaves like a control.
 struct WIFAmbientBackground: View {

@@ -1,6 +1,10 @@
 # App Store and TestFlight metadata
 
-Prepared for **Across Us 0.1.0 (Build 7)** on August 27, 2026.
+## Current copy — September 15, 2026
+
+Use [the refreshed bilingual App introduction](APP_INTRO_20260915.md) for the current Friends, personal travel plans, Together soon, and shared Trips experience. New screenshots are under `app_store_screenshots/2026-09-15/`.
+
+The material below is **historical metadata**, prepared for **Across Us 0.1.0 (Build 7)** on August 27, 2026. It predates Trips and personal plans; its feature descriptions and privacy answers must not be reused as current submission copy.
 
 ## URLs
 

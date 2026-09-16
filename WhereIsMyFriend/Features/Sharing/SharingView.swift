@@ -8,6 +8,7 @@ struct CitySharingSheet: View {
     @EnvironmentObject private var locationService: CityLocationService
     @State private var pendingSharingEnabled: Bool?
     @State private var pendingBackgroundUpdates: Bool?
+    @State private var choosingManualCity = false
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,7 @@ struct CitySharingSheet: View {
                         .accessibilityIdentifier("backgroundUpdatesToggle")
                     }
                     .wifSettingsGlassCard()
+                    .disabled(store.isSavingSharingPreferences)
 
                     if locationService.authorizationStatus == .denied || locationService.authorizationStatus == .restricted {
                         VStack(alignment: .leading, spacing: 10) {
@@ -86,7 +88,7 @@ struct CitySharingSheet: View {
                             .font(.subheadline)
                             .foregroundStyle(WIFTheme.fresh)
 
-                        Text("Zero precise tracking. Only your coarse city name and update timestamp are shared. Exact GPS coordinates and route history are never uploaded or stored.")
+                        Text("Zero precise tracking. Only your city-level location and update timestamp are shared, including state or region when available. Exact GPS coordinates and route history are never uploaded or stored.")
                             .font(.footnote)
                             .foregroundStyle(WIFTheme.secondaryText)
                     }
@@ -108,6 +110,15 @@ struct CitySharingSheet: View {
         .presentationDetents([.fraction(0.68), .large])
         .presentationDragIndicator(.visible)
         .accessibilityIdentifier("citySharingSheet")
+        .sheet(isPresented: $choosingManualCity) {
+            TravelCityPicker { city in
+                let owner = store.snapshot.currentUser.id
+                Task {
+                    await store.updateCurrentCity(city: city.name, countryCode: city.countryCode, source: .manual,
+                        observedAt: Date(), expectedOwnerID: owner, administrativeArea: city.region)
+                }
+            }
+        }
     }
 
     private var cityHero: some View {
@@ -116,6 +127,7 @@ struct CitySharingSheet: View {
                 CityEmblemView(
                     city: store.currentCity,
                     countryCode: store.snapshot.currentPresence.countryCode,
+                    administrativeArea: store.snapshot.currentPresence.administrativeArea,
                     size: 80
                 )
 
@@ -125,6 +137,13 @@ struct CitySharingSheet: View {
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(2)
                         .minimumScaleFactor(0.8)
+
+                    if let region = store.snapshot.currentPresence.artworkRegion {
+                        Text("Part of \(region.displayName)")
+                            .font(.caption)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .accessibilityIdentifier("currentCityRegion")
+                    }
 
                     Text(sharingStatusText)
                         .font(.subheadline)
@@ -151,7 +170,8 @@ struct CitySharingSheet: View {
                             .font(.subheadline.weight(.semibold))
                     }
 
-                    Text(locationService.isResolving ? "Detecting current city…" : "Refresh location")
+                    Text(locationService.isResolving ? "Detecting current city…" :
+                         store.snapshot.currentPresence.source == .manual && store.currentCity != nil ? "Use device location" : "Refresh location")
                         .font(.subheadline.weight(.semibold))
                 }
                 .foregroundStyle(WIFTheme.fresh)
@@ -162,6 +182,18 @@ struct CitySharingSheet: View {
             .buttonStyle(.plain)
             .disabled(locationService.isResolving)
             .accessibilityIdentifier("refreshLocationButton")
+
+            Button { choosingManualCity = true } label: {
+                Label("Set city manually", systemImage: "magnifyingglass")
+                    .font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 44)
+            }
+            .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
+            .disabled(store.isWorking || locationService.isResolving)
+            .accessibilityIdentifier("manualCityButton")
+            if store.snapshot.currentPresence.source == .manual, store.currentCity != nil {
+                Text("Set manually. Use device location to resume automatic city detection.")
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }
         }
         .wifSettingsGlassCard(tint: sharingIsEnabled ? WIFTheme.fresh.opacity(0.12) : WIFTheme.surface.opacity(0.07))
         .animation(.spring(response: 0.42, dampingFraction: 0.8), value: sharingIsEnabled)
