@@ -1,5 +1,7 @@
 # Trip planning reminders and quieter UI
 
+Released later on September 17 in TestFlight **1.0.3 (14)** with the matching production backend. See [release verification](TESTFLIGHT_1_0_3_14.md). The implementation-stage notes below record the work before deployment.
+
 ## User-facing changes
 
 - Creator Trip options exposes **Delete trip**; **Cancel trip** is removed from the new UI. Members retain **Leave trip**. Old cancelled records remain readable, and the legacy cancellation API remains compatible with already-installed clients.
