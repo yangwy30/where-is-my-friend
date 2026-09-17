@@ -42,11 +42,11 @@ struct FriendTravelPlansView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Label("Shared plans are unavailable", systemImage: "wifi.exclamationmark").font(.headline)
                         Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                        Button("Retry sync") { Task { await library.refresh() } }.frame(minHeight: 44)
+                        Button("Try again") { Task { await library.refresh() } }.frame(minHeight: 44)
                     }
                     .accessibilityIdentifier("friendPlansError")
                 } else if library.isLoading && plans.isEmpty {
-                    ProgressView("Loading shared plans…").frame(maxWidth: .infinity).padding(.vertical, 32)
+                    ProgressView().frame(maxWidth: .infinity).padding(.vertical, 32)
                 } else if plans.isEmpty {
                     ContentUnavailableView {
                         Label("No shared plans yet", systemImage: "calendar")
@@ -164,14 +164,14 @@ private struct FriendTravelPlanDetailView: View {
                 }
                 .padding(WIFTheme.screenInset).padding(.top, 20)
             } else if library.isLoading {
-                ProgressView("Loading shared plans…").padding(40)
+                ProgressView().padding(40)
             } else {
                 ContentUnavailableView {
                     Label("This plan is unavailable", systemImage: "calendar.badge.exclamationmark")
                 } description: {
                     Text("The plan may have ended, or its owner changed sharing. Connect to refresh.")
                 } actions: {
-                    Button("Retry sync") { Task { await library.refresh() } }
+                    Button("Try again") { Task { await library.refresh() } }
                 }
                 .accessibilityIdentifier("friendPlanUnavailable")
             }

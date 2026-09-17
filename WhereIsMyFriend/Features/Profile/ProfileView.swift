@@ -841,7 +841,9 @@ private struct NotificationSettingsView: View {
                     }
                 }
 
-                deviceRegistrationCard
+                if store.repositoryMode == .remote && (store.pushRegistrationState == .failed || store.pushRegistrationState == .waitingForNetwork) {
+                    deviceRegistrationCard
+                }
 
                 Text("Invitations don’t depend on location sharing. Same-city and flight alerts follow your friend and Trip settings.")
                     .font(.footnote)
@@ -866,7 +868,7 @@ private struct NotificationSettingsView: View {
         HStack(spacing: 12) {
             Image(systemName: "iphone.radiowaves.left.and.right").foregroundStyle(WIFTheme.fresh)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Device registration").font(.headline)
+                Text("Notifications need attention").font(.headline)
                 Text(registrationDetail).font(.caption).foregroundStyle(WIFTheme.secondaryText)
             }
             Spacer(minLength: 4)
@@ -882,16 +884,7 @@ private struct NotificationSettingsView: View {
     }
 
     private var registrationDetail: String {
-        if store.repositoryMode == .localDemo { return "Demo mode · no remote delivery." }
-        if !notificationService.allowsNotifications { return "Enable iOS notification access to connect this device." }
-        switch store.pushRegistrationState {
-        case .notStarted: return "Not connected yet."
-        case .waitingForDeviceToken: return "Obtaining this device’s token from Apple…"
-        case .registering: return "Confirming registration with your account…"
-        case .waitingForNetwork: return "Waiting for a connection. You can retry."
-        case .registered: return "Registered with your account. iOS still controls notification delivery."
-        case .failed: return store.pushRegistrationError ?? "Setup could not be confirmed. Please retry."
-        }
+        String(localized: "Couldn’t enable notifications. Check your connection and try again.")
     }
 
     private var permissionStatusRow: some View {

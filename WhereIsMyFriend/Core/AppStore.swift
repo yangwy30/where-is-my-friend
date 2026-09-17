@@ -518,7 +518,7 @@ final class AppStore: ObservableObject {
     }
 
     func retryPendingOperations() async {
-        let synced = await perform(successMessage: String(localized: "Sync completed.")) {
+        let synced = await perform(successMessage: nil) {
             try await self.repository.retryPendingOperations()
         }
         if synced,

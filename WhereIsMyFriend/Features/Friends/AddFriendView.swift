@@ -8,8 +8,7 @@ struct InvitationNotificationStatusView: View {
 
     private var needsSetup: Bool {
         if !service.allowsNotifications { return true }
-        if case .registered = store.pushRegistrationState { return false }
-        return true
+        return store.pushRegistrationState == .failed
     }
 
     var body: some View {
@@ -20,7 +19,7 @@ struct InvitationNotificationStatusView: View {
                     Text(service.allowsNotifications ? "Finish notification setup" : "Get invitation notifications")
                         .font(.subheadline.weight(.semibold))
                     Text(service.allowsNotifications
-                         ? (store.pushRegistrationError ?? "Connecting this device for friend and Trip invitations…")
+                         ? "Notifications couldn’t be enabled. Try again."
                          : "Invitations stay in the app even when notifications are off.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 }

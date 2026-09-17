@@ -1,6 +1,126 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Flight planning reminders": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "机票安排提醒"
+        }
+      }
+    }
+  },
+  "A reminder at 9 AM in your local time, plus occasional nudges from this trip's members, until you add an outbound flight. Stops when the trip starts. Notifications must be enabled.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "在你所在地时间每天上午 9 点提醒，也可接收行程成员发来的提醒。添加去程航班或行程开始后停止。需开启系统通知。"
+        }
+      }
+    }
+  },
+  "Remind": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "提醒一下"
+        }
+      }
+    }
+  },
+  "Reminded": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已提醒"
+        }
+      }
+    }
+  },
+  "Already reminded": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "今天已提醒"
+        }
+      }
+    }
+  },
+  "Remind %@ to add a flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "提醒 %@ 添加航班"
+        }
+      }
+    }
+  },
+  "Flight reminder": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "机票提醒"
+        }
+      }
+    }
+  },
+  "A reminder isn’t available right now. They may have added a flight or may not be receiving reminders.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "暂时无法提醒，对方可能已添加航班或未开启提醒。"
+        }
+      }
+    }
+  },
+  "Couldn’t send the reminder. Please try again.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "未能发出提醒，请重试。"
+        }
+      }
+    }
+  },
+  "Notifications couldn’t be enabled. Try again.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "未能开启通知，请重试。"
+        }
+      }
+    }
+  },
+  "Notifications need attention": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "通知需要重新设置"
+        }
+      }
+    }
+  },
+  "Couldn’t enable notifications. Check your connection and try again.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "未能开启通知，请检查网络后重试。"
+        }
+      }
+    }
+  },
   "Cancel trip": {
     "localizations": {
       "zh-Hans": {

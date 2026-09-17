@@ -79,6 +79,7 @@ struct TripPlan: Identifiable, Codable {
     var flightAlertsEnabled: Bool? = nil
     var meetingPoint: String? = nil
     var cancelledAt: Date? = nil
+    var planningRemindersEnabled: Bool? = nil
 
     var destination: AirportLocation? { AirportLocation.location(for: destinationAirport) }
     var destinationName: String { destination?.city ?? destinationAirport }
@@ -207,18 +208,15 @@ final class TripLibrary: ObservableObject {
     @Published private(set) var syncFailed = false
     @Published private(set) var invitations: [TripInvitation] = []
     @Published private(set) var deviceDrafts: [TripPlan] = []
+    @Published private(set) var reminderInFlight: String?
+    @Published private(set) var remindedUntil: [String: Date] = [:]
+    private var reminderContextKey: String?
+    private var reminderOperationID: UUID?
     private var remote: (any AppRepository)?
     private var generation = 0
     private var lifecycleRequests: [String: UUID] = [:]
     private var importedDraftIDs: Set<String> = []
     var isCloud: Bool { remote != nil }
-    var syncLabel: String {
-        if !isCloud { return "Demo · saved on this device" }
-        if isSaving { return "Saving to your account…" }
-        if isRefreshing { return "Updating trips…" }
-        if syncFailed || lastSyncedAt == nil { return "Cached on this device · pull to retry sync" }
-        return "Synced to your account"
-    }
 
     func connect(_ repository: any AppRepository) { remote = repository.mode == .remote ? repository : nil }
     private let directory: URL
@@ -242,6 +240,10 @@ final class TripLibrary: ObservableObject {
         trips = []
         generation += 1
         lifecycleRequests = [:]
+        reminderContextKey = nil
+        remindedUntil = [:]
+        reminderInFlight = nil
+        reminderOperationID = nil
         errorMessage = nil
         scope = newScope
         cacheEpoch = AccountLocalData.epoch(for: newScope)
@@ -355,10 +357,10 @@ final class TripLibrary: ObservableObject {
         guard !isCloud, trips.isEmpty, let currentUserID, owner.userID == currentUserID else { return }
         var examples = TripPlan.examples(owner: owner)
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-previewTripMember"), !examples.isEmpty {
-            examples[0].creatorUserID = "example-other-owner"
-            if let index = examples[0].participants.firstIndex(where: { $0.id == "example-mia" }) {
-                examples[0].participants[index].userID = "example-other-owner"
+        if ProcessInfo.processInfo.arguments.contains("-previewTripMember") {
+            for index in examples.indices where ["example-west", "example-tokyo"].contains(examples[index].id) {
+                examples[index].creatorUserID = "example-other-owner"
+                if examples[index].participants.count > 1 { examples[index].participants[1].userID = "example-other-owner" }
             }
         }
         #endif
@@ -400,6 +402,16 @@ final class TripLibrary: ObservableObject {
             let incoming = try await remote.tripInvitations(tripID: nil)
             guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return }
             invitations = incoming
+            let locale = Locale.preferredLanguages.first?.hasPrefix("zh") == true ? "zh-Hans" : "en"
+            let timeZone = TimeZone.current.identifier
+            let key = "\(timeZone)|\(locale)"
+            if reminderContextKey != key {
+                do {
+                    try await remote.updateTripReminderContext(.init(timeZone: timeZone, locale: locale))
+                    guard scope == capturedScope, generation == capturedGeneration else { return }
+                    reminderContextKey = key
+                } catch { /* Passive enrollment retries on a later visit without a sync banner. */ }
+            }
         } catch {
             guard scope == capturedScope, generation == capturedGeneration else { return }
             syncFailed = true
@@ -422,15 +434,15 @@ final class TripLibrary: ObservableObject {
             guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return false }
             let plan = result.plan(userID: userID)
             let next = trips.filter { $0.id != plan.id } + [plan]
-            if !save(next) { trips = next; errorMessage = "Saved to your account, but the offline cache couldn't be updated." }
+            if !save(next) { trips = next; errorMessage = "Your changes were saved. Reopen the app if they do not appear." }
             syncFailed = false
             lastSyncedAt = Date()
             return true
         } catch {
             guard scope == capturedScope, generation == capturedGeneration else { return false }
             syncFailed = true
-            let reason = error as? RepositoryError == .networkUnavailable ? "You're offline. Reconnect and try again; this change isn't queued." : error.localizedDescription
-            errorMessage = "Cloud save wasn't confirmed. Your form has been kept. \(reason)"
+            let reason = error as? RepositoryError == .networkUnavailable ? "Reconnect and try again." : error.localizedDescription
+            errorMessage = "Couldn’t save yet. Your changes are still here. \(reason)"
             return false
         }
     }
@@ -443,8 +455,50 @@ final class TripLibrary: ObservableObject {
     }
 
     func setFlightAlerts(_ enabled: Bool, tripID: String) async -> Bool {
-        guard isCloud else { return false }
+        guard let trip = trips.first(where: { $0.id == tripID }), selfParticipant(in: trip) != nil, trip.cancelledAt == nil else { return false }
+        if !isCloud { return update(tripID) { $0.flightAlertsEnabled = enabled } }
         return await cloudSave { try await $0.updateTripCollaboration(id: tripID, action: "preferences", payload: .init(enabled: enabled)) }
+    }
+
+    func setPlanningReminders(_ enabled: Bool, tripID: String) async -> Bool {
+        guard let trip = trips.first(where: { $0.id == tripID }), selfParticipant(in: trip) != nil, trip.cancelledAt == nil else { return false }
+        if !isCloud { return update(tripID) { $0.planningRemindersEnabled = enabled } }
+        return await cloudSave { try await $0.updateTripCollaboration(id: tripID, action: "planning-reminders", payload: .init(enabled: enabled)) }
+    }
+
+    func canRemind(_ person: TripParticipant, in trip: TripPlan, at now: Date = Date()) -> Bool {
+        trip.phase(at: now) == .upcoming && trip.participants.contains { $0.id == person.id } && selfParticipant(in: trip) != nil
+            && person.id != selfParticipant(in: trip)?.id && (person.userID != nil || trip.isExample)
+            && !trip.flights.contains { $0.travelerID == person.id && $0.direction == .outbound }
+    }
+
+    func reminderKey(tripID: String, participantID: String) -> String { "\(tripID)|\(participantID)" }
+
+    func remind(_ person: TripParticipant, tripID: String) async -> TripReminderResult? {
+        guard let trip = trips.first(where: { $0.id == tripID }), canRemind(person, in: trip), reminderInFlight == nil else { return nil }
+        let key = reminderKey(tripID: tripID, participantID: person.id)
+        if let until = remindedUntil[key], until > Date() { return .init(status: "cooldown", nextAllowedAt: nil) }
+        let capturedScope = scope, capturedGeneration = generation
+        let operationID = UUID()
+        reminderOperationID = operationID
+        reminderInFlight = key
+        defer {
+            if reminderOperationID == operationID { reminderInFlight = nil; reminderOperationID = nil }
+        }
+        do {
+            let result: TripReminderResult
+            if let remote { result = try await remote.remindTripMember(tripID: tripID, participantID: person.id) }
+            else { result = .init(status: "queued", nextAllowedAt: nil) }
+            guard scope == capturedScope, generation == capturedGeneration else { return nil }
+            if result.status == "queued" || result.status == "cooldown" {
+                remindedUntil[key] = CloudTrip.timestamp(result.nextAllowedAt) ?? Date().addingTimeInterval(24 * 3600)
+            }
+            return result
+        } catch {
+            guard scope == capturedScope, generation == capturedGeneration else { return nil }
+            errorMessage = String(localized: "Couldn’t send the reminder. Please try again.")
+            return nil
+        }
     }
 
     func saveMeetingPoint(_ point: String, tripID: String, revision: Int?) async -> Bool {
@@ -543,7 +597,7 @@ final class TripLibrary: ObservableObject {
             guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return false }
             guard result.success else { throw RepositoryError.message(String(localized: "The trip change was not confirmed.")) }
             let next = trips.filter { $0.id != tripID } + (result.trip.map { [$0.plan(userID: userID)] } ?? [])
-            if !save(next) { trips = next; errorMessage = "Saved to your account, but the offline cache couldn't be updated." }
+            if !save(next) { trips = next; errorMessage = "Your changes were saved. Reopen the app if they do not appear." }
             lifecycleRequests.removeValue(forKey: key)
             invitations.removeAll { $0.trip_id == tripID }
             lastSyncedAt = Date()

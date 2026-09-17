@@ -68,7 +68,7 @@ struct TripsView: View {
                     }
                 }
                 if library.scope != scope {
-                    ProgressView("Loading your trips")
+                    ProgressView()
                 } else if library.trips.isEmpty {
                     emptyState
                 } else {
@@ -96,9 +96,6 @@ struct TripsView: View {
                             }
                         }
                     }
-                    Label(library.syncLabel, systemImage: library.isCloud ? "icloud" : "iphone")
-                        .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
-                        .frame(maxWidth: .infinity)
                 }
             }
             .foregroundStyle(WIFTheme.primaryText)
@@ -178,8 +175,6 @@ struct TripsView: View {
                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 .frame(minHeight: 44).buttonStyle(.plain)
                 .accessibilityIdentifier("loadExampleTripsButton")
-            } else {
-                Text(library.syncLabel).font(.caption).foregroundStyle(WIFTheme.secondaryText)
             }
         }
         .frame(maxWidth: .infinity).padding(.vertical, 48)
@@ -283,7 +278,7 @@ private struct TripDetailView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("People", systemImage: "person.2") { showsPeople = true }
-                        if library.isCloud, trip.cancelledAt == nil {
+                        if trip.cancelledAt == nil {
                             Button("Notifications", systemImage: "bell") { showsNotifications = true }
                         }
                         if library.canEdit(trip) {
@@ -298,12 +293,6 @@ private struct TripDetailView: View {
                         }
                         Divider()
                         if library.canManage(trip) {
-                            if trip.cancelledAt == nil {
-                                Button("Cancel trip", systemImage: "xmark.circle", role: .destructive) {
-                                    lifecycleRevision = trip.revision; lifecycleAction = .cancel
-                                }
-                                .accessibilityIdentifier("cancelTripButton")
-                            }
                             Button("Delete trip", systemImage: "trash", role: .destructive) {
                                 lifecycleRevision = trip.revision; lifecycleAction = .delete
                             }
@@ -335,7 +324,7 @@ private struct TripDetailView: View {
             } message: { action in
                 Text(lifecycleMessage(action))
             }
-            .overlay { if library.isSaving { ProgressView("Saving…").padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)) } }
+            .overlay { if library.isSaving { ProgressView().padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)) } }
             .confirmationDialog("Finish this trip?", isPresented: $showsCompleteConfirmation, titleVisibility: .visible) {
                 Button("Mark complete") { Task { _ = await library.setComplete(tripID, at: Date()) } }
             } message: {
@@ -635,6 +624,8 @@ private struct FullTripArrivalBoard: View {
                     .font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
                     .frame(minWidth: 44, minHeight: 44)
                     .accessibilityIdentifier("tripNeedsHelpCard")
+            } else if direction == .outbound, library.canRemind(person, in: trip) {
+                TripReminderButton(library: library, trip: trip, person: person)
             } else {
                 Image(systemName: "clock").font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     .accessibilityHidden(true)
@@ -1554,8 +1545,6 @@ private struct AddTripFlightSheet: View {
                     }
                     .buttonStyle(.plain).disabled(!isValid || isSearching || isSaving)
                     .accessibilityIdentifier("confirmAddTripFlightButton")
-                    Text(isSaving ? "Saving…" : (store.repositoryMode == .remote ? "Saved to your account · visible to trip members" : "Demo · saved on this device"))
-                        .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                 }
                 .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 16)
                 .background(WIFTheme.canvas)

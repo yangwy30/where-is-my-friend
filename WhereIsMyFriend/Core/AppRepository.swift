@@ -74,6 +74,8 @@ protocol AppRepository: Sendable {
     func createTrip(_ payload: TripPayload) async throws -> CloudTrip
     func mutateTrip(id: String, mutation: TripMutation) async throws -> CloudTrip
     func changeTripLifecycle(id: String, payload: TripLifecyclePayload) async throws -> TripLifecycleResult
+    func updateTripReminderContext(_ context: TripReminderContext) async throws
+    func remindTripMember(tripID: String, participantID: String) async throws -> TripReminderResult
     func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip
     func tripInvitations(tripID: String?) async throws -> [TripInvitation]
     func inviteToTrip(id: String, username: String) async throws -> CreatedTripInvitation
@@ -119,6 +121,8 @@ extension AppRepository {
     func createTrip(_ payload: TripPayload) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
     func mutateTrip(id: String, mutation: TripMutation) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
     func changeTripLifecycle(id: String, payload: TripLifecyclePayload) async throws -> TripLifecycleResult { throw RepositoryError.unsupportedInCurrentMode }
+    func updateTripReminderContext(_ context: TripReminderContext) async throws { throw RepositoryError.unsupportedInCurrentMode }
+    func remindTripMember(tripID: String, participantID: String) async throws -> TripReminderResult { throw RepositoryError.unsupportedInCurrentMode }
     func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip { throw RepositoryError.unsupportedInCurrentMode }
     func tripInvitations(tripID: String?) async throws -> [TripInvitation] { throw RepositoryError.unsupportedInCurrentMode }
     func inviteToTrip(id: String, username: String) async throws -> CreatedTripInvitation { throw RepositoryError.unsupportedInCurrentMode }

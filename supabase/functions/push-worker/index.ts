@@ -5,8 +5,10 @@ import { deliverUpcoming, normalizeAPNsPrivateKey } from "../_shared/travel-plan
 import { deliverTripInvitations } from "../_shared/trip-invitations.mjs";
 import { deliverFriendInvitations } from "../_shared/friend-invitations.mjs";
 
+import { deliverTripBookingReminders } from "../_shared/trip-booking-reminders.mjs";
+
 type ClaimedDelivery = {
-    kind?: "upcoming" | "trip-invitation" | "friend-invitation";
+    kind?: "upcoming" | "trip-invitation" | "friend-invitation" | "trip-reminder";
     expires_at?: number;
     delivery_id: string;
     device_id: string;
@@ -73,6 +75,13 @@ async function complete(
     claimToken: string,
     result: { outcome: string; error?: string; apnsID?: string | null; retryAfterSeconds?: number | null; disableDevice?: boolean },
 ) {
+    if (delivery.kind === "trip-reminder") {
+        const { error } = await database.rpc("wif_trip_booking_complete", {
+            p_id: delivery.delivery_id, p_token: claimToken, p_outcome: result.outcome, p_disable_device: result.disableDevice ?? false,
+        });
+        if (error) throw new Error("Could not complete trip reminder.");
+        return;
+    }
     if (delivery.kind === "friend-invitation") {
         const { error } = await database.rpc("wif_friend_invitation_complete", {
             p_id: delivery.delivery_id, p_token: claimToken, p_outcome: result.outcome,
@@ -122,6 +131,14 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
             }
         }
         const token = await providerToken();
+        if (delivery.kind === "trip-reminder") {
+            const check = await database.rpc("wif_trip_booking_allowed", {p_id:delivery.event_id,p_device:delivery.device_id});
+            if (check.error) throw new Error("Could not verify trip reminder eligibility.");
+            if (check.data !== true) {
+                await complete(delivery,claimToken,{outcome:"failed"});
+                return "failed";
+            }
+        }
         const deviceToken = await decryptAPNSToken(delivery.encrypted_apns_token, encryptionKey!);
         const host = delivery.environment === "sandbox"
             ? "https://api.sandbox.push.apple.com"
@@ -134,7 +151,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
                 "apns-topic": delivery.bundle_id,
                 "apns-push-type": "alert",
                 "apns-priority": "10",
-                "apns-expiration": delivery.kind === "trip-invitation" || delivery.kind === "friend-invitation" ? String(delivery.expires_at ?? 0) : "0",
+                "apns-expiration": delivery.kind === "trip-invitation" || delivery.kind === "friend-invitation" || delivery.kind === "trip-reminder" ? String(delivery.expires_at ?? 0) : "0",
                 "apns-collapse-id": delivery.event_id,
                 "content-type": "application/json",
             },
@@ -142,7 +159,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
                 aps: {
                     alert: { title: delivery.title, body: delivery.body },
                     sound: "default",
-                    "thread-id": delivery.kind === "friend-invitation" ? "friend-invitations" : delivery.kind === "trip-invitation" ? "trip-invitations" : delivery.kind === "upcoming" ? "upcoming" : "colocation",
+                    "thread-id": delivery.kind === "trip-reminder" ? "trip-reminders" : delivery.kind === "friend-invitation" ? "friend-invitations" : delivery.kind === "trip-invitation" ? "trip-invitations" : delivery.kind === "upcoming" ? "upcoming" : "colocation",
                 },
                 deepLink: delivery.deep_link,
                 eventID: delivery.event_id,
@@ -188,6 +205,12 @@ Deno.serve(async request => {
     }
 
     const claimToken = crypto.randomUUID();
+    if (options?.action === "trip-reminders") {
+        try {
+            const outcomes = await deliverTripBookingReminders(database,claimToken,(delivery: ClaimedDelivery) => send(delivery,claimToken));
+            return json({claimed:outcomes.length,delivered:outcomes.filter(value=>value==="delivered").length});
+        } catch { return json({message:"Trip reminder queue unavailable."},503); }
+    }
     const { data, error } = options?.action === "invitations" ? {data: [], error: null} : await database.rpc("wif_claim_notification_deliveries", {
         p_limit: 20,
         p_claim_token: claimToken,
@@ -211,7 +234,12 @@ Deno.serve(async request => {
     try {
         if (options?.action !== "invitations") outcomes.push(...await deliverUpcoming(database, claimToken, (delivery: ClaimedDelivery) => send(delivery, claimToken)));
     } catch { upcomingError = true; }
+    let bookingReminderError = false;
+    try {
+        if (options?.action !== "invitations") outcomes.push(...await deliverTripBookingReminders(database,claimToken,(delivery: ClaimedDelivery) => send(delivery,claimToken)));
+    } catch { bookingReminderError = true; }
     return json({
+        bookingReminderError,
         friendInvitationError,
         upcomingError,
         invitationError,

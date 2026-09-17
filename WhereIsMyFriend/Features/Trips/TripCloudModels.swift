@@ -4,6 +4,16 @@ struct TripCloudList: Decodable { let trips: [CloudTrip] }
 struct TripInvitationList: Decodable { let invitations: [TripInvitation] }
 struct TripActionResult: Decodable { let success: Bool }
 
+struct TripReminderResult: Decodable, Sendable {
+    let status: String
+    var nextAllowedAt: String? = nil
+}
+
+struct TripReminderContext: Encodable, Sendable {
+    let timeZone: String
+    let locale: String
+}
+
 enum TripLifecycleAction: String, Encodable, Sendable {
     case leave, cancel, delete, removeMember
 }
@@ -61,6 +71,7 @@ struct CloudTrip: Decodable, Sendable {
     var flight_alerts_enabled: Bool? = nil
     var meeting_point: String? = nil
     var cancelled_at: String? = nil
+    var planning_reminders_enabled: Bool? = nil
 
     struct Person: Decodable, Sendable {
         let id: String
@@ -110,7 +121,7 @@ struct CloudTrip: Decodable, Sendable {
             startDay: TripDay(value: start_date), endDay: TripDay(value: end_date), participants: people,
             flights: mappedFlights, completedAt: Self.timestamp(completed_at), creatorUserID: my_role == "owner" ? userID : nil,
             revision: revision, flightAlertsEnabled: flight_alerts_enabled, meetingPoint: meeting_point,
-            cancelledAt: Self.timestamp(cancelled_at))
+            cancelledAt: Self.timestamp(cancelled_at), planningRemindersEnabled: planning_reminders_enabled)
     }
 
     static func timestamp(_ value: String?) -> Date? {

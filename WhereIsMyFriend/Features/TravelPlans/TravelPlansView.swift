@@ -22,7 +22,7 @@ struct TravelPlansView: View {
                 if let error = library.errorMessage {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(error).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        Button("Retry sync") { Task { await library.refresh() } }
+                        Button("Try again") { Task { await library.refresh() } }
                     }
                 }
                 if visiblePlans.isEmpty {
@@ -63,8 +63,6 @@ struct TravelPlansView: View {
                 }
                 Button { importingTrip = true } label: { Label("Use dates from a Trip", systemImage: "airplane") }
                     .font(.subheadline).frame(maxWidth: .infinity, minHeight: 44)
-                Text(library.isDemo ? "Demo · sample friend dates" : library.hasSynced ? "Saved to your account · synced across devices" : "Cached plans · connect to refresh")
-                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 Text("Plans don’t change your current city. Only the friends you choose can match with you.")
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
             }
@@ -415,7 +413,7 @@ struct UpcomingTogetherCard: View {
                             Label("Say hello", systemImage: "bubble.left")
                         }.buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("upcomingSayHello")
                     } else if selectedID != nil {
-                        if library.isLoading { ProgressView("Loading shared dates…") }
+                        if library.isLoading { ProgressView() }
                         else { Text("This overlap is no longer available. Plans or sharing may have changed.").font(.subheadline).multilineTextAlignment(.center) }
                     } else {
                         ForEach(overlaps) { overlap in

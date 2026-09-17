@@ -7,16 +7,17 @@ struct TripNotificationsSheet: View {
     @ObservedObject var library: TripLibrary
     let trip: TripPlan
     @State private var isChangingAlerts = false
+    private var currentTrip: TripPlan { library.trips.first { $0.id == trip.id } ?? trip }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Toggle("Friends' flight alerts", isOn: Binding(get: { trip.flightAlertsEnabled ?? false }, set: { enabled in
+                    Toggle("Friends' flight alerts", isOn: Binding(get: { currentTrip.flightAlertsEnabled ?? false }, set: { enabled in
                         isChangingAlerts = true
                         Task {
                             let saved = await library.setFlightAlerts(enabled, tripID: trip.id)
-                            if saved && enabled { await store.requestNotificationAuthorization() }
+                            if saved && enabled && library.isCloud { await store.requestNotificationAuthorization() }
                             isChangingAlerts = false
                         }
                     }))
@@ -25,6 +26,21 @@ struct TripNotificationsSheet: View {
                     .accessibilityIdentifier("tripFlightAlertsToggle")
                 } footer: {
                     Text("For this trip only: arrival delays of 30+ minutes, cancellations and landings.")
+                }
+                Section {
+                    Toggle("Flight planning reminders", isOn: Binding(get: { currentTrip.planningRemindersEnabled ?? true }, set: { enabled in
+                        isChangingAlerts = true
+                        Task {
+                            let saved = await library.setPlanningReminders(enabled, tripID: trip.id)
+                            if saved && enabled && library.isCloud { await store.requestNotificationAuthorization() }
+                            isChangingAlerts = false
+                        }
+                    }))
+                    .disabled(library.isSaving || isChangingAlerts)
+                    .tint(WIFTheme.fresh)
+                    .accessibilityIdentifier("tripPlanningRemindersToggle")
+                } footer: {
+                    Text("A reminder at 9 AM in your local time, plus occasional nudges from this trip's members, until you add an outbound flight. Stops when the trip starts. Notifications must be enabled.")
                 }
             }
             .scrollContentBackground(.hidden)
@@ -38,7 +54,44 @@ struct TripNotificationsSheet: View {
             }
         }
         .tint(WIFTheme.fresh)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
+    }
+}
+
+struct TripReminderButton: View {
+    @ObservedObject var library: TripLibrary
+    let trip: TripPlan
+    let person: TripParticipant
+    @State private var message: String?
+
+    private var recentlyReminded: Bool {
+        (library.remindedUntil[library.reminderKey(tripID: trip.id, participantID: person.id)] ?? .distantPast) > Date()
+    }
+
+    var body: some View {
+        Button {
+            Task {
+                let result = await library.remind(person, tripID: trip.id)
+                if result?.status == "unavailable" {
+                    message = String(localized: "A reminder isn’t available right now. They may have added a flight or may not be receiving reminders.")
+                } else if result == nil {
+                    message = library.errorMessage ?? String(localized: "Couldn’t send the reminder. Please try again.")
+                    library.errorMessage = nil
+                }
+            }
+        } label: {
+            Label(recentlyReminded ? "Reminded" : "Remind", systemImage: recentlyReminded ? "checkmark" : "bell.badge")
+                .font(.caption.weight(.semibold))
+                .frame(minWidth: 44, minHeight: 44)
+        }
+        .buttonStyle(.borderless)
+        .foregroundStyle(recentlyReminded ? WIFTheme.secondaryText : WIFTheme.fresh)
+        .disabled(recentlyReminded || library.reminderInFlight != nil || library.isSaving)
+        .accessibilityLabel(recentlyReminded ? "Already reminded" : "Remind \(person.name) to add a flight")
+        .accessibilityIdentifier("remindTripMember-\(person.id)")
+        .alert("Flight reminder", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: { Text(message ?? "") }
     }
 }
 
@@ -213,8 +266,6 @@ struct TripPlanningSheet: View {
                     }
                     .buttonStyle(.plain).disabled(!canSave || isSaving)
                     .accessibilityIdentifier("saveTripButton")
-                    Text(isSaving ? "Saving…" : (isCloud ? "Saved to your account · available across devices" : "Demo · saved on this device"))
-                        .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                 }
                 .padding(20).background(WIFTheme.canvas)
             }
@@ -358,6 +409,9 @@ struct TripPeopleSheet: View {
                             Text(person.userID != nil && person.userID == currentUserID ? "You" :
                                  (trip.isExample ? "Example" : (person.userID == nil ? "Unclaimed" : "Member")))
                                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            if library.canRemind(person, in: currentTrip) {
+                                TripReminderButton(library: library, trip: currentTrip, person: person)
+                            }
                             if library.canManage(currentTrip), person.userID == nil || person.userID != currentUserID {
                                 Button(role: .destructive) {
                                     removalRevision = currentTrip.revision

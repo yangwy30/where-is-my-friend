@@ -253,3 +253,19 @@ test('lifecycle HTTP actions reject spoofed actors and malformed fields and bind
  const stale=await harness({databaseError:{code:'P0001',message:'Trip conflict. Refresh before trying again.'}});
  assert.equal((await stale.request('POST',path,{action:'delete',requestID,revision:4})).status,409);
 });
+
+test('booking reminder APIs use verified actor and only recipient/context/preferences fields',async()=>{
+ const {request,calls}=await harness();
+ for(const [path,body,rpc] of [
+  ['/v1/trip-reminders/context',{timeZone:'America/Los_Angeles',locale:'en'},'wif_trip_reminder_context'],
+  ['/v1/trips/trip-one/reminders',{participantID},'wif_trip_remind_member'],
+  ['/v1/trips/trip-one/planning-reminders',{enabled:false},'wif_trip_planning_preferences'],
+ ]){
+  assert.equal((await request('POST',path,body,'')).status,401);
+  assert.equal((await request('POST',path,{...body,userID})).status,400);
+  assert.equal((await request('POST',path,body)).status,200);
+  assert.equal(calls.at(-1).name,rpc);assert.equal(calls.at(-1).parameters.p_user_id,userID);
+ }
+ assert.equal((await request('POST','/v1/trips/trip-one/reminders',{participantID:'invalid'})).status,400);
+ assert.equal((await request('POST','/v1/trips/trip-one/planning-reminders',{enabled:'true'})).status,400);
+});

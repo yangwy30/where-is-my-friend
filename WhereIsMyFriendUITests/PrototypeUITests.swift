@@ -1,7 +1,41 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
-    func testTripOwnerRemovesMemberCancelsAndDeletesWithConfirmation() {
+    func testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter() {
+        continueAfterFailure = false
+        let app = tripsApp(asMember: true)
+        XCTAssertTrue(app.buttons["tripCard-example-west"].waitForExistence(timeout: 8))
+        XCTAssertFalse(app.staticTexts["Updating trips…"].exists)
+        XCTAssertFalse(app.staticTexts["Synced to your account"].exists)
+        let trip = app.buttons["tripCard-example-tokyo"]
+        for _ in 0..<4 where !trip.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        XCTAssertTrue(trip.exists); trip.tap()
+        let remind = app.buttons["remindTripMember-example-lin"]
+        XCTAssertTrue(remind.waitForExistence(timeout: 5))
+        XCTAssertTrue(remind.isEnabled); remind.tap()
+        XCTAssertTrue(remind.waitForExistence(timeout: 3))
+        XCTAssertFalse(remind.isEnabled)
+        capture("trip-flight-reminder-sent")
+        app.buttons["tripOptionsButton"].tap()
+        XCTAssertFalse(app.buttons["cancelTripButton"].exists)
+        XCTAssertFalse(app.buttons["deleteTripButton"].exists)
+        app.buttons["Notifications"].tap()
+        let toggle = app.switches["tripPlanningRemindersToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 4))
+        capture("trip-flight-planning-reminders-before-toggle")
+        // SwiftUI exposes the whole labeled row; tap the actual switch at its trailing edge.
+        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        let switchedOff = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "0"), object: toggle)
+        let toggleResult = XCTWaiter.wait(for: [switchedOff], timeout: 3)
+        capture("trip-flight-planning-reminders-settings")
+        XCTAssertEqual(toggleResult, .completed)
+        app.buttons["Done"].tap()
+        app.buttons["tripPeopleButton"].tap()
+        XCTAssertTrue(app.buttons["remindTripMember-example-alex"].waitForExistence(timeout: 4))
+        capture("trip-people-reminders")
+    }
+
+    func testTripOwnerRemovesMemberAndDeletesWithConfirmation() {
         continueAfterFailure = false
         let app = tripsApp()
         let trip = app.buttons["tripCard-example-west"]
@@ -19,23 +53,12 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["tripPeopleButton"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["tripPeopleButton"].label.contains("4 people"))
         app.buttons["tripOptionsButton"].tap()
-        app.buttons["cancelTripButton"].tap()
-        app.buttons["Keep trip"].tap()
-        XCTAssertFalse(app.descendants(matching: .any)["cancelledTripStatus"].exists)
-        app.buttons["tripOptionsButton"].tap()
-        app.buttons["cancelTripButton"].tap()
-        capture("trip-cancel-confirmation")
-        app.buttons["Cancel trip"].tap()
-        XCTAssertTrue(app.descendants(matching: .any)["cancelledTripStatus"].waitForExistence(timeout: 4))
-        XCTAssertFalse(app.buttons["addBoardFlightButton"].exists)
-        capture("trip-cancelled-read-only")
-        app.buttons["tripOptionsButton"].tap()
-        XCTAssertFalse(app.buttons["Undo completion"].exists)
-        XCTAssertFalse(app.buttons["Edit trip"].exists)
+        XCTAssertFalse(app.buttons["cancelTripButton"].exists)
+        XCTAssertFalse(app.buttons["Cancel trip"].exists)
         app.buttons["deleteTripButton"].tap()
         capture("trip-delete-confirmation")
         app.buttons["Keep trip"].tap()
-        XCTAssertTrue(app.descendants(matching: .any)["cancelledTripStatus"].exists)
+        XCTAssertTrue(app.buttons["tripPeopleButton"].exists)
         app.buttons["tripOptionsButton"].tap()
         app.buttons["deleteTripButton"].tap()
         app.buttons["Delete trip"].tap()
@@ -657,13 +680,13 @@ final class PrototypeUITests: XCTestCase {
 
         XCTAssertTrue(app.descendants(matching: .any)["notificationSettingsScreen"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any)["notificationPermissionCard"].exists)
-        XCTAssertTrue(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
         XCTAssertFalse(app.buttons["retryPushRegistrationButton"].exists)
         let previews = app.switches["notificationPreviewsToggle"]
         XCTAssertTrue(previews.exists)
         previews.switches.firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["notificationPermissionCard"].exists)
-        XCTAssertTrue(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["devicePushRegistrationCard"].exists)
         capture("notification-setup-with-private-previews")
     }
 

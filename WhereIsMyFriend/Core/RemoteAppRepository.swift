@@ -586,8 +586,17 @@ actor RemoteAppRepository: AppRepository {
         try await authorizedRequest(path: "/v1/trips/\(id)/lifecycle", method: "POST", body: payload)
     }
 
+    func updateTripReminderContext(_ context: TripReminderContext) async throws {
+        let _: TripActionResult = try await authorizedRequest(path: "/v1/trip-reminders/context", method: "POST", body: context)
+    }
+
+    func remindTripMember(tripID: String, participantID: String) async throws -> TripReminderResult {
+        struct Target: Encodable, Sendable { let participantID: String }
+        return try await authorizedRequest(path: "/v1/trips/\(tripID)/reminders", method: "POST", body: Target(participantID: participantID))
+    }
+
     func updateTripCollaboration(id: String, action: String, payload: TripCollaborationPayload) async throws -> CloudTrip {
-        guard ["preferences", "meeting", "check-in"].contains(action) else { throw RepositoryError.unsupportedInCurrentMode }
+        guard ["preferences", "meeting", "check-in", "planning-reminders"].contains(action) else { throw RepositoryError.unsupportedInCurrentMode }
         return try await authorizedRequest(path: "/v1/trips/\(id)/\(action)", method: "POST", body: payload)
     }
 

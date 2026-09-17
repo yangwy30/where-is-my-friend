@@ -137,8 +137,8 @@ async function rpc(name: string, parameters: JsonRecord): Promise<unknown> {
     return data;
 }
 
-function wakeInvitations() {
-    wakeInvitationWorker({baseURL: supabaseURL, secret: Deno.env.get("PUSH_WORKER_SECRET"),
+function wakeInvitations(action: "invitations" | "trip-reminders" = "invitations") {
+    wakeInvitationWorker({action, baseURL: supabaseURL, secret: Deno.env.get("PUSH_WORKER_SECRET"),
         waitUntil: typeof EdgeRuntime !== "undefined" ? (task: Promise<unknown>) => EdgeRuntime.waitUntil(task) : undefined});
 }
 
@@ -234,6 +234,12 @@ async function handle(request: Request): Promise<Response> {
         if (!isUUID(segments[2])) throw new APIError(400, "Invalid invitation ID.");
         return json(await rpc("wif_trip_accept_invitation", { p_user_id: userID, p_invitation_id: segments[2] }));
     }
+    if (request.method === "POST" && path === "/v1/trip-reminders/context") {
+        const body = await readBody(request);
+        if (Object.keys(body).some(key => !["timeZone", "locale"].includes(key))) throw new APIError(400, "Invalid reminder fields.");
+        return json({success: await rpc("wif_trip_reminder_context", {p_user_id:userID,
+            p_time_zone:requiredString(body,"timeZone"), p_locale:requiredString(body,"locale")})});
+    }
     if (request.method === "GET" && path === "/v1/trips") {
         return json({ trips: await rpc("wif_trip_list", { p_user_id: userID }) });
     }
@@ -251,6 +257,18 @@ async function handle(request: Request): Promise<Response> {
     if (segments[0] === "v1" && segments[1] === "trips" && segments.length >= 3) {
         const tripID = segments[2];
         if (!/^[A-Za-z0-9_-]{1,100}$/.test(tripID)) throw new APIError(400, "Invalid trip ID.");
+        if (request.method === "POST" && segments.length === 4 && segments[3] === "reminders") {
+            const body = await readBody(request);
+            if (Object.keys(body).some(key => key !== "participantID") || !isUUID(body.participantID)) throw new APIError(400,"Invalid reminder target.");
+            const result = await rpc("wif_trip_remind_member", {p_user_id:userID,p_trip_id:tripID,p_participant_id:body.participantID}) as {status:string};
+            if (result.status === "queued") wakeInvitations("trip-reminders");
+            return json(result);
+        }
+        if (request.method === "POST" && segments.length === 4 && segments[3] === "planning-reminders") {
+            const body = await readBody(request);
+            if (Object.keys(body).some(key => key !== "enabled")) throw new APIError(400,"Invalid reminder fields.");
+            return json(await rpc("wif_trip_planning_preferences", {p_user_id:userID,p_trip_id:tripID,p_enabled:requiredBoolean(body,"enabled")}));
+        }
         if (request.method === "POST" && segments.length === 4 && segments[3] === "lifecycle") {
             const body = await readBody(request);
             const action = requiredString(body, "action");

@@ -662,6 +662,31 @@ final class TripMapTests: XCTestCase {
 final class TripLibraryTests: XCTestCase {
     private let owner = TripParticipant(id: "owner", name: "Wang Yang", userID: "owner")
 
+    func testFlightReminderEligibilityAndLocalCooldown() async throws {
+        let (library, directory) = try temporaryLibrary()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        library.addExamples(owner: owner)
+        var plan = try XCTUnwrap(library.trips.first { $0.id == "example-tokyo" })
+        let person = plan.participants[1]
+        XCTAssertTrue(library.canRemind(person, in: plan))
+        XCTAssertFalse(library.canRemind(owner, in: plan))
+        let first = await library.remind(person, tripID: plan.id)
+        let repeated = await library.remind(person, tripID: plan.id)
+        XCTAssertEqual(first?.status, "queued")
+        XCTAssertEqual(repeated?.status, "cooldown")
+        var flight = try XCTUnwrap(TripFlight.previewFlights.first { $0.direction == .outbound })
+        flight.travelerID = person.id
+        plan.flights.append(flight)
+        XCTAssertFalse(library.canRemind(person, in: plan))
+        plan.flights = []; plan.completedAt = Date()
+        XCTAssertFalse(library.canRemind(person, in: plan))
+        let disabled = await library.setPlanningReminders(false, tripID: "example-tokyo")
+        XCTAssertTrue(disabled)
+        let restored = TripLibrary(directory: directory)
+        restored.load(scope: "demo-owner", userID: owner.userID)
+        XCTAssertEqual(restored.trips.first { $0.id == "example-tokyo" }?.planningRemindersEnabled, false)
+    }
+
     func testLifecycleRemovesOnlyTargetFlightsAndCancelledTripStaysReadOnlyAfterReload() async throws {
         let (library, directory) = try temporaryLibrary()
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -1429,6 +1454,27 @@ final class RemoteAppRepositoryTests: XCTestCase {
         XCTAssertEqual(setup.tokenStore.load(), "token")
     }
 
+    func testTripRemindersUseOnlyAuthenticatedContextAndTarget() async throws {
+        let setup = try makeRepository()
+        var paths: [String] = []
+        StubURLProtocol.setHandler { request in
+            paths.append(request.url?.path ?? "")
+            XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer token")
+            let body = (try? JSONSerialization.jsonObject(with: requestBodyData(request) ?? Data())) as? [String: Any]
+            XCTAssertNil(body?["userID"]); XCTAssertNil(body?["senderID"])
+            if request.url?.path == "/v1/trip-reminders/context" {
+                XCTAssertEqual(body?["timeZone"] as? String, "America/Los_Angeles")
+                return .response(statusCode: 200, data: Data(#"{"success":true}"#.utf8))
+            }
+            XCTAssertEqual(body?["participantID"] as? String, "target-person")
+            return .response(statusCode: 200, data: Data(#"{"status":"cooldown","nextAllowedAt":"2035-01-01T09:00:00Z"}"#.utf8))
+        }
+        try await setup.repository.updateTripReminderContext(.init(timeZone: "America/Los_Angeles", locale: "en"))
+        let reminder = try await setup.repository.remindTripMember(tripID: "cloud-one", participantID: "target-person")
+        XCTAssertEqual(reminder.status, "cooldown")
+        XCTAssertEqual(paths, ["/v1/trip-reminders/context", "/v1/trips/cloud-one/reminders"])
+    }
+
     @MainActor
     func testTripLifecycleWaitsForConfirmationAndReusesRequestIDAfterLostResponse() async throws {
         let setup = try makeRepository()
@@ -1498,7 +1544,7 @@ final class RemoteAppRepositoryTests: XCTestCase {
             start: TripDay(value: "2026-09-07"), end: TripDay(value: "2026-09-10"), revision: 4)
         XCTAssertFalse(saved)
         XCTAssertEqual(library.trips.first?.name, "Together")
-        XCTAssertTrue(library.errorMessage?.contains("isn't queued") == true)
+        XCTAssertTrue(library.errorMessage?.contains("Reconnect") == true)
         cached.load(scope: "remote-other-\(userID)", userID: userID)
         XCTAssertTrue(cached.trips.isEmpty)
         library.load(scope: "signed-out", userID: nil)
