@@ -1,6 +1,55 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testTripPrimaryActionRemainsReachableAfterScrolling() {
+        continueAfterFailure = false
+        let app = tripsApp()
+        let trip = app.buttons["tripCard-example-west"]
+        XCTAssertTrue(trip.waitForExistence(timeout: 8))
+        trip.tap()
+        let board = app.scrollViews["fullTripArrivalBoard"]
+        XCTAssertTrue(board.waitForExistence(timeout: 4))
+        board.swipeUp()
+        capture("Trip navigation after scrolling")
+
+        let addFlight = app.buttons["addBoardFlightButton"]
+        XCTAssertTrue(addFlight.isHittable)
+        addFlight.tap()
+        XCTAssertTrue(app.buttons["confirmAddTripFlightButton"].waitForExistence(timeout: 4))
+        capture("Native flight form action")
+        app.buttons["Cancel"].tap()
+        board.swipeDown()
+        let options = app.buttons["tripOptionsButton"]
+        XCTAssertTrue(options.isHittable)
+        options.tap()
+        XCTAssertTrue(app.buttons["Edit trip"].waitForExistence(timeout: 3))
+    }
+
+    func testFriendsAccessibilityLayoutKeepsCityAndFriendReachable() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "-skipOnboarding", "-resetDemoData", "-previewCityFallbackCompare",
+            "-AppleLanguages", "(en)", "-AppleLocale", "en_US",
+            "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"
+        ]
+        app.launch()
+        let screen = app.scrollViews["friendsScreen"]
+        XCTAssertTrue(screen.waitForExistence(timeout: 8))
+        let city = app.buttons["myCitySharingCard"]
+        XCTAssertTrue(city.isHittable)
+        XCTAssertTrue(city.label.contains("Bakersfield, CA"))
+        capture("Friends accessibility city layout")
+
+        let friend = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Fremont, CA")).firstMatch
+        for _ in 0..<6 where !friend.isHittable { screen.swipeUp() }
+        XCTAssertTrue(friend.isHittable)
+        XCTAssertLessThanOrEqual(friend.frame.maxX, app.frame.maxX)
+        capture("Friends accessibility card layout")
+        friend.tap()
+        XCTAssertTrue(app.navigationBars.buttons.firstMatch.waitForExistence(timeout: 3))
+    }
+
     func testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter() {
         continueAfterFailure = false
         let app = tripsApp(asMember: true)

@@ -507,7 +507,7 @@ struct WIFSettingsPageHero: View {
 extension View {
     func wifSettingsGlassCard(tint: Color = WIFTheme.surface.opacity(0.08)) -> some View {
         padding(18)
-            .wifGlassSurface(
+            .wifContentSurface(
                 tint: tint,
                 in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
             )

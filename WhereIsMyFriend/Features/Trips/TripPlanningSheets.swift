@@ -260,11 +260,10 @@ struct TripPlanningSheet: View {
                         }
                     } label: {
                         Text(existing == nil ? "Create trip" : "Save changes").font(.headline)
-                            .frame(maxWidth: .infinity).frame(minHeight: 52)
-                            .foregroundStyle(canSave ? WIFTheme.canvas : WIFTheme.secondaryText)
-                            .background(canSave ? WIFTheme.fresh : WIFTheme.border.opacity(0.25), in: Capsule())
+                            .frame(maxWidth: .infinity)
+                            .wifPrimaryActionLabel(enabled: canSave)
                     }
-                    .buttonStyle(.plain).disabled(!canSave || isSaving)
+                    .wifPrimaryActionStyle().disabled(!canSave || isSaving)
                     .accessibilityIdentifier("saveTripButton")
                 }
                 .padding(20).background(WIFTheme.canvas)

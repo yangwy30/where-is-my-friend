@@ -88,6 +88,7 @@ struct SameCityReunionCard: View {
                     HStack(spacing: 12) {
                         Image(systemName: isCurrent ? "person.2" : "clock")
                             .font(.body.weight(.semibold))
+                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                             .foregroundStyle(WIFTheme.fresh)
                             .frame(width: 40, height: 40)
                             .background(WIFTheme.fresh.opacity(0.12), in: Circle())
@@ -104,6 +105,7 @@ struct SameCityReunionCard: View {
                         Spacer(minLength: 4)
                         Image(systemName: "chevron.down")
                             .font(.caption.weight(.semibold))
+                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                             .rotationEffect(.degrees(expanded ? 180 : 0))
                             .foregroundStyle(WIFTheme.secondaryText)
                     }
@@ -263,7 +265,7 @@ struct SameCityMomentCard: View {
             }
         }
         .padding(16)
-        .wifGlassSurface(
+        .wifContentSurface(
             tint: WIFTheme.fresh.opacity(0.18),
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )

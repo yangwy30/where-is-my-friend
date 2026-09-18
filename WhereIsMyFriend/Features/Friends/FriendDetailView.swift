@@ -80,7 +80,7 @@ struct FriendDetailView: View {
                     .padding(15)
                     .accessibilityIdentifier("blockFriendButton")
                 }
-                .wifGlassSurface(
+                .wifContentSurface(
                     tint: WIFTheme.surface.opacity(0.08),
                     in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
                 )
@@ -91,6 +91,8 @@ struct FriendDetailView: View {
                     .multilineTextAlignment(.center)
                     .padding(.top, 18)
             }
+            .frame(maxWidth: 700)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 28)
         }
@@ -189,7 +191,7 @@ struct FriendDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
         .padding(.horizontal, 18)
-        .wifGlassSurface(
+        .wifContentSurface(
             tint: WIFTheme.eventBlue.opacity(0.20),
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )

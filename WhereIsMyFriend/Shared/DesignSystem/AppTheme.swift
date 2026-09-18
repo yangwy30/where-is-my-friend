@@ -200,13 +200,17 @@ struct WIFAmbientBackground: View {
 /// Uses Apple's native Liquid Glass on iOS 26+ and a legible material fallback
 /// for the app's iOS 18–25 support range.
 private struct WIFGlassSurfaceModifier<S: Shape>: ViewModifier {
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     let tint: Color?
     let interactive: Bool
     let shape: S
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
+        if reduceTransparency {
+            content.background(WIFTheme.surface, in: shape)
+                .overlay { shape.stroke(WIFTheme.border, lineWidth: 1) }
+        } else if #available(iOS 26.0, *) {
             content
                 .glassEffect(.regular.tint(tint).interactive(interactive), in: shape)
         } else {
@@ -219,7 +223,83 @@ private struct WIFGlassSurfaceModifier<S: Shape>: ViewModifier {
     }
 }
 
+/// Content stays on a stable surface; glass belongs to floating controls/navigation.
+private struct WIFContentSurfaceModifier<S: Shape>: ViewModifier {
+    @Environment(\.colorSchemeContrast) private var contrast
+    let tint: Color?
+    let interactive: Bool
+    let shape: S
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 27.0, *) {
+            content.background {
+                shape.fill(WIFTheme.surface)
+                if let tint { shape.fill(tint) }
+            }
+            .overlay {
+                shape.stroke(
+                    WIFTheme.border.opacity(contrast == .increased ? 1 : 0.4),
+                    lineWidth: contrast == .increased ? 1.5 : 0.7
+                )
+            }
+        } else {
+            content.wifGlassSurface(tint: tint, interactive: interactive, in: shape)
+        }
+    }
+}
+
+enum WIFToolbarPlacement {
+    static var primary: ToolbarItemPlacement {
+        if #available(iOS 27.0, *) { return .topBarPinnedTrailing }
+        return .primaryAction
+    }
+}
+
 extension View {
+    func wifContentSurface<S: Shape>(tint: Color? = nil, interactive: Bool = false, in shape: S) -> some View {
+        modifier(WIFContentSurfaceModifier(tint: tint, interactive: interactive, shape: shape))
+    }
+
+    /// Trip actions must stay reachable while reading a long arrivals board.
+    @ViewBuilder
+    func wifPersistentTripNavigation() -> some View {
+        if #available(iOS 27.0, *) {
+            toolbarMinimizationBehavior(.never, for: .navigationBar)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func wifNavigationSurface() -> some View {
+        if #available(iOS 27.0, *) {
+            toolbarBackground(.automatic, for: .navigationBar)
+        } else {
+            toolbarBackground(WIFTheme.canvas, for: .navigationBar)
+        }
+    }
+
+    @ViewBuilder
+    func wifPrimaryActionLabel(enabled: Bool) -> some View {
+        if #available(iOS 27.0, *) {
+            frame(minHeight: 26)
+                .foregroundStyle(enabled ? WIFTheme.canvas : WIFTheme.secondaryText)
+        } else {
+            frame(minHeight: 52).foregroundStyle(enabled ? WIFTheme.canvas : WIFTheme.secondaryText)
+                .background(enabled ? WIFTheme.fresh : WIFTheme.border.opacity(0.25), in: Capsule())
+        }
+    }
+
+    @ViewBuilder
+    func wifPrimaryActionStyle() -> some View {
+        if #available(iOS 27.0, *) {
+            buttonStyle(.glassProminent).tint(WIFTheme.fresh).controlSize(.large)
+        } else {
+            buttonStyle(.plain)
+        }
+    }
+
     func wifGlassSurface<S: Shape>(
         tint: Color? = nil,
         interactive: Bool = false,

@@ -99,6 +99,8 @@ struct TripsView: View {
                 }
             }
             .foregroundStyle(WIFTheme.primaryText)
+            .frame(maxWidth: 780)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.top, 12).padding(.bottom, 36)
         }
@@ -275,40 +277,11 @@ private struct TripDetailView: View {
                 addRequest = FlightRequest(direction: flight.direction, existing: flight)
             }, onDeleteFlight: { deleteRequest = $0 }, onPeople: { showsPeople = true })
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button("People", systemImage: "person.2") { showsPeople = true }
-                        if trip.cancelledAt == nil {
-                            Button("Notifications", systemImage: "bell") { showsNotifications = true }
-                        }
-                        if library.canEdit(trip) {
-                            Button("Edit trip", systemImage: "pencil") { showsEdit = true }
-                        }
-                        if library.canEdit(trip), trip.completedAt != nil {
-                            Button("Undo completion", systemImage: "arrow.uturn.backward") {
-                                Task { _ = await library.setComplete(tripID, at: nil) }
-                            }
-                        } else if library.canEdit(trip), trip.phase() != .past {
-                            Button("Mark complete", systemImage: "checkmark.circle") { showsCompleteConfirmation = true }
-                        }
-                        Divider()
-                        if library.canManage(trip) {
-                            Button("Delete trip", systemImage: "trash", role: .destructive) {
-                                lifecycleRevision = trip.revision; lifecycleAction = .delete
-                            }
-                            .accessibilityIdentifier("deleteTripButton")
-                        } else if library.selfParticipant(in: trip) != nil {
-                            Button("Leave trip", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
-                                lifecycleRevision = nil; lifecycleAction = .leave
-                            }
-                            .accessibilityIdentifier("leaveTripButton")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
-                    .accessibilityLabel("Trip options")
-                    .accessibilityIdentifier("tripOptionsButton")
-                    .disabled(library.isSaving)
+                if #available(iOS 27.0, *) {
+                    ToolbarItem(placement: .topBarTrailing) { tripOptions(trip) }
+                        .visibilityPriority(.high)
+                } else {
+                    ToolbarItem(placement: .topBarTrailing) { tripOptions(trip) }
                 }
             }
             .refreshable { await library.refresh() }
@@ -391,6 +364,42 @@ private struct TripDetailView: View {
             ContentUnavailableView("Trip unavailable", systemImage: "suitcase",
                                    description: Text("Go back to Trips to choose a trip for this account."))
         }
+    }
+
+    private func tripOptions(_ trip: TripPlan) -> some View {
+        Menu {
+            Button("People", systemImage: "person.2") { showsPeople = true }
+            if trip.cancelledAt == nil {
+                Button("Notifications", systemImage: "bell") { showsNotifications = true }
+            }
+            if library.canEdit(trip) {
+                Button("Edit trip", systemImage: "pencil") { showsEdit = true }
+            }
+            if library.canEdit(trip), trip.completedAt != nil {
+                Button("Undo completion", systemImage: "arrow.uturn.backward") {
+                    Task { _ = await library.setComplete(tripID, at: nil) }
+                }
+            } else if library.canEdit(trip), trip.phase() != .past {
+                Button("Mark complete", systemImage: "checkmark.circle") { showsCompleteConfirmation = true }
+            }
+            Divider()
+            if library.canManage(trip) {
+                Button("Delete trip", systemImage: "trash", role: .destructive) {
+                    lifecycleRevision = trip.revision; lifecycleAction = .delete
+                }
+                .accessibilityIdentifier("deleteTripButton")
+            } else if library.selfParticipant(in: trip) != nil {
+                Button("Leave trip", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) {
+                    lifecycleRevision = nil; lifecycleAction = .leave
+                }
+                .accessibilityIdentifier("leaveTripButton")
+            }
+        } label: {
+            Image(systemName: "ellipsis")
+        }
+        .accessibilityLabel("Trip options")
+        .accessibilityIdentifier("tripOptionsButton")
+        .disabled(library.isSaving)
     }
 
     private var lifecycleTitle: LocalizedStringKey {
@@ -481,17 +490,23 @@ private struct FullTripArrivalBoard: View {
                 }
             }
             .foregroundStyle(WIFTheme.primaryText)
+            .frame(maxWidth: 780)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.top, 8).padding(.bottom, 32)
         }
         .background(WIFTheme.canvas.ignoresSafeArea())
         .navigationTitle("").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
-        .toolbarBackground(WIFTheme.canvas, for: .navigationBar)
+        .wifNavigationSurface()
+        .wifPersistentTripNavigation()
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: WIFToolbarPlacement.primary) {
                 if selfParticipant != nil, trip.cancelledAt == nil {
-                    Button("Add flight") { onAddFlight(direction) }
+                    Button { onAddFlight(direction) } label: {
+                        if #available(iOS 27.0, *) { Label("Add flight", systemImage: "plus") }
+                        else { Text("Add flight") }
+                    }
                         .font(.subheadline.weight(.medium))
                         .accessibilityLabel("Add my flight").accessibilityIdentifier("addBoardFlightButton")
                 }
@@ -1539,11 +1554,10 @@ private struct AddTripFlightSheet: View {
                         }
                     } label: {
                         Text(existing == nil ? "Add my flight" : "Save my flight").font(.headline)
-                            .frame(maxWidth: .infinity).frame(minHeight: 52)
-                            .foregroundStyle(isValid ? WIFTheme.canvas : WIFTheme.secondaryText)
-                            .background(isValid ? WIFTheme.fresh : WIFTheme.border.opacity(0.30), in: Capsule())
+                            .frame(maxWidth: .infinity)
+                            .wifPrimaryActionLabel(enabled: isValid)
                     }
-                    .buttonStyle(.plain).disabled(!isValid || isSearching || isSaving)
+                    .wifPrimaryActionStyle().disabled(!isValid || isSearching || isSaving)
                     .accessibilityIdentifier("confirmAddTripFlightButton")
                 }
                 .padding(.horizontal, 20).padding(.top, 10).padding(.bottom, 16)

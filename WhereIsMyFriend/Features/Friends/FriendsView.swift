@@ -49,10 +49,7 @@ struct FriendsView: View {
             return [GridItem(.flexible())]
         }
 
-        return [
-            GridItem(.flexible(), spacing: 12),
-            GridItem(.flexible(), spacing: 12)
-        ]
+        return [GridItem(.adaptive(minimum: 154, maximum: 220), spacing: 12)]
     }
 
     var body: some View {
@@ -72,17 +69,7 @@ struct FriendsView: View {
                 UpcomingTogetherCard(selectedID: $selectedUpcomingID)
                     .id("upcomingTogether")
 
-                ViewThatFits(in: .horizontal) {
-                    HStack(alignment: .center, spacing: 12) {
-                        worldSectionTitle
-                        Spacer(minLength: 4)
-                        friendPlansLink
-                    }
-                    VStack(alignment: .leading, spacing: 4) {
-                        worldSectionTitle
-                        friendPlansLink
-                    }
-                }
+                worldSectionHeader
                     .padding(.top, 22)
                     .padding(.bottom, 9)
                     .padding(.leading, 3)
@@ -100,7 +87,7 @@ struct FriendsView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
-                    .wifGlassSurface(
+                    .wifContentSurface(
                         tint: WIFTheme.surface.opacity(0.10),
                         in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
                     )
@@ -118,6 +105,8 @@ struct FriendsView: View {
                     }
                 }
             }
+            .frame(maxWidth: 900)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 24)
         }
@@ -161,10 +150,34 @@ struct FriendsView: View {
         }
     }
 
+    @ViewBuilder
+    private var worldSectionHeader: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            stackedWorldSectionHeader
+        } else {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .center, spacing: 12) {
+                    worldSectionTitle
+                    Spacer(minLength: 4)
+                    friendPlansLink
+                }
+                stackedWorldSectionHeader
+            }
+        }
+    }
+
+    private var stackedWorldSectionHeader: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            worldSectionTitle
+            friendPlansLink
+        }
+    }
+
     private var worldSectionTitle: some View {
         Text("Around the world")
             .font(.caption.weight(.semibold)).textCase(.uppercase).tracking(1.1)
-            .foregroundStyle(WIFTheme.secondaryText).fixedSize(horizontal: true, vertical: false)
+            .foregroundStyle(WIFTheme.secondaryText)
+            .fixedSize(horizontal: !dynamicTypeSize.isAccessibilitySize, vertical: true)
     }
 
     private var friendPlansLink: some View {
@@ -248,6 +261,7 @@ struct FriendsView: View {
                             .offset(x: 5, y: -5)
                     }
                 }
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
             }
             .buttonStyle(.plain)
             .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.16), interactive: true, in: Circle())
@@ -258,33 +272,22 @@ struct FriendsView: View {
 
     private var cityContextCard: some View {
         Button(action: onOpenCitySharing) {
-            HStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Your city")
-                        .font(.system(size: 10, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1.35)
-                        .foregroundStyle(WIFTheme.fresh)
-
-                    Text(currentCityLabel)
-                        .font(.system(size: 22, weight: .semibold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.82)
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    stackedCityContext
+                } else {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 0) {
+                            cityContextTitle.frame(maxWidth: .infinity, alignment: .leading)
+                            Rectangle().fill(WIFTheme.border.opacity(0.62))
+                                .frame(width: 1, height: 48).padding(.horizontal, 16)
+                            cityContextMetric
+                            cityContextChevron.padding(.leading, 12)
+                        }
+                        .frame(minWidth: 280)
+                        stackedCityContext
+                    }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Rectangle()
-                    .fill(WIFTheme.border.opacity(0.62))
-                    .frame(width: 1, height: 48)
-                    .padding(.horizontal, 16)
-
-                cityContextMetric
-
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
-                    .padding(.leading, 12)
             }
             .padding(.horizontal, 17)
             .padding(.vertical, 15)
@@ -292,13 +295,41 @@ struct FriendsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .wifGlassSurface(
+        .wifContentSurface(
             tint: WIFTheme.fresh.opacity(0.11),
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
         .accessibilityLabel("Your city, \(currentCityLabel), \(cityContextText)")
         .accessibilityIdentifier("myCitySharingCard")
+    }
+
+    private var cityContextTitle: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Your city").font(.caption2.weight(.semibold)).textCase(.uppercase)
+                .tracking(1.35).foregroundStyle(WIFTheme.fresh)
+            Text(currentCityLabel).font(.system(.title3, design: .rounded, weight: .semibold))
+                .foregroundStyle(WIFTheme.primaryText)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1).minimumScaleFactor(0.82)
+        }
+    }
+
+    private var cityContextChevron: some View {
+        Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+            .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
+            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+    }
+
+    private var stackedCityContext: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            cityContextTitle.frame(maxWidth: .infinity, alignment: .leading)
+            Divider().overlay(WIFTheme.border.opacity(0.4))
+            HStack {
+                cityContextMetric
+                Spacer(minLength: 12)
+                cityContextChevron
+            }
+        }
     }
 
     @ViewBuilder
@@ -315,7 +346,7 @@ struct FriendsView: View {
                     Text(sameCityFriendUnit)
                     Text(sameCityLocationPhrase)
                 }
-                .font(.system(size: 11, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundStyle(WIFTheme.secondaryText)
                 .lineLimit(1)
             }
@@ -393,13 +424,13 @@ struct FriendsView: View {
 
             VStack(spacing: 2) {
                 Text(friend.displayName)
-                    .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(WIFTheme.primaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
 
                 Text(friend.cityDisplay)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(WIFTheme.secondaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.82)
@@ -420,7 +451,7 @@ struct FriendsView: View {
                     Text(friend.relativeUpdateText(at: referenceDate))
                         .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
-                .font(.system(size: 11, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .lineLimit(1)
                 .padding(.top, 3)
             }
@@ -428,7 +459,7 @@ struct FriendsView: View {
             .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity)
-        .wifGlassSurface(
+        .wifContentSurface(
             tint: isSameCity ? WIFTheme.fresh.opacity(0.12) : WIFTheme.surface.opacity(0.07),
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
