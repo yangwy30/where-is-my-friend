@@ -1,6 +1,10 @@
 # App Store and TestFlight metadata
 
-## Current copy — September 15, 2026
+## Current submission — September 17, 2026
+
+Version **1.0.3 (15)** was submitted for App Review with automatic release after approval. See [submission record and bilingual update copy](APP_STORE_1_0_3_SUBMISSION.md).
+
+## Base listing — September 15, 2026
 
 Use [the refreshed bilingual App introduction](APP_INTRO_20260915.md) for the current Friends, personal travel plans, Together soon, and shared Trips experience. New screenshots are under `app_store_screenshots/2026-09-15/`.
 
