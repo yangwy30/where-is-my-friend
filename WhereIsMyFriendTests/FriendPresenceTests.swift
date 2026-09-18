@@ -1120,7 +1120,6 @@ final class FriendPresenceTests: XCTestCase {
             "City_archetype_central_valley",
             "City_archetype_silicon_valley",
             "City_archetype_pacific_surf",
-            "City_archetype_alpine_chalet",
             "City_archetype_desert_adobe",
             "City_archetype_historic_brick"
         ]
@@ -1190,6 +1189,32 @@ final class FriendPresenceTests: XCTestCase {
         }
         let empty = CityEmblem.resolve(city: "  ", countryCode: "US")
         XCTAssertEqual(empty.fallbackAssetName, "City_unknown_location")
+    }
+
+    func testArchetypeRulesRespectMetadataAndWholeWords() {
+        for (short, full) in [("CA", "California"), ("AZ", "Arizona"), ("WA", "Washington"), ("CO", "Colorado"), ("ME", "Maine")] {
+            XCTAssertEqual(CityArchetype.infer(from: "Example Town", countryCode: "US", administrativeArea: short),
+                           CityArchetype.infer(from: "Example Town", countryCode: "us", administrativeArea: full))
+        }
+        XCTAssertEqual(CityArchetype.infer(from: "Bakersfield", countryCode: nil, administrativeArea: "CA"), .metropolis)
+        XCTAssertEqual(CityArchetype.infer(from: "Fremont", countryCode: "US"), .metropolis)
+        XCTAssertEqual(CityArchetype.infer(from: "Cambridge", countryCode: "US", administrativeArea: "CA"), .metropolis)
+        XCTAssertNotEqual(CityArchetype.infer(from: "Jackson", countryCode: "US", administrativeArea: "FL"), .alpineChalet)
+        XCTAssertEqual(CityArchetype.infer(from: "Testskiville", countryCode: "MX"), .metropolis)
+        XCTAssertEqual(CityArchetype.infer(from: "Turkey", countryCode: "MX"), .metropolis)
+        XCTAssertEqual(CityArchetype.infer(from: "Greenfield", countryCode: "MX"), .metropolis)
+        XCTAssertEqual(CityArchetype.infer(from: "Sunny Beach", countryCode: "MX"), .pacificSurf)
+        XCTAssertEqual(CityArchetype.alpineChalet.assetName, "City_generic_block")
+    }
+
+    func testSharedArchetypeDoesNotMeanSameCity() {
+        let now = Date()
+        let a = CityEmblem.resolve(city: "Bakersfield", countryCode: "US", administrativeArea: "CA")
+        let b = CityEmblem.resolve(city: "Fresno", countryCode: "US", administrativeArea: "California")
+        XCTAssertEqual(a.fallbackAssetName, b.fallbackAssetName)
+        let me = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield", countryCode: "US", updatedAt: now, source: .manual)
+        let friend = FriendPresence(displayName: "Example", username: "example", city: "Fresno", countryCode: "US", updatedAt: now, administrativeArea: "California")
+        XCTAssertFalse(PresenceMatchPolicy.matches(me, friend, at: now))
     }
 
     private func makeFriend(

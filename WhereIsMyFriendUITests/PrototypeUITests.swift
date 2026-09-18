@@ -1177,6 +1177,14 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.buttons["myCitySharingCard"].label.contains("Bakersfield, CA"))
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Fremont, CA")).firstMatch.waitForExistence(timeout: 3))
+        // A previous test may have left Night Jade selected. Make both captures deterministic.
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        let initialAppearance = app.buttons["appearanceSettingsButton"]
+        if !initialAppearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        XCTAssertTrue(initialAppearance.waitForExistence(timeout: 3)); initialAppearance.tap()
+        app.buttons["solarJadeAppearance"].tap()
+        app.buttons["appearanceDoneButton"].tap()
+        app.tabBars.buttons.element(boundBy: 0).tap()
         capture("City fallback visual side-by-side comparison")
         app.tabBars.buttons.element(boundBy: 2).tap()
         let appearance = app.buttons["appearanceSettingsButton"]

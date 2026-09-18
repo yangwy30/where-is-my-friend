@@ -400,7 +400,7 @@ public enum CityArchetype: String, CaseIterable, Sendable {
         case .centralValley: return "City_archetype_central_valley"
         case .siliconValley: return "City_archetype_silicon_valley"
         case .pacificSurf, .coastal: return "City_archetype_pacific_surf"
-        case .alpineChalet, .alpine: return "City_archetype_alpine_chalet"
+        case .alpineChalet, .alpine: return "City_generic_block" // Chalet artwork withheld: transparent holes in the roof.
         case .desertAdobe, .desert: return "City_archetype_desert_adobe"
         case .historicBrick, .european: return "City_archetype_historic_brick"
         case .metropolis, .asian: return "City_generic_block"
@@ -441,10 +441,13 @@ public enum CityArchetype: String, CaseIterable, Sendable {
     ) -> CityArchetype {
         let normCity = CityIdentity.normalize(city)
         let normCountry = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? ""
-        let normArea = administrativeArea?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? ""
+        let areaKey = CityIdentity.presencePart(administrativeArea ?? "")
+        let normArea = (CityRegionCatalog.bundled.administrativeAliases?[normCountry]?[areaKey] ?? areaKey).uppercased()
+        // Missing metadata is not permission to assume a country/state from a city name.
+        guard !normCountry.isEmpty, normCountry != "US" || !normArea.isEmpty else { return .metropolis }
 
         // Tier 1: Explicit Curated Sub-Regional Dictionary
-        if normCountry == "US" || normCountry.isEmpty {
+        if normCountry == "US" {
             let isCA = normArea == "CA" || normArea == "CALIFORNIA"
 
             // Central Valley (CA)
@@ -453,7 +456,7 @@ public enum CityArchetype: String, CaseIterable, Sendable {
                 "turlock", "chico", "redding", "tulare", "hanford", "delano", "porterville",
                 "madera", "lodi", "tracy", "manteca"
             ]
-            if (isCA || normArea.isEmpty) && centralValleyCities.contains(normCity) {
+            if isCA && centralValleyCities.contains(normCity) {
                 return .centralValley
             }
 
@@ -462,9 +465,10 @@ public enum CityArchetype: String, CaseIterable, Sendable {
                 "fremont", "palo alto", "sunnyvale", "cupertino", "mountain view", "santa clara",
                 "san mateo", "redwood city", "menlo park", "los altos", "milpitas", "foster city",
                 "san carlos", "burlingame", "belmont", "pleasanton", "dublin", "san ramon",
-                "walnut creek", "bellevue", "redmond", "kirkland"
+                "walnut creek"
             ]
-            if (isCA || normArea == "WA" || normArea.isEmpty) && siliconValleyCities.contains(normCity) {
+            if (isCA && siliconValleyCities.contains(normCity)) ||
+                (normArea == "WA" && ["bellevue", "redmond", "kirkland"].contains(normCity)) {
                 return .siliconValley
             }
 
@@ -475,47 +479,43 @@ public enum CityArchetype: String, CaseIterable, Sendable {
                 "monterey", "carmel", "pacific grove", "santa barbara", "ventura", "carpinteria",
                 "morro bay", "pismo beach", "capitola"
             ]
-            if (isCA || normArea == "HI" || normArea.isEmpty) && surfCities.contains(normCity) {
+            if isCA && surfCities.contains(normCity) {
                 return .pacificSurf
             }
 
             // Alpine Mountain Towns
-            let alpineCities: Set<String> = [
-                "lake tahoe", "south lake tahoe", "truckee", "mammoth lakes", "aspen", "vail",
-                "breckenridge", "boulder", "park city", "jackson", "steamboat springs",
-                "telluride", "big bear lake"
+            let alpineCities: [String: Set<String>] = [
+                "CA": ["lake tahoe", "south lake tahoe", "truckee", "mammoth lakes", "big bear lake"],
+                "CO": ["aspen", "vail", "breckenridge", "boulder", "steamboat springs", "telluride"],
+                "UT": ["park city"], "WY": ["jackson"]
             ]
-            if alpineCities.contains(normCity) {
-                return .alpineChalet
-            }
+            if alpineCities[normArea]?.contains(normCity) == true { return .alpineChalet }
 
-            // Desert & Adobe
-            let desertCities: Set<String> = [
-                "palm springs", "sedona", "scottsdale", "santa fe", "moab", "taos", "tucson",
-                "mesa", "tempe", "chandler", "joshua tree", "indio", "cathedral city",
-                "desert hot springs", "palm desert", "la quinta", "albuquerque", "yuma"
+            let desertCities: [String: Set<String>] = [
+                "CA": ["palm springs", "joshua tree", "indio", "cathedral city", "desert hot springs", "palm desert", "la quinta"],
+                "AZ": ["sedona", "scottsdale", "tucson", "mesa", "tempe", "chandler", "yuma"],
+                "NM": ["santa fe", "taos", "albuquerque"], "UT": ["moab"]
             ]
-            if desertCities.contains(normCity) {
-                return .desertAdobe
-            }
+            if desertCities[normArea]?.contains(normCity) == true { return .desertAdobe }
         }
 
-        // International Tier 1 Matches
-        let internationalSurf: Set<String> = ["byron bay", "gold coast", "biarritz", "noosa", "torquay"]
-        if internationalSurf.contains(normCity) { return .pacificSurf }
-
-        let internationalAlpine: Set<String> = [
-            "zermatt", "chamonix", "innsbruck", "st. moritz", "grindelwald", "interlaken",
-            "whistler", "banff", "cortina d'ampezzo", "nagano", "hakuba", "niseko"
+        // Exact country-scoped names; an international namesake must not inherit another country's artwork.
+        let internationalSurf: [String: Set<String>] = [
+            "AU": ["byron bay", "gold coast", "noosa", "torquay"], "FR": ["biarritz"]
         ]
-        if internationalAlpine.contains(normCity) { return .alpineChalet }
-
-        let internationalHistoric: Set<String> = [
-            "oxford", "cambridge", "bath", "york", "cotswolds", "heidelberg", "bruges",
-            "ghent", "salzburg", "toledo", "siena", "edinburgh", "durham", "canterbury",
-            "stratford-upon-avon", "chester", "rothenburg", "bamberg", "weimar"
+        if internationalSurf[normCountry]?.contains(normCity) == true { return .pacificSurf }
+        let internationalAlpine: [String: Set<String>] = [
+            "CH": ["zermatt", "st. moritz", "grindelwald", "interlaken"], "FR": ["chamonix"],
+            "AT": ["innsbruck"], "CA": ["whistler", "banff"], "IT": ["cortina d'ampezzo"],
+            "JP": ["nagano", "hakuba", "niseko"]
         ]
-        if internationalHistoric.contains(normCity) { return .historicBrick }
+        if internationalAlpine[normCountry]?.contains(normCity) == true { return .alpineChalet }
+        let internationalHistoric: [String: Set<String>] = [
+            "GB": ["oxford", "cambridge", "bath", "york", "cotswolds", "edinburgh", "durham", "canterbury", "stratford-upon-avon", "chester"],
+            "DE": ["heidelberg", "rothenburg", "bamberg", "weimar"], "BE": ["bruges", "ghent"],
+            "AT": ["salzburg"], "ES": ["toledo"], "IT": ["siena"]
+        ]
+        if internationalHistoric[normCountry]?.contains(normCity) == true { return .historicBrick }
 
         // Tier 2: State / Regional Heuristics
         if normCountry == "US" {
@@ -527,29 +527,13 @@ public enum CityArchetype: String, CaseIterable, Sendable {
             if ["ME", "NH", "MA", "RI", "CT"].contains(normArea) { return .historicBrick }
         }
 
-        // Tier 3: Semantic Keyword Sniffing
-        if normCity.contains("beach") || normCity.contains("coast") || normCity.contains("surf") ||
-           normCity.contains("shore") || normCity.contains("island") || normCity.contains("cove") ||
-           normCity.contains("bay") || normCity.contains("key") {
-            return .pacificSurf
-        }
-        if normCity.contains("mountain") || normCity.contains("mount ") || normCity.contains("peak") ||
-           normCity.contains("alpine") || normCity.contains("summit") || normCity.contains("ridge") ||
-           normCity.contains("ski") {
-            return .alpineChalet
-        }
-        if normCity.contains("desert") || normCity.contains("adobe") || normCity.contains("dune") ||
-           normCity.contains("canyon") || normCity.contains("mesa") {
-            return .desertAdobe
-        }
-        if normCity.contains("valley") || normCity.contains("prairie") || normCity.contains("plains") ||
-           normCity.contains("ranch") || normCity.contains("farm") || normCity.contains("field") {
-            return .centralValley
-        }
-        if normCity.contains("village") || normCity.contains("burg") || normCity.contains("bad ") ||
-           normCity.contains("castle") || normCity.contains("abbey") || normCity.contains("chester") {
-            return .historicBrick
-        }
+        // Treat complete words as decorative motifs; never match fragments such as "ski" in a name.
+        let words = Set(normCity.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init))
+        if !words.isDisjoint(with: ["beach", "coast", "surf", "shore", "island", "cove", "bay", "key"]) { return .pacificSurf }
+        if !words.isDisjoint(with: ["mountain", "mount", "peak", "alpine", "summit", "ridge", "ski"]) { return .alpineChalet }
+        if !words.isDisjoint(with: ["desert", "adobe", "dune", "canyon", "mesa"]) { return .desertAdobe }
+        if !words.isDisjoint(with: ["valley", "prairie", "plains", "ranch", "farm", "field"]) { return .centralValley }
+        if !words.isDisjoint(with: ["village", "castle", "abbey"]) { return .historicBrick }
 
         // Tier 4: International Country Heuristics
         if ["CH", "AT"].contains(normCountry) { return .alpineChalet }
@@ -592,7 +576,7 @@ public struct CityEmblemView: View {
 
         if let direct = UIImage(named: emblem.fallbackAssetName) { return direct }
         if let namespaced = UIImage(named: "CityEmblems/\(emblem.fallbackAssetName)") { return namespaced }
-
+        if emblem.cityID != "unknown" { return UIImage(named: "City_generic_block") ?? UIImage(named: "CityEmblems/City_generic_block") }
         return nil
     }
 
