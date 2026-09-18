@@ -40,4 +40,4 @@ Local result bundles (not checked into the repository):
 
 ## Release boundary
 
-This change does not alter the existing App Store 1.0.3 (15) submission. It requires a new build before users receive it through TestFlight or the App Store.
+This change does not alter the existing App Store 1.0.3 (15) submission. It was subsequently released to the existing internal TestFlight group as [1.0.4 (16)](TESTFLIGHT_1_0_4_16.md), following the user's upload request. It has not been submitted as a new public App Store version.
