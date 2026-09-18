@@ -5,14 +5,14 @@
   },
   "images" : [
     {
+      "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "City_archetype_pacific_surf.png",
-      "idiom" : "universal"
+      "filename" : "City_archetype_pacific_surf.png"
     },
     {
-      "idiom" : "universal",
+      "filename" : "City_archetype_pacific_surf@2x.png",
       "scale" : "2x",
-      "filename" : "City_archetype_pacific_surf@2x.png"
+      "idiom" : "universal"
     },
     {
       "idiom" : "universal",

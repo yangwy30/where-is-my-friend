@@ -517,7 +517,7 @@ public enum CityArchetype: String, CaseIterable, Sendable {
         ]
         if internationalHistoric.contains(normCity) { return .historicBrick }
 
-        // Tier 2: State / National Regional Heuristics
+        // Tier 2: State / Regional Heuristics
         if normCountry == "US" {
             if ["AZ", "NM", "NV"].contains(normArea) { return .desertAdobe }
             if ["CO", "UT", "WY", "MT", "ID", "VT"].contains(normArea) { return .alpineChalet }
@@ -526,13 +526,6 @@ public enum CityArchetype: String, CaseIterable, Sendable {
             if ["IA", "KS", "NE", "OK", "ND", "SD"].contains(normArea) { return .centralValley }
             if ["ME", "NH", "MA", "RI", "CT"].contains(normArea) { return .historicBrick }
         }
-
-        if ["CH", "AT"].contains(normCountry) { return .alpineChalet }
-        if ["NO", "SE", "FI", "IS"].contains(normCountry) { return .alpineChalet }
-        if ["GB", "IE"].contains(normCountry) { return .historicBrick }
-        if ["AE", "EG", "SA", "QA", "MA"].contains(normCountry) { return .desertAdobe }
-        if ["JP", "CN", "KR", "TW", "HK", "TH", "VN", "SG"].contains(normCountry) { return .asian }
-        if ["FR", "IT", "DE", "ES", "NL", "PT", "GR", "CZ", "BE"].contains(normCountry) { return .historicBrick }
 
         // Tier 3: Semantic Keyword Sniffing
         if normCity.contains("beach") || normCity.contains("coast") || normCity.contains("surf") ||
@@ -558,7 +551,15 @@ public enum CityArchetype: String, CaseIterable, Sendable {
             return .historicBrick
         }
 
-        // Tier 4: Global Default
+        // Tier 4: International Country Heuristics
+        if ["CH", "AT"].contains(normCountry) { return .alpineChalet }
+        if ["NO", "SE", "FI", "IS"].contains(normCountry) { return .alpineChalet }
+        if ["GB", "IE"].contains(normCountry) { return .historicBrick }
+        if ["AE", "EG", "SA", "QA", "MA"].contains(normCountry) { return .desertAdobe }
+        if ["JP", "CN", "KR", "TW", "HK", "TH", "VN", "SG"].contains(normCountry) { return .asian }
+        if ["FR", "IT", "DE", "ES", "NL", "PT", "GR", "CZ", "BE"].contains(normCountry) { return .european }
+
+        // Tier 5: Global Default
         return .metropolis
     }
 }
