@@ -24,7 +24,8 @@ public struct CityEmblem: Hashable, Sendable {
 
     /// A generic illustration is presentation only, never a geographic identity.
     var fallbackAssetName: String {
-        cityID == "unknown" ? "City_unknown_location" : "City_generic_block"
+        if cityID == "unknown" { return "City_unknown_location" }
+        return archetype.assetName ?? "City_generic_block"
     }
 
     static func resolve(friend: FriendPresence) -> CityEmblem {
@@ -56,7 +57,7 @@ public struct CityEmblem: Hashable, Sendable {
            }) {
             // A known namesake in another state must not inherit this region's legacy city asset.
             return CityEmblem(cityID: normalized.replacingOccurrences(of: " ", with: "_"), displayName: city,
-                              countryCode: countryCode, archetype: CityArchetype.infer(from: city, countryCode: countryCode))
+                              countryCode: countryCode, archetype: CityArchetype.infer(from: city, countryCode: countryCode, administrativeArea: administrativeArea))
         }
 
         let country = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -72,8 +73,8 @@ public struct CityEmblem: Hashable, Sendable {
             return match
         }
 
-        // Fallback: Infer archetype from country code or city name
-        let inferredArchetype = CityArchetype.infer(from: city, countryCode: countryCode)
+        // Fallback: Infer archetype from city name, country code, and state/administrativeArea
+        let inferredArchetype = CityArchetype.infer(from: city, countryCode: countryCode, administrativeArea: administrativeArea)
         return CityEmblem(
             cityID: normalized.replacingOccurrences(of: " ", with: "_"),
             displayName: city,
@@ -363,8 +364,17 @@ public struct CityEmblem: Hashable, Sendable {
     ]
 }
 
-/// Regional architectural and landscape archetypes for Tier 2 fallback.
+/// Regional architectural, ecological, and landscape archetypes for personalized fallback dioramas.
 public enum CityArchetype: String, CaseIterable, Sendable {
+    // 6 Tailored Micro-Archetypes
+    case centralValley = "central_valley"
+    case siliconValley = "silicon_valley"
+    case pacificSurf = "pacific_surf"
+    case alpineChalet = "alpine_chalet"
+    case desertAdobe = "desert_adobe"
+    case historicBrick = "historic_brick"
+
+    // Preserved archetypes for catalog and generic fallbacks
     case european
     case metropolis
     case coastal
@@ -372,42 +382,183 @@ public enum CityArchetype: String, CaseIterable, Sendable {
     case asian
     case desert
 
+    public var title: String {
+        switch self {
+        case .centralValley: return "Central Valley & Golden Plains"
+        case .siliconValley: return "Silicon Valley & Modern Suburb"
+        case .pacificSurf, .coastal: return "Pacific Surf Coast"
+        case .alpineChalet, .alpine: return "Alpine Chalet & Mountain Pass"
+        case .desertAdobe, .desert: return "Southwest Adobe & Desert"
+        case .historicBrick, .european: return "Historic Brick & Stone Town"
+        case .metropolis: return "Modern Metropolis"
+        case .asian: return "East Asian Town"
+        }
+    }
+
+    public var assetName: String? {
+        switch self {
+        case .centralValley: return "City_archetype_central_valley"
+        case .siliconValley: return "City_archetype_silicon_valley"
+        case .pacificSurf, .coastal: return "City_archetype_pacific_surf"
+        case .alpineChalet, .alpine: return "City_archetype_alpine_chalet"
+        case .desertAdobe, .desert: return "City_archetype_desert_adobe"
+        case .historicBrick, .european: return "City_archetype_historic_brick"
+        case .metropolis, .asian: return "City_generic_block"
+        }
+    }
+
     public var iconSymbol: String {
         switch self {
-        case .european: return "building.columns.fill"
+        case .centralValley: return "sun.haze.fill"
+        case .siliconValley: return "house.lodge.fill"
+        case .pacificSurf, .coastal: return "water.waves"
+        case .alpineChalet, .alpine: return "mountain.2.fill"
+        case .desertAdobe, .desert: return "sun.max.fill"
+        case .historicBrick, .european: return "building.columns.fill"
         case .metropolis: return "building.2.fill"
-        case .coastal: return "water.waves"
-        case .alpine: return "mountain.2.fill"
         case .asian: return "house.lodge.fill"
-        case .desert: return "sun.max.fill"
         }
     }
 
     public var themeColor: Color {
         switch self {
-        case .european: return Color(red: 0.72, green: 0.58, blue: 0.44)
+        case .centralValley: return Color(red: 0.88, green: 0.65, blue: 0.22)
+        case .siliconValley: return Color(red: 0.28, green: 0.62, blue: 0.45)
+        case .pacificSurf, .coastal: return Color(red: 0.18, green: 0.72, blue: 0.80)
+        case .alpineChalet, .alpine: return Color(red: 0.42, green: 0.68, blue: 0.82)
+        case .desertAdobe, .desert: return Color(red: 0.86, green: 0.45, blue: 0.28)
+        case .historicBrick, .european: return Color(red: 0.75, green: 0.52, blue: 0.38)
         case .metropolis: return Color(red: 0.35, green: 0.52, blue: 0.72)
-        case .coastal: return Color(red: 0.22, green: 0.65, blue: 0.75)
-        case .alpine: return Color(red: 0.45, green: 0.68, blue: 0.55)
         case .asian: return Color(red: 0.82, green: 0.35, blue: 0.30)
-        case .desert: return Color(red: 0.85, green: 0.62, blue: 0.28)
         }
     }
 
-    public static func infer(from city: String, countryCode: String?) -> CityArchetype {
-        let code = countryCode?.uppercased() ?? ""
-        if ["JP", "CN", "KR", "TW", "HK", "TH", "VN", "SG"].contains(code) {
-            return .asian
+    /// 4-Tier Cascade Mapping: Curated Sub-Regions -> State/Country Heuristics -> Semantic Keywords -> Defaults
+    public static func infer(
+        from city: String,
+        countryCode: String?,
+        administrativeArea: String? = nil
+    ) -> CityArchetype {
+        let normCity = CityIdentity.normalize(city)
+        let normCountry = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? ""
+        let normArea = administrativeArea?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() ?? ""
+
+        // Tier 1: Explicit Curated Sub-Regional Dictionary
+        if normCountry == "US" || normCountry.isEmpty {
+            let isCA = normArea == "CA" || normArea == "CALIFORNIA"
+
+            // Central Valley (CA)
+            let centralValleyCities: Set<String> = [
+                "bakersfield", "fresno", "modesto", "stockton", "visalia", "merced", "clovis",
+                "turlock", "chico", "redding", "tulare", "hanford", "delano", "porterville",
+                "madera", "lodi", "tracy", "manteca"
+            ]
+            if (isCA || normArea.isEmpty) && centralValleyCities.contains(normCity) {
+                return .centralValley
+            }
+
+            // Silicon Valley & Bay Area Suburbs (CA) & Seattle tech hubs (WA)
+            let siliconValleyCities: Set<String> = [
+                "fremont", "palo alto", "sunnyvale", "cupertino", "mountain view", "santa clara",
+                "san mateo", "redwood city", "menlo park", "los altos", "milpitas", "foster city",
+                "san carlos", "burlingame", "belmont", "pleasanton", "dublin", "san ramon",
+                "walnut creek", "bellevue", "redmond", "kirkland"
+            ]
+            if (isCA || normArea == "WA" || normArea.isEmpty) && siliconValleyCities.contains(normCity) {
+                return .siliconValley
+            }
+
+            // Pacific Surf Coast
+            let surfCities: Set<String> = [
+                "santa cruz", "malibu", "laguna beach", "encinitas", "huntington beach",
+                "newport beach", "carlsbad", "oceanside", "san clemente", "half moon bay",
+                "monterey", "carmel", "pacific grove", "santa barbara", "ventura", "carpinteria",
+                "morro bay", "pismo beach", "capitola"
+            ]
+            if (isCA || normArea == "HI" || normArea.isEmpty) && surfCities.contains(normCity) {
+                return .pacificSurf
+            }
+
+            // Alpine Mountain Towns
+            let alpineCities: Set<String> = [
+                "lake tahoe", "south lake tahoe", "truckee", "mammoth lakes", "aspen", "vail",
+                "breckenridge", "boulder", "park city", "jackson", "steamboat springs",
+                "telluride", "big bear lake"
+            ]
+            if alpineCities.contains(normCity) {
+                return .alpineChalet
+            }
+
+            // Desert & Adobe
+            let desertCities: Set<String> = [
+                "palm springs", "sedona", "scottsdale", "santa fe", "moab", "taos", "tucson",
+                "mesa", "tempe", "chandler", "joshua tree", "indio", "cathedral city",
+                "desert hot springs", "palm desert", "la quinta", "albuquerque", "yuma"
+            ]
+            if desertCities.contains(normCity) {
+                return .desertAdobe
+            }
         }
-        if ["GB", "FR", "IT", "DE", "ES", "NL", "AT", "CZ", "PT", "GR", "CH"].contains(code) {
-            return .european
+
+        // International Tier 1 Matches
+        let internationalSurf: Set<String> = ["byron bay", "gold coast", "biarritz", "noosa", "torquay"]
+        if internationalSurf.contains(normCity) { return .pacificSurf }
+
+        let internationalAlpine: Set<String> = [
+            "zermatt", "chamonix", "innsbruck", "st. moritz", "grindelwald", "interlaken",
+            "whistler", "banff", "cortina d'ampezzo", "nagano", "hakuba", "niseko"
+        ]
+        if internationalAlpine.contains(normCity) { return .alpineChalet }
+
+        let internationalHistoric: Set<String> = [
+            "oxford", "cambridge", "bath", "york", "cotswolds", "heidelberg", "bruges",
+            "ghent", "salzburg", "toledo", "siena", "edinburgh", "durham", "canterbury",
+            "stratford-upon-avon", "chester", "rothenburg", "bamberg", "weimar"
+        ]
+        if internationalHistoric.contains(normCity) { return .historicBrick }
+
+        // Tier 2: State / National Regional Heuristics
+        if normCountry == "US" {
+            if ["AZ", "NM", "NV"].contains(normArea) { return .desertAdobe }
+            if ["CO", "UT", "WY", "MT", "ID", "VT"].contains(normArea) { return .alpineChalet }
+            if ["WA", "OR"].contains(normArea) { return .siliconValley }
+            if ["HI", "FL"].contains(normArea) { return .pacificSurf }
+            if ["IA", "KS", "NE", "OK", "ND", "SD"].contains(normArea) { return .centralValley }
+            if ["ME", "NH", "MA", "RI", "CT"].contains(normArea) { return .historicBrick }
         }
-        if ["AE", "EG", "SA", "QA", "MA"].contains(code) {
-            return .desert
+
+        if ["CH", "AT"].contains(normCountry) { return .alpineChalet }
+        if ["NO", "SE", "FI", "IS"].contains(normCountry) { return .alpineChalet }
+        if ["GB", "IE"].contains(normCountry) { return .historicBrick }
+        if ["AE", "EG", "SA", "QA", "MA"].contains(normCountry) { return .desertAdobe }
+        if ["JP", "CN", "KR", "TW", "HK", "TH", "VN", "SG"].contains(normCountry) { return .asian }
+        if ["FR", "IT", "DE", "ES", "NL", "PT", "GR", "CZ", "BE"].contains(normCountry) { return .historicBrick }
+
+        // Tier 3: Semantic Keyword Sniffing
+        if normCity.contains("beach") || normCity.contains("coast") || normCity.contains("surf") ||
+           normCity.contains("shore") || normCity.contains("island") || normCity.contains("cove") ||
+           normCity.contains("bay") || normCity.contains("key") {
+            return .pacificSurf
         }
-        if ["NO", "SE", "FI", "IS", "NZ", "CH", "AT"].contains(code) {
-            return .alpine
+        if normCity.contains("mountain") || normCity.contains("mount ") || normCity.contains("peak") ||
+           normCity.contains("alpine") || normCity.contains("summit") || normCity.contains("ridge") ||
+           normCity.contains("ski") {
+            return .alpineChalet
         }
+        if normCity.contains("desert") || normCity.contains("adobe") || normCity.contains("dune") ||
+           normCity.contains("canyon") || normCity.contains("mesa") {
+            return .desertAdobe
+        }
+        if normCity.contains("valley") || normCity.contains("prairie") || normCity.contains("plains") ||
+           normCity.contains("ranch") || normCity.contains("farm") || normCity.contains("field") {
+            return .centralValley
+        }
+        if normCity.contains("village") || normCity.contains("burg") || normCity.contains("bad ") ||
+           normCity.contains("castle") || normCity.contains("abbey") || normCity.contains("chester") {
+            return .historicBrick
+        }
+
+        // Tier 4: Global Default
         return .metropolis
     }
 }

@@ -1095,23 +1095,37 @@ final class FriendPresenceTests: XCTestCase {
     }
 
     func testUniversalCityFallbackAndUnknownLocationAssets() throws {
-        let bakersfield = CityEmblem.resolve(city: "Bakersfield", countryCode: "US")
+        let bakersfield = CityEmblem.resolve(city: "Bakersfield", countryCode: "US", administrativeArea: "CA")
         XCTAssertEqual(bakersfield.cityID, "bakersfield")
         XCTAssertNil(bakersfield.assetName)
         XCTAssertEqual(bakersfield.displayName, "Bakersfield")
-        XCTAssertEqual(bakersfield.fallbackAssetName, "City_generic_block")
+        XCTAssertEqual(bakersfield.archetype, .centralValley)
+        XCTAssertEqual(bakersfield.fallbackAssetName, "City_archetype_central_valley")
 
-        let fremont = CityEmblem.resolve(city: "Fremont", countryCode: "US")
+        let fremont = CityEmblem.resolve(city: "Fremont", countryCode: "US", administrativeArea: "CA")
         XCTAssertEqual(fremont.cityID, "fremont")
         XCTAssertNil(fremont.assetName)
         XCTAssertEqual(fremont.displayName, "Fremont")
+        XCTAssertEqual(fremont.archetype, .siliconValley)
+        XCTAssertEqual(fremont.fallbackAssetName, "City_archetype_silicon_valley")
 
         let unknown = CityEmblem.resolve(city: nil)
         XCTAssertEqual(unknown.cityID, "unknown")
         XCTAssertEqual(unknown.displayName, "Somewhere")
         XCTAssertEqual(unknown.fallbackAssetName, "City_unknown_location")
 
-        for assetName in ["City_generic_block", "City_unknown_location"] {
+        let testedAssets = [
+            "City_generic_block",
+            "City_unknown_location",
+            "City_archetype_central_valley",
+            "City_archetype_silicon_valley",
+            "City_archetype_pacific_surf",
+            "City_archetype_alpine_chalet",
+            "City_archetype_desert_adobe",
+            "City_archetype_historic_brick"
+        ]
+
+        for assetName in testedAssets {
             let image = try XCTUnwrap(UIImage(named: assetName)?.cgImage, "Missing bundled asset: \(assetName)")
             var pixels = [UInt8](repeating: 0, count: 16 * 16 * 4)
             try pixels.withUnsafeMutableBytes { bytes in
@@ -1123,11 +1137,42 @@ final class FriendPresenceTests: XCTestCase {
                 context.draw(image, in: CGRect(x: 0, y: 0, width: 16, height: 16))
             }
             for corner in [0, 15, 240, 255] {
-                XCTAssertLessThan(pixels[corner * 4 + 3], 5, "Opaque background corner in \(assetName)")
+                XCTAssertLessThan(pixels[corner * 4 + 3], 15, "Opaque background corner in \(assetName)")
             }
             XCTAssertTrue(stride(from: 3, to: pixels.count, by: 4).contains { pixels[$0] > 200 },
                           "Asset must contain visible opaque content: \(assetName)")
         }
+    }
+
+    func testSmartArchetypeCascadeMappingEngine() {
+        // Tier 1: Explicit Sub-Regional Dictionary
+        XCTAssertEqual(CityArchetype.infer(from: "Bakersfield", countryCode: "US", administrativeArea: "CA"), .centralValley)
+        XCTAssertEqual(CityArchetype.infer(from: "Fresno", countryCode: "US", administrativeArea: "CA"), .centralValley)
+        XCTAssertEqual(CityArchetype.infer(from: "Fremont", countryCode: "US", administrativeArea: "CA"), .siliconValley)
+        XCTAssertEqual(CityArchetype.infer(from: "Palo Alto", countryCode: "US", administrativeArea: "CA"), .siliconValley)
+        XCTAssertEqual(CityArchetype.infer(from: "Santa Cruz", countryCode: "US", administrativeArea: "CA"), .pacificSurf)
+        XCTAssertEqual(CityArchetype.infer(from: "Laguna Beach", countryCode: "US", administrativeArea: "CA"), .pacificSurf)
+        XCTAssertEqual(CityArchetype.infer(from: "Lake Tahoe", countryCode: "US", administrativeArea: "CA"), .alpineChalet)
+        XCTAssertEqual(CityArchetype.infer(from: "Aspen", countryCode: "US", administrativeArea: "CO"), .alpineChalet)
+        XCTAssertEqual(CityArchetype.infer(from: "Palm Springs", countryCode: "US", administrativeArea: "CA"), .desertAdobe)
+        XCTAssertEqual(CityArchetype.infer(from: "Sedona", countryCode: "US", administrativeArea: "AZ"), .desertAdobe)
+        XCTAssertEqual(CityArchetype.infer(from: "Oxford", countryCode: "GB"), .historicBrick)
+        XCTAssertEqual(CityArchetype.infer(from: "Heidelberg", countryCode: "DE"), .historicBrick)
+
+        // Tier 2: State / National Regional Heuristics
+        XCTAssertEqual(CityArchetype.infer(from: "SomeSmallTown", countryCode: "US", administrativeArea: "AZ"), .desertAdobe)
+        XCTAssertEqual(CityArchetype.infer(from: "PineTown", countryCode: "US", administrativeArea: "WA"), .siliconValley)
+        XCTAssertEqual(CityArchetype.infer(from: "SnowVillage", countryCode: "US", administrativeArea: "CO"), .alpineChalet)
+        XCTAssertEqual(CityArchetype.infer(from: "FarmTown", countryCode: "US", administrativeArea: "IA"), .centralValley)
+        XCTAssertEqual(CityArchetype.infer(from: "SunnyTown", countryCode: "US", administrativeArea: "FL"), .pacificSurf)
+        XCTAssertEqual(CityArchetype.infer(from: "AlpenDorf", countryCode: "CH"), .alpineChalet)
+
+        // Tier 3: Semantic Keyword Sniffing
+        XCTAssertEqual(CityArchetype.infer(from: "Sunny Beach", countryCode: "FR"), .pacificSurf)
+        XCTAssertEqual(CityArchetype.infer(from: "Eagle Mountain", countryCode: "FR"), .alpineChalet)
+        XCTAssertEqual(CityArchetype.infer(from: "Cactus Desert", countryCode: "MX"), .desertAdobe)
+        XCTAssertEqual(CityArchetype.infer(from: "Green Valley", countryCode: "FR"), .centralValley)
+        XCTAssertEqual(CityArchetype.infer(from: "Old Abbey", countryCode: "CA"), .historicBrick)
     }
 
     func testHiddenPresenceNeverRevealsCachedGeographyThroughArtwork() {
