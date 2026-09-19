@@ -33,15 +33,25 @@ jobs:
         run: npm run backend:test
 
   ios:
-    runs-on: macos-26
+    # iOS 27 SwiftUI symbols require the Xcode 27 SDK at compile time.
+    runs-on: xcode-27
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode.app
+      - name: Select and verify Xcode 27
+        run: |
+          sudo xcode-select -s /Applications/Xcode_27.0.app/Contents/Developer
+          xcodebuild -version
+          xcrun swift --version
+          SDK_VERSION=$(xcrun --sdk iphonesimulator --show-sdk-version)
+          echo "iOS Simulator SDK: $SDK_VERSION"
+          if [ "${SDK_VERSION%%.*}" -lt 27 ]; then
+            echo "::error::This project requires Xcode 27 and the iOS 27 SDK."
+            exit 1
+          fi
 
       - name: Validate project inputs
         run: |
