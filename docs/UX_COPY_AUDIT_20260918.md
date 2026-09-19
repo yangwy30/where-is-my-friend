@@ -43,4 +43,4 @@ Lead with the user's action or result. Avoid repeated negative claims (never sto
 
 ## Release status
 
-Code change only. TestFlight 1.0.4 (16) was uploaded before this audit and does not include these edits.
+Subsequently released to the existing internal TestFlight group in [1.0.4 (17)](TESTFLIGHT_1_0_4_17.md), alongside the compact Trip form and full removal of the flight-lookup footer. Build 16 predates these copy edits.
