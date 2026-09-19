@@ -1,6 +1,63 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testCompactTripFormAtAccessibilityTextSize() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewTrips",
+                               "-tripTestNamespace=\(UUID().uuidString)",
+                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US",
+                               "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.buttons["newTripButton"].waitForExistence(timeout: 8))
+        app.buttons["newTripButton"].tap()
+        XCTAssertTrue(app.buttons["tripDestinationPicker"].waitForExistence(timeout: 3))
+        capture("Compact trip accessibility destination")
+        for id in ["tripDatesPicker", "saveTripButton"] {
+            let control = app.buttons[id]
+            for _ in 0..<6 where !control.isHittable { app.scrollViews.firstMatch.swipeUp() }
+            XCTAssertTrue(control.isHittable)
+            XCTAssertLessThanOrEqual(control.frame.maxX, app.frame.maxX)
+        }
+        capture("Compact trip accessibility fields")
+        XCTAssertFalse(app.buttons["saveTripButton"].isEnabled)
+    }
+
+    func testCompactTripFormThemesAndSingleCalendar() {
+        continueAfterFailure = false
+        let app = tripsApp(seedExamples: false)
+        for theme in ["solarJadeAppearance", "nightJadeAppearance"] {
+            app.tabBars.buttons.element(boundBy: 2).tap()
+            let appearance = app.buttons["appearanceSettingsButton"]
+            if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            XCTAssertTrue(appearance.waitForExistence(timeout: 3))
+            appearance.tap()
+            app.buttons[theme].tap()
+            app.buttons["appearanceDoneButton"].tap()
+            app.tabBars.buttons.element(boundBy: 1).tap()
+            app.buttons["newTripButton"].tap()
+            let save = app.buttons["saveTripButton"]
+            XCTAssertTrue(save.waitForExistence(timeout: 3))
+            XCTAssertTrue(save.isHittable)
+            XCTAssertFalse(save.isEnabled)
+            capture("Compact trip empty - \(theme)")
+            app.buttons["tripDestinationPicker"].tap()
+            app.buttons["Tokyo (NRT)"].tap()
+            XCTAssertTrue(save.waitForExistence(timeout: 3))
+            XCTAssertTrue(save.isEnabled)
+            let dates = app.buttons["tripDatesPicker"]
+            let originalDates = dates.value as? String
+            dates.tap()
+            XCTAssertTrue(app.buttons["rangeNextMonth"].waitForExistence(timeout: 3))
+            XCTAssertEqual(app.datePickers.count, 0)
+            app.buttons["rangeNextMonth"].tap()
+            app.buttons["Cancel"].firstMatch.tap()
+            XCTAssertEqual(dates.value as? String, originalDates)
+            capture("Compact trip destination - \(theme)")
+            app.buttons["Cancel"].tap()
+        }
+    }
+
     func testTripPrimaryActionRemainsReachableAfterScrolling() {
         continueAfterFailure = false
         let app = tripsApp()
@@ -1184,6 +1241,7 @@ final class PrototypeUITests: XCTestCase {
         let field = app.textFields["tripNameField"]
         XCTAssertTrue(field.waitForExistence(timeout: 3))
         XCTAssertFalse(app.buttons["saveTripButton"].isEnabled)
+        capture("Compact new trip form")
         field.tap()
         field.typeText(name)
         app.buttons["tripDestinationPicker"].tap()
@@ -1279,6 +1337,9 @@ final class PrototypeUITests: XCTestCase {
 private extension XCUIElement {
     func replaceText(with text: String) {
         tap()
+        // A wider field can place the caret mid-text when its center is tapped.
+        // Position it at the trailing edge before deleting the existing value.
+        coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: 0.5)).tap()
         if let currentValue = value as? String, !currentValue.isEmpty {
             typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: currentValue.count))
         }

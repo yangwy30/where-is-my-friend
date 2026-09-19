@@ -96,6 +96,7 @@ struct TripReminderButton: View {
 }
 
 struct TripPlanningSheet: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.dismiss) private var dismiss
     let existing: TripPlan?
     let onSave: (String, String, TripDay, TripDay, Int?) async -> Bool
@@ -150,95 +151,181 @@ struct TripPlanningSheet: View {
         let endYear = cal.component(.year, from: end)
         let df = DateFormatter()
         if startYear == endYear {
-            df.dateFormat = "MMM d"
+            df.setLocalizedDateFormatFromTemplate("MMM d")
             let startPart = df.string(from: start)
-            df.dateFormat = "MMM d, yyyy"
+            df.setLocalizedDateFormatFromTemplate("MMM d yyyy")
             let endPart = df.string(from: end)
             return "\(startPart) – \(endPart)"
         } else {
-            df.dateFormat = "MMM d, yyyy"
+            df.setLocalizedDateFormatFromTemplate("MMM d yyyy")
             return "\(df.string(from: start)) – \(df.string(from: end))"
         }
     }
 
+    private var destinationCard: some View {
+        Button {
+            nameFocused = false
+            showsDestinationSheet = true
+        } label: {
+            HStack(spacing: 18) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Destination")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(WIFTheme.secondaryText)
+                    Text(destination.isEmpty ? String(localized: "Where to?") : (AirportLocation.location(for: destination)?.city ?? destination))
+                        .font(.system(.title2, design: .rounded, weight: .semibold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .multilineTextAlignment(.leading)
+                    HStack(spacing: 6) {
+                        Text(destination.isEmpty ? String(localized: "Choose a city or airport") : destination)
+                        Image(systemName: "chevron.right").font(.caption2.weight(.semibold))
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.fresh)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                if let location = AirportLocation.location(for: destination) {
+                    CityEmblemView(city: location.city, countryCode: location.countryCode, size: 84)
+                        .accessibilityHidden(true)
+                } else {
+                    Image(systemName: "globe.americas.fill")
+                        .font(.system(size: 34, weight: .light))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(width: 76, height: 76)
+                        .background(WIFTheme.fresh.opacity(0.09), in: Circle())
+                        .accessibilityHidden(true)
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, minHeight: 132, alignment: .leading)
+            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 26))
+            .contentShape(RoundedRectangle(cornerRadius: 26))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("tripDestinationPicker")
+    }
+
+    private func dateColumn(_ title: LocalizedStringKey, date: Date) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(title).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            Text(date, format: .dateTime.month(.abbreviated).day().year())
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(WIFTheme.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var datesCard: some View {
+        Button {
+            nameFocused = false
+            showsDatePicker = true
+        } label: {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack {
+                    Label("Dates", systemImage: "calendar")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(WIFTheme.fresh)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: 16) {
+                        dateColumn("From", date: start)
+                        dateColumn("Until", date: end)
+                    }
+                } else {
+                    HStack(spacing: 20) {
+                        dateColumn("From", date: start)
+                        Rectangle().fill(WIFTheme.border.opacity(0.6)).frame(width: 1, height: 40)
+                        dateColumn("Until", date: end)
+                    }
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 26))
+            .contentShape(RoundedRectangle(cornerRadius: 26))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Dates")
+        .accessibilityValue(dateSummary)
+        .accessibilityHint("Choose the start and end dates.")
+        .accessibilityIdentifier("tripDatesPicker")
+    }
+
+    private var nameCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Trip name").font(.caption.weight(.medium))
+                Spacer()
+                Text("Optional").font(.caption)
+            }
+            .foregroundStyle(WIFTheme.secondaryText)
+            TextField(defaultGeneratedName.isEmpty ? String(localized: "Name your trip") : defaultGeneratedName, text: $name)
+                .font(.system(.title3, design: .rounded, weight: .medium))
+                .foregroundStyle(WIFTheme.primaryText)
+                .focused($nameFocused).submitLabel(.done)
+                .onSubmit { nameFocused = false }
+                .onChange(of: name) { _, newValue in
+                    let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty && trimmed != defaultGeneratedName { isCustomName = true }
+                }
+                .accessibilityLabel("Trip name")
+                .accessibilityIdentifier("tripNameField")
+            if cleanName.count > 60 {
+                Text("Keep the name to 60 characters or fewer.")
+                    .font(.caption).foregroundStyle(WIFTheme.destructive)
+            }
+        }
+        .padding(20)
+        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 26))
+    }
+
+    private var saveButton: some View {
+        Button {
+            nameFocused = false
+            isSaving = true
+            Task {
+                if await onSave(effectiveName, destination, TripDay(start), TripDay(end), initialRevision) { dismiss() }
+                else { showsSaveError = true }
+                isSaving = false
+            }
+        } label: {
+            HStack(spacing: 10) {
+                if isSaving { ProgressView().tint(WIFTheme.canvas) }
+                Text(existing == nil ? "Create trip" : "Save changes").font(.headline)
+            }
+            .frame(maxWidth: .infinity, minHeight: 54)
+            .foregroundStyle(canSave ? WIFTheme.canvas : WIFTheme.secondaryText)
+            .background(canSave ? WIFTheme.fresh : WIFTheme.fresh.opacity(0.10), in: Capsule())
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(!canSave || isSaving)
+        .accessibilityIdentifier("saveTripButton")
+    }
+
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    Button {
-                        showsDestinationSheet = true
-                    } label: {
-                        HStack {
-                            Text("Destination")
-                                .foregroundStyle(WIFTheme.primaryText)
-                            Spacer()
-                            if destination.isEmpty {
-                                Text("Select city or airport")
-                                    .foregroundStyle(WIFTheme.secondaryText)
-                            } else {
-                                let loc = AirportLocation.location(for: destination)
-                                let cityName = loc?.city ?? destination
-                                Text("\(cityName) (\(destination))")
-                                    .foregroundStyle(WIFTheme.primaryText)
-                            }
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(WIFTheme.secondaryText)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("tripDestinationPicker")
-                } header: {
-                    Text("Where to?")
+            ScrollView {
+                VStack(spacing: 14) {
+                    destinationCard
+                    datesCard
+                    nameCard
+                    saveButton.padding(.top, 8)
                 }
-                .listRowBackground(WIFTheme.surface)
-
-                Section {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            showsDatePicker.toggle()
-                        }
-                    } label: {
-                        HStack {
-                            Text("Dates")
-                                .foregroundStyle(WIFTheme.primaryText)
-                            Spacer()
-                            Text(dateSummary)
-                                .foregroundStyle(WIFTheme.primaryText)
-                            Image(systemName: showsDatePicker ? "chevron.down" : "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(WIFTheme.secondaryText)
-                        }
-                    }
-                    .buttonStyle(.plain)
-
-
-                } header: {
-                    Text("When?")
-                }
-                .listRowBackground(WIFTheme.surface)
-
-                Section {
-                    TextField(defaultGeneratedName.isEmpty ? "e.g. Palm Springs trip" : defaultGeneratedName, text: $name)
-                        .font(.body)
-                        .focused($nameFocused).submitLabel(.done)
-                        .onSubmit { nameFocused = false }
-                        .onChange(of: name) { _, newValue in
-                            let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-                            if !trimmed.isEmpty && trimmed != defaultGeneratedName {
-                                isCustomName = true
-                            }
-                        }
-                        .accessibilityIdentifier("tripNameField")
-                } header: {
-                    Text("Trip name · Optional")
-                }
-                .listRowBackground(WIFTheme.surface)
+                .frame(maxWidth: 560)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 20)
+                .padding(.top, 18)
+                .padding(.bottom, 24)
             }
-            .scrollContentBackground(.hidden)
             .disabled(isSaving)
             .scrollDismissesKeyboard(.interactively)
-            .background(WIFTheme.canvas)
+            .wifAmbientBackground()
             .sheet(isPresented: $showsDatePicker) {
                 TravelDateRangePicker(startDay: TripDay(start).value, endDay: TripDay(end).value, futurePlansOnly: false) {
                     start = TripDay(value: $0).pickerDate; end = TripDay(value: $1).pickerDate
@@ -248,25 +335,6 @@ struct TripPlanningSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(isSaving) }
-            }
-            .safeAreaInset(edge: .bottom) {
-                VStack(spacing: 10) {
-                    Button {
-                        isSaving = true
-                        Task {
-                            if await onSave(effectiveName, destination, TripDay(start), TripDay(end), initialRevision) { dismiss() }
-                            else { showsSaveError = true }
-                            isSaving = false
-                        }
-                    } label: {
-                        Text(existing == nil ? "Create trip" : "Save changes").font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .wifPrimaryActionLabel(enabled: canSave)
-                    }
-                    .wifPrimaryActionStyle().disabled(!canSave || isSaving)
-                    .accessibilityIdentifier("saveTripButton")
-                }
-                .padding(20).background(WIFTheme.canvas)
             }
             .onChange(of: start) { _, newStart in if end < newStart { end = newStart } }
             .onChange(of: destination) { _, newDest in
@@ -287,7 +355,9 @@ struct TripPlanningSheet: View {
             }
         }
         .tint(WIFTheme.fresh)
-        .presentationDetents([.large])
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(650), .large])
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(32)
         .interactiveDismissDisabled(isSaving)
     }
 }

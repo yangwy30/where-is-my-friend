@@ -1526,14 +1526,6 @@ private struct AddTripFlightSheet: View {
                                 .accessibilityIdentifier("flightCandidateCard-\(candidate.id)")
                             }
                         }
-                    } else if searchError == nil && !isSearching {
-                        Label {
-                            Text(store.repositoryMode == .remote ? "Look up the schedule, or save this flight as unverified." : "Sample flights for trying out Trips.")
-                                .fixedSize(horizontal: false, vertical: true)
-                        } icon: {
-                            Image(systemName: "info.circle")
-                        }
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                 }
                 .padding(20)

@@ -1,6 +1,56 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Choose a city or airport": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择城市或机场"
+        }
+      }
+    }
+  },
+  "Name your trip": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "为行程起个名字"
+        }
+      }
+    }
+  },
+  "Optional": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "可选"
+        }
+      }
+    }
+  },
+  "Keep the name to 60 characters or fewer.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程名称请勿超过 60 个字符。"
+        }
+      }
+    }
+  },
+  "Choose the start and end dates.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择开始和结束日期。"
+        }
+      }
+    }
+  },
   "See where your friends are headed.": {
     "localizations": {
       "zh-Hans": {
@@ -271,26 +321,8 @@
       }
     }
   },
-  "Look up the schedule, or save this flight as unverified.": {
-    "localizations": {
-      "zh-Hans": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "查询时刻表，或将航班保存为未验证。"
-        }
-      }
-    }
-  },
-  "Sample flights for trying out Trips.": {
-    "localizations": {
-      "zh-Hans": {
-        "stringUnit": {
-          "state": "translated",
-          "value": "试用 Trips 的示例航班。"
-        }
-      }
-    }
-  },
+
+
   "Widget content hidden": {
     "localizations": {
       "zh-Hans": {
