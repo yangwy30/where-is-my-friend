@@ -23,7 +23,7 @@ struct AuthenticationView: View {
                     .foregroundStyle(WIFTheme.primaryText)
                     .padding(.top, 22)
 
-                Text("Sign in to restore your accepted friends and city-sharing preferences.")
+                Text("Sign in to connect with your friends.")
                     .font(.body)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
@@ -69,14 +69,15 @@ struct AuthenticationView: View {
                     .padding(.top, 12)
                 }
 
-                Text(authenticationFootnote)
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 14)
-                    .padding(.bottom, 24)
+                if showsDebugSignIn {
+                    Text("Demo mode · sample data")
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .padding(.top, 14)
+                }
             }
             .padding(.horizontal, WIFTheme.screenInset)
+            .padding(.bottom, 24)
         }
         .overlay {
             if isProcessingAppleSignIn || store.isWorking {
@@ -96,13 +97,6 @@ struct AuthenticationView: View {
 
     private var debugSignInLabel: String {
         "Continue with local demo"
-    }
-
-    private var authenticationFootnote: String {
-        if store.repositoryMode == .localDemo {
-            return "Apple authorization is wired, but server verification is replaced by the local repository in this build."
-        }
-        return "Apple verifies your identity, then Supabase securely stores and refreshes your session."
     }
 
     private func handleAppleResult(_ result: Result<ASAuthorization, Error>) {

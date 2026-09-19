@@ -137,7 +137,7 @@ struct ProfileView: View {
                     } label: {
                         profileMenuRow(
                             "Privacy & data",
-                            subtitle: "See how your location data is protected",
+                            subtitle: "What you share and save",
                             symbol: "hand.raised.fill",
                             color: .blue
                         )
@@ -195,14 +195,6 @@ struct ProfileView: View {
                         .buttonStyle(.plain)
                     }
                 }
-
-                Text(buildFooter)
-                    .font(.footnote)
-                    .foregroundStyle(.tertiary)
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 34)
-                    .padding(.bottom, 42)
             }
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.top, 20)
@@ -307,13 +299,6 @@ struct ProfileView: View {
         store.snapshot.colocationEvents.isEmpty
             ? "Timeline of times you shared a city"
             : "\(store.snapshot.colocationEvents.count) moments recorded"
-    }
-
-    private var buildFooter: String {
-        if store.repositoryMode == .localDemo {
-            return "Local demo · No precise coordinates or route history are stored"
-        }
-        return "No precise coordinates or route history are stored"
     }
 
     private var blockedPeopleSubtitle: LocalizedStringKey {
@@ -525,7 +510,7 @@ private struct LocationAccessView: View {
                 WIFSettingsPageHero(
                     symbol: "location.viewfinder",
                     title: "Your city, kept current",
-                    detail: "City detection happens on this iPhone. Precise coordinates and routes are never uploaded."
+                    detail: "Keep your city up to date as you travel."
                 )
 
                 Toggle(isOn: backgroundUpdatesBinding) {
@@ -679,7 +664,7 @@ private struct WidgetPrivacyView: View {
                 WIFSettingsPageHero(
                     symbol: "rectangle.3.group.fill",
                     title: "Beautiful at a glance",
-                    detail: "Widgets start with a useful default. Choose a quieter privacy level only when you need it."
+                    detail: "Choose what appears on your widgets."
                 )
 
                 VStack(spacing: 12) {
@@ -698,12 +683,12 @@ private struct WidgetPrivacyView: View {
                     privacyChoice(
                         mode: .hideAll,
                         title: "Hide everything",
-                        note: "Show only a private placeholder.",
+                        note: "Hide names and cities.",
                         symbol: "lock.fill"
                     )
                 }
 
-                Text("This controls Across Us widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked.")
+                Text("Applies to Home Screen and Lock Screen widgets.")
                     .font(.footnote)
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.horizontal, 4)
@@ -804,7 +789,7 @@ private struct NotificationSettingsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Show notification previews")
                             .font(.headline)
-                        Text(previewsEnabled ? "Show names and invitation details" : "Keep names and details private")
+                        Text(previewsEnabled ? "Show names and invitation details" : "Hide names and details")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -1039,7 +1024,7 @@ private struct PrivacyDataView: View {
                 WIFSettingsPageHero(
                     symbol: "hand.raised.fill",
                     title: "City-level by design",
-                    detail: "Your friends get useful context without precise tracking or route history."
+                    detail: "See what you share and what the app saves."
                 )
 
                 VStack(spacing: 0) {
@@ -1057,13 +1042,13 @@ private struct PrivacyDataView: View {
                     Divider().overlay(WIFTheme.border).padding(.leading, 52)
                     privacyRow(
                         "On your Widget",
-                        detail: "Accepted friends’ last-known cities in a private App Group cache",
+                        detail: "Your friends’ latest shared cities",
                         symbol: "rectangle.3.group.fill"
                     )
                     Divider().overlay(WIFTheme.border).padding(.leading, 52)
                     privacyRow(
                         "When you delete",
-                        detail: "Server data, the local session and Widget cache are removed",
+                        detail: "Your account data is deleted and you’re signed out",
                         symbol: "trash.fill"
                     )
                 }

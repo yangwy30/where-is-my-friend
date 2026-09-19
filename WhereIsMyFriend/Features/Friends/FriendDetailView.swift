@@ -84,12 +84,6 @@ struct FriendDetailView: View {
                     tint: WIFTheme.surface.opacity(0.08),
                     in: RoundedRectangle(cornerRadius: WIFTheme.mediumRadius, style: .continuous)
                 )
-
-                Label("No precise location or route history is shared.", systemImage: "hand.raised.fill")
-                    .font(.footnote)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 18)
             }
             .frame(maxWidth: 700)
             .frame(maxWidth: .infinity)

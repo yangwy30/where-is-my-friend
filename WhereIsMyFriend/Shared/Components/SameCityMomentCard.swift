@@ -211,9 +211,6 @@ struct SameCityReunionCard: View {
                 .foregroundStyle(WIFTheme.fresh)
                 .multilineTextAlignment(.center)
             if isCurrent {
-                Text("Based on shared city updates · not live location")
-                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
                 Text(friend.relativeUpdateLongText(at: referenceDate))
                     .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                 ShareLink(item: "We’re both in \(city)! Want to catch up?") {
@@ -224,12 +221,12 @@ struct SameCityReunionCard: View {
                         .background(WIFTheme.fresh, in: Capsule())
                 }
                 .buttonStyle(.plain)
-                .accessibilityHint("Choose a messaging app and recipient. Nothing is sent automatically.")
+                .accessibilityHint("Choose who to message.")
                 .accessibilityIdentifier("sameCitySayHello")
             } else if let event {
                 Text(event.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                Text("This is a past update, not confirmation that you’re still together.")
+                Text("Past city update")
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
             }

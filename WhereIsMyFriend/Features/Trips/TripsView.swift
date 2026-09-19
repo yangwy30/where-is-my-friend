@@ -484,7 +484,7 @@ private struct FullTripArrivalBoard: View {
                                      onExpand: { showsMap = true })
                 }
                 if trip.isExample {
-                    Text("Example itinerary · not live flight tracking.")
+                    Text("Example itinerary")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -809,7 +809,7 @@ private struct TripRouteMapView: View {
                 .frame(height: 150)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .accessibilityIdentifier("tripRouteMapView")
-            Text("Airport routes · not live aircraft positions")
+            Text("Airport routes")
                 .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
         }
     }
@@ -880,7 +880,7 @@ private struct TripImmersiveMap: View {
                     }
                     .padding(.horizontal, 20)
                 }
-                Text("Airport routes · not live aircraft positions")
+                Text("Airport routes")
                     .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                     .padding(.horizontal, 20)
             }
@@ -1300,7 +1300,7 @@ private struct AddTripFlightSheet: View {
                         .accessibilityIdentifier("tripSignedInTraveler")
                     }
                     .padding(.horizontal, 2)
-                    Text(store.repositoryMode == .remote ? "Your flight · signed-in account" : "Your flight · demo account")
+                    Text(store.repositoryMode == .remote ? "Your flight" : "Your flight · demo")
                         .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityIdentifier("tripFlightOwnershipCaption")
@@ -1528,7 +1528,7 @@ private struct AddTripFlightSheet: View {
                         }
                     } else if searchError == nil && !isSearching {
                         Label {
-                            Text(store.repositoryMode == .remote ? "Flight lookup queries schedules via AeroDataBox. You can also save without lookup as unverified." : "Demo flights are examples, not live schedules. Sign in to your cloud account for real flight lookup.")
+                            Text(store.repositoryMode == .remote ? "Look up the schedule, or save this flight as unverified." : "Sample flights for trying out Trips.")
                                 .fixedSize(horizontal: false, vertical: true)
                         } icon: {
                             Image(systemName: "info.circle")

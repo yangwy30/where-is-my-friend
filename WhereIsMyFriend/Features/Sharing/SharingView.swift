@@ -22,7 +22,7 @@ struct CitySharingSheet: View {
                                 Text("Share my city")
                                     .font(.body.weight(.semibold))
                                     .foregroundStyle(WIFTheme.primaryText)
-                                Text("Your per-friend visibility choices still apply")
+                                Text("Share with the friends you choose")
                                     .font(.caption)
                                     .foregroundStyle(WIFTheme.secondaryText)
                             }
@@ -56,7 +56,7 @@ struct CitySharingSheet: View {
                                 .font(.headline)
                                 .foregroundStyle(WIFTheme.destructive)
 
-                            Text("Across Us needs location access to automatically detect your city. Precise coordinates are never stored.")
+                            Text("Allow location access to update your city automatically.")
                                 .font(.caption)
                                 .foregroundStyle(WIFTheme.secondaryText)
 
@@ -82,18 +82,6 @@ struct CitySharingSheet: View {
                             .foregroundStyle(WIFTheme.destructive)
                             .wifSettingsGlassCard(tint: WIFTheme.destructive.opacity(0.08))
                     }
-
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "shield.checkmark.fill")
-                            .font(.subheadline)
-                            .foregroundStyle(WIFTheme.fresh)
-
-                        Text("Zero precise tracking. Only your city-level location and update timestamp are shared, including state or region when available. Exact GPS coordinates and route history are never uploaded or stored.")
-                            .font(.footnote)
-                            .foregroundStyle(WIFTheme.secondaryText)
-                    }
-                    .padding(.horizontal, 4)
-                    .padding(.bottom, 20)
                 }
                 .padding(WIFTheme.screenInset)
             }

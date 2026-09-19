@@ -220,7 +220,7 @@ private struct IncomingInviteView: View {
                 Text("Connect with @\(invite.username)?")
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
-                Text("This invite link will send a friend request. Your city stays private until both people accept and sharing is enabled.")
+                Text("Send a friend request to connect.")
                     .foregroundStyle(WIFTheme.secondaryText)
                     .multilineTextAlignment(.center)
                 Button {

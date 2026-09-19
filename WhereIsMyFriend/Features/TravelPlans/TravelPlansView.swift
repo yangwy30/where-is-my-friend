@@ -164,12 +164,12 @@ struct PersonalPlanEditor: View {
                     Toggle("Let selected friends view this plan", isOn: $plan.allowFriendBrowsing)
                         .font(.subheadline).accessibilityIdentifier("travelPlanBrowsing")
                     Text(plan.allowFriendBrowsing
-                         ? "Selected friends can see your full city and dates in Friend plans, even without a matching plan. No announcement is sent."
-                         : "Only matching dates are shown when both of you share overlapping plans. Your full plan stays out of Friend plans.")
+                         ? "Selected friends can browse your city and dates."
+                         : "Selected friends see matching dates only when you share plans with each other.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     Toggle("Remind me about overlaps", isOn: $plan.alertsEnabled)
                         .font(.subheadline).accessibilityIdentifier("travelPlanAlerts")
-                    Text("When both of you share matching plans, reminders can arrive within 14 days of the overlap. No live location is shared.")
+                    Text("Get a reminder up to 14 days before your plans overlap.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     if let error { Text(error).font(.caption).foregroundStyle(WIFTheme.destructive).accessibilityIdentifier("travelPlanError") }
                     Button {
@@ -407,8 +407,6 @@ struct UpcomingTogetherCard: View {
                         Text(selected.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.fresh)
                         Text("\(selected.daysTogether) days in common · local dates")
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        Text("Based on plans you’ve shared with each other, not live location.")
-                            .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                         ShareLink(item: "We’ll both be in \(selected.city) on \(selected.dateLabel). Coffee?") {
                             Label("Say hello", systemImage: "bubble.left")
                         }.buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("upcomingSayHello")

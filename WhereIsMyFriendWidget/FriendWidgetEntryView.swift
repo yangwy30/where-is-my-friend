@@ -687,7 +687,7 @@ private struct LockScreenPrivateState: View {
     var body: some View {
         switch layout {
         case .rectangular:
-            Label("Privacy mode active", systemImage: "eye.slash.fill")
+            Label("Widget content hidden", systemImage: "eye.slash.fill")
                 .font(.caption2)
                 .lineLimit(2)
                 .widgetAccentable()
@@ -695,7 +695,7 @@ private struct LockScreenPrivateState: View {
             Image(systemName: "eye.slash.fill")
                 .font(.title3.weight(.semibold))
                 .widgetAccentable()
-                .accessibilityLabel("Privacy mode active")
+                .accessibilityLabel("Widget content hidden")
         }
     }
 }

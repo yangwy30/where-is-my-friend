@@ -1,6 +1,407 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "See where your friends are headed.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "看看好友接下来去哪儿。"
+        }
+      }
+    }
+  },
+  "Add a city and your dates.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "填上城市和日期。"
+        }
+      }
+    }
+  },
+  "Your friends’ shared plans will appear here.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "好友分享的计划会显示在这里。"
+        }
+      }
+    }
+  },
+  "Review your plan before saving.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "确认你的计划后再保存。"
+        }
+      }
+    }
+  },
+  "Selected friends can browse your city and dates.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所选好友可以查看你的城市和日期。"
+        }
+      }
+    }
+  },
+  "Selected friends see matching dates only when you share plans with each other.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "双方互相分享计划时，所选好友才能看到重叠日期。"
+        }
+      }
+    }
+  },
+  "Get a reminder up to 14 days before your plans overlap.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "在计划重叠前的 14 天内收到提醒。"
+        }
+      }
+    }
+  },
+  "Share with the friends you choose": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "分享给你选择的好友"
+        }
+      }
+    }
+  },
+  "Allow location access to update your city automatically.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "允许访问位置，即可自动更新城市。"
+        }
+      }
+    }
+  },
+  "Updated %@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "更新于 %@"
+        }
+      }
+    }
+  },
+  "Send a friend request to connect.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "发送好友请求，与对方建立联系。"
+        }
+      }
+    }
+  },
+  "Your city.\nYour choice.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你的城市。\n由你做主。"
+        }
+      }
+    }
+  },
+  "Choose who sees your city. Pause sharing anytime.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择把城市分享给谁，随时可以暂停。"
+        }
+      }
+    }
+  },
+  "Start with your city.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "从你所在的城市开始。"
+        }
+      }
+    }
+  },
+  "What you share and save": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你分享和保存的信息"
+        }
+      }
+    }
+  },
+  "Keep your city up to date as you travel.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "旅途中，自动更新你所在的城市。"
+        }
+      }
+    }
+  },
+  "Choose what appears on your widgets.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择小组件显示哪些内容。"
+        }
+      }
+    }
+  },
+  "Hide names and cities.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "隐藏姓名和城市。"
+        }
+      }
+    }
+  },
+  "Applies to Home Screen and Lock Screen widgets.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "适用于主屏幕和锁屏小组件。"
+        }
+      }
+    }
+  },
+  "See what you share and what the app saves.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "了解你分享的内容，以及 App 保存的信息。"
+        }
+      }
+    }
+  },
+  "Your friends’ latest shared cities": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "好友最近分享的城市"
+        }
+      }
+    }
+  },
+  "Your account data is deleted and you’re signed out": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "删除账号数据并退出登录"
+        }
+      }
+    }
+  },
+  "Sign in to connect with your friends.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "登录，与好友保持联系。"
+        }
+      }
+    }
+  },
+  "Example itinerary": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "示例行程"
+        }
+      }
+    }
+  },
+  "Airport routes": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "机场间航线"
+        }
+      }
+    }
+  },
+  "Your flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你的航班"
+        }
+      }
+    }
+  },
+  "Your flight · demo": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你的航班 · 演示"
+        }
+      }
+    }
+  },
+  "Look up the schedule, or save this flight as unverified.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "查询时刻表，或将航班保存为未验证。"
+        }
+      }
+    }
+  },
+  "Sample flights for trying out Trips.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "试用 Trips 的示例航班。"
+        }
+      }
+    }
+  },
+  "Widget content hidden": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已隐藏小组件内容"
+        }
+      }
+    }
+  },
+  "Past city update": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "历史城市动态"
+        }
+      }
+    }
+  },
+  "Choose who to message.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择发给谁。"
+        }
+      }
+    }
+  },
+  "Demo mode · sample data": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "演示模式 · 示例数据"
+        }
+      }
+    }
+  },
+  "Hide names and details": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "隐藏姓名和详情"
+        }
+      }
+    }
+  },
+  "Different cities.\nStill close.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "各在一城。\n依然亲近。"
+        }
+      }
+    }
+  },
+  "A little nudge.\nA real-life reunion.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "一个提醒。\n一次相聚。"
+        }
+      }
+    }
+  },
+  "Your next trip,\ntogether.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "下一次旅行，\n一起出发。"
+        }
+      }
+    }
+  },
+  "A little window into your friends’ worlds, wherever life takes you.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "无论身在何处，看看好友所在的城市。"
+        }
+      }
+    }
+  },
+  "Get a notification when you and a friend are in the same city. Make time to catch up.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "和好友来到同一座城市时，收到提醒，找时间见一面。"
+        }
+      }
+    }
+  },
+  "Make a shared trip, invite your friends, and see everyone’s flights in one place.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "创建行程、邀请好友，一起查看大家的航班。"
+        }
+      }
+    }
+  },
+
   "Flight planning reminders": {
     "localizations": {
       "zh-Hans": {
@@ -511,32 +912,12 @@
         }
       }
     },
-    "Future cities your friends chose to share with you." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "好友主动与你分享的未来城市安排。"
-          }
-        }
-      }
-    },
     "Add my plan" : {
       "localizations": {
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
             "value": "添加我的计划"
-          }
-        }
-      }
-    },
-    "Private until you choose to share." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "由你决定分享，默认仅自己可见。"
           }
         }
       }
@@ -577,16 +958,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "还没有好友分享计划"
-          }
-        }
-      }
-    },
-    "Plans appear here when a friend chooses to share their full city and dates with you. You don’t need a matching plan." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "好友选择与你分享完整城市和日期后，计划就会显示在这里。你不必先填写重叠的计划。"
           }
         }
       }
@@ -641,26 +1012,7 @@
         }
       }
     },
-    "This is a future plan shared with you. Dates may change." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "这是一份与你分享的未来安排，日期可能调整。"
-          }
-        }
-      }
-    },
-    "Copying dates creates a private draft. Choose who can see it before saving." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "复制日期会新建一份私密草稿，保存前可自行选择分享给谁。"
-          }
-        }
-      }
-    },
+
     "This plan is unavailable" : {
       "localizations": {
         "zh-Hans": {
@@ -711,26 +1063,7 @@
         }
       }
     },
-    "Selected friends can see your full city and dates in Friend plans, even without a matching plan. No announcement is sent." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "所选好友可以在“好友计划”查看完整城市和日期，无需先有重叠安排。不会群发通知。"
-          }
-        }
-      }
-    },
-    "Only matching dates are shown when both of you share overlapping plans. Your full plan stays out of Friend plans." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "仅当双方相互分享且日期重叠时，展示重叠日期。完整计划不会出现在“好友计划”。"
-          }
-        }
-      }
-    },
+
     "Selected friends can match with this plan. If you enable plan browsing, they can also see its full city and dates. Changes take effect when you save the plan." : {
       "localizations": {
         "zh-Hans": {
@@ -987,16 +1320,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "提醒我重叠安排"
-          }
-        }
-      }
-    },
-    "When both of you share matching plans, reminders can arrive within 14 days of the overlap. No live location is shared." : {
-      "localizations": {
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "双方相互分享重叠计划后，可在重叠日期开始前14天内收到提醒。不会共享实时位置。"
           }
         }
       }
@@ -1395,16 +1718,6 @@
         }
       }
     },
-    "Accepted friends’ last-known cities in a private App Group cache" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已接受好友的最近城市会缓存在私密的 App Group 中"
-          }
-        }
-      }
-    },
     "Accepted friends’ last-known cities in an App Group cache" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1625,17 +1938,6 @@
         }
       }
     },
-    "Apple authorization is wired, but server verification is replaced by the local repository in this build." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已接入 Apple 授权；当前构建使用本地数据层代替服务器验证。"
-          }
-        }
-      }
-    },
     "Apple did not return an identity token." : {
       "localizations" : {
         "zh-Hans" : {
@@ -1663,17 +1965,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通过 Apple 登录失败"
-          }
-        }
-      }
-    },
-    "Apple verifies your identity, then Supabase securely stores and refreshes your session." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apple 验证你的身份，Supabase 随后会安全保存并自动刷新登录会话。"
           }
         }
       }
@@ -2090,16 +2381,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "只关注城市变化"
-          }
-        }
-      }
-    },
-    "City detection happens on this iPhone. Precise coordinates and routes are never uploaded." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "城市识别只在这台 iPhone 上完成，精确坐标与路线永远不会上传。"
           }
         }
       }
@@ -3051,17 +3332,6 @@
     "Live simulator for iOS Home Screen & StandBy widgets." : {
 
     },
-    "Local demo · No precise coordinates or route history are stored" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本地演示 · 不会存储精确坐标或路线历史"
-          }
-        }
-      }
-    },
     "Location & automatic updates" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -3371,27 +3641,7 @@
         }
       }
     },
-    "No precise coordinates or route history are stored" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不会存储精确坐标或路线历史"
-          }
-        }
-      }
-    },
-    "No precise location or route history is shared." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "不会共享精确位置或路线历史。"
-          }
-        }
-      }
-    },
+
     "No same-city moments yet" : {
       "localizations" : {
         "zh-Hans" : {
@@ -3829,9 +4079,6 @@
         }
       }
     },
-    "Privacy mode active" : {
-
-    },
     "Procedural Archetype · %@" : {
 
     },
@@ -4248,16 +4495,6 @@
         }
       }
     },
-    "See how your location data is protected" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "了解你的位置信息如何受到保护"
-          }
-        }
-      }
-    },
     "See the latest city your closest friends have chosen to share — without starting another group chat." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4307,16 +4544,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "发送好友请求"
-          }
-        }
-      }
-    },
-    "Server data, the local session and Widget cache are removed" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "服务器数据、本地登录状态和小组件缓存都会被移除"
           }
         }
       }
@@ -4448,16 +4675,6 @@
         }
       }
     },
-    "Show only a private placeholder." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "只显示一个私密占位画面。"
-          }
-        }
-      }
-    },
     "Showing the last saved update" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -4476,16 +4693,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "登录后刷新"
-          }
-        }
-      }
-    },
-    "Sign in to restore your accepted friends and city-sharing preferences." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "登录以恢复已接受的朋友和城市共享偏好。"
           }
         }
       }
@@ -4807,26 +5014,7 @@
         }
       }
     },
-    "This controls Across Us widgets on the Home Screen and Lock Screen. iOS may apply additional privacy redaction while your iPhone is locked." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此设置控制 Across Us 在主屏幕和锁屏上的小组件。iPhone 锁定时，iOS 可能会进一步隐藏隐私内容。"
-          }
-        }
-      }
-    },
-    "This invite link will send a friend request. Your city stays private until both people accept and sharing is enabled." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此邀请链接会发送好友请求。在双方接受并启用共享之前，你的城市会保持私密。"
-          }
-        }
-      }
-    },
+
     "This iPhone" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -5012,26 +5200,7 @@
         }
       }
     },
-    "Updated %@" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新于 %@"
-          }
-        }
-      }
-    },
-    "Updated %@ · City only" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新于 %@ · 仅共享城市"
-          }
-        }
-      }
-    },
+
     "Use current location" : {
       "localizations" : {
         "zh-Hans" : {
@@ -5273,16 +5442,6 @@
         }
       }
     },
-    "Widgets start with a useful default. Choose a quieter privacy level only when you need it." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "小组件默认就能直接使用；只有需要时，才选择更低调的隐私级别。"
-          }
-        }
-      }
-    },
     "Working offline" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -5444,16 +5603,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你的城市，保持最新"
-          }
-        }
-      }
-    },
-    "Your friends get useful context without precise tracking or route history." : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "好友能了解你所在的城市，但不会有精确追踪或路线历史。"
           }
         }
       }

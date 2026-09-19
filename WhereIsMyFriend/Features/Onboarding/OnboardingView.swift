@@ -12,7 +12,7 @@ struct LocationSetupView: View {
         Image(systemName: "location.circle.fill")
           .font(.system(size: 76, weight: .light)).foregroundStyle(WIFTheme.fresh)
           .padding(.top, 48).accessibilityHidden(true)
-        Text("A city, not a pin.")
+        Text("Start with your city.")
           .font(.largeTitle.bold()).foregroundStyle(WIFTheme.primaryText)
         Text("Turn on location to find your city and discover when you and your friends are nearby.")
           .font(.title3).foregroundStyle(WIFTheme.secondaryText)
@@ -87,21 +87,21 @@ struct OnboardingView: View {
     _step = State(initialValue: min(max(initialStep, 0), Self.pageCount - 1))
   }
 
-  private var title: String {
+  private var title: LocalizedStringKey {
     switch step {
     case 0: "Different cities.\nStill close."
     case 1: "A little nudge.\nA real-life reunion."
     case 2: "Your next trip,\ntogether."
-    default: "Your city.\nYour privacy."
+    default: "Your city.\nYour choice."
     }
   }
 
-  private var subtitle: String {
+  private var subtitle: LocalizedStringKey {
     switch step {
     case 0: "A little window into your friends’ worlds, wherever life takes you."
     case 1: "Get a notification when you and a friend are in the same city. Make time to catch up."
     case 2: "Make a shared trip, invite your friends, and see everyone’s flights in one place."
-    default: "Friends see your city, never your exact location. Pause sharing anytime."
+    default: "Choose who sees your city. Pause sharing anytime."
     }
   }
 

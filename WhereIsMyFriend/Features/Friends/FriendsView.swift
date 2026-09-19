@@ -411,7 +411,7 @@ struct FriendsView: View {
 
         let update = store.snapshot.currentPresence.updatedAt?
             .formatted(date: .omitted, time: .shortened) ?? "—"
-        return String(format: String(localized: "Updated %@ · City only"), update)
+        return String(format: String(localized: "Updated %@"), update)
     }
 
     private func friendCard(_ friend: FriendPresence) -> some View {

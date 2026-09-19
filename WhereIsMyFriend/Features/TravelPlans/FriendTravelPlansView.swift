@@ -15,7 +15,7 @@ struct FriendTravelPlansView: View {
             LazyVStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Where are friends going?").font(.largeTitle.bold())
-                    Text("Future cities your friends chose to share with you.")
+                    Text("See where your friends are headed.")
                         .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 }
 
@@ -27,7 +27,7 @@ struct FriendTravelPlansView: View {
                         Image(systemName: "calendar.badge.plus").font(.title2)
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Add my plan").font(.subheadline.weight(.semibold))
-                            Text("Private until you choose to share.").font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            Text("Add a city and your dates.").font(.caption).foregroundStyle(WIFTheme.secondaryText)
                         }
                         Spacer(minLength: 0)
                         Image(systemName: "chevron.right").font(.caption)
@@ -51,7 +51,7 @@ struct FriendTravelPlansView: View {
                     ContentUnavailableView {
                         Label("No shared plans yet", systemImage: "calendar")
                     } description: {
-                        Text("Plans appear here when a friend chooses to share their full city and dates with you. You don’t need a matching plan.")
+                        Text("Your friends’ shared plans will appear here.")
                     }
                     .accessibilityIdentifier("friendPlansEmpty")
                 } else {
@@ -101,7 +101,6 @@ private struct FriendTravelPlanCard: View {
                 if let friend = store.friend(id: plan.friendID) { FriendAvatarView(friend: friend, size: 28) }
                 Text(plan.friendName).font(.subheadline.weight(.medium))
                 Spacer(minLength: 4)
-                Text("Shared with you").font(.caption2).foregroundStyle(WIFTheme.secondaryText)
             }
             NavigationLink {
                 FriendTravelPlanDetailView(planID: plan.id)
@@ -151,15 +150,13 @@ private struct FriendTravelPlanDetailView: View {
                     Text(plan.city).font(.largeTitle.bold())
                     Text(plan.dateLabel).font(.title3).foregroundStyle(WIFTheme.fresh)
                     Text("Local dates in \(plan.city)").font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    Text("This is a future plan shared with you. Dates may change.")
-                        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                     Button { draft = plan.privateDraft() } label: {
                         Label("I’ll be there too", systemImage: "calendar.badge.plus")
                     }
                     .buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("copyFriendPlanDetail")
                     ShareLink(item: greeting(for: plan)) { Label("Say hello", systemImage: "bubble.left") }
                         .font(.subheadline).frame(minHeight: 44)
-                    Text("Copying dates creates a private draft. Choose who can see it before saving.")
+                    Text("Review your plan before saving.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                 }
                 .padding(WIFTheme.screenInset).padding(.top, 20)
