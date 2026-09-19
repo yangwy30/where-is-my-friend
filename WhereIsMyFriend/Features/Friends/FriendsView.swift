@@ -1,19 +1,28 @@
 import SwiftUI
+import CoreLocation
+import UIKit
 
 struct FriendsView: View {
     @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var locationService: CityLocationService
+    @EnvironmentObject private var locationReminders: LocationPermissionReminderStore
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
+    @State private var isScreenVisible = false
     @State private var referenceDate = Date()
     @Binding private var selectedSameCityEventID: UUID?
     @Binding private var selectedUpcomingID: String?
     @EnvironmentObject private var travelPlans: TravelPlanLibrary
     let onOpenCitySharing: () -> Void
+    let isHomeVisible: Bool
 
-    init(selectedSameCityEventID: Binding<UUID?> = .constant(nil), selectedUpcomingID: Binding<String?> = .constant(nil), onOpenCitySharing: @escaping () -> Void = {}) {
+    init(selectedSameCityEventID: Binding<UUID?> = .constant(nil), selectedUpcomingID: Binding<String?> = .constant(nil), isHomeVisible: Bool = true, onOpenCitySharing: @escaping () -> Void = {}) {
         self._selectedSameCityEventID = selectedSameCityEventID
         self._selectedUpcomingID = selectedUpcomingID
         self.onOpenCitySharing = onOpenCitySharing
+        self.isHomeVisible = isHomeVisible
     }
 
     private func isFriendInSameCity(_ friend: FriendPresence) -> Bool {
@@ -57,8 +66,11 @@ struct FriendsView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
-                cityContextCard
-                    .padding(.top, 16)
+                Group {
+                    if showsLocationReminder { locationReminderCard }
+                    else { cityContextCard }
+                }
+                .padding(.top, 16)
                 if store.snapshot.friends.isEmpty || store.incomingRequestCount > 0 {
                     InvitationNotificationStatusView(service: store.notificationService)
                         .padding(.top, 12)
@@ -123,6 +135,15 @@ struct FriendsView: View {
             AddFriendView()
         }
         .accessibilityIdentifier("friendsScreen")
+        .onAppear {
+            isScreenVisible = true
+            refreshLocationReminder()
+        }
+        .onDisappear {
+            isScreenVisible = false
+            refreshLocationReminder()
+        }
+        .onChange(of: locationReminderContext) { _, _ in refreshLocationReminder() }
         .onChange(of: selectedSameCityEventID, initial: true) { _, id in
             guard let id else { return }
             Task {
@@ -135,6 +156,7 @@ struct FriendsView: View {
         .task {
             while !Task.isCancelled {
                 referenceDate = Date()
+                refreshLocationReminder()
                 await travelPlans.refresh()
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
@@ -148,6 +170,89 @@ struct FriendsView: View {
             }
         }
         }
+    }
+
+    private struct ReminderContext: Equatable {
+        let ownerID: UUID?
+        let eligible: Bool
+    }
+
+    private var locationReminderContext: ReminderContext {
+        var isLiveAccount = store.repositoryMode == .remote
+        #if DEBUG
+        isLiveAccount = isLiveAccount || ProcessInfo.processInfo.arguments.contains("-testLocationReminder")
+        #endif
+        let canPresent = isScreenVisible && isHomeVisible && scenePhase == .active && !isAddingFriend
+            && store.pendingInvite == nil && store.pendingTripInvitationID == nil
+            && store.pendingFriendRequestID == nil && store.notice == nil
+            && selectedSameCityEventID == nil && selectedUpcomingID == nil
+        return ReminderContext(
+            ownerID: store.snapshot.isAuthenticated ? store.snapshot.currentUser.id : nil,
+            eligible: LocationPermissionReminderPolicy.isEligible(
+                isAuthenticated: store.snapshot.isAuthenticated, isLiveAccount: isLiveAccount,
+                isHomeVisible: canPresent, sharingEnabled: store.snapshot.sharingPreferences.citySharingEnabled,
+                presence: store.snapshot.currentPresence, status: locationService.authorizationStatus)
+        )
+    }
+
+    private var showsLocationReminder: Bool {
+        let context = locationReminderContext
+        return context.eligible && context.ownerID != nil && locationReminders.presentedOwnerID == context.ownerID
+    }
+
+    private func refreshLocationReminder() {
+        let context = locationReminderContext
+        locationReminders.prepare(ownerID: context.ownerID, eligible: context.eligible)
+    }
+
+    private var locationReminderCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Keep your city up to date")
+                .font(.headline).foregroundStyle(WIFTheme.primaryText)
+            Text("Turn on location to spot friends in the same city.")
+                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 8) { locationReminderActions }
+            } else {
+                HStack(spacing: 16) { locationReminderActions }
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .wifContentSurface(tint: WIFTheme.fresh.opacity(0.07),
+                           in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("locationReminderCard")
+    }
+
+    @ViewBuilder
+    private var locationReminderActions: some View {
+        Button {
+            let action = LocationPermissionReminderPolicy.action(for: locationService.authorizationStatus)
+            locationReminders.dismiss(for: store.snapshot.currentUser.id)
+            switch action {
+            case .requestPermission: locationService.requestForegroundCity()
+            case .openSettings:
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            case .none: break
+            }
+        } label: {
+            Text(locationService.authorizationStatus == .denied ? "Open Settings" : "Enable location")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(WIFTheme.canvas)
+                .padding(.horizontal, 16).frame(minHeight: 44)
+                .background(WIFTheme.fresh, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("enableLocationReminder")
+        Button { locationReminders.dismiss(for: store.snapshot.currentUser.id) } label: {
+            Text("Not now")
+                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .frame(minHeight: 44).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("dismissLocationReminder")
     }
 
     @ViewBuilder

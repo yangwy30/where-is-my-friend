@@ -1,6 +1,46 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Enable location": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "开启位置"
+        }
+      }
+    }
+  },
+  "Open Settings": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "打开设置"
+        }
+      }
+    }
+  },
+  "Keep your city up to date": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "让城市信息保持最新"
+        }
+      }
+    }
+  },
+  "Turn on location to spot friends in the same city.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "开启位置，发现与你同城的好友。"
+        }
+      }
+    }
+  },
   "Choose a city or airport": {
     "localizations": {
       "zh-Hans": {

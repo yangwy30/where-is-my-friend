@@ -258,6 +258,7 @@ final class AppStore: ObservableObject {
             try await self.repository.deleteAccount()
         }
         if deleted {
+            if let previousOwner { LocationPermissionReminderStore.clearHistory(for: previousOwner) }
             if repositoryMode == .localDemo, let previousOwner { AccountLocalData.clear(origin: repository.storageScope, ownerID: previousOwner) }
             notice = nil
             pendingCityUpdate = nil

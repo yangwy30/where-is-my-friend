@@ -42,6 +42,116 @@ enum LocationSetupPolicy {
     }
 }
 
+/// A small, account-scoped invitation to enable location; never an automatic OS prompt.
+struct LocationPermissionReminderState: Codable, Equatable {
+    static let interval: TimeInterval = 7 * 24 * 60 * 60
+    static let maximumPresentations = 3
+    var presentations = 0
+    var nextEligibleAt: Date?
+
+    func isDue(at now: Date) -> Bool {
+        presentations < Self.maximumPresentations && (nextEligibleAt.map { now >= $0 } ?? true)
+    }
+
+    mutating func recordPresentation(at now: Date) {
+        presentations += 1
+        deferReminder(at: now)
+    }
+
+    mutating func deferReminder(at now: Date) {
+        nextEligibleAt = max(nextEligibleAt ?? .distantPast, now.addingTimeInterval(Self.interval))
+    }
+}
+
+enum LocationPermissionReminderPolicy {
+    enum Action: Equatable { case requestPermission, openSettings, none }
+
+    static func action(for status: CLAuthorizationStatus) -> Action {
+        switch status {
+        case .notDetermined: .requestPermission
+        case .denied: .openSettings
+        default: .none
+        }
+    }
+
+    static func isEligible(isAuthenticated: Bool, isLiveAccount: Bool, isHomeVisible: Bool,
+                           sharingEnabled: Bool, presence: CurrentUserPresence,
+                           status: CLAuthorizationStatus) -> Bool {
+        let hasManualCity = presence.source == .manual && !(presence.city?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+        return isAuthenticated && isLiveAccount && isHomeVisible && sharingEnabled && !hasManualCity
+            && action(for: status) != .none
+    }
+}
+
+@MainActor
+final class LocationPermissionReminderStore: ObservableObject {
+    @Published private(set) var presentedOwnerID: UUID?
+    private let defaults: UserDefaults
+    private let keyPrefix: String
+
+    init(defaults: UserDefaults = .standard, keyPrefix: String? = nil) {
+        self.defaults = defaults
+        var prefix = keyPrefix ?? "location.permission-reminder.v1"
+        #if DEBUG
+        if keyPrefix == nil,
+           let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("-locationReminderNamespace=") }),
+           let namespace = UUID(uuidString: String(argument.dropFirst("-locationReminderNamespace=".count))) {
+            prefix = "location.permission-reminder.test.\(namespace.uuidString)"
+        }
+        #endif
+        self.keyPrefix = prefix
+    }
+
+    func prepare(ownerID: UUID?, eligible: Bool, at now: Date = Date()) {
+        guard let ownerID, eligible else {
+            if presentedOwnerID != nil { presentedOwnerID = nil }
+            return
+        }
+        guard presentedOwnerID != ownerID else { return }
+        var state = history(for: ownerID)
+        guard state.isDue(at: now) else {
+            if presentedOwnerID != nil { presentedOwnerID = nil }
+            return
+        }
+        // Persist before rendering, so navigation/relaunch cannot repeat this impression.
+        state.recordPresentation(at: now)
+        save(state, for: ownerID)
+        presentedOwnerID = ownerID
+    }
+
+    func dismiss(for ownerID: UUID, at now: Date = Date()) {
+        guard presentedOwnerID == ownerID else { return }
+        var state = history(for: ownerID)
+        state.deferReminder(at: now)
+        save(state, for: ownerID)
+        presentedOwnerID = nil
+    }
+
+    func deferAfterInitialSetup(for ownerID: UUID, at now: Date = Date()) {
+        var state = history(for: ownerID)
+        state.deferReminder(at: now)
+        save(state, for: ownerID)
+        dismiss(for: ownerID, at: now)
+    }
+
+    func history(for ownerID: UUID) -> LocationPermissionReminderState {
+        guard let data = defaults.data(forKey: key(for: ownerID)) else { return .init() }
+        // Do not repeatedly nag if a saved cooldown cannot be decoded.
+        return (try? JSONDecoder().decode(LocationPermissionReminderState.self, from: data))
+            ?? .init(presentations: LocationPermissionReminderState.maximumPresentations, nextEligibleAt: .distantFuture)
+    }
+
+    static func clearHistory(for ownerID: UUID) {
+        UserDefaults.standard.removeObject(forKey: "location.permission-reminder.v1.\(ownerID.uuidString)")
+    }
+
+    private func key(for ownerID: UUID) -> String { "\(keyPrefix).\(ownerID.uuidString)" }
+    private func save(_ state: LocationPermissionReminderState, for ownerID: UUID) {
+        guard let data = try? JSONEncoder().encode(state) else { return }
+        defaults.set(data, forKey: key(for: ownerID))
+    }
+}
+
 @MainActor
 final class CityLocationService: NSObject, ObservableObject {
     @Published private(set) var authorizationStatus: CLAuthorizationStatus

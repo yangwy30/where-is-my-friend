@@ -10,6 +10,7 @@ struct AppRootView: View {
     @State private var finishedLocationSetupThisLaunch = false
     @StateObject private var store = AppStore()
     @StateObject private var locationService = CityLocationService()
+    @StateObject private var locationReminders = LocationPermissionReminderStore()
     @StateObject private var appearanceController = WIFAppearanceController()
 
     private var skipsOnboarding: Bool {
@@ -42,6 +43,7 @@ struct AppRootView: View {
             } else if store.snapshot.isAuthenticated {
                 if needsLocationSetup {
                     LocationSetupView {
+                        locationReminders.deferAfterInitialSetup(for: store.snapshot.currentUser.id)
                         hasSeenLocationSetup = true
                         finishedLocationSetupThisLaunch = true
                     }
@@ -78,6 +80,11 @@ struct AppRootView: View {
         }
         .onChange(of: cityLocationContext, initial: true) { _, context in
             locationService.configure(context)
+        }
+        .onChange(of: store.snapshot.isAuthenticated ? store.snapshot.currentUser.id : nil) { _, ownerID in
+            if locationReminders.presentedOwnerID != ownerID {
+                locationReminders.prepare(ownerID: nil, eligible: false)
+            }
         }
         .task(id: cityLocationContext) {
             guard cityLocationContext.isActive, cityLocationContext.automaticAllowed else { return }
@@ -169,6 +176,7 @@ struct AppRootView: View {
         .environmentObject(store)
         .environmentObject(store.travelPlans)
         .environmentObject(locationService)
+        .environmentObject(locationReminders)
         .environmentObject(appearanceController)
     }
 

@@ -31,7 +31,8 @@ struct AppShellView: View {
     var body: some View {
         TabView(selection: $selection) {
             NavigationStack(path: $friendsPath) {
-                FriendsView(selectedSameCityEventID: $sameCityEventID, selectedUpcomingID: $upcomingID) {
+                FriendsView(selectedSameCityEventID: $sameCityEventID, selectedUpcomingID: $upcomingID,
+                            isHomeVisible: selection == .friends && friendsPath.isEmpty && !showsCitySharing) {
                     showsCitySharing = true
                 }
                 .id(sameCityPresentationID)
@@ -149,4 +150,5 @@ struct AppShellView: View {
         .environmentObject(store)
         .environmentObject(store.travelPlans)
         .environmentObject(CityLocationService())
+        .environmentObject(LocationPermissionReminderStore())
 }

@@ -1,6 +1,119 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testLocationReminderDoesNotRepeatAfterOpeningFriendPlans() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        let enable = app.buttons["enableLocationReminder"]
+        XCTAssertTrue(enable.waitForExistence(timeout: 8))
+        app.buttons["friendPlansLink"].tap()
+        XCTAssertTrue(app.scrollViews["friendPlansScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(enable.exists)
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertFalse(enable.exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    func testLocationReminderChineseCopyAndDismissal() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments().map {
+            $0 == "(en)" ? "(zh-Hans)" : ($0 == "en_US" ? "zh_CN" : $0)
+        }
+        app.launch()
+        let enable = app.buttons["enableLocationReminder"]
+        XCTAssertTrue(enable.waitForExistence(timeout: 8))
+        XCTAssertEqual(enable.label, "开启位置")
+        XCTAssertTrue(app.staticTexts["让城市信息保持最新"].exists)
+        capture("Weekly location reminder Chinese")
+        app.buttons["dismissLocationReminder"].tap()
+        XCTAssertTrue(enable.waitForNonExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["myCitySharingCard"].exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    func testLocationReminderSnoozesAcrossNavigationAndRelaunch() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        let enable = app.buttons["enableLocationReminder"]
+        XCTAssertTrue(enable.waitForExistence(timeout: 8))
+        XCTAssertEqual(XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.count, 0)
+        capture("Weekly location reminder")
+        app.buttons["dismissLocationReminder"].tap()
+        XCTAssertTrue(enable.waitForNonExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["myCitySharingCard"].exists)
+        app.tabBars.buttons.element(boundBy: 1).tap()
+        app.tabBars.buttons.element(boundBy: 0).tap()
+        XCTAssertFalse(enable.exists)
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+        XCTAssertFalse(enable.exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    func testLocationReminderRequestsPermissionOnlyAfterTap() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        XCTAssertTrue(app.buttons["enableLocationReminder"].waitForExistence(timeout: 8))
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        XCTAssertEqual(springboard.alerts.count, 0)
+        app.buttons["enableLocationReminder"].tap()
+        let allow = springboard.alerts.buttons["Allow While Using App"]
+        XCTAssertTrue(allow.waitForExistence(timeout: 5))
+        allow.tap()
+        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["enableLocationReminder"].exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    func testDeniedLocationReminderOpensSettingsWithoutAnotherSystemPrompt() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        XCTAssertTrue(app.buttons["enableLocationReminder"].waitForExistence(timeout: 8))
+        app.buttons["enableLocationReminder"].tap()
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let deny = springboard.alerts.buttons["Don’t Allow"]
+        XCTAssertTrue(deny.waitForExistence(timeout: 5))
+        deny.tap()
+        app.terminate()
+        // A separate test history makes the denied-permission branch immediately due.
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        let settingsAction = app.buttons["enableLocationReminder"]
+        XCTAssertTrue(settingsAction.waitForExistence(timeout: 8))
+        XCTAssertEqual(settingsAction.label, "Open Settings")
+        capture("Location reminder after denied permission")
+        settingsAction.tap()
+        let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+        XCTAssertTrue(settings.wait(for: .runningForeground, timeout: 5))
+        app.activate()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(settingsAction.exists)
+        XCTAssertEqual(springboard.alerts.count, 0)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    private func locationReminderArguments() -> [String] {
+        ["-skipOnboarding", "-resetDemoData", "-testLocationReminder",
+         "-locationReminderNamespace=\(UUID().uuidString)",
+         "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+    }
+
     func testCompactTripFormAtAccessibilityTextSize() {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -389,6 +502,7 @@ final class PrototypeUITests: XCTestCase {
         let app = XCUIApplication()
         app.resetAuthorizationStatus(for: .location)
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testLocationSetup", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launchArguments += ["-testLocationReminder", "-locationReminderNamespace=\(UUID().uuidString)"]
         app.launch()
         XCTAssertTrue(app.buttons["enableInitialLocation"].waitForExistence(timeout: 5))
         app.buttons["enableInitialLocation"].tap()
@@ -400,10 +514,12 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertEqual(app.buttons["enableInitialLocation"].label, "Open Settings")
         app.buttons["skipInitialLocation"].tap()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["enableLocationReminder"].exists)
         app.terminate()
         app.launchArguments.removeAll { $0 == "-testLocationSetup" }
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["enableLocationReminder"].exists)
         app.resetAuthorizationStatus(for: .location)
     }
 

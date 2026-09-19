@@ -333,6 +333,130 @@ final class FriendNotificationLinkTests: XCTestCase {
     }
 }
 
+@MainActor
+final class LocationPermissionReminderTests: XCTestCase {
+    private let now = Date(timeIntervalSince1970: 1_800_000_000)
+    private let week = LocationPermissionReminderState.interval
+
+    private func withStore(_ run: (LocationPermissionReminderStore, UserDefaults) -> Void) {
+        let suite = "location-reminder-tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        run(LocationPermissionReminderStore(defaults: defaults, keyPrefix: "test"), defaults)
+    }
+
+    func testWeeklyCooldownPersistsAcrossRelaunchAndStopsAfterThreePresentations() {
+        withStore { store, defaults in
+            let owner = UUID()
+            for attempt in 0..<3 {
+                let time = now.addingTimeInterval(Double(attempt) * week)
+                store.prepare(ownerID: owner, eligible: true, at: time)
+                XCTAssertEqual(store.presentedOwnerID, owner)
+                // Reevaluation while visible must not count as another presentation.
+                store.prepare(ownerID: owner, eligible: true, at: time)
+                XCTAssertEqual(store.history(for: owner).presentations, attempt + 1)
+                store.dismiss(for: owner, at: time)
+                let relaunched = LocationPermissionReminderStore(defaults: defaults, keyPrefix: "test")
+                relaunched.prepare(ownerID: owner, eligible: true, at: time.addingTimeInterval(week - 1))
+                XCTAssertNil(relaunched.presentedOwnerID)
+            }
+            let relaunched = LocationPermissionReminderStore(defaults: defaults, keyPrefix: "test")
+            relaunched.prepare(ownerID: owner, eligible: true, at: now.addingTimeInterval(week * 50))
+            XCTAssertNil(relaunched.presentedOwnerID)
+            XCTAssertEqual(relaunched.history(for: owner).presentations, 3)
+        }
+    }
+
+    func testInitialSetupSkipDefersWithoutSpendingAReminder() {
+        withStore { store, _ in
+            let owner = UUID()
+            store.deferAfterInitialSetup(for: owner, at: now)
+            store.prepare(ownerID: owner, eligible: true, at: now)
+            XCTAssertNil(store.presentedOwnerID)
+            XCTAssertEqual(store.history(for: owner).presentations, 0)
+            store.prepare(ownerID: owner, eligible: true, at: now.addingTimeInterval(week))
+            XCTAssertEqual(store.presentedOwnerID, owner)
+        }
+    }
+
+    func testAccountsAndInactivePagesDoNotShareOrConsumeReminders() {
+        withStore { store, _ in
+            let first = UUID(), second = UUID()
+            store.prepare(ownerID: first, eligible: false, at: now)
+            XCTAssertEqual(store.history(for: first).presentations, 0)
+            store.prepare(ownerID: first, eligible: true, at: now)
+            store.prepare(ownerID: nil, eligible: false, at: now)
+            XCTAssertNil(store.presentedOwnerID)
+            store.prepare(ownerID: second, eligible: true, at: now)
+            XCTAssertEqual(store.presentedOwnerID, second)
+            store.dismiss(for: first, at: now) // A stale account callback cannot dismiss the new account.
+            XCTAssertEqual(store.presentedOwnerID, second)
+            store.prepare(ownerID: first, eligible: true, at: now)
+            XCTAssertNil(store.presentedOwnerID)
+            XCTAssertEqual(store.history(for: first).presentations, 1)
+            XCTAssertEqual(store.history(for: second).presentations, 1)
+        }
+    }
+
+    func testLateDismissalAndClockRollbackCannotImmediatelyRepeat() {
+        withStore { store, _ in
+            let owner = UUID()
+            store.prepare(ownerID: owner, eligible: true, at: now)
+            let dismissedAt = now.addingTimeInterval(week * 2)
+            store.dismiss(for: owner, at: dismissedAt)
+            for time in [now.addingTimeInterval(-week), dismissedAt, dismissedAt.addingTimeInterval(week - 1)] {
+                store.prepare(ownerID: owner, eligible: true, at: time)
+                XCTAssertNil(store.presentedOwnerID)
+            }
+            store.prepare(ownerID: owner, eligible: true, at: dismissedAt.addingTimeInterval(week))
+            XCTAssertEqual(store.presentedOwnerID, owner)
+        }
+    }
+
+    func testEligibilityRespectsManualCitiesSharingAndPermissionState() {
+        let empty = CurrentUserPresence(city: nil, countryCode: nil, updatedAt: nil, source: .foregroundLocation)
+        func eligible(_ status: CLAuthorizationStatus = .notDetermined, authenticated: Bool = true,
+                      live: Bool = true, visible: Bool = true, sharing: Bool = true,
+                      presence: CurrentUserPresence? = nil) -> Bool {
+            LocationPermissionReminderPolicy.isEligible(isAuthenticated: authenticated, isLiveAccount: live,
+                isHomeVisible: visible, sharingEnabled: sharing, presence: presence ?? empty, status: status)
+        }
+        XCTAssertTrue(eligible())
+        XCTAssertTrue(eligible(.denied))
+        for status: CLAuthorizationStatus in [.authorizedAlways, .authorizedWhenInUse, .restricted] {
+            XCTAssertFalse(eligible(status))
+            XCTAssertEqual(LocationPermissionReminderPolicy.action(for: status), .none)
+        }
+        XCTAssertFalse(eligible(authenticated: false))
+        XCTAssertFalse(eligible(live: false))
+        XCTAssertFalse(eligible(visible: false))
+        XCTAssertFalse(eligible(sharing: false))
+        XCTAssertFalse(eligible(presence: .init(city: "Paris", countryCode: "FR", updatedAt: now, source: .manual)))
+        XCTAssertTrue(eligible(presence: .init(city: "Paris", countryCode: "FR", updatedAt: now, source: .foregroundLocation)))
+        XCTAssertEqual(LocationPermissionReminderPolicy.action(for: .notDetermined), .requestPermission)
+        XCTAssertEqual(LocationPermissionReminderPolicy.action(for: .denied), .openSettings)
+    }
+
+    func testPermissionOrSharingChangeHidesAnAlreadyVisibleReminder() {
+        withStore { store, _ in
+            let owner = UUID()
+            store.prepare(ownerID: owner, eligible: true, at: now)
+            store.prepare(ownerID: owner, eligible: false, at: now)
+            XCTAssertNil(store.presentedOwnerID)
+            XCTAssertEqual(store.history(for: owner).presentations, 1)
+        }
+    }
+
+    func testCorruptSavedHistoryDoesNotResetTheReminderLimit() {
+        withStore { store, defaults in
+            let owner = UUID()
+            defaults.set(Data("invalid".utf8), forKey: "test.\(owner.uuidString)")
+            store.prepare(ownerID: owner, eligible: true, at: now)
+            XCTAssertNil(store.presentedOwnerID)
+        }
+    }
+}
+
 final class LocationSetupPolicyTests: XCTestCase {
     func testFirstSignedInUsePromptsButPermissionAndExplicitSkipAreRespected() {
         for status: CLAuthorizationStatus in [.notDetermined, .denied, .restricted] {
