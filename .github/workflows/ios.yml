@@ -35,7 +35,8 @@ jobs:
   ios:
     # iOS 27 SwiftUI symbols require the Xcode 27 SDK at compile time.
     runs-on: xcode-27
-    timeout-minutes: 35
+    # Three build configurations plus the full UI suite took just over 35 minutes.
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v7
         with:
@@ -94,7 +95,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Run unit tests
+      - name: Run unit and UI tests
         run: |
           DEVICE_ID=$(xcrun simctl list devices available -j | ruby -rjson -e '
             devices = JSON.parse(STDIN.read)["devices"].values.flatten
