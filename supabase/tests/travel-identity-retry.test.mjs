@@ -10,7 +10,7 @@ async function setup(legacy=false) {
  const db=new PGlite();
  await db.exec('create schema auth; create table auth.users(id uuid primary key,email text); create role anon; create role authenticated; create role service_role;');
  for(const file of (await readdir(new URL('../migrations/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort()) {
-  if(file.startsWith('20260901220000')||(legacy&&file.startsWith('20260916010000'))) continue;
+  if(legacy&&file.startsWith('20260916010000')) continue;
   await db.exec(await readFile(new URL('../migrations/'+file,import.meta.url),'utf8'));
  }
  await db.exec(await readFile(new URL('../seed.sql',import.meta.url),'utf8'));

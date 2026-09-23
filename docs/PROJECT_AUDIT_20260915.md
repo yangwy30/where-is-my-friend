@@ -30,7 +30,7 @@
 
 ## F2 · P1 · 同城时效规则分裂，旧迁移没有接入实际调用链（已复现）
 
-位置：`supabase/migrations/20260901220000_transition_based_colocation.sql:5`、`supabase/migrations/20260812190000_initial_backend.sql:407`、`WhereIsMyFriend/Shared/Models/AppDomain.swift:168`、`WhereIsMyFriend/Shared/Models/FriendPresence.swift:86`。
+位置：`docs/retired-migrations/20260901220000_transition_based_colocation.sql:5`、`supabase/migrations/20260812190000_initial_backend.sql:407`、`WhereIsMyFriend/Shared/Models/AppDomain.swift:168`、`WhereIsMyFriend/Shared/Models/FriendPresence.swift:86`。
 
 当前存在三种逻辑：
 

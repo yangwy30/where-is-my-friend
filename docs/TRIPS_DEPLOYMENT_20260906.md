@@ -7,6 +7,8 @@ User authorized deployment to the App project and asked to include the previous 
 - Project: `cdhpaujazbuppbxyhjxq` (shared by checked-in App Release/Staging configurations).
 - Applied only `20260906010000`, `20260906020000`, `20260906030000` together in one transaction, with an advisory lock, baseline guard, lock/statement timeouts and migration-history entries. The exact deployment bundle was rehearsed against the hosted baseline first.
 - Deliberately excluded the unrelated pending `20260901220000_transition_based_colocation.sql`. Do not blindly run `db push --include-all` to fix the resulting local/remote history gap.
+
+September 23 follow-up: the old SQL was confirmed unused and superseded by the deployed `20260915020000` migration, then preserved in `docs/retired-migrations/` rather than left in the deployable migration directory. A linked `db push --dry-run --skip-vault` then reported no pending migrations.
 - App `api` is ACTIVE, version 11, JWT verification remains enabled. Bundle SHA-256: `0ee05bbd25f01223c7bf9b2d208d8c75123461fd0e899cac2893ec8fc2d17c12`.
 - Added only the server secret `RAPIDAPI_KEY`, using the existing validated AeroDataBox/RapidAPI credential. No key values were logged or added to source. No Apple Auth or APNs secret was changed.
 - No push-worker code was deployed. Its bundle hash stayed `f4c127513506f333473e0543323e1ac761c6bac0a1493db541e56f046dcf8518`; its listed version advanced from 4 to 5 after project secret configuration. API advanced from 9 before the secret change to 11 after deployment.

@@ -8,7 +8,7 @@
 
 ## Hosted database
 
-- Project `cdhpaujazbuppbxyhjxq`, migration `20260923010000` applied alone, excluding the intentionally undeployed colocation transition migration.
+- Project `cdhpaujazbuppbxyhjxq`, migration `20260923010000` applied alone, excluding the intentionally undeployed colocation transition migration, which was subsequently moved to `docs/retired-migrations/`.
 - Pre-deployment private backup: `.migration-backups/app-predeploy-a7V9ce/`, SHA-256 `1f0911418a2843a95bc923e333624d6595ef752c423c241a64a217bcf84fcc4e`. This backup is excluded from Git and does not include Auth, Storage, or secrets.
 - Read-only post-deployment check: 1/1 personal plans browsable, 3 selected-friend feed entries, new-plan database default `true`, migration ledger present, zero pending upcoming notifications.
 
