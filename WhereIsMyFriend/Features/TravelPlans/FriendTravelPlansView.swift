@@ -40,7 +40,7 @@ struct FriendTravelPlansView: View {
 
                 if let error = library.errorMessage, !library.hasSynced {
                     VStack(alignment: .leading, spacing: 10) {
-                        Label("Shared plans are unavailable", systemImage: "wifi.exclamationmark").font(.headline)
+                        Label("Shared plans are unavailable", systemImage: "calendar.badge.exclamationmark").font(.headline)
                         Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                         Button("Try again") { Task { await library.refresh() } }.frame(minHeight: 44)
                     }
@@ -51,7 +51,7 @@ struct FriendTravelPlansView: View {
                     ContentUnavailableView {
                         Label("No shared plans yet", systemImage: "calendar")
                     } description: {
-                        Text("Your friends’ shared plans will appear here.")
+                        Text("Plans friends choose to show you will appear here.")
                     }
                     .accessibilityIdentifier("friendPlansEmpty")
                 } else {

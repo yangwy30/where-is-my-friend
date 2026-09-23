@@ -48,8 +48,16 @@ struct TravelPlansView: View {
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(plan.city).font(.title3.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
                                     Text(plan.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                                    Text(plan.audience.isEmpty ? "Only you" : "Shared with \(plan.audience.count) friends")
-                                        .font(.caption).foregroundStyle(WIFTheme.fresh)
+                                    Group {
+                                        if plan.audience.isEmpty {
+                                            Text("Only you")
+                                        } else if plan.allowFriendBrowsing {
+                                            Text("Visible to \(plan.audience.count) friends")
+                                        } else {
+                                            Text("Can match with \(plan.audience.count) friends")
+                                        }
+                                    }
+                                    .font(.caption).foregroundStyle(WIFTheme.fresh)
                                 }
                                 Spacer(minLength: 0)
                                 Image(systemName: "chevron.right").font(.caption).foregroundStyle(WIFTheme.secondaryText)
@@ -152,7 +160,7 @@ struct PersonalPlanEditor: View {
                     Button { choosingAudience = true } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Share this plan with").font(.subheadline)
+                                Text("Choose friends").font(.subheadline)
                                 Text(plan.audience.isEmpty ? "Only me · choose friends" : "\(plan.audience.count) selected friends")
                                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                             }
@@ -161,11 +169,11 @@ struct PersonalPlanEditor: View {
                     }.buttonStyle(.plain)
                     .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
                     .accessibilityIdentifier("travelPlanAudience")
-                    Toggle("Let selected friends view this plan", isOn: $plan.allowFriendBrowsing)
+                    Toggle("Show plan in their Friend plans", isOn: $plan.allowFriendBrowsing)
                         .font(.subheadline).accessibilityIdentifier("travelPlanBrowsing")
                     Text(plan.allowFriendBrowsing
-                         ? "Selected friends can browse your city and dates."
-                         : "Selected friends see matching dates only when you share plans with each other.")
+                         ? "Selected friends can see its city and dates."
+                         : "Selected friends can still see a match when your dates overlap.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     Toggle("Remind me about overlaps", isOn: $plan.alertsEnabled)
                         .font(.subheadline).accessibilityIdentifier("travelPlanAlerts")

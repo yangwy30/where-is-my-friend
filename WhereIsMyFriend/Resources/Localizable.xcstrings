@@ -1,6 +1,30 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Plans friends choose to show you will appear here.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "好友分享给你的计划会显示在这里。" } } }
+  },
+  "Visible to %lld friends": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "对 %lld 位好友可见" } } }
+  },
+  "Can match with %lld friends": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "可与 %lld 位好友匹配行程" } } }
+  },
+  "Choose friends": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "选择好友" } } }
+  },
+  "Show plan in their Friend plans": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "在他们的好友计划中显示" } } }
+  },
+  "Selected friends can see its city and dates.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "所选好友可以查看城市和日期。" } } }
+  },
+  "Selected friends can still see a match when your dates overlap.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "日期重叠时，所选好友仍可看到匹配。" } } }
+  },
+  "Couldn’t load shared plans. Try again.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "无法加载好友计划，请重试。" } } }
+  },
   "Enable location": {
     "localizations": {
       "zh-Hans": {

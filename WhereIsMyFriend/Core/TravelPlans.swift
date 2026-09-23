@@ -191,7 +191,7 @@ final class TravelPlanLibrary: ObservableObject {
             apply(result)
         } catch {
             guard version == generation, epoch == mutationEpoch else { return }
-            overlaps = []; friendPlans = []; errorMessage = String(localized: "Couldn’t refresh shared dates. Check your connection and retry."); hasSynced = false
+            overlaps = []; friendPlans = []; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
         }
     }
 
