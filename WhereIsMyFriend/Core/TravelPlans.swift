@@ -27,8 +27,8 @@ struct PersonalTravelPlan: Identifiable, Codable, Equatable {
     var audience: [UUID] = []
     var alertsEnabled = false
     var revision = 0
-    // Older plans authorized matching only. Browsing full dates needs separate consent.
-    var allowFriendBrowsing = false
+    // Selected friends can browse by default; the owner can turn this off per plan.
+    var allowFriendBrowsing = true
     var destination: TravelCity { TravelCity(name: city, countryCode: countryCode, region: region, timeZone: timeZone) }
     var dateLabel: String { TravelDateRangeSelection.label(start: startDay, end: endDay) }
     func isPast(at now: Date = Date()) -> Bool { endDay < TripDay(now, timeZone: TimeZone(identifier: timeZone) ?? .gmt).value }
@@ -69,7 +69,7 @@ extension PersonalTravelPlan {
         audience = try values.decode([UUID].self, forKey: .audience)
         alertsEnabled = try values.decode(Bool.self, forKey: .alertsEnabled)
         revision = try values.decode(Int.self, forKey: .revision)
-        allowFriendBrowsing = try values.decodeIfPresent(Bool.self, forKey: .allowFriendBrowsing) ?? false
+        allowFriendBrowsing = try values.decodeIfPresent(Bool.self, forKey: .allowFriendBrowsing) ?? true
     }
 }
 
@@ -118,7 +118,7 @@ struct FriendTravelPlan: Identifiable, Codable, Equatable {
 
     var dateLabel: String { privateDraft().dateLabel }
     func isPast(at now: Date = Date()) -> Bool { privateDraft().isPast(at: now) }
-    // Copy only destination and dates, never permissions, identifiers or alert consent.
+    // Copy only destination and dates; the new plan has no selected audience or alert consent.
     func privateDraft() -> PersonalTravelPlan {
         PersonalTravelPlan(city: city, countryCode: countryCode, region: region, timeZone: timeZone,
                            startDay: startDay, endDay: endDay)

@@ -17,7 +17,8 @@ async function setup({legacy=false}={}) {
     const db=new PGlite();
     await db.exec('create schema auth; create table auth.users(id uuid primary key,email text); create role anon; create role authenticated; create role service_role;');
     for(const file of (await readdir(new URL('../migrations/',import.meta.url))).filter(f=>f.endsWith('.sql')).sort()) {
-        if(file.startsWith('20260901220000_') || (legacy && file.startsWith('20260915040000_'))) continue;
+        if(file.startsWith('20260901220000_') ||
+            (legacy && (file.startsWith('20260915040000_') || file.startsWith('20260923010000_')))) continue;
         await db.exec(await readFile(new URL('../migrations/'+file,import.meta.url),'utf8'));
     }
     await db.exec(await readFile(new URL('../seed.sql',import.meta.url),'utf8'));
@@ -50,6 +51,29 @@ test('migration keeps legacy matching grants private; explicit browsing works wi
     } finally {await db.close();}
 });
 
+test('default migration opens existing plans to their selected friends and preserves later opt-outs',async()=>{
+    const db=await setup({legacy:true});try {
+        await db.exec(await readFile(new URL('../migrations/20260915040000_friend_travel_plans.sql',import.meta.url),'utf8'));
+        await legacySave(db);
+        assert.equal((await snapshot(db,alice)).plans[0].allowFriendBrowsing,false);
+        assert.deepEqual((await snapshot(db,bob)).friendPlans,[]);
+        await db.exec(await readFile(new URL('../migrations/20260923010000_default_friend_plan_browsing.sql',import.meta.url),'utf8'));
+        assert.equal((await snapshot(db,alice)).plans[0].allowFriendBrowsing,true);
+        assert.equal((await snapshot(db,alice)).plans[0].revision,2);
+        assert.equal((await snapshot(db,bob)).friendPlans.length,1);
+        assert.equal(await scalar(db,'select count(*)::int from upcoming_deliveries'),0);
+        await legacySave(db,2);
+        assert.equal((await snapshot(db,bob)).friendPlans.length,1);
+        await save(db,{revision:3,browse:false});
+        assert.deepEqual((await snapshot(db,bob)).friendPlans,[]);
+        await legacySave(db,4);
+        assert.equal((await snapshot(db,alice)).plans[0].allowFriendBrowsing,false);
+        const another='a7150000-0000-0000-0000-000000000003';
+        await scalar(db,"select wif_travel_save($1,$2,'Tokyo','JP','Tokyo','Asia/Tokyo',current_date+2,current_date+5,$3::uuid[],false,0)",[alice,another,[bob]]);
+        assert.equal((await snapshot(db,bob)).friendPlans.length,1);
+    } finally {await db.close();}
+});
+
 test('audience, opt-out, deletion, blocks, friendship removal and re-addition revoke friend browsing',async()=>{
     const db=await setup();try {
         await save(db,{browse:true,audience:[]});
@@ -76,16 +100,20 @@ test('audience, opt-out, deletion, blocks, friendship removal and re-addition re
     } finally {await db.close();}
 });
 
-test('legacy writes disable browsing and v2 revision/owner checks cannot be bypassed',async()=>{
+test('legacy writes preserve browsing choice and v2 revision/owner checks cannot be bypassed',async()=>{
     const db=await setup();try {
         await save(db,{browse:true});
         await assert.rejects(save(db,{revision:0,browse:false}),/conflict/);
         assert.equal((await snapshot(db,bob)).friendPlans.length,1);
         await assert.rejects(scalar(db,"select wif_travel_save_v2($1,$2,'Tokyo','JP','Tokyo','Asia/Tokyo',current_date+2,current_date+5,'{}',false,1,true)",[bob,planID]),/access denied/);
         await legacySave(db,1);
+        assert.equal((await snapshot(db,alice)).plans[0].allowFriendBrowsing,true);
+        assert.equal((await snapshot(db,bob)).friendPlans.length,1);
+        await save(db,{revision:2,browse:false});
+        await legacySave(db,3);
         assert.equal((await snapshot(db,alice)).plans[0].allowFriendBrowsing,false);
         assert.deepEqual((await snapshot(db,bob)).friendPlans,[]);
-        await assert.rejects(save(db,{revision:2,browse:null}),/visibility/);
+        await assert.rejects(save(db,{revision:4,browse:null}),/visibility/);
     } finally {await db.close();}
 });
 
@@ -109,7 +137,7 @@ test('friend feed is date-sorted, excludes ended plans and deleted owners, and i
     } finally {await db.close();}
 });
 
-test('API input requires explicit boolean browsing consent and preserves the legacy RPC shape',()=>{
+test('API input accepts an explicit visibility choice and preserves the legacy RPC shape',()=>{
     const body={city:'Tokyo',countryCode:'JP',region:'Tokyo',timeZone:'Asia/Tokyo',startDay:'2026-10-12',endDay:'2026-10-16',audience:[bob],alertsEnabled:false,revision:0};
     assert.equal(Object.hasOwn(travelPlanInput(body),'p_allow_friend_browsing'),false);
     assert.equal(travelPlanInput({...body,allowFriendBrowsing:true}).p_allow_friend_browsing,true);

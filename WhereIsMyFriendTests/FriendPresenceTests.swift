@@ -2411,12 +2411,16 @@ final class FriendTravelPlanTests: XCTestCase {
                          region: "Tokyo", timeZone: "Asia/Tokyo", startDay: start, endDay: end)
     }
 
-    func testLegacyPlansAndSnapshotsDecodeWithoutExpandingConsent() throws {
+    func testLegacyPlansAndSnapshotsUseTheCurrentBrowsingDefault() throws {
         let plan = shared().privateDraft()
         var json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(plan)) as? [String: Any])
         json.removeValue(forKey: "allowFriendBrowsing")
         let decoded = try JSONDecoder().decode(PersonalTravelPlan.self, from: JSONSerialization.data(withJSONObject: json))
-        XCTAssertFalse(decoded.allowFriendBrowsing)
+        XCTAssertTrue(decoded.allowFriendBrowsing)
+        json["allowFriendBrowsing"] = false
+        let optedOut = try JSONDecoder().decode(PersonalTravelPlan.self, from: JSONSerialization.data(withJSONObject: json))
+        XCTAssertFalse(optedOut.allowFriendBrowsing)
+        json.removeValue(forKey: "allowFriendBrowsing")
         let snapshot = try JSONDecoder().decode(TravelPlanSnapshot.self,
             from: JSONSerialization.data(withJSONObject: ["plans": [json], "overlaps": []]))
         XCTAssertTrue(snapshot.friendPlans.isEmpty)
@@ -2433,10 +2437,10 @@ final class FriendTravelPlanTests: XCTestCase {
         XCTAssertEqual(copy.destination.region, source.region)
         XCTAssertTrue(copy.audience.isEmpty)
         XCTAssertFalse(copy.alertsEnabled)
-        XCTAssertFalse(copy.allowFriendBrowsing)
+        XCTAssertTrue(copy.allowFriendBrowsing)
         XCTAssertEqual(copy.revision, 0)
         let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(TravelPlanPayload(copy))) as? [String: Any])
-        XCTAssertEqual(payload["allowFriendBrowsing"] as? Bool, false)
+        XCTAssertEqual(payload["allowFriendBrowsing"] as? Bool, true)
         XCTAssertNil(payload["friendID"])
     }
 

@@ -33,7 +33,7 @@ const save=(db,owner,id,audience=[],revision=0,enabled=false,city='Tokyo',region
     "select wif_travel_save($1,$2,$3,'JP',$4,'Asia/Tokyo',current_date+$5::integer,current_date+$6::integer,$7::uuid[],$8,$9)",
     [owner,id,city,region,start,end,audience,enabled,revision]);
 
-test('travel plans: own-only CRUD, reciprocal audiences, exact date intersection, private by default and optimistic revision',async()=>{
+test('travel plans: own-only CRUD, reciprocal audiences, exact date intersection, private without an audience and optimistic revision',async()=>{
     const db=await setup();try {
         let s=await save(db,alice,a);
         assert.deepEqual(s.plans[0].audience,[]);assert.equal(s.plans[0].alertsEnabled,false);

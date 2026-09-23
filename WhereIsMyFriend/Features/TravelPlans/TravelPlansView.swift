@@ -171,9 +171,11 @@ struct PersonalPlanEditor: View {
                     .accessibilityIdentifier("travelPlanAudience")
                     Toggle("Show plan in their Friend plans", isOn: $plan.allowFriendBrowsing)
                         .font(.subheadline).accessibilityIdentifier("travelPlanBrowsing")
-                    Text(plan.allowFriendBrowsing
-                         ? "Selected friends can see its city and dates."
-                         : "Selected friends can still see a match when your dates overlap.")
+                    Text(plan.audience.isEmpty
+                         ? "Choose friends to show them this plan."
+                         : plan.allowFriendBrowsing
+                             ? "Selected friends can see its city and dates."
+                             : "Selected friends can still see a match when your dates overlap.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     Toggle("Remind me about overlaps", isOn: $plan.alertsEnabled)
                         .font(.subheadline).accessibilityIdentifier("travelPlanAlerts")

@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Choose friends to show them this plan.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "选择好友后，他们就能看到这份计划。" } } }
+  },
   "Plans friends choose to show you will appear here.": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "好友分享给你的计划会显示在这里。" } } }
   },
