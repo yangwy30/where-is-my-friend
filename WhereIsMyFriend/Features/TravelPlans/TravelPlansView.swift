@@ -340,11 +340,12 @@ struct TravelCityPicker: View {
                     let value = TravelCity(name: city, countryCode: country, region: item.placemark.administrativeArea ?? "", timeZone: zone)
                     return seen.insert(value.id).inserted ? value : nil
                 }
-                if cities.isEmpty { error = "No city found. Try adding the country or region." }
+                if cities.isEmpty { error = String(localized: "No city found. Try adding the country or region.") }
                 isSearching = false
             } catch is CancellationError { } catch {
                 guard !Task.isCancelled else { return }
-                isSearching = false; self.error = "City search is unavailable. Check your connection and try again."
+                isSearching = false
+                self.error = String(localized: "City search is unavailable. Check your connection and try again.")
             }
         }
     }
@@ -352,15 +353,15 @@ struct TravelCityPicker: View {
     @ViewBuilder
     private var startingContent: some View {
         if !ownPlaces.isEmpty {
-            sectionHeading("Your places")
+            sectionHeading(String(localized: "Your places"))
             cityRows(ownPlaces)
         }
         if showsTripDestinations && !visibleTripShortcuts.isEmpty {
-            sectionHeading("From your Trips")
+            sectionHeading(String(localized: "From your Trips"))
             tripShortcutRows
         }
         if library.isDemo && ownPlaces.isEmpty && visibleTripShortcuts.isEmpty {
-            sectionHeading("Demo cities")
+            sectionHeading(String(localized: "Demo cities"))
             cityRows(TravelCity.examples)
         }
         if ownPlaces.isEmpty && visibleTripShortcuts.isEmpty && !library.isDemo {
@@ -388,7 +389,8 @@ struct TravelCityPicker: View {
         ForEach(visibleTripShortcuts) { shortcut in
             Button { query = "\(shortcut.city), \(shortcut.country)" } label: {
                 HStack(spacing: 12) {
-                    locationLabel(city: shortcut.city, detail: shortcut.country)
+                    locationLabel(city: shortcut.city,
+                                  detail: Locale.current.localizedString(forRegionCode: shortcut.countryCode) ?? shortcut.country)
                     Spacer(minLength: 0)
                     Text("Find").font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
                 }

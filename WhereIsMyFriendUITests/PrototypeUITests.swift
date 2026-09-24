@@ -386,6 +386,22 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue((search.value as? String)?.contains("New York") == true)
     }
 
+    func testPlanCityPickerUsesChineseLabels() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        app.buttons["friendPlansLink"].tap()
+        XCTAssertTrue(app.buttons["addMyFriendPlan"].waitForExistence(timeout: 5))
+        app.buttons["addMyFriendPlan"].tap()
+        app.buttons["travelPlanCity"].tap()
+        XCTAssertTrue(app.navigationBars["选择城市"].waitForExistence(timeout: 3))
+        XCTAssertEqual(app.searchFields.firstMatch.label, "城市或城镇")
+        XCTAssertTrue(app.staticTexts["从你的行程中"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["查找"].firstMatch.exists)
+    }
+
     func testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft() {
         continueAfterFailure = false
         let app = XCUIApplication()

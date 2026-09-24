@@ -1,6 +1,24 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Choose a city": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "选择城市" } } }
+  },
+  "City or town": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "城市或城镇" } } }
+  },
+  "Find": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "查找" } } }
+  },
+  "Searching cities…": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "正在搜索城市…" } } }
+  },
+  "No city found. Try adding the country or region.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "未找到城市，请加上国家或地区再试。" } } }
+  },
+  "City search is unavailable. Check your connection and try again.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "无法搜索城市，请检查网络后重试。" } } }
+  },
   "Couldn’t refresh Trips.": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "无法刷新行程。" } } }
   },
