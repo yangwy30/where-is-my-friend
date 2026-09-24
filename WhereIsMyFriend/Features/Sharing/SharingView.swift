@@ -99,11 +99,13 @@ struct CitySharingSheet: View {
         .presentationDragIndicator(.visible)
         .accessibilityIdentifier("citySharingSheet")
         .sheet(isPresented: $choosingManualCity) {
-            TravelCityPicker { city in
-                let owner = store.snapshot.currentUser.id
-                Task {
-                    await store.updateCurrentCity(city: city.name, countryCode: city.countryCode, source: .manual,
-                        observedAt: Date(), expectedOwnerID: owner, administrativeArea: city.region)
+            NavigationStack {
+                TravelCityPicker { city in
+                    let owner = store.snapshot.currentUser.id
+                    Task {
+                        await store.updateCurrentCity(city: city.name, countryCode: city.countryCode, source: .manual,
+                            observedAt: Date(), expectedOwnerID: owner, administrativeArea: city.region)
+                    }
                 }
             }
         }

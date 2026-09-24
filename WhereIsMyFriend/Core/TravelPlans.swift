@@ -16,6 +16,29 @@ struct TravelCity: Codable, Hashable, Identifiable {
     ]
 }
 
+enum TravelCityHistory {
+    static let limit = 4
+
+    static func recent(origin: String, ownerID: UUID, defaults: UserDefaults = .standard) -> [TravelCity] {
+        guard let data = defaults.data(forKey: key(origin: origin, ownerID: ownerID)),
+              let cities = try? JSONDecoder().decode([TravelCity].self, from: data) else { return [] }
+        return Array(cities.prefix(limit))
+    }
+
+    static func remember(_ city: TravelCity, origin: String, ownerID: UUID, defaults: UserDefaults = .standard) {
+        var cities = recent(origin: origin, ownerID: ownerID, defaults: defaults)
+        cities.removeAll { $0.id == city.id }
+        cities.insert(city, at: 0)
+        if let data = try? JSONEncoder().encode(Array(cities.prefix(limit))) {
+            defaults.set(data, forKey: key(origin: origin, ownerID: ownerID))
+        }
+    }
+
+    static func key(origin: String, ownerID: UUID) -> String {
+        "travel-city.recent.v1.\(origin).\(ownerID)"
+    }
+}
+
 struct PersonalTravelPlan: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var city: String

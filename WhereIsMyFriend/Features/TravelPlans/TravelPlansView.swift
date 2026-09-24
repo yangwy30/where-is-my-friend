@@ -206,7 +206,7 @@ struct PersonalPlanEditor: View {
                     plan.startDay = $0; plan.endDay = $1
                 }
             }
-            .navigationDestination(isPresented: $choosingCity) { TravelCityPicker { city in
+            .navigationDestination(isPresented: $choosingCity) { TravelCityPicker(showsCancelButton: false, showsTripDestinations: true) { city in
                 plan.city = city.name; plan.countryCode = city.countryCode; plan.region = city.region; plan.timeZone = city.timeZone
             } }
             .navigationDestination(isPresented: $choosingAudience) {
@@ -239,60 +239,174 @@ struct PersonalPlanEditor: View {
 
 struct TravelCityPicker: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var library: TravelPlanLibrary
     @State private var query = ""
     @State private var cities: [TravelCity] = []
+    @State private var tripShortcuts: [TripCityShortcut] = []
+    @State private var shortcutsOwnerID: UUID?
     @State private var isSearching = false
     @State private var error: String?
+    let showsCancelButton: Bool
+    let showsTripDestinations: Bool
     let onSelect: (TravelCity) -> Void
 
-    var body: some View {
-        NavigationStack {
-            List {
-                if library.isDemo && query.isEmpty {
-                    Section("Demo cities") { cityRows(TravelCity.examples) }
-                }
-                if isSearching { ProgressView("Searching cities…") }
-                cityRows(cities)
-                if let error { Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText) }
-                if query.isEmpty && !library.isDemo { Text("Search for a city, such as Tokyo or Palm Springs.").foregroundStyle(WIFTheme.secondaryText) }
+    private struct TripCityShortcut: Identifiable {
+        let id: String
+        let tripName: String
+        let city: String
+        let country: String
+        let countryCode: String
+    }
+
+    init(initialQuery: String = "", showsCancelButton: Bool = true, showsTripDestinations: Bool = false,
+         onSelect: @escaping (TravelCity) -> Void) {
+        _query = State(initialValue: initialQuery)
+        self.showsCancelButton = showsCancelButton
+        self.showsTripDestinations = showsTripDestinations
+        self.onSelect = onSelect
+    }
+
+    private var ownPlaces: [TravelCity] {
+        guard store.snapshot.isAuthenticated else { return [] }
+        let recent = TravelCityHistory.recent(origin: store.tripRepository.storageScope, ownerID: store.snapshot.currentUser.id)
+        let planned = library.plans.sorted { $0.startDay > $1.startDay }.map(\.destination)
+        var seen = Set<String>()
+        var places: [TravelCity] = []
+        for city in recent + planned where places.count < 3 {
+            if seen.insert(city.id).inserted { places.append(city) }
+        }
+        return places
+    }
+
+    private var visibleTripShortcuts: [TripCityShortcut] {
+        guard shortcutsOwnerID == store.snapshot.currentUser.id else { return [] }
+        var seen = Set(ownPlaces.map { "\($0.name.lowercased())|\($0.countryCode)" })
+        var shortcuts: [TripCityShortcut] = []
+        for shortcut in tripShortcuts where shortcuts.count < 2 {
+            if seen.insert("\(shortcut.city.lowercased())|\(shortcut.countryCode)").inserted {
+                shortcuts.append(shortcut)
             }
-            .searchable(text: $query, prompt: "City or town")
-            .navigationTitle("Choose a city").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-            .task(id: query) {
-                cities = []; error = nil
-                let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard text.count >= 2 else { cities = []; isSearching = false; error = nil; return }
-                do {
-                    try await Task.sleep(for: .milliseconds(350))
-                    guard !Task.isCancelled else { return }
-                    isSearching = true; error = nil
-                    let request = MKLocalSearch.Request()
-                    request.naturalLanguageQuery = text
-                    request.resultTypes = .address
-                    let result = try await MKLocalSearch(request: request).start()
-                    guard !Task.isCancelled else { return }
-                    var seen = Set<String>()
-                    cities = result.mapItems.compactMap { item in
-                        guard let city = item.placemark.locality, let country = item.placemark.isoCountryCode,
-                              let zone = item.timeZone?.identifier else { return nil }
-                        let value = TravelCity(name: city, countryCode: country, region: item.placemark.administrativeArea ?? "", timeZone: zone)
-                        return seen.insert(value.id).inserted ? value : nil
-                    }
-                    if cities.isEmpty { error = "No city found. Try adding the country or region." }
-                    isSearching = false
-                } catch is CancellationError { } catch {
-                    guard !Task.isCancelled else { return }
-                    isSearching = false; self.error = "City search is unavailable. Check your connection and try again."
+        }
+        return shortcuts
+    }
+
+    var body: some View {
+        List {
+            if query.isEmpty { startingContent }
+            else { searchContent }
+        }
+        .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "City or town")
+        .navigationTitle("Choose a city").navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if showsCancelButton {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+            }
+        }
+        .task(id: store.snapshot.currentUser.id) { await loadTripShortcuts() }
+        .task(id: query) {
+            cities = []; error = nil; isSearching = false
+            let text = query.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard text.count >= 2 else { return }
+            do {
+                try await Task.sleep(for: .milliseconds(350))
+                guard !Task.isCancelled else { return }
+                isSearching = true
+                let request = MKLocalSearch.Request()
+                request.naturalLanguageQuery = text
+                request.resultTypes = .address
+                let result = try await MKLocalSearch(request: request).start()
+                guard !Task.isCancelled else { return }
+                var seen = Set<String>()
+                cities = result.mapItems.compactMap { item in
+                    guard let city = item.placemark.locality, let country = item.placemark.isoCountryCode,
+                          let zone = item.timeZone?.identifier else { return nil }
+                    let value = TravelCity(name: city, countryCode: country, region: item.placemark.administrativeArea ?? "", timeZone: zone)
+                    return seen.insert(value.id).inserted ? value : nil
                 }
+                if cities.isEmpty { error = "No city found. Try adding the country or region." }
+                isSearching = false
+            } catch is CancellationError { } catch {
+                guard !Task.isCancelled else { return }
+                isSearching = false; self.error = "City search is unavailable. Check your connection and try again."
             }
         }
     }
 
+    @ViewBuilder
+    private var startingContent: some View {
+        if !ownPlaces.isEmpty { Section("Your places") { cityRows(ownPlaces) } }
+        if showsTripDestinations && !visibleTripShortcuts.isEmpty {
+            Section("From your Trips") { tripShortcutRows }
+        }
+        if library.isDemo && ownPlaces.isEmpty && visibleTripShortcuts.isEmpty {
+            Section("Demo cities") { cityRows(TravelCity.examples) }
+        }
+        if ownPlaces.isEmpty && visibleTripShortcuts.isEmpty && !library.isDemo {
+            Text("Search for a city or town. Results include its region and country.")
+                .foregroundStyle(WIFTheme.secondaryText)
+        }
+    }
+
+    @ViewBuilder
+    private var searchContent: some View {
+        if query.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 {
+            Text("Keep typing to search.").foregroundStyle(WIFTheme.secondaryText)
+        }
+        if isSearching { ProgressView("Searching cities…") }
+        cityRows(cities)
+        if let error { Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText) }
+    }
+
+    private var tripShortcutRows: some View {
+        ForEach(visibleTripShortcuts) { shortcut in
+            Button { query = "\(shortcut.city), \(shortcut.country)" } label: {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(shortcut.city).foregroundStyle(WIFTheme.primaryText)
+                    Text("\(shortcut.tripName) · \(shortcut.country)")
+                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                }.padding(.vertical, 5)
+            }.accessibilityIdentifier("tripCity-\(shortcut.id)")
+        }
+    }
+
+    private func loadTripShortcuts() async {
+        tripShortcuts = []
+        shortcutsOwnerID = nil
+        guard showsTripDestinations, store.snapshot.isAuthenticated else { return }
+        let ownerID = store.snapshot.currentUser.id
+        let available: [TripPlan]
+        do {
+            if store.repositoryMode == .localDemo {
+                available = TripPlan.examples(owner: .init(id: ownerID.uuidString,
+                    name: store.snapshot.currentUser.displayName, userID: ownerID.uuidString))
+            } else {
+                available = try await store.tripRepository.fetchTrips().map { $0.plan(userID: ownerID.uuidString) }
+            }
+        } catch { return } // These are optional shortcuts; search remains available.
+        guard !Task.isCancelled, store.snapshot.currentUser.id == ownerID else { return }
+        var seen = Set<String>()
+        var shortcuts: [TripCityShortcut] = []
+        let relevant = available.filter { $0.phase() != .past }.sorted { $0.startDay < $1.startDay }
+        for trip in relevant where shortcuts.count < 3 {
+            guard let destination = trip.destination,
+                  seen.insert("\(destination.city.lowercased())|\(destination.countryCode)").inserted else { continue }
+            shortcuts.append(.init(id: trip.id, tripName: trip.name, city: destination.city,
+                                   country: destination.country, countryCode: destination.countryCode))
+        }
+        tripShortcuts = shortcuts
+        shortcutsOwnerID = ownerID
+    }
+
     private func cityRows(_ values: [TravelCity]) -> some View {
         ForEach(values) { city in
-            Button { onSelect(city); dismiss() } label: {
+            Button {
+                if store.snapshot.isAuthenticated {
+                    TravelCityHistory.remember(city, origin: store.tripRepository.storageScope,
+                                               ownerID: store.snapshot.currentUser.id)
+                }
+                onSelect(city); dismiss()
+            } label: {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(city.name).foregroundStyle(WIFTheme.primaryText)
                     Text(city.subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText)
@@ -371,12 +485,16 @@ private struct TravelTripPicker: View {
                     self.error = error.localizedDescription
                 }
             }
-            .sheet(item: $selected) { trip in TravelCityPicker { city in
-                let plan = PersonalTravelPlan(city: city.name, countryCode: city.countryCode, region: city.region, timeZone: city.timeZone,
-                    startDay: trip.startDay.value, endDay: trip.endDay.value)
-                // The new editor requires explicit audience/alert consent again.
-                selected = nil; dismiss(); onSelect(plan)
-            } }
+            .sheet(item: $selected) { trip in
+                NavigationStack {
+                    TravelCityPicker(initialQuery: trip.destination.map { "\($0.city), \($0.country)" } ?? "") { city in
+                        let plan = PersonalTravelPlan(city: city.name, countryCode: city.countryCode, region: city.region, timeZone: city.timeZone,
+                            startDay: trip.startDay.value, endDay: trip.endDay.value)
+                        // The new editor requires explicit audience/alert consent again.
+                        selected = nil; dismiss(); onSelect(plan)
+                    }
+                }
+            }
         }
     }
 }

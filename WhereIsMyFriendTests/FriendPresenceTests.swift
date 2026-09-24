@@ -812,9 +812,11 @@ final class TripLibraryTests: XCTestCase {
         let newRefresh = Task { await library.refresh() }
         let secondReadStarted = await repository.waitForTripReads(2)
         XCTAssertTrue(secondReadStarted)
-        await oldRefresh.value
+        let oldResult = await oldRefresh.value
+        XCTAssertNil(oldResult)
         XCTAssertTrue(library.isRefreshing)
-        await newRefresh.value
+        let newResult = await newRefresh.value
+        XCTAssertEqual(newResult, true)
         XCTAssertEqual(library.trips.map(\.id), ["new"])
         XCTAssertFalse(library.isRefreshing)
     }
@@ -1810,7 +1812,8 @@ final class RemoteAppRepositoryTests: XCTestCase {
         let userID = "10000000-0000-0000-0000-000000000001"
         library.connect(setup.repository)
         library.load(scope: "remote-one-\(userID)", userID: userID)
-        await library.refresh()
+        let initialRefresh = await library.refresh()
+        XCTAssertEqual(initialRefresh, true)
         XCTAssertEqual(library.trips.first?.name, "Together")
         XCTAssertNotNil(library.lastSyncedAt)
         XCTAssertTrue(library.canManage(try XCTUnwrap(library.trips.first)))
@@ -1819,7 +1822,8 @@ final class RemoteAppRepositoryTests: XCTestCase {
         cached.load(scope: "remote-one-\(userID)", userID: userID)
         XCTAssertEqual(cached.trips.count, 1)
         StubURLProtocol.setHandler { _ in .failure(URLError(.notConnectedToInternet)) }
-        await library.refresh()
+        let failedRefresh = await library.refresh()
+        XCTAssertEqual(failedRefresh, false)
         XCTAssertTrue(library.syncFailed)
         XCTAssertEqual(library.trips.count, 1)
         let saved = await library.saveDetails("cloud-one", name: "Offline edit", airport: "LAX",
@@ -2740,6 +2744,23 @@ extension AppStoreReliabilityTests {
 }
 
 final class DateRangeRegressionTests: XCTestCase {
+    func testRecentCitiesStayWithinTheAccountAndRemainBounded() throws {
+        let suite = "travel-city-history-\(UUID())"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let firstOwner = UUID(), secondOwner = UUID(), origin = "test:city-history"
+        let cities = (0..<5).map {
+            TravelCity(name: "City \($0)", countryCode: "US", region: "CA", timeZone: "America/Los_Angeles")
+        }
+        for city in cities { TravelCityHistory.remember(city, origin: origin, ownerID: firstOwner, defaults: defaults) }
+        XCTAssertEqual(TravelCityHistory.recent(origin: origin, ownerID: firstOwner, defaults: defaults).map(\.name),
+                       ["City 4", "City 3", "City 2", "City 1"])
+        XCTAssertTrue(TravelCityHistory.recent(origin: origin, ownerID: secondOwner, defaults: defaults).isEmpty)
+        TravelCityHistory.remember(cities[2], origin: origin, ownerID: firstOwner, defaults: defaults)
+        XCTAssertEqual(TravelCityHistory.recent(origin: origin, ownerID: firstOwner, defaults: defaults).map(\.name),
+                       ["City 2", "City 4", "City 3", "City 1"])
+    }
+
     func testSameDayCrossMonthAndReverseSelection() {
         var selection = TravelDateRangeSelection(start: "2026-12-29", end: "2027-01-03")
         selection.select("2026-12-31")
@@ -2765,6 +2786,9 @@ final class DateRangeRegressionTests: XCTestCase {
         let ownKey = "travel-plans.v1.\(origin).\(owner)", otherKey = "travel-plans.v1.\(origin).\(other)"
         UserDefaults.standard.set(Data("own".utf8), forKey: ownKey)
         UserDefaults.standard.set(Data("other".utf8), forKey: otherKey)
+        let remembered = TravelCity(name: "Tokyo", countryCode: "JP", region: "Tokyo", timeZone: "Asia/Tokyo")
+        TravelCityHistory.remember(remembered, origin: origin, ownerID: owner)
+        TravelCityHistory.remember(remembered, origin: origin, ownerID: other)
         let library = TripLibrary(); let scope = "\(origin)-\(owner)"
         library.load(scope: scope, userID: owner.uuidString)
         let person = TripParticipant(id: owner.uuidString, name: "Owner", userID: owner.uuidString)
@@ -2773,6 +2797,8 @@ final class DateRangeRegressionTests: XCTestCase {
         AccountLocalData.clear(origin: origin, ownerID: owner)
         XCTAssertNil(UserDefaults.standard.data(forKey: ownKey))
         XCTAssertNotNil(UserDefaults.standard.data(forKey: otherKey))
+        XCTAssertTrue(TravelCityHistory.recent(origin: origin, ownerID: owner).isEmpty)
+        XCTAssertEqual(TravelCityHistory.recent(origin: origin, ownerID: other), [remembered])
         var delayed = plan; delayed.name = "Late response"
         XCTAssertFalse(library.editTrip(plan.id, name: delayed.name, airport: "LAX", start: plan.startDay, end: plan.endDay))
         let fresh = TripLibrary(); fresh.load(scope: scope, userID: owner.uuidString)

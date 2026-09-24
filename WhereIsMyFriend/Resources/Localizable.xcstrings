@@ -1,6 +1,24 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Couldn’t refresh Trips.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "无法刷新行程。" } } }
+  },
+  "Your places": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "我的城市" } } }
+  },
+  "From your Trips": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "从你的行程中" } } }
+  },
+  "Search for a city or town. Results include its region and country.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "搜索城市或城镇；结果会显示州／地区和国家。" } } }
+  },
+  "Keep typing to search.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "继续输入以搜索。" } } }
+  },
+  "Demo cities": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "示例城市" } } }
+  },
   "Loading trips…": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "正在加载行程…" } } }
   },

@@ -9,6 +9,7 @@ struct TripsView: View {
     @State private var showsPast = false
     @State private var now = Date()
     @State private var newTripID = UUID().uuidString
+    @State private var manualRefreshFailed = false
 
     private var owner: TripParticipant {
         TripParticipant(id: store.snapshot.currentUser.id.uuidString, name: store.snapshot.currentUser.displayName,
@@ -42,6 +43,21 @@ struct TripsView: View {
                     .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
                     .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.12), interactive: true, in: Circle())
                     .accessibilityLabel("New trip").accessibilityIdentifier("newTripButton")
+                }
+
+                if manualRefreshFailed {
+                    HStack(spacing: 12) {
+                        Text("Couldn’t refresh Trips.").foregroundStyle(WIFTheme.secondaryText)
+                        Spacer(minLength: 4)
+                        Button("Try again") {
+                            Task {
+                                if let refreshed = await library.refresh() { manualRefreshFailed = !refreshed }
+                            }
+                        }
+                        .foregroundStyle(WIFTheme.fresh)
+                    }
+                    .font(.subheadline)
+                    .accessibilityIdentifier("tripsRefreshFailure")
                 }
 
                 if store.repositoryMode == .remote {
@@ -118,6 +134,7 @@ struct TripsView: View {
             }
         }
         .task(id: scope) {
+            manualRefreshFailed = false
             library.connect(store.tripRepository)
             library.load(scope: scope, userID: owner.userID)
             library.readDeviceDrafts(legacyScope: "remote-\(owner.id)")
@@ -128,7 +145,12 @@ struct TripsView: View {
             #endif
             await library.refresh()
         }
-        .refreshable { await library.refresh() }
+        .refreshable {
+            if let refreshed = await library.refresh() { manualRefreshFailed = !refreshed }
+        }
+        .onChange(of: library.syncFailed) { _, failed in
+            if !failed { manualRefreshFailed = false }
+        }
         .onChange(of: store.invitationRefreshRevision) { _, _ in
             Task { await library.refresh() }
         }

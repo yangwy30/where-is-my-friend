@@ -271,6 +271,7 @@ enum AccountLocalData {
         let planScope = "travel-plans.v1.\(origin).\(ownerID)"
         invalidate(planScope)
         UserDefaults.standard.removeObject(forKey: planScope)
+        UserDefaults.standard.removeObject(forKey: TravelCityHistory.key(origin: origin, ownerID: ownerID))
         let tripScopes = ["\(origin)-\(ownerID)", "\(origin.hasPrefix("remote:") ? "remote" : origin)-\(ownerID)"]
         let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("TripLibrary", isDirectory: true)

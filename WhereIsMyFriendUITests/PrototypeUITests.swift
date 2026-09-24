@@ -356,9 +356,34 @@ final class PrototypeUITests: XCTestCase {
         let manual = app.buttons["manualCityButton"]
         for _ in 0..<3 where !manual.isHittable { app.scrollViews.firstMatch.swipeUp() }
         XCTAssertTrue(manual.waitForExistence(timeout: 3)); manual.tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 3))
+        XCTAssertLessThan(search.frame.midY, app.frame.midY)
         XCTAssertTrue(app.buttons["travelCity-Tokyo"].waitForExistence(timeout: 3)); app.buttons["travelCity-Tokyo"].tap()
         XCTAssertTrue(app.buttons["refreshLocationButton"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["refreshLocationButton"].label.contains("Use device location"))
+    }
+
+    func testPlanCityPickerShowsSearchAtTopAndOwnTripDestinations() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        app.buttons["friendPlansLink"].tap()
+        XCTAssertTrue(app.buttons["addMyFriendPlan"].waitForExistence(timeout: 5))
+        app.buttons["addMyFriendPlan"].tap()
+        app.buttons["travelPlanCity"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 3))
+        XCTAssertLessThan(search.frame.midY, app.frame.midY)
+        XCTAssertTrue(app.staticTexts["From your Trips"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.navigationBars["Choose a city"].buttons["Cancel"].exists)
+        capture("plan-city-picker-top-search")
+        let tripShortcut = app.buttons["tripCity-example-new-york"]
+        XCTAssertTrue(tripShortcut.waitForExistence(timeout: 3))
+        tripShortcut.tap()
+        XCTAssertTrue((search.value as? String)?.contains("New York") == true)
     }
 
     func testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft() {
@@ -385,7 +410,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["travelPlanCity"].label.contains("Tokyo"))
         XCTAssertTrue(app.staticTexts["Only me · choose friends"].exists)
         let browse = app.switches["travelPlanBrowsing"]
-        XCTAssertEqual(browse.value as? String, "0")
+        XCTAssertEqual(browse.value as? String, "1")
         let save = app.buttons["saveTravelPlan"]
         for _ in 0..<5 where !save.isHittable { app.scrollViews.firstMatch.swipeUp() }
         XCTAssertEqual(app.switches["travelPlanAlerts"].value as? String, "0")
@@ -396,10 +421,10 @@ final class PrototypeUITests: XCTestCase {
         let own = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-")).firstMatch
         XCTAssertTrue(own.waitForExistence(timeout: 5)); own.tap()
         XCTAssertTrue(app.staticTexts["Only me · choose friends"].exists)
-        XCTAssertEqual(app.switches["travelPlanBrowsing"].value as? String, "0")
+        XCTAssertEqual(app.switches["travelPlanBrowsing"].value as? String, "1")
     }
 
-    func testFriendPlansChineseSharingConsentPersists() {
+    func testFriendPlansChineseOptOutPersists() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
@@ -417,17 +442,18 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["travelAudienceDone"].tap()
         let browse = app.switches["travelPlanBrowsing"]
         for _ in 0..<4 where !browse.isHittable { app.scrollViews.firstMatch.swipeUp() }
-        browse.switches.firstMatch.tap()
         XCTAssertEqual(browse.value as? String, "1")
+        browse.switches.firstMatch.tap()
+        XCTAssertEqual(browse.value as? String, "0")
         let save = app.buttons["saveTravelPlan"]
         for _ in 0..<4 where !save.isHittable { app.scrollViews.firstMatch.swipeUp() }
-        capture("friend-plan-explicit-sharing-chinese")
+        capture("friend-plan-opt-out-chinese")
         save.tap()
         XCTAssertTrue(app.scrollViews["friendPlansScreen"].waitForExistence(timeout: 5))
         app.buttons["manageOwnTravelPlans"].tap()
         let own = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-")).firstMatch
         XCTAssertTrue(own.waitForExistence(timeout: 5)); own.tap()
-        XCTAssertEqual(app.switches["travelPlanBrowsing"].value as? String, "1")
+        XCTAssertEqual(app.switches["travelPlanBrowsing"].value as? String, "0")
     }
 
     func testFriendRequestNotificationRestoresAndCanBeAccepted() {

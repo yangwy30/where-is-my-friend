@@ -392,8 +392,9 @@ final class TripLibrary: ObservableObject {
 
     private enum LibraryError: Error { case unsupportedVersion }
 
-    func refresh() async {
-        guard let remote, let userID = currentUserID, !isRefreshing, !isSaving else { return }
+    @discardableResult
+    func refresh() async -> Bool? {
+        guard let remote, let userID = currentUserID, !isRefreshing, !isSaving else { return nil }
         let capturedScope = scope
         let capturedGeneration = generation
         let operationID = UUID()
@@ -404,13 +405,13 @@ final class TripLibrary: ObservableObject {
         }
         do {
             let result = try await remote.fetchTrips()
-            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return }
+            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return nil }
             let plans = result.map { $0.plan(userID: userID) }
             if !save(plans) { trips = plans }
             lastSyncedAt = Date()
             syncFailed = false
             let incoming = try await remote.tripInvitations(tripID: nil)
-            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return }
+            guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return nil }
             invitations = incoming
             let locale = Locale.preferredLanguages.first?.hasPrefix("zh") == true ? "zh-Hans" : "en"
             let timeZone = TimeZone.current.identifier
@@ -418,17 +419,19 @@ final class TripLibrary: ObservableObject {
             if reminderContextKey != key {
                 do {
                     try await remote.updateTripReminderContext(.init(timeZone: timeZone, locale: locale))
-                    guard scope == capturedScope, generation == capturedGeneration else { return }
+                    guard scope == capturedScope, generation == capturedGeneration else { return nil }
                     reminderContextKey = key
                 } catch { /* Passive enrollment retries on a later visit without a sync banner. */ }
             }
+            return true
         } catch {
-            guard scope == capturedScope, generation == capturedGeneration else { return }
+            guard scope == capturedScope, generation == capturedGeneration else { return nil }
             syncFailed = true
             if error as? RepositoryError == .sessionExpired || error as? RepositoryError == .notAuthenticated {
                 trips = []
                 invitations = []
             }
+            return false
         }
     }
 
