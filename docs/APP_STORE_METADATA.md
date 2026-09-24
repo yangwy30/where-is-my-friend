@@ -1,8 +1,8 @@
 # App Store and TestFlight metadata
 
-## Current submission — September 17, 2026
+## Current submission — September 23, 2026
 
-Version **1.0.3 (15)** was submitted for App Review with automatic release after approval. See [submission record and bilingual update copy](APP_STORE_1_0_3_SUBMISSION.md).
+Version **1.0.4 (20)** is Waiting for Review with manual release after approval. See [replacement submission](APP_STORE_1_0_4_REPLACEMENT.md) for the build and review record. Version 1.0.3 is currently on the App Store.
 
 ## Base listing — September 15, 2026
 
