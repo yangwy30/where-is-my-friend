@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Loading trips…": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "正在加载行程…" } } }
+  },
+  "No ongoing or upcoming trips.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "没有正在进行或即将开始的行程。" } } }
+  },
   "Choose friends to show them this plan.": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "选择好友后，他们就能看到这份计划。" } } }
   },

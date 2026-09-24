@@ -337,27 +337,39 @@ private struct TravelTripPicker: View {
     @State private var trips: [TripPlan] = []
     @State private var selected: TripPlan?
     @State private var error: String?
+    @State private var isLoading = true
     let onSelect: (PersonalTravelPlan) -> Void
     var body: some View {
         NavigationStack {
             List {
                 Text("Choose a trip, then confirm its city and who can see your personal dates.").font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                if isLoading { ProgressView("Loading trips…") }
                 if let error { Text(error) }
                 ForEach(trips) { trip in
                     Button { selected = trip } label: { VStack(alignment: .leading) { Text(trip.name); Text(trip.dateLabel).font(.caption) } }
                 }
-                if trips.isEmpty && error == nil { Text("No trips available.") }
+                if !isLoading && trips.isEmpty && error == nil { Text("No ongoing or upcoming trips.") }
             }
             .navigationTitle("Use a Trip").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
             .task {
+                isLoading = true
+                defer { isLoading = false }
+                let ownerID = store.snapshot.currentUser.id
                 do {
+                    let available: [TripPlan]
                     if store.repositoryMode == .localDemo {
-                        trips = TripPlan.examples(owner: TripParticipant(id: store.snapshot.currentUser.id.uuidString,
-                            name: store.snapshot.currentUser.displayName, userID: store.snapshot.currentUser.id.uuidString))
+                        available = TripPlan.examples(owner: TripParticipant(id: ownerID.uuidString,
+                            name: store.snapshot.currentUser.displayName, userID: ownerID.uuidString))
+                    } else {
+                        available = try await store.tripRepository.fetchTrips().map { $0.plan(userID: ownerID.uuidString) }
                     }
-                    else { trips = try await store.tripRepository.fetchTrips().map { $0.plan(userID: store.snapshot.currentUser.id.uuidString) } }
-                } catch { self.error = error.localizedDescription }
+                    guard !Task.isCancelled, store.snapshot.currentUser.id == ownerID else { return }
+                    trips = available.filter { $0.phase() != .past }
+                } catch is CancellationError { } catch {
+                    guard !Task.isCancelled, store.snapshot.currentUser.id == ownerID else { return }
+                    self.error = error.localizedDescription
+                }
             }
             .sheet(item: $selected) { trip in TravelCityPicker { city in
                 let plan = PersonalTravelPlan(city: city.name, countryCode: city.countryCode, region: city.region, timeZone: city.timeZone,

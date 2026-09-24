@@ -6,6 +6,10 @@
 
 Loading another account now resets those flags and assigns each refresh/save an operation ID, so only that operation can clear its flag. Late invitation results are ignored after an account change. Three race regressions cover delayed old reads, old saves, and invitation failures. The iOS 27 simulator passed all 154 unit tests. This change is in source only; it is not part of App Store review build 1.0.4 (18).
 
+## Fixed: ended Trips offered for a personal plan (P2)
+
+The “Use dates from a Trip” picker previously listed every Trip, including completed, cancelled, and past ones. A user could choose an expired date range, then encounter a server rejection only after filling the city and saving the personal plan. The picker now lists only ongoing and upcoming Trips, distinguishes loading from an empty result, and ignores a response if the account changes while it is open. The Debug iOS Simulator build passed after this view change.
+
 ## Next: city picker first screen (P1 UX)
 
 `TravelCityPicker` still uses default SwiftUI search placement, which appears at the bottom in the reported iOS 27 screen. On first open it shows only an instruction row, leaving the main area largely empty. The previously reviewed mock with search near the title and conditional rows from the user's own places/Trips has not been implemented. A focused next change should use an explicit navigation-bar search placement, remove the nested navigation stack in push navigation, and show real account-derived rows only when available. Do not add generic “Suggested” cities. [Apple's search placement API](https://developer.apple.com/documentation/swiftui/searchfieldplacement/navigationbardrawer) provides the top navigation-bar placement and an always-visible mode.
