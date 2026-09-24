@@ -20,4 +20,4 @@ The picker now uses [Apple's always-visible navigation-bar search placement](htt
 
 ## Validation and release boundary
 
-The iOS 27 simulator passed 155/155 unit tests. Four targeted city/plan UI workflows passed, including top search placement, manual city choice and Chinese plan opt-out; the final two picker workflows passed again after visual refinement. The city picker screenshot was inspected for search placement, duplicate rows and navigation chrome. Debug simulator build passed. These changes are in source only and are not in App Store review build 1.0.4 (18).
+The iOS 27 simulator passed 155/155 unit tests. Six distinct city/plan UI workflows passed, including top search placement, manual city choice, Chinese plan opt-out, MapKit search from Profile, and plan-overlap creation and revocation. The final picker workflows passed again after visual refinement. The city picker screenshot was inspected for search placement, duplicate rows and navigation chrome. Debug simulator build passed. These changes are in source only and are not in App Store review build 1.0.4 (18).
