@@ -377,8 +377,8 @@ final class PrototypeUITests: XCTestCase {
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 3))
         XCTAssertLessThan(search.frame.midY, app.frame.midY)
-        XCTAssertTrue(app.staticTexts["From your Trips"].waitForExistence(timeout: 5))
-        XCTAssertFalse(app.navigationBars["Choose a city"].buttons["Cancel"].exists)
+        XCTAssertTrue(app.staticTexts["FROM YOUR TRIPS"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Choose a city"].buttons["Cancel"].exists)
         capture("plan-city-picker-top-search")
         let tripShortcut = app.buttons["tripCity-example-new-york"]
         XCTAssertTrue(tripShortcut.waitForExistence(timeout: 3))

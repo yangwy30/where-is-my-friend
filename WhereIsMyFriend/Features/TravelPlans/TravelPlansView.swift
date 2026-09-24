@@ -200,15 +200,25 @@ struct PersonalPlanEditor: View {
                 .padding(24)
             }
             .wifAmbientBackground().navigationTitle(plan.revision == 0 ? "New plan" : "Edit plan").navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(library.isSaving) } }
+            .toolbar { ToolbarItem(placement: .cancellationAction) {
+                if !choosingCity { Button("Cancel") { dismiss() }.disabled(library.isSaving) }
+            } }
             .sheet(isPresented: $choosingDates) {
                 TravelDateRangePicker(startDay: plan.startDay, endDay: plan.endDay, timeZone: plan.timeZone) {
                     plan.startDay = $0; plan.endDay = $1
                 }
             }
-            .navigationDestination(isPresented: $choosingCity) { TravelCityPicker(showsCancelButton: false, showsTripDestinations: true) { city in
-                plan.city = city.name; plan.countryCode = city.countryCode; plan.region = city.region; plan.timeZone = city.timeZone
-            } }
+            .sheet(isPresented: $choosingCity) {
+                NavigationStack {
+                    TravelCityPicker(showsTripDestinations: true) { city in
+                        plan.city = city.name; plan.countryCode = city.countryCode
+                        plan.region = city.region; plan.timeZone = city.timeZone
+                    }
+                }
+                .presentationDetents([.height(620), .large])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(32)
+            }
             .navigationDestination(isPresented: $choosingAudience) {
                 List {
                     Section {
@@ -253,7 +263,6 @@ struct TravelCityPicker: View {
 
     private struct TripCityShortcut: Identifiable {
         let id: String
-        let tripName: String
         let city: String
         let country: String
         let countryCode: String
@@ -292,10 +301,17 @@ struct TravelCityPicker: View {
     }
 
     var body: some View {
-        List {
-            if query.isEmpty { startingContent }
-            else { searchContent }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                if query.isEmpty { startingContent }
+                else { searchContent }
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 12)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .wifAmbientBackground()
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "City or town")
         .navigationTitle("Choose a city").navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -335,39 +351,91 @@ struct TravelCityPicker: View {
 
     @ViewBuilder
     private var startingContent: some View {
-        if !ownPlaces.isEmpty { Section("Your places") { cityRows(ownPlaces) } }
+        if let featured = ownPlaces.first {
+            sectionHeading("Your places")
+            featuredCity(featured)
+            cityRows(Array(ownPlaces.dropFirst()))
+        }
         if showsTripDestinations && !visibleTripShortcuts.isEmpty {
-            Section("From your Trips") { tripShortcutRows }
+            sectionHeading("From your Trips")
+            tripShortcutRows
         }
         if library.isDemo && ownPlaces.isEmpty && visibleTripShortcuts.isEmpty {
-            Section("Demo cities") { cityRows(TravelCity.examples) }
+            sectionHeading("Demo cities")
+            cityRows(TravelCity.examples)
         }
         if ownPlaces.isEmpty && visibleTripShortcuts.isEmpty && !library.isDemo {
             Text("Search for a city or town. Results include its region and country.")
-                .foregroundStyle(WIFTheme.secondaryText)
+                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .padding(.top, 20)
         }
     }
 
     @ViewBuilder
     private var searchContent: some View {
         if query.trimmingCharacters(in: .whitespacesAndNewlines).count < 2 {
-            Text("Keep typing to search.").foregroundStyle(WIFTheme.secondaryText)
+            Text("Keep typing to search.").font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .padding(.top, 20)
         }
-        if isSearching { ProgressView("Searching cities…") }
+        if isSearching { ProgressView("Searching cities…").padding(.top, 20) }
         cityRows(cities)
-        if let error { Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText) }
+        if let error {
+            Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .padding(.top, 20)
+        }
     }
 
     private var tripShortcutRows: some View {
         ForEach(visibleTripShortcuts) { shortcut in
             Button { query = "\(shortcut.city), \(shortcut.country)" } label: {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(shortcut.city).foregroundStyle(WIFTheme.primaryText)
-                    Text("\(shortcut.tripName) · \(shortcut.country)")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                }.padding(.vertical, 5)
-            }.accessibilityIdentifier("tripCity-\(shortcut.id)")
+                HStack(spacing: 13) {
+                    CityEmblemView(city: shortcut.city, countryCode: shortcut.countryCode, size: 48)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(shortcut.city).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                        Text(shortcut.country).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("tripCity-\(shortcut.id)")
+            Divider().overlay(WIFTheme.border.opacity(0.4))
         }
+    }
+
+    private func sectionHeading(_ title: String) -> some View {
+        Text(title.uppercased())
+            .font(.caption2.weight(.semibold))
+            .tracking(1.5)
+            .foregroundStyle(WIFTheme.secondaryText)
+            .padding(.top, 25)
+            .padding(.bottom, 12)
+    }
+
+    private func featuredCity(_ city: TravelCity) -> some View {
+        Button { select(city) } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(city.name).font(.title2.weight(.semibold))
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text(city.subtitle).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                }
+                Spacer(minLength: 0)
+                CityEmblemView(city: city.name, countryCode: city.countryCode,
+                               administrativeArea: city.region, size: 104)
+            }
+            .padding(.leading, 20)
+            .padding(.trailing, 8)
+            .frame(maxWidth: .infinity, minHeight: 116, alignment: .leading)
+            .background(WIFTheme.elevatedSurface.opacity(0.55), in: RoundedRectangle(cornerRadius: 23))
+            .contentShape(RoundedRectangle(cornerRadius: 23))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("travelCity-\(city.name)")
     }
 
     private func loadTripShortcuts() async {
@@ -391,7 +459,7 @@ struct TravelCityPicker: View {
         for trip in relevant where shortcuts.count < 3 {
             guard let destination = trip.destination,
                   seen.insert("\(destination.city.lowercased())|\(destination.countryCode)").inserted else { continue }
-            shortcuts.append(.init(id: trip.id, tripName: trip.name, city: destination.city,
+            shortcuts.append(.init(id: trip.id, city: destination.city,
                                    country: destination.country, countryCode: destination.countryCode))
         }
         tripShortcuts = shortcuts
@@ -400,19 +468,34 @@ struct TravelCityPicker: View {
 
     private func cityRows(_ values: [TravelCity]) -> some View {
         ForEach(values) { city in
-            Button {
-                if store.snapshot.isAuthenticated {
-                    TravelCityHistory.remember(city, origin: store.tripRepository.storageScope,
-                                               ownerID: store.snapshot.currentUser.id)
+            Button { select(city) } label: {
+                HStack(spacing: 13) {
+                    CityEmblemView(city: city.name, countryCode: city.countryCode,
+                                   administrativeArea: city.region, size: 48)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(city.name).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                        Text(city.subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                        .foregroundStyle(WIFTheme.secondaryText)
                 }
-                onSelect(city); dismiss()
-            } label: {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(city.name).foregroundStyle(WIFTheme.primaryText)
-                    Text(city.subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                }.padding(.vertical, 5)
-            }.accessibilityIdentifier("travelCity-\(city.name)")
+                .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("travelCity-\(city.name)")
+            Divider().overlay(WIFTheme.border.opacity(0.4))
         }
+    }
+
+    private func select(_ city: TravelCity) {
+        if store.snapshot.isAuthenticated {
+            TravelCityHistory.remember(city, origin: store.tripRepository.storageScope,
+                                       ownerID: store.snapshot.currentUser.id)
+        }
+        onSelect(city)
+        dismiss()
     }
 }
 
