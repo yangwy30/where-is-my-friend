@@ -351,10 +351,9 @@ struct TravelCityPicker: View {
 
     @ViewBuilder
     private var startingContent: some View {
-        if let featured = ownPlaces.first {
+        if !ownPlaces.isEmpty {
             sectionHeading("Your places")
-            featuredCity(featured)
-            cityRows(Array(ownPlaces.dropFirst()))
+            cityRows(ownPlaces)
         }
         if showsTripDestinations && !visibleTripShortcuts.isEmpty {
             sectionHeading("From your Trips")
@@ -388,17 +387,12 @@ struct TravelCityPicker: View {
     private var tripShortcutRows: some View {
         ForEach(visibleTripShortcuts) { shortcut in
             Button { query = "\(shortcut.city), \(shortcut.country)" } label: {
-                HStack(spacing: 13) {
-                    CityEmblemView(city: shortcut.city, countryCode: shortcut.countryCode, size: 48)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(shortcut.city).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
-                        Text(shortcut.country).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    }
+                HStack(spacing: 12) {
+                    locationLabel(city: shortcut.city, detail: shortcut.country)
                     Spacer(minLength: 0)
-                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
-                        .foregroundStyle(WIFTheme.secondaryText)
+                    Text("Find").font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
                 }
-                .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -414,28 +408,6 @@ struct TravelCityPicker: View {
             .foregroundStyle(WIFTheme.secondaryText)
             .padding(.top, 25)
             .padding(.bottom, 12)
-    }
-
-    private func featuredCity(_ city: TravelCity) -> some View {
-        Button { select(city) } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(city.name).font(.title2.weight(.semibold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                    Text(city.subtitle).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                }
-                Spacer(minLength: 0)
-                CityEmblemView(city: city.name, countryCode: city.countryCode,
-                               administrativeArea: city.region, size: 104)
-            }
-            .padding(.leading, 20)
-            .padding(.trailing, 8)
-            .frame(maxWidth: .infinity, minHeight: 116, alignment: .leading)
-            .background(WIFTheme.elevatedSurface.opacity(0.55), in: RoundedRectangle(cornerRadius: 23))
-            .contentShape(RoundedRectangle(cornerRadius: 23))
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("travelCity-\(city.name)")
     }
 
     private func loadTripShortcuts() async {
@@ -469,24 +441,31 @@ struct TravelCityPicker: View {
     private func cityRows(_ values: [TravelCity]) -> some View {
         ForEach(values) { city in
             Button { select(city) } label: {
-                HStack(spacing: 13) {
-                    CityEmblemView(city: city.name, countryCode: city.countryCode,
-                                   administrativeArea: city.region, size: 48)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(city.name).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
-                        Text(city.subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    }
+                HStack(spacing: 12) {
+                    locationLabel(city: city.name, detail: cityDetail(city))
                     Spacer(minLength: 0)
-                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
-                        .foregroundStyle(WIFTheme.secondaryText)
                 }
-                .frame(maxWidth: .infinity, minHeight: 68, alignment: .leading)
+                .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("travelCity-\(city.name)")
             Divider().overlay(WIFTheme.border.opacity(0.4))
         }
+    }
+
+    private func locationLabel(city: String, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(city).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+            Text(detail).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func cityDetail(_ city: TravelCity) -> String {
+        let region = city.region.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard region.localizedCaseInsensitiveCompare(city.name) == .orderedSame else { return city.subtitle }
+        return Locale.current.localizedString(forRegionCode: city.countryCode) ?? city.countryCode
     }
 
     private func select(_ city: TravelCity) {
