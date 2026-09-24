@@ -786,6 +786,94 @@ final class TripMapTests: XCTestCase {
 final class TripLibraryTests: XCTestCase {
     private let owner = TripParticipant(id: "owner", name: "Wang Yang", userID: "owner")
 
+    private func cloudTrip(_ id: String, ownerID: String) -> CloudTrip {
+        CloudTrip(id: id, name: id, destination_airport: "LAX", start_date: "2035-01-01", end_date: "2035-01-05",
+                  completed_at: nil, my_role: "owner", revision: 1,
+                  participants: [.init(id: "person-\(id)", name: id, user_id: ownerID)], flights: [])
+    }
+
+    func testAccountSwitchStartsNewTripRefreshWhileOldRequestIsStillInFlight() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("TripSwitch-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let repository = SlowTestRepository(mode: .remote)
+        let firstOwner = UUID().uuidString, secondOwner = UUID().uuidString
+        await repository.configureTripReads([[cloudTrip("old", ownerID: firstOwner)],
+                                             [cloudTrip("new", ownerID: secondOwner)]],
+                                            delays: [.milliseconds(90), .milliseconds(220)])
+        let library = TripLibrary(directory: directory)
+        library.connect(repository)
+        library.load(scope: "remote-first-\(firstOwner)", userID: firstOwner)
+        let oldRefresh = Task { await library.refresh() }
+        let firstReadStarted = await repository.waitForTripReads(1)
+        XCTAssertTrue(firstReadStarted)
+
+        library.load(scope: "remote-second-\(secondOwner)", userID: secondOwner)
+        XCTAssertFalse(library.isRefreshing)
+        let newRefresh = Task { await library.refresh() }
+        let secondReadStarted = await repository.waitForTripReads(2)
+        XCTAssertTrue(secondReadStarted)
+        await oldRefresh.value
+        XCTAssertTrue(library.isRefreshing)
+        await newRefresh.value
+        XCTAssertEqual(library.trips.map(\.id), ["new"])
+        XCTAssertFalse(library.isRefreshing)
+    }
+
+    func testAccountSwitchKeepsNewTripSaveLockedUntilItsOwnResponse() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("TripSaveSwitch-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let repository = SlowTestRepository(mode: .remote)
+        let firstOwner = UUID().uuidString, secondOwner = UUID().uuidString
+        await repository.configureTripWrites([cloudTrip("old", ownerID: firstOwner),
+                                              cloudTrip("new", ownerID: secondOwner)],
+                                             delays: [.milliseconds(90), .milliseconds(220)])
+        let library = TripLibrary(directory: directory)
+        library.connect(repository)
+        func draft(_ id: String, ownerID: String) -> TripPlan {
+            TripPlan(id: id, name: id, destinationAirport: "LAX", startDay: TripDay(value: "2035-01-01"),
+                     endDay: TripDay(value: "2035-01-05"),
+                     participants: [.init(id: "person-\(id)", name: id, userID: ownerID)], flights: [],
+                     creatorUserID: ownerID)
+        }
+        library.load(scope: "remote-first-\(firstOwner)", userID: firstOwner)
+        let oldSave = Task { await library.create(draft("old", ownerID: firstOwner)) }
+        let firstWriteStarted = await repository.waitForTripWrites(1)
+        XCTAssertTrue(firstWriteStarted)
+
+        library.load(scope: "remote-second-\(secondOwner)", userID: secondOwner)
+        XCTAssertFalse(library.isSaving)
+        let newSave = Task { await library.create(draft("new", ownerID: secondOwner)) }
+        let secondWriteStarted = await repository.waitForTripWrites(2)
+        XCTAssertTrue(secondWriteStarted)
+        let oldSaved = await oldSave.value
+        XCTAssertFalse(oldSaved)
+        XCTAssertTrue(library.isSaving)
+        let newSaved = await newSave.value
+        XCTAssertTrue(newSaved)
+        XCTAssertEqual(library.trips.map(\.id), ["new"])
+        XCTAssertFalse(library.isSaving)
+    }
+
+    func testOldInvitationFailureDoesNotAlertNewAccount() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("TripInviteSwitch-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let repository = SlowTestRepository(mode: .remote)
+        await repository.configureDismissal(delay: .milliseconds(120), error: .networkUnavailable)
+        let library = TripLibrary(directory: directory)
+        library.connect(repository)
+        library.load(scope: "remote-first", userID: UUID().uuidString)
+        let invitation = TripInvitation(id: UUID(), trip_name: "Old invite", trip_id: "old-trip",
+                                        destination_airport: "LAX", start_date: "2035-01-01", end_date: "2035-01-05",
+                                        inviter_name: "Alex", recipient_name: "Wang", recipient_id: UUID(),
+                                        expires_at: "2035-01-01T00:00:00Z")
+        let oldDecline = Task { await library.decline(invitation) }
+        let dismissalStarted = await repository.waitForDismissalStart()
+        XCTAssertTrue(dismissalStarted)
+        library.load(scope: "remote-second", userID: UUID().uuidString)
+        await oldDecline.value
+        XCTAssertNil(library.errorMessage)
+    }
+
     func testFlightReminderEligibilityAndLocalCooldown() async throws {
         let (library, directory) = try temporaryLibrary()
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -2166,7 +2254,7 @@ final class AppStoreReliabilityTests: XCTestCase {
 }
 
 private actor SlowTestRepository: AppRepository {
-    nonisolated let mode: RepositoryMode = .localDemo
+    nonisolated let mode: RepositoryMode
     nonisolated let storageScope = "test:slow-repository"
     private var snapshot = DemoData.initialSnapshot()
     private var cities: [String] = []
@@ -2175,6 +2263,15 @@ private actor SlowTestRepository: AppRepository {
     private let loadError: Error?
     private var travel = TravelPlanSnapshot()
     private var travelError: Error?
+    private var tripReads: [[CloudTrip]] = []
+    private var tripReadDelays: [Duration] = []
+    private var tripReadCount = 0
+    private var tripWrites: [CloudTrip] = []
+    private var tripWriteDelays: [Duration] = []
+    private var tripWriteCount = 0
+    private var dismissalDelay: Duration = .zero
+    private var dismissalError: RepositoryError?
+    private var dismissalStarted = false
     private var profileDelay: Duration
     private var profileError: Error?
     private let loadDelay: Duration
@@ -2193,7 +2290,64 @@ private actor SlowTestRepository: AppRepository {
         travel = TravelPlanSnapshot(plans: [plan]); return travel
     }
 
-    init(loadError: Error? = nil, profileDelay: Duration = .zero, loadDelay: Duration = .milliseconds(180)) {
+    func configureTripReads(_ values: [[CloudTrip]], delays: [Duration]) {
+        tripReads = values; tripReadDelays = delays; tripReadCount = 0
+    }
+    func waitForTripReads(_ count: Int) async -> Bool {
+        for _ in 0..<200 {
+            if tripReadCount >= count { return true }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return false
+    }
+    func fetchTrips() async throws -> [CloudTrip] {
+        tripReadCount += 1
+        let index = tripReadCount - 1
+        let result = tripReads.indices.contains(index) ? tripReads[index] : []
+        let delay = tripReadDelays.indices.contains(index) ? tripReadDelays[index] : .zero
+        try? await Task.sleep(for: delay)
+        return result
+    }
+    func tripInvitations(tripID: String?) async throws -> [TripInvitation] { [] }
+    func configureTripWrites(_ values: [CloudTrip], delays: [Duration]) {
+        tripWrites = values; tripWriteDelays = delays; tripWriteCount = 0
+    }
+    func waitForTripWrites(_ count: Int) async -> Bool {
+        for _ in 0..<200 {
+            if tripWriteCount >= count { return true }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return false
+    }
+    func createTrip(_ payload: TripPayload) async throws -> CloudTrip {
+        tripWriteCount += 1
+        let index = tripWriteCount - 1
+        guard tripWrites.indices.contains(index) else { throw RepositoryError.unsupportedInCurrentMode }
+        let result = tripWrites[index]
+        let delay = tripWriteDelays.indices.contains(index) ? tripWriteDelays[index] : .zero
+        try? await Task.sleep(for: delay)
+        return result
+    }
+    func configureDismissal(delay: Duration, error: RepositoryError?) {
+        dismissalDelay = delay; dismissalError = error; dismissalStarted = false
+    }
+    func waitForDismissalStart() async -> Bool {
+        for _ in 0..<200 {
+            if dismissalStarted { return true }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return false
+    }
+    func dismissTripInvitation(id: UUID, revoke: Bool) async throws {
+        dismissalStarted = true
+        let error = dismissalError
+        try? await Task.sleep(for: dismissalDelay)
+        if let error { throw error }
+    }
+
+    init(loadError: Error? = nil, profileDelay: Duration = .zero, loadDelay: Duration = .milliseconds(180),
+         mode: RepositoryMode = .localDemo) {
+        self.mode = mode
         self.loadError = loadError
         self.profileDelay = profileDelay
         self.loadDelay = loadDelay

@@ -214,6 +214,8 @@ final class TripLibrary: ObservableObject {
     private var reminderOperationID: UUID?
     private var remote: (any AppRepository)?
     private var generation = 0
+    private var refreshOperationID: UUID?
+    private var saveOperationID: UUID?
     private var lifecycleRequests: [String: UUID] = [:]
     private var importedDraftIDs: Set<String> = []
     var isCloud: Bool { remote != nil }
@@ -239,6 +241,10 @@ final class TripLibrary: ObservableObject {
         guard scope != newScope || currentUserID != userID else { return }
         trips = []
         generation += 1
+        refreshOperationID = nil
+        saveOperationID = nil
+        isRefreshing = false
+        isSaving = false
         lifecycleRequests = [:]
         reminderContextKey = nil
         remindedUntil = [:]
@@ -390,8 +396,12 @@ final class TripLibrary: ObservableObject {
         guard let remote, let userID = currentUserID, !isRefreshing, !isSaving else { return }
         let capturedScope = scope
         let capturedGeneration = generation
+        let operationID = UUID()
+        refreshOperationID = operationID
         isRefreshing = true
-        defer { isRefreshing = false }
+        defer {
+            if refreshOperationID == operationID { isRefreshing = false; refreshOperationID = nil }
+        }
         do {
             let result = try await remote.fetchTrips()
             guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return }
@@ -425,10 +435,14 @@ final class TripLibrary: ObservableObject {
     private func cloudSave(_ operation: (any AppRepository) async throws -> CloudTrip) async -> Bool {
         guard let remote, let userID = currentUserID, !isSaving else { return false }
         let capturedScope = scope
+        let operationID = UUID()
+        saveOperationID = operationID
         isSaving = true
         generation += 1
         let capturedGeneration = generation
-        defer { isSaving = false }
+        defer {
+            if saveOperationID == operationID { isSaving = false; saveOperationID = nil }
+        }
         do {
             let result = try await operation(remote)
             guard scope == capturedScope, currentUserID == userID, generation == capturedGeneration else { return false }
@@ -588,9 +602,13 @@ final class TripLibrary: ObservableObject {
         let capturedScope = scope
         generation += 1
         let capturedGeneration = generation
+        let operationID = UUID()
+        saveOperationID = operationID
         isSaving = true
         errorMessage = nil
-        defer { isSaving = false }
+        defer {
+            if saveOperationID == operationID { isSaving = false; saveOperationID = nil }
+        }
         do {
             let result = try await remote.changeTripLifecycle(id: tripID, payload: .init(action: action,
                 requestID: requestID, revision: action == .leave ? nil : revision, participantID: participantID))
@@ -612,10 +630,15 @@ final class TripLibrary: ObservableObject {
     }
 
     func decline(_ invitation: TripInvitation) async {
+        let capturedScope = scope, capturedGeneration = generation
         do {
             try await remote?.dismissTripInvitation(id: invitation.id, revoke: false)
+            guard scope == capturedScope, generation == capturedGeneration else { return }
             invitations.removeAll { $0.id == invitation.id }
-        } catch { errorMessage = error.localizedDescription }
+        } catch {
+            guard scope == capturedScope, generation == capturedGeneration else { return }
+            errorMessage = error.localizedDescription
+        }
     }
 
     // Preserve old archives, never silently upload examples, guests, or another person's flights.
