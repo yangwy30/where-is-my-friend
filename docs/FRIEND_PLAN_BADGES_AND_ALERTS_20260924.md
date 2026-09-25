@@ -10,9 +10,15 @@
 ## Production diagnosis (read-only)
 
 - Examined recipient-specific event/outbox/device delivery records. Production app deliveries failed with `APNs 400: TopicDisallowed`; the equivalent staging-production deliveries were accepted by APNs. A second examined account had no registered devices, so its events had no device delivery rows. No permission state can be inferred from the absence of server device registrations alone.
-- Confirmed the server's existing key ID matches the Apple Developer key. The Apple key configuration permits only `com.yangwy30.whereismyfriend.staging` in Production, excluding `com.yangwy30.whereismyfriend`.
-- Prepared adding only the production app topic to the existing key. Saving this permission expansion is pending explicit user confirmation. No new key, revoked key, broad historical replay or test push has been performed.
+- Confirmed the server's existing key ID matches the Apple Developer key. Before repair, the Apple key permitted only `com.yangwy30.whereismyfriend.staging` in Production, excluding `com.yangwy30.whereismyfriend`.
 - APNs acceptance on an old staging installation is not evidence of notification delivery to the production app or display on a physical iPhone.
+
+## Production repair — September 24, 2026
+
+- After explicit user confirmation, added only `com.yangwy30.whereismyfriend` to the existing Production key, retaining the staging topic. Apple confirmed **Your Key is Updated**. No private key rotation, server secret change, function deployment or app binary update was required for this authorization correction.
+- Backed up and requeued exactly one existing failed delivery for the consenting owner's production install. The retry required the expected recipient/device/event, unchanged failure/attempt count, currently matching fresh city updates and no other pending or newly eligible devices. The regular worker retained its final sharing/eligibility check.
+- At **September 24, 2026, 9:09 PM PDT** the production delivery became **delivered**, attempts increased from 1 to 2, a new APNs request ID was recorded, and the error cleared. Both staging rows remained at one attempt; no broad historical replay occurred.
+- This proves APNs now accepts the production topic. Physical notification display is awaiting the owner's confirmation. The second examined account still needs successful notification permission/device registration on its own iPhone.
 
 ## Verification
 
