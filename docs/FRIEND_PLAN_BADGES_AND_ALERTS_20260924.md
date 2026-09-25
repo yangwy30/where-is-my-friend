@@ -24,4 +24,4 @@
 
 - 158 iOS unit tests passed, including new remote snapshot banner delivery, late-push deduplication, history/consent/account filters and background suppression.
 - Friend badge → selected friend's shared cities → plan detail UI test passed on iOS 27. Checked home and profile screenshots.
-- These client changes are source changes after App Store build 20; they have not been uploaded to TestFlight or included in its existing review submission.
+- These client changes shipped to the existing internal TestFlight group in [1.0.4 (21)](TESTFLIGHT_1_0_4_21.md). This upload did not replace build 20 in its existing App Store review submission.
