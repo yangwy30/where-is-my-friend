@@ -129,7 +129,7 @@ private struct FriendTravelPlanCard: View {
     }
 }
 
-private struct FriendTravelPlanDetailView: View {
+struct FriendTravelPlanDetailView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.scenePhase) private var scenePhase

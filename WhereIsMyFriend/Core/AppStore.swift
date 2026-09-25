@@ -112,6 +112,8 @@ final class AppStore: ObservableObject {
     private var upcomingDismissTask: Task<Void, Never>?
     private var pendingForegroundSameCityIDs: Set<UUID> = []
     private var bannerDismissTask: Task<Void, Never>?
+    private var sameCitySnapshotOwnerID: UUID?
+    private var isAppActive = false
 
     let repositoryMode: RepositoryMode
     let notificationService: LocalNotificationService
@@ -640,6 +642,7 @@ final class AppStore: ObservableObject {
                     pendingUpcomingNotificationID = nil
                     dismissUpcomingBanner()
                 }
+                discoverNewSameCityEvents(excluding: existingEventIDs)
                 reconcileSameCityBanner()
                 if let banner = upcomingBanner,
                    friend(id: banner.friendID) == nil || snapshot.blockedUserIDs.contains(banner.friendID)
@@ -727,6 +730,7 @@ final class AppStore: ObservableObject {
         pendingUpcomingNotificationID = nil
         dismissUpcomingBanner()
         pendingSameCityEventID = nil
+        sameCitySnapshotOwnerID = nil
         pendingForegroundSameCityIDs.removeAll()
         dismissSameCityBanner()
         SharedAppStateStore.save(snapshot, origin: repository.storageScope)
@@ -742,13 +746,39 @@ final class AppStore: ObservableObject {
     }
 
     private func deliverNewNotifications(excluding existingEventIDs: Set<UUID>) async {
-        // Remote same-city events are delivered by APNs. Re-scheduling events from
-        // a bootstrap response would replay history on sign-in and duplicate pushes.
+        // Remote system notifications come from APNs; snapshot discovery only
+        // presents an in-app banner, never a second scheduled system notification.
         guard repositoryMode == .localDemo else { return }
         for event in snapshot.colocationEvents where !existingEventIDs.contains(event.id) {
             guard SameCityAlertPolicy.isCurrent(event, in: snapshot) else { continue }
             await notificationService.schedule(event, previewsEnabled: snapshot.sharingPreferences.notificationPreviewEnabled)
         }
+    }
+
+    func setAppActive(_ active: Bool) {
+        isAppActive = active
+        if !active {
+            pendingForegroundSameCityIDs.removeAll()
+            dismissSameCityBanner()
+        }
+    }
+
+    private func discoverNewSameCityEvents(excluding existingEventIDs: Set<UUID>) {
+        guard repositoryMode == .remote else { return }
+        guard snapshot.isAuthenticated else { sameCitySnapshotOwnerID = nil; return }
+        guard snapshot.syncState != .offline else { return }
+        let owner = snapshot.currentUser.id
+        defer { sameCitySnapshotOwnerID = owner }
+        // The first successful response establishes a baseline. Reopening/signing
+        // in must not turn stored event history into a series of new banners.
+        guard sameCitySnapshotOwnerID == owner, isAppActive else { return }
+        let now = Date()
+        let freshIDs = snapshot.colocationEvents.filter {
+            !existingEventIDs.contains($0.id)
+                && $0.createdAt <= now.addingTimeInterval(60)
+                && now.timeIntervalSince($0.createdAt) < 5 * 60
+        }.map(\.id)
+        pendingForegroundSameCityIDs.formUnion(freshIDs)
     }
 
     var sameCityBannerEvent: ColocationEvent? {
@@ -770,7 +800,7 @@ final class AppStore: ObservableObject {
     }
 
     private func receiveSameCityNotification(_ id: UUID) {
-        guard snapshot.isAuthenticated else { return }
+        guard snapshot.isAuthenticated, isAppActive else { return }
         pendingForegroundSameCityIDs.insert(id)
         let owner = snapshot.currentUser.id
         Task { [weak self] in
@@ -783,7 +813,7 @@ final class AppStore: ObservableObject {
 
     private func reconcileSameCityBanner() {
         if sameCityBannerEventID != nil, sameCityBannerEvent == nil { dismissSameCityBanner() }
-        guard snapshot.isAuthenticated else { return }
+        guard snapshot.isAuthenticated, isAppActive else { return }
         let key = "same-city.seen.v1.\(repository.storageScope).\(snapshot.currentUser.id)"
         var seen = UserDefaults.standard.stringArray(forKey: key) ?? []
         let candidates = snapshot.colocationEvents.filter { pendingForegroundSameCityIDs.contains($0.id) }

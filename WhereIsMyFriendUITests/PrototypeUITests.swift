@@ -386,6 +386,28 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue((search.value as? String)?.contains("New York") == true)
     }
 
+    func testFriendPlanBadgeOpensThatFriendsSharedCities() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+        XCTAssertTrue(lin.waitForExistence(timeout: 8))
+        XCTAssertTrue(lin.label.contains("Has shared travel plans"))
+        let mia = app.buttons["friendCard-10000000-0000-0000-0000-000000000001"]
+        XCTAssertFalse(mia.label.contains("Has shared travel plans"))
+        for _ in 0..<3 where !lin.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
+        capture("friend-plan-badge")
+        lin.tap()
+        let plan = app.buttons["friendDetailPlan-A7150000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(plan.waitForExistence(timeout: 5))
+        XCTAssertTrue(plan.label.contains("Tokyo"))
+        XCTAssertFalse(app.buttons["friendDetailPlan-A7150000-0000-0000-0000-000000000002"].exists)
+        capture("friend-shared-plans")
+        plan.tap()
+        XCTAssertTrue(app.scrollViews["friendPlanDetail"].waitForExistence(timeout: 3))
+    }
+
     func testPlanCityPickerUsesChineseLabels() {
         continueAfterFailure = false
         let app = XCUIApplication()

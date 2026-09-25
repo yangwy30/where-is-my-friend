@@ -71,7 +71,8 @@ struct AppRootView: View {
             }
             #endif
         }
-        .onChange(of: scenePhase) { _, phase in
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            store.setAppActive(phase == .active)
             guard phase == .active, store.snapshot.isAuthenticated else { return }
             Task {
                 await store.preparePushRegistrationIfAuthorized()

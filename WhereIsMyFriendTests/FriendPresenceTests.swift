@@ -659,6 +659,91 @@ final class SameCityAlertPolicyTests: XCTestCase {
 
 @MainActor
 final class SameCityAlertDeliveryTests: XCTestCase {
+    private func remoteFixture() async -> (SlowTestRepository, AppStore, AppSnapshot) {
+        var snapshot = DemoData.initialSnapshot()
+        snapshot.currentUser = AppUser(id: UUID(), displayName: "Owner", username: "owner")
+        snapshot.currentPresence = CurrentUserPresence(administrativeArea: "NY", city: "New York",
+            countryCode: "US", updatedAt: Date(), source: .foregroundLocation)
+        snapshot.friends = [FriendPresence(displayName: "Friend", username: "friend", city: "New York",
+            countryCode: "US", updatedAt: Date(), administrativeArea: "NY")]
+        snapshot.colocationEvents = []
+        let repo = SlowTestRepository(loadDelay: .zero, mode: .remote)
+        await repo.configureSnapshot(snapshot)
+        let store = AppStore(repository: repo)
+        store.setAppActive(true)
+        return (repo, store, snapshot)
+    }
+
+    private func event(in snapshot: AppSnapshot, at date: Date = Date()) -> ColocationEvent {
+        let friend = snapshot.friends[0]
+        return ColocationEvent(cityKey: "v2|US|ny|newyork", id: UUID(), deduplicationKey: UUID().uuidString,
+            city: "New York", friendIDs: [friend.id], friendNames: [friend.displayName], createdAt: date, wasNotified: false)
+    }
+
+    func testNewRemoteEventShowsWithoutPushAndLatePushDoesNotRepeat() async throws {
+        let (repo, store, initial) = await remoteFixture()
+        var snapshot = initial
+        snapshot.colocationEvents = [event(in: snapshot)]
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID, "Bootstrap must not replay even recent history")
+        let arrived = event(in: snapshot)
+        snapshot.colocationEvents.append(arrived)
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertEqual(store.sameCityBannerEventID, arrived.id)
+        store.dismissSameCityBanner()
+        store.notificationService.onSameCityForeground?(arrived.id)
+        try await Task.sleep(for: .milliseconds(300))
+        XCTAssertNil(store.sameCityBannerEventID)
+        await store.signOut()
+    }
+
+    func testRemoteSnapshotRejectsOlderEventsDisabledAlertsAndNewAccountHistory() async {
+        let (repo, store, initial) = await remoteFixture()
+        var snapshot = initial
+        await store.refresh()
+        snapshot.colocationEvents = [event(in: snapshot, at: Date().addingTimeInterval(-600))]
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID)
+        snapshot.friendPreferences = [FriendAccessPreference(friendID: snapshot.friends[0].id,
+            sharesMyCity: true, sameCityAlertEnabled: false)]
+        snapshot.colocationEvents.append(event(in: snapshot))
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID)
+        snapshot.friendPreferences = []
+        snapshot.currentUser = AppUser(id: UUID(), displayName: "New owner", username: "newowner")
+        snapshot.colocationEvents.append(event(in: snapshot))
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID)
+        await store.signOut()
+    }
+
+    func testBackgroundSnapshotDoesNotQueueAnUnseenBannerForResume() async {
+        let (repo, store, initial) = await remoteFixture()
+        var snapshot = initial
+        await store.refresh()
+        store.setAppActive(false)
+        snapshot.colocationEvents = [event(in: snapshot)]
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID)
+        store.setAppActive(true)
+        await store.refresh()
+        XCTAssertNil(store.sameCityBannerEventID)
+        let arrived = event(in: snapshot)
+        snapshot.colocationEvents.append(arrived)
+        await repo.configureSnapshot(snapshot)
+        await store.refresh()
+        XCTAssertEqual(store.sameCityBannerEventID, arrived.id)
+        store.setAppActive(false)
+        XCTAssertNil(store.sameCityBannerEventID)
+        await store.signOut()
+    }
+
     private func makeStore() async -> (AppStore, ColocationEvent) {
         var snapshot = DemoData.initialSnapshot()
         snapshot.currentUser = AppUser(id: UUID(), displayName: "Test owner", username: "testowner")
@@ -669,6 +754,7 @@ final class SameCityAlertDeliveryTests: XCTestCase {
             friendIDs: [friend.id], friendNames: [friend.displayName], createdAt: Date(), wasNotified: true)
         snapshot.colocationEvents = [event]
         let store = AppStore(repository: LocalDemoRepository(snapshot: snapshot, persistsChanges: false))
+        store.setAppActive(true)
         await store.refresh()
         return (store, event)
     }
@@ -2363,6 +2449,8 @@ private actor SlowTestRepository: AppRepository {
         if let loadError { throw loadError }
         return snapshot
     }
+
+    func configureSnapshot(_ value: AppSnapshot) { snapshot = value }
 
     func uploadedCities() -> [String] { cities }
     func incomingRequestID() -> UUID? { snapshot.incomingRequests.first?.id }

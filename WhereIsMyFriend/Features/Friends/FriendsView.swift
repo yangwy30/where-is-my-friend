@@ -113,6 +113,7 @@ struct FriendsView: View {
                                 friendCard(friend)
                             }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier("friendCard-\(friend.id)")
                         }
                     }
                 }
@@ -153,11 +154,12 @@ struct FriendsView: View {
                 proxy.scrollTo("sameCityReunion", anchor: .top)
             }
         }
-        .task {
+        .task(id: isHomeVisible) {
+            guard isHomeVisible else { return }
             while !Task.isCancelled {
                 referenceDate = Date()
                 refreshLocationReminder()
-                await travelPlans.refresh()
+                if scenePhase == .active { await store.refresh() }
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
         }
@@ -522,9 +524,18 @@ struct FriendsView: View {
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
         let isSameCity = isFriendInSameCity(friend)
+        let nextPlan = travelPlans.visibleFriendPlans(
+            friendIDs: Set(friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs), at: referenceDate
+        ).first { $0.friendID == friend.id }
 
         return VStack(spacing: 6) {
             CityEmblemView(friend: friend, size: 88)
+                .overlay(alignment: .topTrailing) {
+                    if let nextPlan {
+                        FriendPlanBadge(planID: nextPlan.id, isActive: isHomeVisible && scenePhase == .active)
+                            .offset(x: 5, y: 2)
+                    }
+                }
                 .padding(.top, 9)
 
             VStack(spacing: 2) {
@@ -571,7 +582,7 @@ struct FriendsView: View {
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "\(String(localized: "Same city")), " : "")\(friend.relativeUpdateLongText(at: referenceDate))"
+            "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "\(String(localized: "Same city")), " : "")\(friend.relativeUpdateLongText(at: referenceDate))\(nextPlan != nil ? ", \(String(localized: "Has shared travel plans"))" : "")"
         )
     }
 

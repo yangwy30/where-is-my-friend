@@ -1,6 +1,15 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+  "Has shared travel plans": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "有分享的旅行计划" } } }
+  },
+  "Enable same-city notifications": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "开启同城通知" } } }
+  },
+  "Get an alert when you and this friend share a city.": {
+    "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "当你与这位好友同城时收到提醒。" } } }
+  },
   "Choose a city": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "选择城市" } } }
   },

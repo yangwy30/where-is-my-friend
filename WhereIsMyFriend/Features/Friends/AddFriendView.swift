@@ -5,10 +5,22 @@ import UserNotifications
 struct InvitationNotificationStatusView: View {
     @EnvironmentObject private var store: AppStore
     @ObservedObject var service: LocalNotificationService
+    var isSameCityContext = false
 
     private var needsSetup: Bool {
         if !service.allowsNotifications { return true }
-        return store.pushRegistrationState == .failed
+        return store.pushRegistrationState == .failed || store.pushRegistrationState == .waitingForNetwork
+    }
+
+    private var promptTitle: LocalizedStringKey {
+        if service.allowsNotifications { return "Finish notification setup" }
+        return isSameCityContext ? "Enable same-city notifications" : "Get invitation notifications"
+    }
+
+    private var promptDetail: LocalizedStringKey {
+        if service.allowsNotifications { return "Notifications couldn’t be enabled. Try again." }
+        return isSameCityContext ? "Get an alert when you and this friend share a city."
+            : "Invitations stay in the app even when notifications are off."
     }
 
     var body: some View {
@@ -16,11 +28,9 @@ struct InvitationNotificationStatusView: View {
             HStack(spacing: 12) {
                 Image(systemName: "bell.badge").foregroundStyle(WIFTheme.fresh)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(service.allowsNotifications ? "Finish notification setup" : "Get invitation notifications")
+                    Text(promptTitle)
                         .font(.subheadline.weight(.semibold))
-                    Text(service.allowsNotifications
-                         ? "Notifications couldn’t be enabled. Try again."
-                         : "Invitations stay in the app even when notifications are off.")
+                    Text(promptDetail)
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 }
                 Spacer(minLength: 4)

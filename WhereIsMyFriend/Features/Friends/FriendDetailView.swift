@@ -3,10 +3,18 @@ import SwiftUI
 struct FriendDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var travelPlans: TravelPlanLibrary
+    @Environment(\.scenePhase) private var scenePhase
     let friend: FriendPresence
     @State private var showsRemoveConfirmation = false
     @State private var showsBlockConfirmation = false
-    private let referenceDate = Date()
+    @State private var referenceDate = Date()
+
+    private var sharedPlans: [FriendTravelPlan] {
+        let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
+        return travelPlans.visibleFriendPlans(friendIDs: allowed, at: referenceDate)
+            .filter { $0.friendID == friend.id }
+    }
 
     private var currentFriend: FriendPresence {
         store.friend(id: friend.id) ?? friend
@@ -29,6 +37,7 @@ struct FriendDetailView: View {
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.top, 3)
 
+                if !sharedPlans.isEmpty { sharedPlansSection.padding(.top, 24) }
                 citySurface.padding(.top, 20)
 
                 sectionLabel("Between you two").padding(.top, 24)
@@ -49,6 +58,11 @@ struct FriendDetailView: View {
                     .disabled(store.isSavingFriendPreference(for: friend.id))
                     .tint(WIFTheme.fresh)
                     .padding(15)
+
+                    if preference.sameCityAlertEnabled {
+                        InvitationNotificationStatusView(service: store.notificationService, isSameCityContext: true)
+                            .padding(.horizontal, 8)
+                    }
 
                     Divider().overlay(WIFTheme.border).padding(.leading, 15)
 
@@ -93,6 +107,19 @@ struct FriendDetailView: View {
         .wifAmbientBackground()
         .navigationTitle(currentFriend.displayName.components(separatedBy: " ").first ?? currentFriend.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
+        .refreshable { await store.refresh(); referenceDate = Date() }
+        .task {
+            await store.preparePushRegistrationIfAuthorized()
+            while !Task.isCancelled {
+                referenceDate = Date()
+                if scenePhase == .active { await travelPlans.refresh() }
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { referenceDate = Date(); await travelPlans.refresh() } }
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -147,6 +174,34 @@ struct FriendDetailView: View {
             var updated = store.preference(for: currentFriend.id)
             updated.sharesMyCity = newValue
             Task { await store.setFriendPreference(updated) }
+        }
+    }
+
+    private var sharedPlansSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionLabel("Travel plans")
+            ForEach(sharedPlans) { plan in
+                NavigationLink {
+                    FriendTravelPlanDetailView(planID: plan.id)
+                } label: {
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(plan.city).font(.title3.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                            Text(plan.privateDraft().destination.subtitle)
+                                .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            Text(plan.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.fresh)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .padding(.vertical, 15).frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("friendDetailPlan-\(plan.id)")
+                Divider().overlay(WIFTheme.border.opacity(0.4))
+            }
         }
     }
 
@@ -211,6 +266,8 @@ struct FriendDetailView: View {
 }
 
 #Preview {
+    let store = AppStore()
     NavigationStack { FriendDetailView(friend: MockFriendData.friends[0]) }
-        .environmentObject(AppStore())
+        .environmentObject(store)
+        .environmentObject(store.travelPlans)
 }
