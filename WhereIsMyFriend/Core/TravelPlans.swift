@@ -189,12 +189,15 @@ final class TravelPlanLibrary: ObservableObject {
     private var cacheEpoch = 0
     private var generation = 0
     private var mutationEpoch = 0
+    private var refreshTask: Task<TravelPlanSnapshot, Error>?
+    private var refreshID: UUID?
     var isDemo: Bool { repository?.mode == .localDemo }
 
     func connect(repository: any AppRepository, userID: UUID?) {
         let newScope = userID.map { "travel-plans.v1.\(repository.storageScope).\($0)" }
         guard newScope != scope else { return }
         generation += 1
+        cancelRefresh()
         self.repository = repository; ownerID = userID; scope = newScope
         cacheEpoch = newScope.map { AccountLocalData.epoch(for: $0) } ?? 0
         plans = []; overlaps = []; friendPlans = []; errorMessage = nil; hasSynced = false; isLoading = false; isSaving = false
@@ -203,25 +206,55 @@ final class TravelPlanLibrary: ObservableObject {
     }
 
     func refresh() async {
-        guard !isLoading, !isSaving, let repository, ownerID != nil else { return }
+        guard !Task.isCancelled, !isSaving, let repository, ownerID != nil else { return }
         let version = generation
         let epoch = mutationEpoch
-        isLoading = true
-        defer { if version == generation { isLoading = false } }
+        let task: Task<TravelPlanSnapshot, Error>
+        let ticket: UUID
+        if let existing = refreshTask, let existingID = refreshID {
+            task = existing
+            ticket = existingID
+        } else {
+            ticket = UUID()
+            // The shared library owns this read. A disappearing view may stop
+            // waiting, but must not cancel a request another screen needs.
+            task = Task { try await repository.fetchTravelPlans() }
+            refreshTask = task
+            refreshID = ticket
+            isLoading = true
+        }
+        defer {
+            if refreshID == ticket {
+                refreshTask = nil
+                refreshID = nil
+                isLoading = false
+            }
+        }
         do {
-            let result = try await repository.fetchTravelPlans()
-            guard version == generation, epoch == mutationEpoch else { return }
+            let result = try await task.value
+            guard refreshID == ticket, version == generation, epoch == mutationEpoch else { return }
             apply(result)
         } catch {
-            guard version == generation, epoch == mutationEpoch else { return }
+            guard refreshID == ticket, version == generation, epoch == mutationEpoch else { return }
+            // Cancellation is control flow during account/navigation changes,
+            // not evidence that the server rejected a shared plan.
+            guard !(error is CancellationError), (error as? URLError)?.code != .cancelled else { return }
             overlaps = []; friendPlans = []; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
         }
+    }
+
+    private func cancelRefresh() {
+        refreshID = nil
+        refreshTask?.cancel()
+        refreshTask = nil
+        isLoading = false
     }
 
     func save(_ plan: PersonalTravelPlan) async -> Bool {
         guard !isSaving, let repository, ownerID != nil else { return false }
         let version = generation
         mutationEpoch += 1
+        cancelRefresh()
         isSaving = true
         defer { if generation == version { isSaving = false } }
         do {
@@ -239,6 +272,7 @@ final class TravelPlanLibrary: ObservableObject {
         guard !isSaving, let repository, ownerID != nil else { return false }
         let version = generation
         mutationEpoch += 1
+        cancelRefresh()
         isSaving = true
         defer { if generation == version { isSaving = false } }
         do {

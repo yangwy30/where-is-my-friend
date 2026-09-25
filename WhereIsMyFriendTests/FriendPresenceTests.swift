@@ -2353,6 +2353,7 @@ private actor SlowTestRepository: AppRepository {
     private let loadError: Error?
     private var travel = TravelPlanSnapshot()
     private var travelError: Error?
+    private var travelReadCount = 0
     private var tripReads: [[CloudTrip]] = []
     private var tripReadDelays: [Duration] = []
     private var tripReadCount = 0
@@ -2367,6 +2368,7 @@ private actor SlowTestRepository: AppRepository {
     private let loadDelay: Duration
 
     func fetchTravelPlans() async throws -> TravelPlanSnapshot {
+        travelReadCount += 1
         let old = travel
         let error = travelError
         try await Task.sleep(for: .milliseconds(180))
@@ -2375,6 +2377,15 @@ private actor SlowTestRepository: AppRepository {
     }
     func configureTravel(snapshot: TravelPlanSnapshot, error: Error? = nil) {
         travel = snapshot; travelError = error
+    }
+
+    func travelReads() -> Int { travelReadCount }
+    func waitForTravelReads(_ count: Int) async -> Bool {
+        for _ in 0..<100 {
+            if travelReadCount >= count { return true }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return false
     }
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {
         travel = TravelPlanSnapshot(plans: [plan]); return travel
@@ -2655,6 +2666,89 @@ final class FriendTravelPlanTests: XCTestCase {
     private func shared(start: String = "2090-01-01", end: String = "2090-01-05") -> FriendTravelPlan {
         FriendTravelPlan(id: UUID(), friendID: UUID(), friendName: "A friend", city: "Tokyo", countryCode: "JP",
                          region: "Tokyo", timeZone: "Asia/Tokyo", startDay: start, endDay: end)
+    }
+
+    @MainActor
+    func testNavigationCancellationDoesNotFailTheNextScreensSharedRefresh() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID(), row = shared()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlans: [row]))
+        library.connect(repository: repo, userID: owner)
+        let home = Task { await library.refresh() }
+        let started = await repo.waitForTravelReads(1)
+        XCTAssertTrue(started)
+        let destination = Task { await library.refresh() }
+        home.cancel()
+        await destination.value
+        await home.value
+        XCTAssertEqual(library.friendPlans, [row])
+        XCTAssertTrue(library.hasSynced)
+        XCTAssertFalse(library.isLoading)
+        XCTAssertNil(library.errorMessage)
+        let reads = await repo.travelReads()
+        XCTAssertEqual(reads, 1, "The destination should join the existing request")
+    }
+
+    @MainActor
+    func testAccountChangeStartsANewReadAndOldWaitersCannotReplaceIt() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary()
+        let oldOwner = UUID(), newOwner = UUID(), oldRow = shared(), newRow = shared()
+        defer {
+            for owner in [oldOwner, newOwner] {
+                UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)")
+            }
+        }
+        library.connect(repository: repo, userID: oldOwner)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlans: [oldRow]))
+        let oldRead = Task { await library.refresh() }
+        let started = await repo.waitForTravelReads(1)
+        XCTAssertTrue(started)
+        library.connect(repository: repo, userID: newOwner)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlans: [newRow]))
+        await library.refresh()
+        await oldRead.value
+        XCTAssertEqual(library.friendPlans, [newRow])
+        XCTAssertTrue(library.hasSynced)
+        XCTAssertFalse(library.isLoading)
+        XCTAssertNil(library.errorMessage)
+    }
+
+    @MainActor
+    func testSavingRetiresPendingReadWithoutRestoringItsOldSharedPlans() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID(), row = shared()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        library.connect(repository: repo, userID: owner)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlans: [row]))
+        let read = Task { await library.refresh() }
+        let started = await repo.waitForTravelReads(1)
+        XCTAssertTrue(started)
+        let plan = row.privateDraft()
+        let saved = await library.save(plan)
+        XCTAssertTrue(saved)
+        await read.value
+        XCTAssertEqual(library.plans, [plan])
+        XCTAssertTrue(library.friendPlans.isEmpty)
+        XCTAssertTrue(library.hasSynced)
+        XCTAssertFalse(library.isLoading)
+        XCTAssertNil(library.errorMessage)
+    }
+
+    @MainActor
+    func testTransportCancellationDoesNotBecomeASharedPlanFailure() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID(), row = shared()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        library.connect(repository: repo, userID: owner)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlans: [row]))
+        await library.refresh()
+        let cancellations: [Error] = [CancellationError(), URLError(.cancelled)]
+        for error in cancellations {
+            await repo.configureTravel(snapshot: TravelPlanSnapshot(), error: error)
+            await library.refresh()
+            XCTAssertEqual(library.friendPlans, [row])
+            XCTAssertTrue(library.hasSynced)
+            XCTAssertNil(library.errorMessage)
+            XCTAssertFalse(library.isLoading)
+        }
     }
 
     func testLegacyPlansAndSnapshotsUseTheCurrentBrowsingDefault() throws {
