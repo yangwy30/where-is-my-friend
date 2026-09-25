@@ -530,12 +530,6 @@ struct FriendsView: View {
 
         return VStack(spacing: 6) {
             CityEmblemView(friend: friend, size: 88)
-                .overlay(alignment: .topTrailing) {
-                    if let nextPlan {
-                        FriendPlanBadge(planID: nextPlan.id, isActive: isHomeVisible && scenePhase == .active)
-                            .offset(x: 5, y: 2)
-                    }
-                }
                 .padding(.top, 9)
 
             VStack(spacing: 2) {
@@ -580,6 +574,13 @@ struct FriendsView: View {
             interactive: true,
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
+        .overlay(alignment: .topTrailing) {
+            if let nextPlan {
+                FriendPlanBadge(planID: nextPlan.id, isActive: isHomeVisible && scenePhase == .active)
+                    .padding(12)
+                    .allowsHitTesting(false)
+            }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "\(String(localized: "Same city")), " : "")\(friend.relativeUpdateLongText(at: referenceDate))\(nextPlan != nil ? ", \(String(localized: "Has shared travel plans"))" : "")"
