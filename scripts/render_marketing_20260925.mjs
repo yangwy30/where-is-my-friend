@@ -7,14 +7,16 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const sharp = require('sharp');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const out = path.join(root, 'docs/app_store_screenshots/2026-09-25');
+const setName = process.argv.find(arg => arg.startsWith('--set='))?.slice(6) ?? '2026-09-25';
+if (!/^\d{4}-\d{2}-\d{2}$/.test(setName)) throw new Error('Expected --set=YYYY-MM-DD');
+const out = path.join(root, 'docs/app_store_screenshots', setName);
 const copy = JSON.parse(fs.readFileSync(path.join(out, 'copy.json'), 'utf8'));
 const esc = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 const palettes = {cream:['#F8F7EF','#E5F1E5'], mint:['#E7F2E9','#F5F7ED'], blue:['#EDF2F2','#E1EEE8']};
 for (const [locale, specs] of Object.entries(copy)) {
   const rendered=[];
   for (const [index, s] of specs.entries()) {
-    const raw = path.join(out, 'raw', locale, `${s.id}.png`);
+    const raw = s.raw ? path.resolve(out, s.raw) : path.join(out, 'raw', locale, `${s.id}.png`);
     if (!fs.existsSync(raw) && process.argv.includes('--partial')) continue;
     if (!fs.existsSync(raw)) throw new Error(`Missing real capture: ${raw}`);
     const meta=await sharp(raw).metadata();
