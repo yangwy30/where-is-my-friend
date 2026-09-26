@@ -21,7 +21,7 @@ Completed September 26, 2026. **Prepared locally; not uploaded to App Store Conn
 3. Together soon and overlapping dates.
 4. Here together, in the same city.
 5. Shared Trips.
-6. Flights and arrival times.
+6. Expanded geographic map: friends' routes converge on one destination.
 7. Actual installed City Stage Home Screen widget.
 
 Cream and pale mint backgrounds, dark green typography and short benefit-led copy replace the older bright green treatment. The screenshots show the build 22 interface. All friends and plans are demo data. The widget poster crops a real Home Screen screenshot; it is not the developer's Widget Studio mock. The widget's English system-rendered contents are shared across both locales. Chinese app captures preserve untranslated labels still present in the app.
@@ -31,6 +31,8 @@ Cream and pale mint backgrounds, dark green typography and short benefit-led cop
 Source: committed build 22 UI plus a DEBUG-only `-marketingOverlap` personal-plan fixture. No release behavior changes.
 
 Use `PrototypeUITests/testCaptureUpdatedMarketingEnglish` and `testCaptureUpdatedMarketingChinese` for the first six screens. Use `testCaptureMarketingOverlapDetails` for just the overlap details. These navigate through Friend plans before opening the overlap to ensure the shared plan data has loaded.
+
+The sixth poster was revised following user feedback to feature the expanded MapKit route map instead of the arrivals list. `testCaptureMarketingFlightMaps` captures both locales through the real Expand map button. The poster preserves the actual airport markers and route lines; it does not add simulated live aircraft positions. Static posters cannot reproduce the map's route-reveal animation.
 
 For the seventh screen, install the City Stage large widget on the simulator Home Screen, then run `testCaptureActualMarketingWidgets`. It captures three Home Screen pages after the app seeds its actual shared widget data. The selected capture is page 2; crop coordinates are in `copy.json`.
 

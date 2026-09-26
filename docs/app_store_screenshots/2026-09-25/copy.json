@@ -53,12 +53,13 @@
     {
       "id": "06-arrivals",
       "title": [
-        "Different flights.",
-        "One reunion."
+        "Different cities.",
+        "One destination."
       ],
-      "sub": "See who lands when, all in one place.",
+      "sub": "See everyone’s routes come together on the map.",
       "tone": "blue",
-      "crop": 150
+      "crop": 150,
+      "frameHeight": 1960
     },
     {
       "id": "07-widgets",
@@ -133,12 +134,13 @@
     {
       "id": "06-arrivals",
       "title": [
-        "谁几点到，",
-        "一起看清楚"
+        "从不同城市，",
+        "飞向同一站"
       ],
-      "sub": "把每个人的抵达时间放在一起。",
+      "sub": "把朋友们的航线，放在同一张地图上。",
       "tone": "blue",
-      "crop": 150
+      "crop": 150,
+      "frameHeight": 1960
     },
     {
       "id": "07-widgets",

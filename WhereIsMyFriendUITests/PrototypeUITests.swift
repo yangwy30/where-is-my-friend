@@ -1087,8 +1087,39 @@ final class PrototypeUITests: XCTestCase {
         capture("\(language)-05-shared-trips")
         app.buttons["tripCard-example-west"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
-        capture("\(language)-06-arrivals")
+        captureMarketingFlightMap(app, language: language)
         app.terminate()
+    }
+
+    func testCaptureMarketingFlightMaps() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewTrips", "-seedTripExamples",
+                "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(\(language))",
+                "-AppleLocale", locale, "-AppleInterfaceStyle", "Light"]
+            app.launch()
+            XCTAssertTrue(app.buttons["tripCard-example-west"].waitForExistence(timeout: 8))
+            app.buttons["tripCard-example-west"].tap()
+            XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+            captureMarketingFlightMap(app, language: language)
+            app.terminate()
+        }
+    }
+
+    private func captureMarketingFlightMap(_ app: XCUIApplication, language: String) {
+        let expand = app.buttons["expandTripMapButton"]
+        XCTAssertTrue(expand.waitForExistence(timeout: 5))
+        for _ in 0..<4 {
+            if expand.isHittable { break }
+            app.scrollViews["fullTripArrivalBoard"].swipeUp()
+        }
+        expand.tap()
+        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["mapTraveler-all"].exists)
+        // Let MapKit finish loading tiles and the entry route reveal before capture.
+        sleep(4)
+        capture("\(language)-06-arrivals")
     }
 
     func testCaptureMarketingOverlapDetails() {

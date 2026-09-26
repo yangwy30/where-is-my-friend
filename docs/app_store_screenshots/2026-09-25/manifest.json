@@ -13,7 +13,8 @@
     "App screenshots use actual UI and demo data.",
     "03 was recaptured September 26 after opening Friend plans to load its data.",
     "07 is an actual installed City Stage large Home Screen widget; the same English system-widget capture is used in both locales.",
-    "Some Chinese app labels are untranslated in the current build; screenshots preserve the real UI."
+    "Some Chinese app labels are untranslated in the current build; screenshots preserve the real UI.",
+    "06 revised September 26 to expanded actual MapKit routes. Bilingual capture test passed; static asset preserves route lines and airport markers."
   ],
   "files": [
     {
@@ -38,7 +39,7 @@
     },
     {
       "path": "en/1284x2778/06-arrivals.png",
-      "sha256": "d8419c111391ecdaede797a158e591cf920a2c9e422ebaa68ea47f727d821b49"
+      "sha256": "6b1bacd508e6de17490e310e1d10b4641da9e0033bde4301218bfd816de85e38"
     },
     {
       "path": "en/1284x2778/07-widgets.png",
@@ -66,7 +67,7 @@
     },
     {
       "path": "en/1320x2868/06-arrivals.png",
-      "sha256": "7b30a2838264cc6fafd58d7627a5c8b7dc724dd96bab55b430299614a3f75da0"
+      "sha256": "5ae5a7aa1a007148cf6810db57f8572612170cd65a9c7887a8f53a5cae166fc6"
     },
     {
       "path": "en/1320x2868/07-widgets.png",
@@ -94,7 +95,7 @@
     },
     {
       "path": "raw/en/06-arrivals.png",
-      "sha256": "65d13935aeb976ba82d0db0f7ff8925bc111b097b9b0d6f8da049e4186656f74"
+      "sha256": "99919cb7213cc5acf0d487dea0107821551eeccf4712a5502a7c193fe16fed89"
     },
     {
       "path": "raw/en/07-widgets.png",
@@ -122,7 +123,7 @@
     },
     {
       "path": "raw/zh-Hans/06-arrivals.png",
-      "sha256": "3f9368cb56d4613809baa89cc8e9d2b5a848653e2349a27026edfe0a83078b13"
+      "sha256": "8974ac130a3103369d180e134334d187f53b63c480bc61323ec0b153b4802be1"
     },
     {
       "path": "raw/zh-Hans/07-widgets.png",
@@ -150,7 +151,7 @@
     },
     {
       "path": "zh-Hans/1284x2778/06-arrivals.png",
-      "sha256": "ce7816f27e336beae66e8d1d9d41236b995cf5a7d44fdf4b10057e33a0225ff8"
+      "sha256": "8dab25dcdafbe8f42f6be9ca68b36d7b36386edaeae0734a3dbcbbf3ca57ee69"
     },
     {
       "path": "zh-Hans/1284x2778/07-widgets.png",
@@ -178,7 +179,7 @@
     },
     {
       "path": "zh-Hans/1320x2868/06-arrivals.png",
-      "sha256": "eef5e4942a597cadaee96529b7902cce6b3e3633760b616a1f0b146e61abcd5a"
+      "sha256": "86ddf3dcc962ba656900d8dc7f602e4eff14356617d32d5b13397701dd5d7eed"
     },
     {
       "path": "zh-Hans/1320x2868/07-widgets.png",
