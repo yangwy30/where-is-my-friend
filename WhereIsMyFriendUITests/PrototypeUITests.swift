@@ -1087,6 +1087,8 @@ final class PrototypeUITests: XCTestCase {
         capture("\(language)-05-shared-trips")
         app.buttons["tripCard-example-west"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        captureMarketingFlightDetails(app, language: language)
+        app.buttons["flightCard-alex-out"].tap()
         captureMarketingFlightMap(app, language: language)
         app.terminate()
     }
@@ -1105,6 +1107,32 @@ final class PrototypeUITests: XCTestCase {
             captureMarketingFlightMap(app, language: language)
             app.terminate()
         }
+    }
+
+    func testCaptureMarketingFlightDetails() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewTrips", "-seedTripExamples",
+                "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(\(language))",
+                "-AppleLocale", locale, "-AppleInterfaceStyle", "Light"]
+            app.launch()
+            let trip = app.buttons["tripCard-example-west"]
+            XCTAssertTrue(trip.waitForExistence(timeout: 8))
+            trip.tap()
+            XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+            captureMarketingFlightDetails(app, language: language)
+            app.terminate()
+        }
+    }
+
+    private func captureMarketingFlightDetails(_ app: XCUIApplication, language: String) {
+        let flight = app.buttons["flightCard-alex-out"]
+        XCTAssertTrue(flight.waitForExistence(timeout: 5))
+        flight.tap()
+        XCTAssertEqual(flight.value as? String, "Details expanded")
+        XCTAssertTrue(app.staticTexts["British Airways"].waitForExistence(timeout: 3))
+        capture("\(language)-07-flight-details")
     }
 
     private func captureMarketingFlightMap(_ app: XCUIApplication, language: String) {

@@ -35,7 +35,7 @@ for (const [locale, specs] of Object.entries(copy)) {
       <rect width="1290" height="2796" fill="url(#bg)"/>
       <g font-family="${font}, sans-serif" fill="#123D2D">
       <text x="94" y="100" font-size="25" font-weight="600" letter-spacing="5">ACROSS US</text>
-      <text x="1196" y="100" text-anchor="end" font-size="23" fill="#6C8273" letter-spacing="2">${String(index+1).padStart(2,'0')} / 07</text>
+      <text x="1196" y="100" text-anchor="end" font-size="23" fill="#6C8273" letter-spacing="2">${String(index+1).padStart(2,'0')} / ${String(specs.length).padStart(2,'0')}</text>
       ${title}<text x="94" y="523" font-size="37" fill="#587363">${esc(s.sub)}</text></g>
       <rect x="96" y="${frameY+32}" width="1098" height="${frameHeight-20}" rx="${radius}" fill="#163D29" opacity=".11" filter="url(#shadow)"/>
       <rect x="90" y="${frameY}" width="1110" height="${frameHeight}" rx="${radius}" fill="#F8FAF2"/>

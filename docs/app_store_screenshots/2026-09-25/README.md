@@ -4,9 +4,9 @@ Completed September 26, 2026. **Prepared locally; not uploaded to App Store Conn
 
 ## Deliverables
 
-- `gallery.html`: all seven posters in English and Simplified Chinese.
+- `gallery.html`: all eight posters in English and Simplified Chinese.
 - `contact-sheet-en.png` and `contact-sheet-zh-Hans.png`: complete sequence previews.
-- `en/1284x2778/` and `zh-Hans/1284x2778/`: primary upload sets, seven opaque PNGs each.
+- `en/1284x2778/` and `zh-Hans/1284x2778/`: primary upload sets, eight opaque PNGs each.
 - `en/1320x2868/` and `zh-Hans/1320x2868/`: alternate size sets.
 - `listing.json`: subtitle, promotional text, description and keywords for both localizations, checked against field length limits.
 - [Bilingual introduction](../../APP_INTRO_20260925.md).
@@ -22,7 +22,8 @@ Completed September 26, 2026. **Prepared locally; not uploaded to App Store Conn
 4. Here together, in the same city.
 5. Shared Trips.
 6. Expanded geographic map: friends' routes converge on one destination.
-7. Actual installed City Stage Home Screen widget.
+7. Ongoing Trip with an expanded flight: route, status, departure/arrival times, airline and terminal.
+8. Actual installed City Stage Home Screen widget.
 
 Cream and pale mint backgrounds, dark green typography and short benefit-led copy replace the older bright green treatment. The screenshots show the build 22 interface. All friends and plans are demo data. The widget poster crops a real Home Screen screenshot; it is not the developer's Widget Studio mock. The widget's English system-rendered contents are shared across both locales. Chinese app captures preserve untranslated labels still present in the app.
 
@@ -30,15 +31,15 @@ Cream and pale mint backgrounds, dark green typography and short benefit-led cop
 
 Source: committed build 22 UI plus a DEBUG-only `-marketingOverlap` personal-plan fixture. No release behavior changes.
 
-Use `PrototypeUITests/testCaptureUpdatedMarketingEnglish` and `testCaptureUpdatedMarketingChinese` for the first six screens. Use `testCaptureMarketingOverlapDetails` for just the overlap details. These navigate through Friend plans before opening the overlap to ensure the shared plan data has loaded.
+Use `PrototypeUITests/testCaptureUpdatedMarketingEnglish` and `testCaptureUpdatedMarketingChinese` for the first seven screens. Use `testCaptureMarketingFlightDetails` for the new seventh poster, opening the ongoing West Coast Trip and expanding Alex’s flight. Use `testCaptureMarketingOverlapDetails` for just the overlap details. These navigate through Friend plans before opening the overlap to ensure the shared plan data has loaded.
 
 The sixth poster was revised following user feedback to feature the expanded MapKit route map instead of the arrivals list. `testCaptureMarketingFlightMaps` captures both locales through the real Expand map button. The poster preserves the actual airport markers and route lines; it does not add simulated live aircraft positions. Static posters cannot reproduce the map's route-reveal animation.
 
-For the seventh screen, install the City Stage large widget on the simulator Home Screen, then run `testCaptureActualMarketingWidgets`. It captures three Home Screen pages after the app seeds its actual shared widget data. The selected capture is page 2; crop coordinates are in `copy.json`.
+For the eighth screen, install the City Stage large widget on the simulator Home Screen, then run `testCaptureActualMarketingWidgets`. It captures three Home Screen pages after the app seeds its actual shared widget data. The selected capture is page 2; crop coordinates are in `copy.json`.
 
-Run on iPhone 18 Pro Max with local simulator signing (`CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-`), parallel testing disabled. Export XCTest attachments with `xcresulttool export attachments`. The final September 26 overlap test passed (both locales); the actual-widget capture test passed. The first overlap attempt failed to load data before the UI wait and supplied no final assets.
+Run on iPhone 18 Pro Max with local simulator signing (`CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-`), parallel testing disabled. Export XCTest attachments with `xcresulttool export attachments`. The final September 26 overlap test passed (both locales); the actual-widget capture test passed. The new bilingual flight-details capture test also passed on September 26. The first overlap attempt failed to load data before the UI wait and supplied no final assets.
 
-Render with `node scripts/render_marketing_20260925.mjs`, with `sharp` available in the Node module path. Running without `--partial` requires every capture. This renders 28 opaque PNGs (two sizes × seven screens × two languages), two contact sheets and the gallery. Both contact sheets and the overlap/widget details were visually reviewed.
+Render with `node scripts/render_marketing_20260925.mjs`, with `sharp` available in the Node module path. Running without `--partial` requires every capture. This renders 32 opaque PNGs (two sizes × eight screens × two languages), two contact sheets and the gallery. Both contact sheets and the overlap/widget details were visually reviewed.
 
 ## Store handoff
 

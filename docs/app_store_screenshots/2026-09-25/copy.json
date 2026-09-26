@@ -62,7 +62,18 @@
       "frameHeight": 1960
     },
     {
-      "id": "07-widgets",
+      "id": "07-flight-details",
+      "title": [
+        "Your trip.",
+        "Flight by flight."
+      ],
+      "sub": "Open an ongoing trip to see flight details.",
+      "tone": "cream",
+      "crop": 150,
+      "frameHeight": 2000
+    },
+    {
+      "id": "08-widgets",
       "title": [
         "Friends, one",
         "glance away."
@@ -143,7 +154,18 @@
       "frameHeight": 1960
     },
     {
-      "id": "07-widgets",
+      "id": "07-flight-details",
+      "title": [
+        "点开行程，",
+        "看清航班详情"
+      ],
+      "sub": "起降时间、航班状态和航站楼，随手查看。",
+      "tone": "cream",
+      "crop": 150,
+      "frameHeight": 2000
+    },
+    {
+      "id": "08-widgets",
       "title": [
         "把朋友，",
         "放在主屏幕"

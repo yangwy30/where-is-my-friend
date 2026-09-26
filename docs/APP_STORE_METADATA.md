@@ -2,7 +2,7 @@
 
 ## Latest prepared listing — September 26, 2026
 
-Use [the new bilingual introduction](APP_INTRO_20260925.md) and [seven bilingual screenshots](app_store_screenshots/2026-09-25/README.md) for the build 22 experience. Assets are complete locally; they have **not been saved to App Store Connect**. The current browser session requires sign-in.
+Use [the new bilingual introduction](APP_INTRO_20260925.md) and [eight bilingual screenshots](app_store_screenshots/2026-09-25/README.md) for the build 22 experience. Assets are complete locally; they have **not been saved to App Store Connect**. The current browser session requires sign-in.
 
 Last verified on September 25: **1.0.4 (20)** was **Pending Developer Release**, with manual release. Build **1.0.4 (22)** was available in internal TestFlight. Recheck the store state before changing the approved version; the new screenshots include features from build 22.
 

@@ -12,66 +12,75 @@
   "notes": [
     "App screenshots use actual UI and demo data.",
     "03 was recaptured September 26 after opening Friend plans to load its data.",
-    "07 is an actual installed City Stage large Home Screen widget; the same English system-widget capture is used in both locales.",
+    "08 is an actual installed City Stage large Home Screen widget; the same English system-widget capture is used in both locales.",
     "Some Chinese app labels are untranslated in the current build; screenshots preserve the real UI.",
-    "06 revised September 26 to expanded actual MapKit routes. Bilingual capture test passed; static asset preserves route lines and airport markers."
+    "06 revised September 26 to expanded actual MapKit routes. Bilingual capture test passed; static asset preserves route lines and airport markers.",
+    "07 added after the map: actual ongoing Trip with Alex’s flight details expanded. Both language captures passed; widget moved to 08."
   ],
   "files": [
     {
       "path": "en/1284x2778/01-friends.png",
-      "sha256": "62ba47f1e4de8665cf6b5e35b14c631712df86187214bdf10e5baa845c12c534"
+      "sha256": "dd5ea613e6766f5cad3c7a9187523f34220b75717a66118afcc0498ec9a12399"
     },
     {
       "path": "en/1284x2778/02-friend-plans.png",
-      "sha256": "3ed45619059f06304d3463a0ae80912b359903131ccc643cd3eaf9e48964f458"
+      "sha256": "bae1d45a661650f3931cf9c96fbd99fa9e1b57da2fd20e2fd437e09f9c862495"
     },
     {
       "path": "en/1284x2778/03-together-soon.png",
-      "sha256": "3553aa284da24327c2ac48e4e7cb6382793b88a4a2efb7eb5ffa590e52ce3d9f"
+      "sha256": "f2807ba039d5674a80bf9500cf5e2377e5fd1e6c0bf2e9dcfd6ed89ea1d5e6a5"
     },
     {
       "path": "en/1284x2778/04-here-together.png",
-      "sha256": "2da4fb5efe2c627c7e9ffc5a6d7ba567952626a91a0cc1e071a2fcf76952bf22"
+      "sha256": "ab26dfe256bd491a6c9120831267bfbd05e1d6440c0060b4e5572893b5c6d3c6"
     },
     {
       "path": "en/1284x2778/05-shared-trips.png",
-      "sha256": "b8ed9c940e08b4ffcb82c78caec321af5c53481211b8954970984667635f5269"
+      "sha256": "4d60685b0acfe1295dae0c56f8ad8dca6e7bec84f8c427ada6f6bdc7afcbb602"
     },
     {
       "path": "en/1284x2778/06-arrivals.png",
-      "sha256": "6b1bacd508e6de17490e310e1d10b4641da9e0033bde4301218bfd816de85e38"
+      "sha256": "51cd7e282bc635babc083e537a988234288baaea7a42b3cb49f56db9c79c3f78"
     },
     {
-      "path": "en/1284x2778/07-widgets.png",
-      "sha256": "a8b41279cd620ce92d14a925ebaf76ec0d5a2ea1c426df37b0db6c5fc708eb13"
+      "path": "en/1284x2778/07-flight-details.png",
+      "sha256": "06287547b1edb159961bf5d3878009558c519e0e966d79d6f3d9625ca77dc2cf"
+    },
+    {
+      "path": "en/1284x2778/08-widgets.png",
+      "sha256": "469c0d108937ec87d719e7839a4226835c0afd4caf4167c8ae912915e9a5be76"
     },
     {
       "path": "en/1320x2868/01-friends.png",
-      "sha256": "bbb2ff9ce97dcdfc1814fb84a1ee395ce7ecf2798dc99fe9be49fc5efd2a664a"
+      "sha256": "a4e54a80705f73de1b66f79d558fa20622c0fa14264c897ce2ed92ca2b9587c0"
     },
     {
       "path": "en/1320x2868/02-friend-plans.png",
-      "sha256": "b686e0e8da01fcd8d00adf12524eada94e9e64b979e2cd406558c174676b1b8a"
+      "sha256": "ea9e15ac79070c0d0df5a2686be08924a0f3b64b5497e7d72f6a48e655d4842d"
     },
     {
       "path": "en/1320x2868/03-together-soon.png",
-      "sha256": "b18c3ad45bca205ba2a754421da7787494c4b78be8dd46078175201cf2c9198c"
+      "sha256": "bbc570bec2f33cfa83d46cdef94a2fcc14ff34c6415b66a57bc269647d488466"
     },
     {
       "path": "en/1320x2868/04-here-together.png",
-      "sha256": "693fd7d300e4f73cec9a434b6a69aa5aaaab9701132a0192be8a1720ddbfec92"
+      "sha256": "fff19b7e7a6a5dbef3e59ce5b7ff9436257bdc84693462dc2968f4612ca12e03"
     },
     {
       "path": "en/1320x2868/05-shared-trips.png",
-      "sha256": "f0e95b69156b190b59f2f0f333db3bb430f3dcaacc24bf90b9a0f1ebb9516f0f"
+      "sha256": "7171f544fe69435ca1605e8784bf0f6a323adc8c9061c0e4f81d04cf84f858ad"
     },
     {
       "path": "en/1320x2868/06-arrivals.png",
-      "sha256": "5ae5a7aa1a007148cf6810db57f8572612170cd65a9c7887a8f53a5cae166fc6"
+      "sha256": "bf3bc18fd9aa130fa74e87154bed8cc7c60d334ae6d90d5ed54591d4ab8202e9"
     },
     {
-      "path": "en/1320x2868/07-widgets.png",
-      "sha256": "48f9fbc34544836de1051151dbfa6177d58308e01fbd2cddbd86ffb3753e04a9"
+      "path": "en/1320x2868/07-flight-details.png",
+      "sha256": "66d07931d5363acc5005795fde41a52fa9b983c75d9c28ee597857ffc12c0e49"
+    },
+    {
+      "path": "en/1320x2868/08-widgets.png",
+      "sha256": "bb90828e3c776da46bd105e744bd2b8e3a6e4aa72f6d486992cbaea207a77ab0"
     },
     {
       "path": "raw/en/01-friends.png",
@@ -98,7 +107,11 @@
       "sha256": "99919cb7213cc5acf0d487dea0107821551eeccf4712a5502a7c193fe16fed89"
     },
     {
-      "path": "raw/en/07-widgets.png",
+      "path": "raw/en/07-flight-details.png",
+      "sha256": "5c56e743e3911ecd208cd1b297c352cf15b3ceb809af7db7767f6d6c544722a0"
+    },
+    {
+      "path": "raw/en/08-widgets.png",
       "sha256": "649d68665dbaeb2ff4c605da7e68551ad625c5b1e0fd8f5f9ac61589f81df651"
     },
     {
@@ -126,64 +139,76 @@
       "sha256": "8974ac130a3103369d180e134334d187f53b63c480bc61323ec0b153b4802be1"
     },
     {
-      "path": "raw/zh-Hans/07-widgets.png",
+      "path": "raw/zh-Hans/07-flight-details.png",
+      "sha256": "b9cb67b483bfe02ba366accec3811ca7ee0e4db90314d15d2b4f915a43fd6e67"
+    },
+    {
+      "path": "raw/zh-Hans/08-widgets.png",
       "sha256": "649d68665dbaeb2ff4c605da7e68551ad625c5b1e0fd8f5f9ac61589f81df651"
     },
     {
       "path": "zh-Hans/1284x2778/01-friends.png",
-      "sha256": "52c2449960c9d3aaa57e2521f7523146638dce1107d04a52a49a2e04e1c70420"
+      "sha256": "7aa7d4728acc37ae81d87b14eecd466624683d37f23368d0ed76b52ba34d5880"
     },
     {
       "path": "zh-Hans/1284x2778/02-friend-plans.png",
-      "sha256": "6ae7c22250731152f3915e35738c4cc4505a48b321574fe4a957cfd91ede2fac"
+      "sha256": "57aeaac2b67379df370ff44943def9794e8d6751956e1d8008a15382b459dee9"
     },
     {
       "path": "zh-Hans/1284x2778/03-together-soon.png",
-      "sha256": "70201e4b5fe57219e30a7930873d9c727d0ac86910227958572222c391921bd6"
+      "sha256": "91ea6c464fb20b3a028ad6c5a68a62fe96bb9e79d32b2009e20df95868007023"
     },
     {
       "path": "zh-Hans/1284x2778/04-here-together.png",
-      "sha256": "0cf2c6c4890fefb07d3dc5d6e2f1b208dbdde62cac9f771d068b27a30a45dafc"
+      "sha256": "1dc59f05c8f463f6947ea9de5d6a234f02bd93ce095673adcf44d0c56a11f7a4"
     },
     {
       "path": "zh-Hans/1284x2778/05-shared-trips.png",
-      "sha256": "b0b15b0a1eddaca44fb03511742ee65779200dbb06eb160b457e29b80f42379f"
+      "sha256": "c43e3ca3763bfca1cf17538066136a31fc136a921775b29bafae66a08ff87746"
     },
     {
       "path": "zh-Hans/1284x2778/06-arrivals.png",
-      "sha256": "8dab25dcdafbe8f42f6be9ca68b36d7b36386edaeae0734a3dbcbbf3ca57ee69"
+      "sha256": "936a5ba25c08a59884c671928a1df65f0a148f2701ce18c38c9a616625035405"
     },
     {
-      "path": "zh-Hans/1284x2778/07-widgets.png",
-      "sha256": "cb8eff9c5f3fc5a6a644973013b854d5094d674d1abee8e07c90ab09600d3796"
+      "path": "zh-Hans/1284x2778/07-flight-details.png",
+      "sha256": "d84e9fb7e23be1444b026e93f9415348420fca805bbe8791863e316001ede3fc"
+    },
+    {
+      "path": "zh-Hans/1284x2778/08-widgets.png",
+      "sha256": "ccbe6480bec4d42fc24f36051d7711c22331dd83870244fbdb31c1c3bfe5f4eb"
     },
     {
       "path": "zh-Hans/1320x2868/01-friends.png",
-      "sha256": "6f129593e8e29f8d080b24a5b38077608898d170cf5c31e122d53db2d6539a71"
+      "sha256": "9ca69f53958a69b2be9044d36474201f7c41bf0dfebece2e5f50f17524744002"
     },
     {
       "path": "zh-Hans/1320x2868/02-friend-plans.png",
-      "sha256": "fd8c83b6c8f7223eafe3295c8c5867f4aff275b4b1bca6d49d3d5b66a9f8f162"
+      "sha256": "3c6a5b9dd774b0d8b2b81f0ef6ec504ae0b74b33699dd13f7233dfdad0b46b59"
     },
     {
       "path": "zh-Hans/1320x2868/03-together-soon.png",
-      "sha256": "c179e36e90448f6e62d276d92d8d04182d2af0b3172722b5dbb71446be13d7cd"
+      "sha256": "f975bb9a8f014d9b1d48ada4aab5a31df930fbcd6dd6f563b3aea4684665180f"
     },
     {
       "path": "zh-Hans/1320x2868/04-here-together.png",
-      "sha256": "f1b3dcc30d8fa81313169522192e4af778e0c64460c5b3814b103e982498d4e2"
+      "sha256": "e067236da3235969ba240177176f828e0da635b41d2e65e24215069fdc5d1b18"
     },
     {
       "path": "zh-Hans/1320x2868/05-shared-trips.png",
-      "sha256": "e872a660ad2b651d12766b4360a161dbc6b8e2438c334767cb4d8dce0962eab0"
+      "sha256": "97fcc3d850885f53c514291377f6adbe3885770f5de50d634b6c2271f9cdd5f7"
     },
     {
       "path": "zh-Hans/1320x2868/06-arrivals.png",
-      "sha256": "86ddf3dcc962ba656900d8dc7f602e4eff14356617d32d5b13397701dd5d7eed"
+      "sha256": "97eb9e2d4236ada75e0c7a98badf1d6198eba89ee286b3657849fe029556056b"
     },
     {
-      "path": "zh-Hans/1320x2868/07-widgets.png",
-      "sha256": "f95ba7b9142d5e41487c2f6716748504feaee997bea2ead606c27ca032d8e951"
+      "path": "zh-Hans/1320x2868/07-flight-details.png",
+      "sha256": "6d9bbc0f3617d2050c3d83bb2777b6ca58f97129bd806f462037b6459b701dbf"
+    },
+    {
+      "path": "zh-Hans/1320x2868/08-widgets.png",
+      "sha256": "b048717a9aaf1c93c4b10b7e982c22a427ba50e58d94b9d67800e4e31b257cf3"
     }
   ]
 }
