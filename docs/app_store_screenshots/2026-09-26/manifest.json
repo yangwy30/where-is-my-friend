@@ -133,5 +133,6 @@
       "path": "zh-Hans/1320x2868/08-flight-details.png",
       "sha256": "a8b97b92f3e72021cca78e631498c2c85cc3b95bb11237e8e045ec03a9acccdf"
     }
-  ]
+  ],
+  "publicationDecision": "User chose to preserve approved 1.0.4 (20) and use this set in the next update."
 }

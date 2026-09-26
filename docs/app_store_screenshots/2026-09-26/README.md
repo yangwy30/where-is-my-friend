@@ -1,6 +1,6 @@
 # App Store screenshot order — September 26, 2026
 
-**Ready locally; not uploaded.** This set moves the redesigned Home Screen widget to position 2. The prior September 25 set is preserved so earlier review links and capture references remain valid.
+**Reserved for the next update by user decision; not uploaded.** This set moves the redesigned Home Screen widget to position 2. The prior September 25 set is preserved so earlier review links and capture references remain valid.
 
 ## Upload sequence
 
@@ -33,4 +33,4 @@ Rebuild with `node scripts/render_marketing_20260925.mjs --set=2026-09-26`, with
 - The pending version still contains the previous seven-image green screenshot set.
 - Build 20 does not contain the new widgets; build 22 also predates the new widget implementation and Chinese localization fixes.
 
-Publishing these assets therefore requires a matching new build and a replacement review submission. No cancellation, release or store metadata write has been performed in this screenshot-ordering step. The decision to replace the already approved pending version is awaiting the user's confirmation.
+Publishing these assets therefore requires a matching new build and a replacement review submission. No cancellation, release or store metadata write has been performed in this screenshot-ordering step. The user explicitly chose to keep the approved version and reserve this new screenshot set for the next update. Do not cancel or modify 1.0.4 (20) for this screenshot request.
