@@ -244,10 +244,10 @@ struct TripsView: View {
                     }
                     Spacer()
                     if trip.phase(at: now) == .past {
-                        Text(trip.cancelledAt != nil ? String(localized: "Cancelled") : (trip.completedAt == nil ? "Finished" : "Marked complete"))
+                        Text(trip.cancelledAt != nil ? String(localized: "Cancelled") : (trip.completedAt == nil ? String(localized: "Finished") : String(localized: "Marked complete")))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     } else {
-                        Text(trip.flights.isEmpty ? "Ready to plan" : "\(trip.addedTravelerCount) of \(trip.participants.count) flights added")
+                        Text(trip.flights.isEmpty ? String(localized: "Ready to plan") : String(localized: "\(trip.addedTravelerCount) of \(trip.participants.count) flights added"))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
@@ -566,7 +566,7 @@ private struct FullTripArrivalBoard: View {
 
     private var peopleButton: some View {
         Button(action: onPeople) {
-            Label("\(trip.participants.count) \(trip.participants.count == 1 ? "person" : "people")", systemImage: "person.2")
+            Label(trip.participants.count == 1 ? String(localized: "1 person") : String(localized: "\(trip.participants.count) people"), systemImage: "person.2")
                 .font(.caption.weight(.medium)).frame(minHeight: 44)
         }
         .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
@@ -600,12 +600,12 @@ private struct FullTripArrivalBoard: View {
         VStack(alignment: .leading, spacing: 10) {
             ViewThatFits(in: .horizontal) {
                 HStack(alignment: .firstTextBaseline) {
-                    Text(direction == .outbound ? "Arrivals" : "Heading home").font(.headline)
+                    Text(direction == .outbound ? String(localized: "Arrivals") : String(localized: "Heading home")).font(.headline)
                     Spacer(minLength: 8)
                     arrivalTimeCaption.fixedSize()
                 }
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(direction == .outbound ? "Arrivals" : "Heading home").font(.headline)
+                    Text(direction == .outbound ? String(localized: "Arrivals") : String(localized: "Heading home")).font(.headline)
                     arrivalTimeCaption
                 }
             }
@@ -642,7 +642,7 @@ private struct FullTripArrivalBoard: View {
 
     private var arrivalTimeCaption: some View {
         let usesDestinationTime = direction == .outbound && visibleFlights.allSatisfy { $0.destination == trip.destinationAirport }
-        return Text(usesDestinationTime ? "\(trip.destinationName) time" : "Local arrival times")
+        return Text(usesDestinationTime ? String(localized: "\(trip.destinationName) time") : String(localized: "Local arrival times"))
             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
     }
 
@@ -651,7 +651,9 @@ private struct FullTripArrivalBoard: View {
             TripTravelerAvatar(name: person.name, color: WIFTheme.secondaryText.opacity(0.5), size: 34)
             VStack(alignment: .leading, spacing: 3) {
                 Text(person.name).font(.subheadline.weight(.medium))
-                Text(person.id == selfParticipant?.id ? "Add your \(direction == .outbound ? "outbound" : "return") flight" : "Flight not added yet")
+                Text(person.id == selfParticipant?.id
+                     ? (direction == .outbound ? String(localized: "Add your outbound flight") : String(localized: "Add your return flight"))
+                     : String(localized: "Flight not added yet"))
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -708,13 +710,13 @@ private struct TripArrivalSummary: View {
     private var travelerDetails: some View {
         VStack(alignment: .leading, spacing: 3) {
             (Text(flight.traveler).font(.subheadline.weight(.semibold)) +
-             Text(isCurrentUser ? "  You" : "").font(.caption).foregroundColor(WIFTheme.secondaryText))
+             Text(isCurrentUser ? String(localized: "  You") : "").font(.caption).foregroundColor(WIFTheme.secondaryText))
                 .fixedSize(horizontal: false, vertical: true)
             Text("\(flight.origin) → \(flight.destination) · \(flight.flightNumber)")
                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             TimelineView(.periodic(from: .now, by: 60)) { context in
-                Text(flight.isStatusStale(at: context.date) ? "Updates delayed" : flight.status.title)
+                Text(flight.isStatusStale(at: context.date) ? String(localized: "Updates delayed") : flight.status.title)
                     .font(.caption2)
                     .foregroundStyle(flight.isStatusStale(at: context.date) ? WIFTheme.secondaryText : flight.status.accent)
             }
@@ -797,7 +799,7 @@ private struct TripFlightCard: View {
 
     private func endpoint(_ code: String, time: String, caption: String, trailing: Bool = false) -> some View {
         VStack(alignment: trailing ? .trailing : .leading, spacing: 4) {
-            Text(caption).font(.caption2).foregroundStyle(WIFTheme.secondaryText)
+            Text(LocalizedStringKey(caption)).font(.caption2).foregroundStyle(WIFTheme.secondaryText)
             Text("\(code)  \(time)").font(.system(.subheadline, design: .rounded, weight: .semibold)).monospacedDigit()
             Text(AirportLocation.location(for: code)?.city ?? "Awaiting lookup")
                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
@@ -816,7 +818,7 @@ private struct TripRouteMapView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(direction == .outbound ? "Coming together" : "Heading home")
+                Text(direction == .outbound ? String(localized: "Coming together") : String(localized: "Heading home"))
                     .font(.headline)
                 Spacer(minLength: 8)
                 Button(action: onExpand) {
@@ -853,7 +855,7 @@ private struct TripImmersiveMap: View {
         VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(direction == .outbound ? "Coming together" : "Heading home")
+                    Text(direction == .outbound ? String(localized: "Coming together") : String(localized: "Heading home"))
                         .font(.title2.bold())
                     Text(tripName).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 }
@@ -895,7 +897,7 @@ private struct TripImmersiveMap: View {
                     .accessibilityIdentifier("mapSelectedFlight")
                 } else {
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(direction == .outbound ? "Different cities. Same destination." : "Until the next adventure.")
+                        Text(direction == .outbound ? String(localized: "Different cities. Same destination.") : String(localized: "Until the next adventure."))
                             .font(.headline)
                         Text("Choose a friend to explore their journey.")
                             .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
@@ -923,7 +925,7 @@ private struct TripMapTravelerPicker: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                chip("Everyone", id: nil, color: WIFTheme.fresh)
+                chip(String(localized: "Everyone"), id: nil, color: WIFTheme.fresh)
                 ForEach(flights) { flight in
                     chip(flight.traveler.components(separatedBy: " ").first ?? flight.traveler,
                          id: flight.id, color: flight.accent)
@@ -1635,7 +1637,7 @@ enum TripDirection: String, CaseIterable, Identifiable, Codable {
     case inbound
 
     var id: String { rawValue }
-    var title: String { self == .outbound ? "Outbound" : "Return" }
+    var title: String { self == .outbound ? String(localized: "Outbound") : String(localized: "Return") }
 }
 
 enum TripFlightStatus: String, Codable {
@@ -1649,16 +1651,16 @@ enum TripFlightStatus: String, Codable {
 
     var title: String {
         switch self {
-        case .airborne: "In flight"
-        case .cancelled: "Cancelled"
-        case .diverted: "Diverted"
-        case .unknown: "Status unknown"
-        case .landed: "Landed"
-        case .boarding: "Boarding"
-        case .onTime: "On time"
-        case .scheduled: "Scheduled"
-        case .delayed: "Delayed"
-        case .unverified: "Unverified"
+        case .airborne: String(localized: "In flight")
+        case .cancelled: String(localized: "Cancelled")
+        case .diverted: String(localized: "Diverted")
+        case .unknown: String(localized: "Status unknown")
+        case .landed: String(localized: "Landed")
+        case .boarding: String(localized: "Boarding")
+        case .onTime: String(localized: "On time")
+        case .scheduled: String(localized: "Scheduled")
+        case .delayed: String(localized: "Delayed")
+        case .unverified: String(localized: "Unverified")
         }
     }
 

@@ -93,10 +93,10 @@ struct SameCityReunionCard: View {
                             .frame(width: 40, height: 40)
                             .background(WIFTheme.fresh.opacity(0.12), in: Circle())
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(isCurrent ? "Here together" : "Same-city moment")
+                            Text(isCurrent ? String(localized: "Here together") : String(localized: "Same-city moment"))
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(WIFTheme.primaryText)
-                            Text(people.isEmpty ? "This update is no longer available"
+                            Text(people.isEmpty ? String(localized: "This update is no longer available")
                                  : people.map(\.displayName).joined(separator: ", "))
                                 .font(.caption)
                                 .foregroundStyle(WIFTheme.secondaryText)
@@ -201,7 +201,7 @@ struct SameCityReunionCard: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            Text(isCurrent ? "Same city. Good company." : "A moment you shared.")
+            Text(isCurrent ? String(localized: "Same city. Good company.") : String(localized: "A moment you shared."))
                 .font(.title2.weight(.semibold))
                 .tracking(-0.5)
                 .foregroundStyle(WIFTheme.primaryText)

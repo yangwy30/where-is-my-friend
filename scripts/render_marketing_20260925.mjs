@@ -21,26 +21,28 @@ for (const [locale, specs] of Object.entries(copy)) {
     const crop=Math.round(s.crop*meta.width/1320);
     const sourceRect=s.sourceRect ?? {left:0,top:crop,width:meta.width,height:meta.height-crop};
     const capture=await sharp(raw).extract(sourceRect).png().toBuffer();
-    const imageHeight=1110*sourceRect.height/sourceRect.width;
+    const frameWidth=s.frameWidth ?? 1110, frameX=(1290-frameWidth)/2;
+    const imageHeight=frameWidth*sourceRect.height/sourceRect.width;
     const frameY=s.frameY ?? 650, frameHeight=s.frameHeight ?? 2030;
-    const radius=s.sourceRect ? 120 : 62;
+    const radius=s.radius ?? (s.sourceRect ? 120 : 62);
     const colors=palettes[s.tone];
     const font=locale==='en'?'Helvetica Neue':'Hiragino Sans GB';
     const fontSize=locale==='en'?124:114;
     const title=s.title.map((line,i)=>`<text x="90" y="${275+i*148}" font-size="${fontSize}" font-weight="700" letter-spacing="${locale==='en'?-4:0}">${esc(line)}</text>`).join('');
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="2796" viewBox="0 0 1290 2796">
       <defs><linearGradient id="bg" x2=".7" y2="1"><stop stop-color="${colors[0]}"/><stop offset="1" stop-color="${colors[1]}"/></linearGradient>
-      <clipPath id="screen"><rect x="90" y="${frameY}" width="1110" height="${frameHeight}" rx="${radius}"/></clipPath>
+      <clipPath id="screen"><rect x="${frameX}" y="${frameY}" width="${frameWidth}" height="${frameHeight}" rx="${radius}"/></clipPath>
       <filter id="shadow" x="-20%" y="-10%" width="140%" height="130%"><feGaussianBlur stdDeviation="24"/></filter></defs>
       <rect width="1290" height="2796" fill="url(#bg)"/>
       <g font-family="${font}, sans-serif" fill="#123D2D">
       <text x="94" y="100" font-size="25" font-weight="600" letter-spacing="5">ACROSS US</text>
       <text x="1196" y="100" text-anchor="end" font-size="23" fill="#6C8273" letter-spacing="2">${String(index+1).padStart(2,'0')} / ${String(specs.length).padStart(2,'0')}</text>
-      ${title}<text x="94" y="523" font-size="37" fill="#587363">${esc(s.sub)}</text></g>
-      <rect x="96" y="${frameY+32}" width="1098" height="${frameHeight-20}" rx="${radius}" fill="#163D29" opacity=".11" filter="url(#shadow)"/>
-      <rect x="90" y="${frameY}" width="1110" height="${frameHeight}" rx="${radius}" fill="#F8FAF2"/>
-      <image x="90" y="${frameY}" width="1110" height="${imageHeight}" href="data:image/png;base64,${capture.toString('base64')}" clip-path="url(#screen)"/>
-      <rect x="90" y="${frameY}" width="1110" height="${frameHeight}" rx="${radius}" fill="none" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2"/>
+      ${title}<text x="94" y="523" font-size="48" fill="#456453">${esc(s.sub)}</text>
+      ${s.eyebrow ? `<text x="94" y="665" font-size="30" font-weight="600" fill="#456453">${esc(s.eyebrow)}</text>` : ''}</g>
+      <rect x="${frameX+6}" y="${frameY+32}" width="${frameWidth-12}" height="${frameHeight-20}" rx="${radius}" fill="#163D29" opacity=".11" filter="url(#shadow)"/>
+      <rect x="${frameX}" y="${frameY}" width="${frameWidth}" height="${frameHeight}" rx="${radius}" fill="#F8FAF2"/>
+      <image x="${frameX}" y="${frameY}" width="${frameWidth}" height="${imageHeight}" href="data:image/png;base64,${capture.toString('base64')}" clip-path="url(#screen)"/>
+      <rect x="${frameX}" y="${frameY}" width="${frameWidth}" height="${frameHeight}" rx="${radius}" fill="none" stroke="#FFFFFF" stroke-opacity=".85" stroke-width="2"/>
     </svg>`;
     const svgDir=path.join(out,'svg',locale);fs.mkdirSync(svgDir,{recursive:true});
     fs.writeFileSync(path.join(svgDir,`${s.id}.svg`),svg);

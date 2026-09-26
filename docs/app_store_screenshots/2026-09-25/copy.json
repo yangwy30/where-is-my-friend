@@ -16,7 +16,7 @@
         "Where friends",
         "are headed."
       ],
-      "sub": "Tap a friend. See their next city.",
+      "sub": "See your friends’ next stops.",
       "tone": "mint",
       "crop": 150
     },
@@ -26,7 +26,7 @@
         "Your next",
         "“See you there.”"
       ],
-      "sub": "Find the dates you’ll both be there.",
+      "sub": "Find your dates in common.",
       "tone": "cream",
       "crop": 210
     },
@@ -36,7 +36,7 @@
         "Same city.",
         "Say hello."
       ],
-      "sub": "Make room for a spontaneous reunion.",
+      "sub": "Same city. A chance to meet.",
       "tone": "mint",
       "crop": 150
     },
@@ -56,7 +56,7 @@
         "Different cities.",
         "One destination."
       ],
-      "sub": "See everyone’s routes come together on the map.",
+      "sub": "Everyone’s routes, on one map.",
       "tone": "blue",
       "crop": 150,
       "frameHeight": 1960
@@ -67,10 +67,20 @@
         "Your trip.",
         "Flight by flight."
       ],
-      "sub": "Open an ongoing trip to see flight details.",
+      "sub": "Open a trip. Explore each flight.",
       "tone": "cream",
       "crop": 150,
-      "frameHeight": 2000
+      "frameHeight": 1248,
+      "sourceRect": {
+        "left": 60,
+        "top": 1000,
+        "width": 1200,
+        "height": 1280
+      },
+      "frameY": 750,
+      "frameWidth": 1170,
+      "radius": 62,
+      "eyebrow": "TRIPS  →  ONGOING  →  FLIGHT DETAILS"
     },
     {
       "id": "08-widgets",
@@ -78,17 +88,18 @@
         "Friends, one",
         "glance away."
       ],
-      "sub": "City updates on your Home Screen.",
+      "sub": "Friends on your Home Screen.",
       "tone": "cream",
       "crop": 150,
       "sourceRect": {
-        "left": 94,
-        "top": 934,
-        "width": 1132,
-        "height": 1182
+        "left": 0,
+        "top": 880,
+        "width": 1320,
+        "height": 1950
       },
-      "frameY": 1000,
-      "frameHeight": 1160
+      "frameY": 650,
+      "frameHeight": 1640,
+      "radius": 62
     }
   ],
   "zh-Hans": [
@@ -108,7 +119,7 @@
         "朋友的下一站，",
         "提前知道"
       ],
-      "sub": "点开朋友，看看他将去哪里。",
+      "sub": "提前看看朋友将去哪里。",
       "tone": "mint",
       "crop": 150
     },
@@ -118,7 +129,7 @@
         "你们的计划，",
         "刚好重叠"
       ],
-      "sub": "找到同一座城市里的共同日期。",
+      "sub": "找到你们共同停留的日期。",
       "tone": "cream",
       "crop": 210
     },
@@ -128,7 +139,7 @@
         "原来，",
         "你也在这里"
       ],
-      "sub": "同一座城市，多一个见面的机会。",
+      "sub": "同一座城，多一次相聚。",
       "tone": "mint",
       "crop": 150
     },
@@ -148,7 +159,7 @@
         "从不同城市，",
         "飞向同一站"
       ],
-      "sub": "把朋友们的航线，放在同一张地图上。",
+      "sub": "把大家的航线放在同一张地图上。",
       "tone": "blue",
       "crop": 150,
       "frameHeight": 1960
@@ -159,10 +170,20 @@
         "点开行程，",
         "看清航班详情"
       ],
-      "sub": "起降时间、航班状态和航站楼，随手查看。",
+      "sub": "起降时间、状态、航站楼，一起看清。",
       "tone": "cream",
       "crop": 150,
-      "frameHeight": 2000
+      "frameHeight": 1248,
+      "sourceRect": {
+        "left": 60,
+        "top": 1000,
+        "width": 1200,
+        "height": 1280
+      },
+      "frameY": 750,
+      "frameWidth": 1170,
+      "radius": 62,
+      "eyebrow": "行程  →  进行中  →  航班详情"
     },
     {
       "id": "08-widgets",
@@ -170,17 +191,18 @@
         "把朋友，",
         "放在主屏幕"
       ],
-      "sub": "不用打开 App，也能看一眼。",
+      "sub": "在主屏幕上，一眼看到朋友。",
       "tone": "cream",
       "crop": 150,
       "sourceRect": {
-        "left": 94,
-        "top": 934,
-        "width": 1132,
-        "height": 1182
+        "left": 0,
+        "top": 880,
+        "width": 1320,
+        "height": 1950
       },
-      "frameY": 1000,
-      "frameHeight": 1160
+      "frameY": 650,
+      "frameHeight": 1640,
+      "radius": 62
     }
   ]
 }

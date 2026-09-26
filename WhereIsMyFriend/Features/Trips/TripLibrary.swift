@@ -30,9 +30,9 @@ enum TripPhase: String, CaseIterable {
     case ongoing, upcoming, past
     var title: String {
         switch self {
-        case .ongoing: "Ongoing"
-        case .upcoming: "Upcoming"
-        case .past: "Past"
+        case .ongoing: String(localized: "Ongoing")
+        case .upcoming: String(localized: "Upcoming")
+        case .past: String(localized: "Past")
         }
     }
 }
@@ -50,10 +50,10 @@ enum TripCheckIn: String, Codable, CaseIterable {
     case notSet = "not_set", landed, bagsCollected = "bags_collected", atMeetingPoint = "at_meeting_point"
     var title: String {
         switch self {
-        case .notSet: "Not checked in"
-        case .landed: "I've landed"
-        case .bagsCollected: "Bags collected"
-        case .atMeetingPoint: "At the meeting point"
+        case .notSet: String(localized: "Not checked in")
+        case .landed: String(localized: "I've landed")
+        case .bagsCollected: String(localized: "Bags collected")
+        case .atMeetingPoint: String(localized: "At the meeting point")
         }
     }
 }
@@ -107,10 +107,10 @@ struct TripPlan: Identifiable, Codable {
         let flightsInDirection = flights.filter { $0.direction == direction }
         let added = Set(flightsInDirection.compactMap(\.travelerID)).intersection(memberIDs).count
         let missing = participants.count - added
-        let waiting = missing == 0 ? "Everyone’s flight is added" :
-            "Waiting on \(missing) \(missing == 1 ? "traveler" : "travelers")"
+        let waiting = missing == 0 ? String(localized: "Everyone’s flight is added") :
+            (missing == 1 ? String(localized: "Waiting on 1 traveler") : String(localized: "Waiting on \(missing) travelers"))
         if phase(at: now) == .past {
-            return TripArrivalOverview(title: "Trip complete", detail: "Your people and flights are saved here", progressCount: added)
+            return TripArrivalOverview(title: String(localized: "Trip complete"), detail: String(localized: "Your people and flights are saved here"), progressCount: added)
         }
 
         // Return planning stays useful during the trip, until that journey starts.
@@ -119,7 +119,7 @@ struct TripPlan: Identifiable, Codable {
         let journeyDay = min(plannedDay, firstFlightDay)
         let today = TripDay(now, timeZone: destination?.timeZone ?? .current)
         if today < journeyDay || flightsInDirection.isEmpty {
-            return TripArrivalOverview(title: "\(added) of \(participants.count) flights added",
+            return TripArrivalOverview(title: String(localized: "\(added) of \(participants.count) flights added"),
                                        detail: waiting, progressCount: added)
         }
 
@@ -133,15 +133,16 @@ struct TripPlan: Identifiable, Codable {
         if let next {
             let date = next.arrivalDayLabel.map { "\($0), " } ?? ""
             let zone = next.arrivalTimeZoneLabel.map { " \($0)" } ?? ""
-            detail = "Next: \(next.traveler) · \(date)\(next.arrivalTime)\(zone)"
+            detail = String(localized: "Next: \(next.traveler) · \(date)\(next.arrivalTime)\(zone)")
         } else if relevant.contains(where: { $0.isStatusStale(at: now) }) {
-            detail = "Flight updates delayed · check flight details"
+            detail = String(localized: "Flight updates delayed · check flight details")
         } else if missing > 0 {
-            detail = "\(missing) \(missing == 1 ? "traveler hasn’t" : "travelers haven’t") added a flight"
+            detail = missing == 1 ? String(localized: "1 traveler hasn’t added a flight")
+                : String(localized: "\(missing) travelers haven’t added a flight")
         } else {
-            detail = landed == participants.count ? "Everyone has arrived" : "All flights added · see schedules below"
+            detail = landed == participants.count ? String(localized: "Everyone has arrived") : String(localized: "All flights added · see schedules below")
         }
-        return TripArrivalOverview(title: "\(landed) of \(participants.count) travelers arrived",
+        return TripArrivalOverview(title: String(localized: "\(landed) of \(participants.count) travelers arrived"),
                                    detail: detail, progressCount: landed)
     }
 

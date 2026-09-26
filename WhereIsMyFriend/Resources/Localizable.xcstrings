@@ -1,6 +1,746 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+"Trips": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程"
+        }
+      }
+    }
+  },
+  "More places. More time together.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "一起去更多地方，多一些相聚时光。"
+        }
+      }
+    }
+  },
+  "Ongoing": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "进行中"
+        }
+      }
+    }
+  },
+  "Ready to plan": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "准备安排行程"
+        }
+      }
+    }
+  },
+  "EXAMPLE": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "示例"
+        }
+      }
+    }
+  },
+  "Finished": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已结束"
+        }
+      }
+    }
+  },
+  "Marked complete": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已标记完成"
+        }
+      }
+    }
+  },
+  "%lld of %lld flights added": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已添加 %1$lld / %2$lld 人的航班"
+        }
+      }
+    }
+  },
+  "%lld of %lld travelers arrived": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已有 %1$lld / %2$lld 人抵达"
+        }
+      }
+    }
+  },
+  "1 person": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "1 人"
+        }
+      }
+    }
+  },
+  "%lld people": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%lld 人"
+        }
+      }
+    }
+  },
+  "1 traveler hasn’t added a flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "还有 1 人未添加航班"
+        }
+      }
+    }
+  },
+  "%lld travelers haven’t added a flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "还有 %lld 人未添加航班"
+        }
+      }
+    }
+  },
+  "Everyone’s flight is added": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所有人的航班均已添加"
+        }
+      }
+    }
+  },
+  "Waiting on 1 traveler": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "等待 1 人添加航班"
+        }
+      }
+    }
+  },
+  "Waiting on %lld travelers": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "等待 %lld 人添加航班"
+        }
+      }
+    }
+  },
+  "Everyone has arrived": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所有人均已抵达"
+        }
+      }
+    }
+  },
+  "All flights added · see schedules below": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "航班已添加齐全，请查看下方安排"
+        }
+      }
+    }
+  },
+  "Trip complete": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "行程已结束"
+        }
+      }
+    }
+  },
+  "Your people and flights are saved here": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "同行成员和航班记录保留在这里"
+        }
+      }
+    }
+  },
+  "Flight updates delayed · check flight details": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "航班更新延迟，请查看详情"
+        }
+      }
+    }
+  },
+  "Next: %@ · %@%@%@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "下一位：%1$@ · %2$@%3$@%4$@"
+        }
+      }
+    }
+  },
+  "Outbound": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "去程"
+        }
+      }
+    }
+  },
+  "Return": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "返程"
+        }
+      }
+    }
+  },
+  "Arrivals": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "抵达安排"
+        }
+      }
+    }
+  },
+  "Heading home": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "各自返程"
+        }
+      }
+    }
+  },
+  "%@ time": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%@ 当地时间"
+        }
+      }
+    }
+  },
+  "Local arrival times": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "抵达地当地时间"
+        }
+      }
+    }
+  },
+  "Departure": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "出发"
+        }
+      }
+    }
+  },
+  "Arrival": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "抵达"
+        }
+      }
+    }
+  },
+  "In flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "飞行中"
+        }
+      }
+    }
+  },
+  "Diverted": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已备降"
+        }
+      }
+    }
+  },
+  "Status unknown": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "状态未知"
+        }
+      }
+    }
+  },
+  "Landed": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已抵达"
+        }
+      }
+    }
+  },
+  "Boarding": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "正在登机"
+        }
+      }
+    }
+  },
+  "On time": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "准点"
+        }
+      }
+    }
+  },
+  "Scheduled": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已计划"
+        }
+      }
+    }
+  },
+  "Delayed": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已延误"
+        }
+      }
+    }
+  },
+  "Unverified": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "待确认"
+        }
+      }
+    }
+  },
+  "Updates delayed": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "更新延迟"
+        }
+      }
+    }
+  },
+  "  You": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "  你"
+        }
+      }
+    }
+  },
+  "Flight not added yet": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "尚未添加航班"
+        }
+      }
+    }
+  },
+  "Add your outbound flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "添加你的去程航班"
+        }
+      }
+    }
+  },
+  "Add your return flight": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "添加你的返程航班"
+        }
+      }
+    }
+  },
+  "Coming together": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "飞向同一站"
+        }
+      }
+    }
+  },
+  "View map": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "查看地图"
+        }
+      }
+    }
+  },
+  "Everyone": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所有人"
+        }
+      }
+    }
+  },
+  "Different cities. Same destination.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "从不同城市，飞向同一站。"
+        }
+      }
+    }
+  },
+  "Until the next adventure.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "期待下一次相聚。"
+        }
+      }
+    }
+  },
+  "Choose a friend to explore their journey.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "选择一位好友，查看对方的航线。"
+        }
+      }
+    }
+  },
+  "Expand map": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "展开地图"
+        }
+      }
+    }
+  },
+  "Close map": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "关闭地图"
+        }
+      }
+    }
+  },
+  "Show all routes": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "查看所有航线"
+        }
+      }
+    }
+  },
+  "Together soon": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "即将相聚"
+        }
+      }
+    }
+  },
+  "1 upcoming overlap": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "1 次即将相聚"
+        }
+      }
+    }
+  },
+  "%lld upcoming overlaps": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%lld 次即将相聚"
+        }
+      }
+    }
+  },
+  "All overlaps": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "所有相聚机会"
+        }
+      }
+    }
+  },
+  "You + %@, in %@.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你和 %1$@，相聚 %2$@。"
+        }
+      }
+    }
+  },
+  "%lld days in common · local dates": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "共同停留 %lld 天 · 当地日期"
+        }
+      }
+    }
+  },
+  "Manage my plans": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "管理我的计划"
+        }
+      }
+    }
+  },
+  "Back to Friends": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "返回好友"
+        }
+      }
+    }
+  },
+  "Here together": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "此刻同城"
+        }
+      }
+    }
+  },
+  "Same-city moment": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "同城时刻"
+        }
+      }
+    }
+  },
+  "Same city. Good company.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "同一座城，有朋友在。"
+        }
+      }
+    }
+  },
+  "A moment you shared.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你们曾共享的时刻。"
+        }
+      }
+    }
+  },
+  "You + %@ · %@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你和 %1$@ · %2$@"
+        }
+      }
+    }
+  },
+  "This update is no longer available": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "这条动态已不可用"
+        }
+      }
+    }
+  },
+  "Loading shared dates…": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "正在加载共同日期…"
+        }
+      }
+    }
+  },
+  "This overlap is no longer available": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "这次相聚机会已不可用"
+        }
+      }
+    }
+  },
+  "This overlap is no longer available. Plans or sharing may have changed.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "这次相聚机会已不可用，计划或分享设置可能已更改。"
+        }
+      }
+    }
+  },
+  "Not checked in": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "尚未报平安"
+        }
+      }
+    }
+  },
+  "I've landed": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "我已抵达"
+        }
+      }
+    }
+  },
+  "Bags collected": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已取行李"
+        }
+      }
+    }
+  },
+  "At the meeting point": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "已到集合地点"
+        }
+      }
+    }
+  },
   "Has shared travel plans": {
     "localizations": { "zh-Hans": { "stringUnit": { "state": "translated", "value": "有分享的旅行计划" } } }
   },

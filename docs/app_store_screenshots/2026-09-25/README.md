@@ -25,11 +25,11 @@ Completed September 26, 2026. **Prepared locally; not uploaded to App Store Conn
 7. Ongoing Trip with an expanded flight: route, status, departure/arrival times, airline and terminal.
 8. Actual installed City Stage Home Screen widget.
 
-Cream and pale mint backgrounds, dark green typography and short benefit-led copy replace the older bright green treatment. The screenshots show the build 22 interface. All friends and plans are demo data. The widget poster crops a real Home Screen screenshot; it is not the developer's Widget Studio mock. The widget's English system-rendered contents are shared across both locales. Chinese app captures preserve untranslated labels still present in the app.
+Cream and pale mint backgrounds, dark green typography and short benefit-led copy replace the older bright green treatment. The screenshots show the build 22 interface with the new, not-yet-released Chinese UI localization fixes. All friends and plans are demo data. The widget poster retains wallpaper, its app label and the Dock from a real Home Screen screenshot; it is not the developer's Widget Studio mock. The widget's English system-rendered contents are shared across both locales. Core interface labels in the Chinese captures are now localized in the actual app. User-created trip names, friend names, airport identifiers and geographic proper names are preserved.
 
 ## Capture and validation
 
-Source: committed build 22 UI plus a DEBUG-only `-marketingOverlap` personal-plan fixture. No release behavior changes.
+Source: build 22 UI plus Chinese localization corrections and a DEBUG-only `-marketingOverlap` personal-plan fixture. Localization affects the next app build; no backend or travel logic change is intended.
 
 Use `PrototypeUITests/testCaptureUpdatedMarketingEnglish` and `testCaptureUpdatedMarketingChinese` for the first seven screens. Use `testCaptureMarketingFlightDetails` for the new seventh poster, opening the ongoing West Coast Trip and expanding Alex’s flight. Use `testCaptureMarketingOverlapDetails` for just the overlap details. These navigate through Friend plans before opening the overlap to ensure the shared plan data has loaded.
 
@@ -43,4 +43,10 @@ Render with `node scripts/render_marketing_20260925.mjs`, with `sharp` available
 
 ## Store handoff
 
-Last verified September 25: version 1.0.4 build 20 was Pending Developer Release; build 22 was in internal TestFlight. On September 26 the browser required sign-in. These materials must accompany build 22 or newer; do not publish them as evidence of features in the older approved build. Recheck the version status before changing the submission. No approved submission has been withdrawn and no public release has been performed as part of this asset refresh.
+Last verified September 25: version 1.0.4 build 20 was Pending Developer Release; build 22 was in internal TestFlight. On September 26 the browser required sign-in. These materials must accompany a new build containing the Chinese localization fixes; do not publish them as evidence of features in the older approved build. Recheck the version status before changing the submission. No approved submission has been withdrawn and no public release has been performed as part of this asset refresh.
+
+## Independent review follow-up
+
+The initial independent agent review identified mixed Chinese/English UI, small secondary text, and a widget crop lacking Home Screen context. The updated set uses actual localized app captures, short 48px subtitles (previously 37px), a focused flight-detail crop with a navigation caption, and a real Home Screen crop including wallpaper and Dock icons. The eight-image order is unchanged.
+
+Validation: 18 TripFlightLookupTests and both full bilingual capture workflows passed (20 tests total). PNG dimension/opacity checks and visual review cover the final assets. Translation changes need a new release build before store publication; App Store Connect has not been modified.

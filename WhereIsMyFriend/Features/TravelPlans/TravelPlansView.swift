@@ -593,8 +593,8 @@ struct UpcomingTogetherCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Together soon").font(.subheadline.weight(.semibold))
                         Text(overlaps.isEmpty
-                             ? (library.isLoading ? "Loading shared dates…" : "This overlap is no longer available")
-                             : "\(overlaps.count) upcoming \(overlaps.count == 1 ? "overlap" : "overlaps")")
+                             ? (library.isLoading ? String(localized: "Loading shared dates…") : String(localized: "This overlap is no longer available"))
+                             : (overlaps.count == 1 ? String(localized: "1 upcoming overlap") : String(localized: "\(overlaps.count) upcoming overlaps")))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Spacer()
