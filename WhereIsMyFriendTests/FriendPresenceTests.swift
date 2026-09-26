@@ -4,6 +4,45 @@ import UIKit
 import XCTest
 @testable import WhereIsMyFriend
 
+final class HomeWidgetPresentationTests: XCTestCase {
+    private let now = Date(timeIntervalSince1970: 1_790_500_000)
+
+    private func content() -> HomeWidgetContent {
+        HomeWidgetContent(date: now, friends: [FriendPresence(displayName: "Private Person", username: "private",
+            city: "Bakersfield", countryCode: "US", updatedAt: now.addingTimeInterval(-300), administrativeArea: "CA")],
+            currentPresence: CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield", countryCode: "US",
+                updatedAt: now.addingTimeInterval(-600), source: .foregroundLocation), privacyMode: .full)
+    }
+
+    func testHiddenNamesRemoveNamesAndInitialsFromAllPresentations() throws {
+        var value = content()
+        let friend = try XCTUnwrap(value.friends.first)
+        XCTAssertEqual(value.initials(for: friend), "PP")
+        for mode in [WidgetPrivacyMode.hideNames, .hideAll] {
+            value.privacyMode = mode
+            XCTAssertEqual(value.name(for: friend), String(localized: "Friend"))
+            XCTAssertEqual(value.name(for: friend, short: true), String(localized: "Friend"))
+            XCTAssertNil(value.initials(for: friend))
+            XCTAssertFalse(value.togetherNames.contains("Private"))
+        }
+    }
+
+    func testTogetherUsesRecentMatchingCityAndOldestObservation() {
+        var value = content()
+        XCTAssertEqual(value.sameCityFriends.count, 1)
+        XCTAssertEqual(value.togetherUpdatedAt, value.currentPresence.updatedAt)
+        value.friends[0].administrativeArea = "MO"
+        XCTAssertTrue(value.sameCityFriends.isEmpty)
+        value.friends[0].administrativeArea = "CA"
+        value.friends[0].updatedAt = now.addingTimeInterval(-25 * 3600)
+        XCTAssertTrue(value.sameCityFriends.isEmpty)
+        value.friends[0].updatedAt = now
+        value.friends[0].sharingState = .paused
+        XCTAssertTrue(value.sameCityFriends.isEmpty)
+        XCTAssertFalse(value.friends[0].cityDisplay.contains("Bakersfield"))
+    }
+}
+
 final class CityLocationLabelTests: XCTestCase {
     func testUSStateNamesAndCodesShareCompactAndFullLabels() {
         for area in ["CA", "ca", " California "] {

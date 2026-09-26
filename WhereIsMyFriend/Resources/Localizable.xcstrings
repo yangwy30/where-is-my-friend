@@ -1,6 +1,217 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+"1 friend": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "1 位朋友"
+        }
+      }
+    }
+  },
+  "%lld friends": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%lld 位朋友"
+        }
+      }
+    }
+  },
+  "Preview your Home Screen widgets": {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "预览主屏幕小组件"}}}},
+"Friends,\nnear and far.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "朋友在哪，\n一眼就知道。"
+        }
+      }
+    }
+  },
+  "Friends, near and far": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "朋友，近在身边，远在各地"
+        }
+      }
+    }
+  },
+  "Your friends and their shared cities, at a glance.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "一眼看看朋友和他们分享的城市。"
+        }
+      }
+    }
+  },
+  "Shared cities": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "分享的城市"
+        }
+      }
+    }
+  },
+  "Here too": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "也在这里"
+        }
+      }
+    }
+  },
+  "Same city as you": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "与你同城"
+        }
+      }
+    }
+  },
+  "You & %@": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你和 %@"
+        }
+      }
+    }
+  },
+  "You & a friend": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你和一位朋友"
+        }
+      }
+    }
+  },
+  "You + %lld friends": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "你和 %lld 位朋友"
+        }
+      }
+    }
+  },
+  "Updated just now": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "刚刚更新"
+        }
+      }
+    }
+  },
+  "Updated %lld min ago": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "%lld 分钟前更新"
+        }
+      }
+    }
+  },
+  "More chances\nto meet.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "多一些机会，\n再见一面。"
+        }
+      }
+    }
+  },
+  "Friends in your city will appear here.": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "与你同城的朋友会出现在这里。"
+        }
+      }
+    }
+  },
+  "Widget style": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "小组件样式"
+        }
+      }
+    }
+  },
+  "Widget size": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "小组件尺寸"
+        }
+      }
+    }
+  },
+  "Small": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "小"
+        }
+      }
+    }
+  },
+  "Medium": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "中"
+        }
+      }
+    }
+  },
+  "Large": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "大"
+        }
+      }
+    }
+  },
+  "Widgets": {
+    "localizations": {
+      "zh-Hans": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "小组件"
+        }
+      }
+    }
+  },
 "Trips": {
     "localizations": {
       "zh-Hans": {

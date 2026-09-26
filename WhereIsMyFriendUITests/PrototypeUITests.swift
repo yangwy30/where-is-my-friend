@@ -1186,6 +1186,70 @@ final class PrototypeUITests: XCTestCase {
         }
     }
 
+    func testCaptureRefinedWidgetLayouts() {
+        continueAfterFailure = false
+        for appearance in ["Light", "Dark"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewWidgets",
+                "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "-AppleInterfaceStyle", appearance]
+            if appearance == "Dark" { app.launchArguments.append("-widgetPreviewDark") }
+            app.launch()
+            XCTAssertTrue(app.segmentedControls["widgetSizePicker"].waitForExistence(timeout: 8))
+            for style in ["Friends", "Here together"] {
+                app.segmentedControls["widgetStylePicker"].buttons[style].tap()
+                for size in ["Small", "Medium", "Large"] {
+                    app.segmentedControls["widgetSizePicker"].buttons[size].tap()
+                    capture("widget-\(style)-\(size)-\(appearance)")
+                }
+            }
+            app.terminate()
+        }
+    }
+
+    func testWidgetPrivacyAndEdgeStates() {
+        continueAfterFailure = false
+        let baseline = XCUIApplication()
+        baseline.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewWidgets", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        baseline.launch()
+        let visibleName = baseline.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Mia Chen")).firstMatch
+        XCTAssertTrue(visibleName.waitForExistence(timeout: 8))
+        baseline.terminate()
+        for state in ["HideNames", "HideAll", "Empty", "LongCity"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewWidgets", "-widget\(state)",
+                "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "-AppleInterfaceStyle", "Light"]
+            app.launch()
+            XCTAssertTrue(app.segmentedControls["widgetStylePicker"].waitForExistence(timeout: 8))
+            for style in ["Friends", "Here together"] {
+                app.segmentedControls["widgetStylePicker"].buttons[style].tap()
+                if state == "HideNames" || state == "HideAll" {
+                    XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Mia")).firstMatch.exists)
+                    XCTAssertFalse(app.staticTexts["MC"].exists)
+                }
+                if state == "HideAll" { XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "New York")).firstMatch.exists) }
+                app.segmentedControls["widgetSizePicker"].buttons["Small"].tap()
+                capture("widget-\(style)-\(state)")
+            }
+            app.terminate()
+        }
+    }
+
+    func testCaptureRefinedWidgetsChinese() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewWidgets", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.segmentedControls["widgetStylePicker"].waitForExistence(timeout: 8))
+        for style in 0..<2 {
+            app.segmentedControls["widgetStylePicker"].buttons.element(boundBy: style).tap()
+            for size in 0..<3 {
+                app.segmentedControls["widgetSizePicker"].buttons.element(boundBy: size).tap()
+                capture("widget-zh-\(style)-\(size)")
+            }
+        }
+        app.terminate()
+    }
+
     func testCaptureAppStoreScreenshots() {
         continueAfterFailure = false
         let dir = URL(fileURLWithPath: "/Users/wangyang/.gemini/antigravity-insiders/brain/a9fe7251-03e8-4092-990c-527a6ef21b48/raw_screenshots")

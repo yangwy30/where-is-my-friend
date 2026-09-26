@@ -1289,7 +1289,7 @@ private struct DeveloperToolsView: View {
                     } label: {
                         devToolRow(
                             title: "Widget Studio",
-                            subtitle: "Interactive 3D diorama widget preview",
+                            subtitle: "Preview your Home Screen widgets",
                             symbol: "square.grid.2x2.fill",
                             color: .cyan
                         )
@@ -1364,589 +1364,74 @@ private struct DeveloperToolsView: View {
 
 struct WidgetShowcaseView: View {
     @EnvironmentObject private var store: AppStore
-    @State private var selectedAmbience: AmbienceTone = .day
-    @State private var selectedTab: WidgetTab = .dualOrbit
+    @Environment(\.colorScheme) private var scheme
+    @State private var size: HomeWidgetSize = .large
+    @State private var together = false
 
-    enum WidgetTab: String, CaseIterable, Identifiable {
-        case dualOrbit = "Dual Orbit"
-        case heroSmall = "Hero Stage"
-        case large = "Constellation"
-        case together = "Together"
-
-        var id: String { rawValue }
+    private var previewScheme: ColorScheme {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-widgetPreviewDark") { return .dark }
+        #endif
+        return scheme
     }
 
-    enum AmbienceTone: String, CaseIterable, Identifiable {
-        case dawn = "Dawn"
-        case day = "Day"
-        case goldenHour = "Sunset"
-        case night = "Night"
-
-        var id: String { rawValue }
-
-        var edgeTint: Color {
-            switch self {
-            case .dawn: return Color(red: 0.98, green: 0.65, blue: 0.52).opacity(0.12)
-            case .day: return Color(red: 0.38, green: 0.68, blue: 0.96).opacity(0.10)
-            case .goldenHour: return Color(red: 0.98, green: 0.58, blue: 0.24).opacity(0.12)
-            case .night: return Color(red: 0.35, green: 0.45, blue: 0.88).opacity(0.12)
-            }
+    private var content: HomeWidgetContent {
+        var value = HomeWidgetContent(date: Date(), friends: store.friends,
+            currentPresence: store.snapshot.currentPresence, privacyMode: store.widgetPrivacyMode)
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("-widgetHideNames") { value.privacyMode = .hideNames }
+        if args.contains("-widgetHideAll") { value.privacyMode = .hideAll }
+        if args.contains("-widgetEmpty") { value.friends = [] }
+        if args.contains("-widgetLongCity"), !value.friends.isEmpty {
+            value.friends[0].city = "San Luis Obispo"; value.friends[0].administrativeArea = "California"
+            value.friends[0].displayName = "Alexandra Montgomery-Rivera"
+            value.currentPresence.city = "San Luis Obispo"; value.currentPresence.administrativeArea = "CA"
         }
-    }
-
-    private var myCity: String {
-        store.currentCity ?? ""
-    }
-
-    private var featuredFriend: FriendPresence {
-        store.friends.first ?? FriendPresence(
-            id: UUID(),
-            displayName: "Lin Zhao",
-            username: "lin",
-            city: "Tokyo",
-            countryCode: "JP",
-            updatedAt: Date().addingTimeInterval(-18 * 60),
-            avatarPalette: 1,
-            isFavorite: true
-        )
-    }
-
-    private var isSameCity: Bool {
-        store.snapshot.sharingPreferences.citySharingEnabled
-            && PresenceMatchPolicy.matches(store.snapshot.currentPresence, featuredFriend, at: Date())
+        #endif
+        return value
     }
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 22) {
-                // Header description
-                VStack(spacing: 6) {
-                    Text("3D Diorama Widget Studio")
-                        .font(.system(.title2, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                    Text("Live simulator for iOS Home Screen & StandBy widgets.")
-                        .font(.subheadline)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .multilineTextAlignment(.center)
+            VStack(spacing: 24) {
+                Picker("Widget style", selection: $together) {
+                    Text("Friends").tag(false)
+                    Text("Here together").tag(true)
+                }.pickerStyle(.segmented).accessibilityIdentifier("widgetStylePicker")
+                Picker("Widget size", selection: $size) {
+                    ForEach(HomeWidgetSize.allCases) { item in Text(item.title).tag(item) }
+                }.pickerStyle(.segmented).accessibilityIdentifier("widgetSizePicker")
+                ViewThatFits(in: .horizontal) {
+                    preview(width: size.previewSize.width)
+                    preview(width: size == .small ? 170 : 300)
                 }
-                .padding(.top, 12)
-                .padding(.horizontal)
-
-                // Solar Ambience Picker
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Solar Ambience (Destination Mood)")
-                        .font(.caption.weight(.bold))
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .textCase(.uppercase)
-
-                    HStack(spacing: 8) {
-                        ForEach(AmbienceTone.allCases) { tone in
-                            solarButton(tone)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-
-                // Format Picker
-                Picker("Format", selection: $selectedTab) {
-                    ForEach(WidgetTab.allCases) { tab in
-                        Text(tab.rawValue).tag(tab)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-
-                // Live Widget Display
-                VStack(spacing: 10) {
-                    Text("Widget Live Preview")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(WIFTheme.secondaryText)
-
-                    widgetContainer {
-                        switch selectedTab {
-                        case .dualOrbit:
-                            dualOrbitWidgetView
-                                .frame(width: 338, height: 158)
-                        case .heroSmall:
-                            heroSmallWidgetView
-                                .frame(width: 158, height: 158)
-                        case .large:
-                            constellationLargeWidgetView
-                                .frame(width: 338, height: 338)
-                        case .together:
-                            togetherWidgetView
-                                .frame(width: 338, height: 158)
-                        }
-                    }
-                }
-                .padding(.top, 6)
-
-                // Design Highlights
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Design Architecture")
-                        .font(.headline)
-                        .foregroundStyle(WIFTheme.primaryText)
-
-                    highlightRow(
-                        icon: "sparkles",
-                        title: "101 Native 3D City Dioramas",
-                        desc: "Rendered on chamfered aluminum & frosted glass pedestals with zero background boxes."
-                    )
-                    highlightRow(
-                        icon: "arrow.left.and.right",
-                        title: "Smart Dual Orbit & Same-City Merge",
-                        desc: "Cross-city creates a dual horizon; Same-city merges seamlessly into a single hero stage."
-                    )
-                    highlightRow(
-                        icon: "sun.horizon.fill",
-                        title: "8-12% Subtle Solar Edge Halo",
-                        desc: "Ambient mood lights up according to destination local sun position without weather clutter."
-                    )
-                }
-                .padding(18)
-                .wifGlassSurface(tint: WIFTheme.surface.opacity(0.12), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .padding(.horizontal)
-                .padding(.bottom, 30)
-            }
+                Text("Across Us").font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }.padding(20)
         }
-        .wifAmbientBackground()
-        .navigationTitle("Widget Studio")
-        .navigationBarTitleDisplayMode(.inline)
+        .background(WIFTheme.canvas)
+        .navigationTitle("Widgets").navigationBarTitleDisplayMode(.inline)
     }
 
-    private var dualOrbitWidgetView: some View {
+    private func preview(width: CGFloat) -> some View {
         Group {
-            if isSameCity {
-                HStack(spacing: 16) {
-                    CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
-
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(store.snapshot.currentPresence.cityDisplay)
-                            .font(.system(.title3, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-
-                        Text(featuredFriend.displayName)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                            .lineLimit(1)
-
-                        Text("Together")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(WIFTheme.fresh)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3.5)
-                            .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
-                    }
-                    Spacer(minLength: 0)
-                }
-                .padding(14)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(WIFTheme.fresh.opacity(0.08))
-                )
-            } else {
-                HStack(spacing: 0) {
-                    // Left: User City Stage
-                    VStack(spacing: 4) {
-                        CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 68)
-
-                        Text(store.snapshot.currentPresence.cityDisplay)
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-                    }
-                    .frame(maxWidth: .infinity)
-
-                    // Center: Minimal Orbit Track
-                    VStack(spacing: 0) {
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(WIFTheme.secondaryText.opacity(0.35))
-                                .frame(width: 3.5, height: 3.5)
-
-                            Rectangle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            WIFTheme.secondaryText.opacity(0.20),
-                                            WIFTheme.fresh.opacity(0.45),
-                                            WIFTheme.secondaryText.opacity(0.20)
-                                        ],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .frame(width: 28, height: 1.5)
-
-                            Circle()
-                                .fill(WIFTheme.fresh.opacity(0.75))
-                                .frame(width: 3.5, height: 3.5)
-                        }
-                    }
-                    .padding(.horizontal, 4)
-
-                    // Right: Friend City Stage
-                    VStack(spacing: 4) {
-                        CityEmblemView(friend: featuredFriend, size: 68)
-
-                        VStack(spacing: 1) {
-                            Text(featuredFriend.cityDisplay)
-                                .font(.system(.caption, design: .rounded, weight: .bold))
-                                .foregroundStyle(WIFTheme.primaryText)
-                                .lineLimit(1)
-
-                            Text(featuredFriend.displayName.components(separatedBy: " ").first ?? featuredFriend.displayName)
-                                .font(.system(size: 9.5, weight: .semibold, design: .rounded))
-                                .foregroundStyle(WIFTheme.fresh)
-                                .lineLimit(1)
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .padding(10)
-            }
+            if together { TogetherHomeWidget(content: content, size: size) }
+            else { FriendDirectoryWidget(content: content, size: size) }
         }
-    }
-
-    private var heroSmallWidgetView: some View {
-        VStack(spacing: 3) {
-            CityEmblemView(friend: featuredFriend, size: 70)
-
-            Text(featuredFriend.cityDisplay)
-                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                .foregroundStyle(WIFTheme.primaryText)
-                .lineLimit(1)
-
-            Text(featuredFriend.displayName.components(separatedBy: " ").first ?? featuredFriend.displayName)
-                .font(.system(size: 9.5, weight: .semibold, design: .rounded))
-                .foregroundStyle(WIFTheme.fresh)
-                .lineLimit(1)
-        }
-        .padding(8)
-    }
-
-    private var constellationLargeWidgetView: some View {
-        VStack(spacing: 12) {
-            // Top Hero Stage
-            VStack(spacing: 4) {
-                CityEmblemView(friend: featuredFriend, size: 80)
-
-                Text(featuredFriend.cityDisplay)
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-
-                Text(featuredFriend.displayName)
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .lineLimit(1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.white.opacity(0.04))
-            )
-
-            // Bottom Orbit Nodes (3 Companion Cities)
-            HStack(spacing: 8) {
-                ForEach(store.friends.dropFirst().prefix(3)) { friend in
-                    VStack(spacing: 2) {
-                        CityEmblemView(friend: friend, size: 48)
-                        Text(friend.cityDisplay)
-                            .font(.system(size: 9.5, weight: .bold, design: .rounded))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-                        Text(friend.displayName.components(separatedBy: " ").first ?? friend.displayName)
-                            .font(.system(size: 8.5, weight: .medium))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                            .lineLimit(1)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(Color.white.opacity(0.03))
-                    )
-                }
-            }
-
-            Spacer(minLength: 0)
-        }
-        .padding(12)
-    }
-
-    private var togetherWidgetView: some View {
-        HStack(spacing: 16) {
-            CityEmblemView(city: myCity, countryCode: store.snapshot.currentPresence.countryCode, administrativeArea: store.snapshot.currentPresence.administrativeArea, size: 86)
-
-            VStack(alignment: .leading, spacing: 5) {
-                Text(store.snapshot.currentPresence.cityDisplay)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-
-                Text("Mia Chen")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .lineLimit(1)
-
-                Text("2 together")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3.5)
-                    .background(Capsule().fill(WIFTheme.fresh.opacity(0.16)))
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(WIFTheme.fresh.opacity(0.08))
-        )
-    }
-
-    private func widgetContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(white: 0.12),
-                            Color(white: 0.08)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.15), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.35), radius: 18, x: 0, y: 10)
-
-            content()
-                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        }
-        .padding(.horizontal, 16)
-    }
-
-    private func solarButton(_ tone: AmbienceTone) -> some View {
-        let isSelected = selectedAmbience == tone
-        return Button {
-            selectedAmbience = tone
-        } label: {
-            Text(tone.rawValue)
-                .font(.caption2.weight(.bold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
-                .background(
-                    isSelected ? tone.edgeTint.opacity(0.8) : Color.white.opacity(0.06),
-                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .strokeBorder(isSelected ? WIFTheme.fresh : Color.clear, lineWidth: 1)
-                )
-                .foregroundStyle(isSelected ? WIFTheme.primaryText : WIFTheme.secondaryText)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func highlightRow(icon: String, title: String, desc: String) -> some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: icon)
-                .font(.headline)
-                .foregroundStyle(WIFTheme.fresh)
-                .frame(width: 32, height: 32)
-                .background(WIFTheme.fresh.opacity(0.15), in: Circle())
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                Text(desc)
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-            }
-        }
+        .padding(16)
+        .frame(width: width, height: size.previewSize.height)
+        .background(together ? HomeWidgetPalette.together : HomeWidgetPalette.paper)
+        .clipShape(RoundedRectangle(cornerRadius: 27))
+        .overlay(RoundedRectangle(cornerRadius: 27).strokeBorder(HomeWidgetPalette.rule.opacity(0.6), lineWidth: 0.5))
+        .environment(\.colorScheme, previewScheme)
+        .accessibilityElement(children: .contain).accessibilityIdentifier("widgetPreviewSurface")
     }
 }
 
-// MARK: - App Store Marketing: Home & Lock Screen Widgets Showcase
+// The debug entry uses the same views as the installed extension.
 struct HomeScreenWidgetMarketingView: View {
-    @EnvironmentObject private var store: AppStore
-
     var body: some View {
-        ZStack {
-            // Subtle ambient wallpaper
-            LinearGradient(
-                colors: [
-                    Color(red: 0.94, green: 0.96, blue: 0.93),
-                    Color(red: 0.88, green: 0.92, blue: 0.89)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
-            VStack(spacing: 22) {
-                // 1. Lock Screen / Dynamic Island Pill Widget
-                HStack(spacing: 8) {
-                    Image(systemName: "location.fill")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(WIFTheme.fresh)
-                    Text("Mia Chen · In New York with you")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(Color.white.opacity(0.90))
-                        .shadow(color: Color.black.opacity(0.08), radius: 10, y: 4)
-                )
-                .padding(.top, 24)
-
-                // 2. Medium Widget (Cross-City Dual Orbit: New York <-> Tokyo)
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack {
-                        Label("ACROSS US", systemImage: "sparkles")
-                            .font(.system(size: 10, weight: .heavy, design: .rounded))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                        Spacer()
-                        Text("LIVE ORBIT")
-                            .font(.system(size: 9, weight: .bold, design: .rounded))
-                            .foregroundStyle(WIFTheme.fresh)
-                    }
-
-                    HStack(spacing: 0) {
-                        // Left: New York
-                        VStack(spacing: 4) {
-                            CityEmblemView(city: "New York", countryCode: "US", size: 68)
-                            Text("New York")
-                                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                                .foregroundStyle(WIFTheme.primaryText)
-                            Text("You")
-                                .font(.system(size: 10, weight: .semibold, design: .rounded))
-                                .foregroundStyle(WIFTheme.secondaryText)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        // Center: Orbit bridge
-                        VStack(spacing: 2) {
-                            HStack(spacing: 4) {
-                                Circle().fill(WIFTheme.fresh).frame(width: 4, height: 4)
-                                Rectangle()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [WIFTheme.fresh, WIFTheme.fresh.opacity(0.3)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        )
-                                    )
-                                    .frame(width: 32, height: 2)
-                                Circle().fill(WIFTheme.fresh).frame(width: 4, height: 4)
-                            }
-                            Text("6,740 mi")
-                                .font(.system(size: 8, weight: .bold, design: .monospaced))
-                                .foregroundStyle(WIFTheme.secondaryText.opacity(0.8))
-                        }
-                        .padding(.horizontal, 4)
-
-                        // Right: Tokyo
-                        VStack(spacing: 4) {
-                            CityEmblemView(city: "Tokyo", countryCode: "JP", size: 68)
-                            Text("Tokyo")
-                                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                                .foregroundStyle(WIFTheme.primaryText)
-                            Text("Lin Zhao")
-                                .font(.system(size: 10, weight: .bold, design: .rounded))
-                                .foregroundStyle(WIFTheme.fresh)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .padding(18)
-                .frame(width: 340, height: 168)
-                .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(Color.white.opacity(0.92))
-                        .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
-                )
-
-                // 3. Side-by-Side Small Widgets (Paris & SF)
-                HStack(spacing: 16) {
-                    // Small Widget 1: Paris
-                    VStack(spacing: 4) {
-                        CityEmblemView(city: "Paris", countryCode: "FR", size: 64)
-                        Text("Paris")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                        Text("Chloe Martin")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                    }
-                    .frame(width: 162, height: 162)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.white.opacity(0.92))
-                            .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
-                    )
-
-                    // Small Widget 2: San Francisco
-                    VStack(spacing: 4) {
-                        CityEmblemView(city: "San Francisco", countryCode: "US", size: 64)
-                        Text("San Francisco")
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                        Text("David Kim")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                    }
-                    .frame(width: 162, height: 162)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.white.opacity(0.92))
-                            .shadow(color: Color.black.opacity(0.08), radius: 14, y: 6)
-                    )
-                }
-
-                // 4. Lock Screen Rectangular Widget Mockup
-                HStack(spacing: 12) {
-                    Image(systemName: "globe.europe.africa.fill")
-                        .font(.title2)
-                        .foregroundStyle(WIFTheme.fresh)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("ACROSS US · 12 CITIES")
-                            .font(.system(size: 9, weight: .heavy, design: .rounded))
-                            .foregroundStyle(WIFTheme.secondaryText)
-                        Text("Lin in Tokyo · Chloe in Paris · David in SF")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .frame(width: 340)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.white.opacity(0.92))
-                        .shadow(color: Color.black.opacity(0.08), radius: 12, y: 4)
-                )
-
-                Spacer()
-            }
-            .padding(.horizontal, 20)
-        }
-        .accessibilityIdentifier("homeScreenWidgetMarketingScreen")
+        NavigationStack { WidgetShowcaseView() }
     }
 }
 

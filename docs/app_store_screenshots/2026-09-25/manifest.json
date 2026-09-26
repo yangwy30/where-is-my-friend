@@ -1,7 +1,7 @@
 {
   "completed": "2026-09-26",
   "sourceCommit": "0cf1cde",
-  "releaseUIBuild": "1.0.4 (22) plus unreleased Chinese UI localization",
+  "releaseUIBuild": "Build 22 feature set plus unreleased Chinese localization and Home Screen widget redesign",
   "device": "iPhone 18 Pro Max simulator",
   "rawSize": [
     1320,
@@ -12,7 +12,7 @@
   "notes": [
     "App screenshots use actual UI and demo data.",
     "03 was recaptured September 26 after opening Friend plans to load its data.",
-    "08 is an actual installed City Stage large Home Screen widget; the same English system-widget capture is used in both locales.",
+    "08 is the actual installed redesigned Friends directory large Home Screen widget; the same English system-widget capture is used in both locales.",
     "06 revised September 26 to expanded actual MapKit routes. Bilingual capture test passed; static asset preserves route lines and airport markers.",
     "07 added after the map: actual ongoing Trip with Alex’s flight details expanded. Both language captures passed; widget moved to 08.",
     "Review follow-up: localized actual Chinese app UI; recaptured 01–07 in both languages. 18 TripFlightLookupTests plus two full capture flows passed. Subtitles enlarged to 48px; 07 crops real flight details; 08 includes real wallpaper and Dock context."
@@ -48,7 +48,7 @@
     },
     {
       "path": "en/1284x2778/08-widgets.png",
-      "sha256": "6204db59a080730e1ceeb5f58fac0f58448225f91c90b272617a086e1e223ea9"
+      "sha256": "1ce2136f674981037a3a2815e6bf5921f2810cf376472e0c8a7d538fc4f10a08"
     },
     {
       "path": "en/1320x2868/01-friends.png",
@@ -80,7 +80,7 @@
     },
     {
       "path": "en/1320x2868/08-widgets.png",
-      "sha256": "b0e3a3c5d66f8a587cb9218490abc7c16c268007e961c8f45cdee1add5c67ee5"
+      "sha256": "9bd609972196897bf5d06878ee8726478a90f4b990461aa0ee3e0258c41d59ab"
     },
     {
       "path": "raw/en/01-friends.png",
@@ -112,7 +112,7 @@
     },
     {
       "path": "raw/en/08-widgets.png",
-      "sha256": "649d68665dbaeb2ff4c605da7e68551ad625c5b1e0fd8f5f9ac61589f81df651"
+      "sha256": "d8b02bd1c20a043e85e771c38c940cd6c7f74626225934b095782390df8abc90"
     },
     {
       "path": "raw/zh-Hans/01-friends.png",
@@ -144,7 +144,7 @@
     },
     {
       "path": "raw/zh-Hans/08-widgets.png",
-      "sha256": "649d68665dbaeb2ff4c605da7e68551ad625c5b1e0fd8f5f9ac61589f81df651"
+      "sha256": "d8b02bd1c20a043e85e771c38c940cd6c7f74626225934b095782390df8abc90"
     },
     {
       "path": "zh-Hans/1284x2778/01-friends.png",
@@ -176,7 +176,7 @@
     },
     {
       "path": "zh-Hans/1284x2778/08-widgets.png",
-      "sha256": "070c7f8da717d693d7e3d120ab75d4d981fc583ea373ed6faecc63628daada0b"
+      "sha256": "065f678fe7d4cf2745ebda503e6b1d34f40bdd4943bff17729ec3c546371b4d9"
     },
     {
       "path": "zh-Hans/1320x2868/01-friends.png",
@@ -208,8 +208,8 @@
     },
     {
       "path": "zh-Hans/1320x2868/08-widgets.png",
-      "sha256": "ea1bf03115bff8c930c0e6217a1ab9275d47b6e2147f0ae12b7571e10dca878a"
+      "sha256": "3a9db883ec4344b2f3cc715b1e0a2a8479a70b489a66a4d6ecc11ab5a3424c52"
     }
   ],
-  "sourceChanges": "Actual app translation fixes and DEBUG-only marketing fixture; recaptured September 26."
+  "sourceChanges": "Native widget redesign after e8faf55; screenshot 08 recaptured from installed widget September 26."
 }

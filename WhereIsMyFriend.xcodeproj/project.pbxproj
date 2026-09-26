@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+        B92600000000000000000001 /* HomeWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92600000000000000000003; };
+        B92600000000000000000002 /* HomeWidgetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92600000000000000000003; };
 		C91500000000000000000001 = {isa = PBXBuildFile; fileRef = C91500000000000000000003; };
 		C91500000000000000000002 = {isa = PBXBuildFile; fileRef = C91500000000000000000003; };
 		C91500000000000000000004 = {isa = PBXBuildFile; fileRef = C91500000000000000000006; };
@@ -111,6 +113,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+        B92600000000000000000003 /* HomeWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Shared/Components/HomeWidgetViews.swift; sourceTree = SOURCE_ROOT; };
 		C91500000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Shared/Models/CityRegions.swift; sourceTree = SOURCE_ROOT; };
 		C91500000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "supabase/functions/_shared/city-regions.v1.json"; sourceTree = SOURCE_ROOT; };
 		300000000000000000000001 /* Where Is My Friend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Where Is My Friend.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -279,6 +282,7 @@
 				300000000000000000000027 /* WhereIsMyFriendWidgetBundle.swift */,
 				300000000000000000000028 /* FriendWidget.swift */,
 				300000000000000000000029 /* FriendWidgetEntryView.swift */,
+                B92600000000000000000003 /* HomeWidgetViews.swift */,
 				300000000000000000000047 /* FriendWidgetConfiguration.swift */,
 				300000000000000000000030 /* Info.plist */,
 				300000000000000000000031 /* WhereIsMyFriendWidget.entitlements */,
@@ -405,7 +409,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				400000000000000000000030 /* AppDomain.swift in Sources */,
+				B92600000000000000000001 /* HomeWidgetViews.swift in Sources */,
+                400000000000000000000030 /* AppDomain.swift in Sources */,
 				400000000000000000000031 /* AppRepository.swift in Sources */,
 				400000000000000000000032 /* LocalDemoRepository.swift in Sources */,
 				400000000000000000000033 /* RemoteAppRepository.swift in Sources */,
@@ -447,7 +452,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (C91500000000000000000002, 400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B92600000000000000000002, C91500000000000000000002, 400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, 400000000000000000000053 /* TripFlightLookupTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */

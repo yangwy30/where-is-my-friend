@@ -21,7 +21,8 @@ struct FriendTimelineProvider: AppIntentTimelineProvider {
             currentCountryCode: "US",
             snapshotUpdatedAt: Date(),
             privacyMode: .full,
-            selectedFriendIDs: []
+            selectedFriendIDs: [],
+            currentAdministrativeArea: "NY", currentPresenceUpdatedAt: Date()
         )
     }
 
@@ -105,7 +106,8 @@ struct SameCityTimelineProvider: TimelineProvider {
             currentCountryCode: "US",
             snapshotUpdatedAt: Date(),
             privacyMode: .full,
-            selectedFriendIDs: []
+            selectedFriendIDs: [],
+            currentAdministrativeArea: "NY", currentPresenceUpdatedAt: Date()
         )
     }
 
@@ -134,12 +136,12 @@ struct FriendWidget: Widget {
             FriendWidgetEntryView(entry: entry)
                 .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 .containerBackground(for: .widget) {
-                    FriendWidgetBackground()
+                    FriendWidgetBackground(together: false)
                         .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 }
         }
-        .configurationDisplayName("City Stage")
-        .description("See your friends as miniature city stages.")
+        .configurationDisplayName("Friends, near and far")
+        .description("Your friends and their shared cities, at a glance.")
         .supportedFamilies([
             .systemSmall,
             .systemMedium,
@@ -161,11 +163,11 @@ struct SameCityWidget: Widget {
             SameCityWidgetEntryView(entry: entry)
                 .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 .containerBackground(for: .widget) {
-                    FriendWidgetBackground()
+                    FriendWidgetBackground(together: true)
                         .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
                 }
         }
-        .configurationDisplayName("Together Moment")
+        .configurationDisplayName("Here together")
         .description("A focused view for friends who are in your city now.")
         .supportedFamilies([
             .systemSmall,
@@ -178,6 +180,7 @@ struct SameCityWidget: Widget {
 }
 
 private struct FriendWidgetBackground: View {
+    let together: Bool
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
@@ -185,7 +188,7 @@ private struct FriendWidgetBackground: View {
         case .accessoryRectangular, .accessoryCircular:
             Color.clear
         default:
-            WIFTheme.ambientGradient
+            together ? HomeWidgetPalette.together : HomeWidgetPalette.paper
         }
     }
 }
