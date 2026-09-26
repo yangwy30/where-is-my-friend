@@ -18,6 +18,14 @@ actor LocalDemoRepository: AppRepository {
                 ?? DemoData.initialSnapshot()
         }
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-marketingOverlap"),
+           let friend = self.snapshot.friends.first(where: { $0.username == "lin" }) {
+            let zone = TimeZone(identifier: "Asia/Tokyo")!
+            personalPlans = [PersonalTravelPlan(city: "Tokyo", countryCode: "JP", region: "Tokyo", timeZone: zone.identifier,
+                startDay: TripDay(Date().addingTimeInterval(3 * 86400), timeZone: zone).value,
+                endDay: TripDay(Date().addingTimeInterval(6 * 86400), timeZone: zone).value,
+                audience: [friend.id])]
+        }
         if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackCompare") || ProcessInfo.processInfo.arguments.contains("-previewCityFallbackStates") {
             self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield",
                 countryCode: "US", updatedAt: Date(), source: .foregroundLocation)

@@ -1,0 +1,162 @@
+{
+  "en": [
+    {
+      "id": "01-friends",
+      "title": [
+        "Your friends.",
+        "City by city."
+      ],
+      "sub": "Shared cities. Familiar faces.",
+      "tone": "cream",
+      "crop": 150
+    },
+    {
+      "id": "02-friend-plans",
+      "title": [
+        "Where friends",
+        "are headed."
+      ],
+      "sub": "Tap a friend. See their next city.",
+      "tone": "mint",
+      "crop": 150
+    },
+    {
+      "id": "03-together-soon",
+      "title": [
+        "Your next",
+        "“See you there.”"
+      ],
+      "sub": "Find the dates you’ll both be there.",
+      "tone": "cream",
+      "crop": 210
+    },
+    {
+      "id": "04-here-together",
+      "title": [
+        "Same city.",
+        "Say hello."
+      ],
+      "sub": "Make room for a spontaneous reunion.",
+      "tone": "mint",
+      "crop": 150
+    },
+    {
+      "id": "05-shared-trips",
+      "title": [
+        "Your next trip.",
+        "Together."
+      ],
+      "sub": "One destination. Everyone’s plans.",
+      "tone": "cream",
+      "crop": 150
+    },
+    {
+      "id": "06-arrivals",
+      "title": [
+        "Different flights.",
+        "One reunion."
+      ],
+      "sub": "See who lands when, all in one place.",
+      "tone": "blue",
+      "crop": 150
+    },
+    {
+      "id": "07-widgets",
+      "title": [
+        "Friends, one",
+        "glance away."
+      ],
+      "sub": "City updates on your Home Screen.",
+      "tone": "cream",
+      "crop": 150,
+      "sourceRect": {
+        "left": 94,
+        "top": 934,
+        "width": 1132,
+        "height": 1182
+      },
+      "frameY": 1000,
+      "frameHeight": 1160
+    }
+  ],
+  "zh-Hans": [
+    {
+      "id": "01-friends",
+      "title": [
+        "朋友在哪，",
+        "一眼就知道"
+      ],
+      "sub": "看看好友最近分享的城市。",
+      "tone": "cream",
+      "crop": 150
+    },
+    {
+      "id": "02-friend-plans",
+      "title": [
+        "朋友的下一站，",
+        "提前知道"
+      ],
+      "sub": "点开朋友，看看他将去哪里。",
+      "tone": "mint",
+      "crop": 150
+    },
+    {
+      "id": "03-together-soon",
+      "title": [
+        "你们的计划，",
+        "刚好重叠"
+      ],
+      "sub": "找到同一座城市里的共同日期。",
+      "tone": "cream",
+      "crop": 210
+    },
+    {
+      "id": "04-here-together",
+      "title": [
+        "原来，",
+        "你也在这里"
+      ],
+      "sub": "同一座城市，多一个见面的机会。",
+      "tone": "mint",
+      "crop": 150
+    },
+    {
+      "id": "05-shared-trips",
+      "title": [
+        "下一趟，",
+        "和朋友一起"
+      ],
+      "sub": "一个目的地，大家的安排。",
+      "tone": "cream",
+      "crop": 150
+    },
+    {
+      "id": "06-arrivals",
+      "title": [
+        "谁几点到，",
+        "一起看清楚"
+      ],
+      "sub": "把每个人的抵达时间放在一起。",
+      "tone": "blue",
+      "crop": 150
+    },
+    {
+      "id": "07-widgets",
+      "title": [
+        "把朋友，",
+        "放在主屏幕"
+      ],
+      "sub": "不用打开 App，也能看一眼。",
+      "tone": "cream",
+      "crop": 150,
+      "sourceRect": {
+        "left": 94,
+        "top": 934,
+        "width": 1132,
+        "height": 1182
+      },
+      "frameY": 1000,
+      "frameHeight": 1160
+    }
+  ]
+}

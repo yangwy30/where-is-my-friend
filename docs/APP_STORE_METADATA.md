@@ -1,8 +1,14 @@
 # App Store and TestFlight metadata
 
-## Current submission — September 23, 2026
+## Latest prepared listing — September 26, 2026
 
-Version **1.0.4 (20)** is Waiting for Review with manual release after approval. See [replacement submission](APP_STORE_1_0_4_REPLACEMENT.md) for the build and review record. Version 1.0.3 is currently on the App Store.
+Use [the new bilingual introduction](APP_INTRO_20260925.md) and [seven bilingual screenshots](app_store_screenshots/2026-09-25/README.md) for the build 22 experience. Assets are complete locally; they have **not been saved to App Store Connect**. The current browser session requires sign-in.
+
+Last verified on September 25: **1.0.4 (20)** was **Pending Developer Release**, with manual release. Build **1.0.4 (22)** was available in internal TestFlight. Recheck the store state before changing the approved version; the new screenshots include features from build 22.
+
+## Submission history — September 23, 2026
+
+Version **1.0.4 (20)** was submitted for review with manual release after approval. See [replacement submission](APP_STORE_1_0_4_REPLACEMENT.md) for the build and review record. Version 1.0.3 was on the App Store at that time.
 
 ## Base listing — September 15, 2026
 

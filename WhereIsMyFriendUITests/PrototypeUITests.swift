@@ -1044,6 +1044,89 @@ final class PrototypeUITests: XCTestCase {
         app.terminate()
     }
 
+    func testCaptureUpdatedMarketingEnglish() { captureUpdatedMarketing(language: "en", locale: "en_US") }
+    func testCaptureUpdatedMarketingChinese() { captureUpdatedMarketing(language: "zh-Hans", locale: "zh_CN") }
+
+    private func captureUpdatedMarketing(language: String, locale: String) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        let base = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale,
+                    "-AppleInterfaceStyle", "Light"]
+        app.launchArguments = base
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+        XCTAssertTrue(lin.waitForExistence(timeout: 5))
+        capture("\(language)-01-friends")
+        app.buttons["friendPlansLink"].tap()
+        XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 5))
+        capture("\(language)-02-friend-plans")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        app.buttons["sameCityReunionToggle"].tap()
+        XCTAssertTrue(app.buttons["sameCitySayHello"].waitForExistence(timeout: 5))
+        capture("\(language)-04-here-together")
+        app.terminate()
+
+        app.launchArguments = base + ["-marketingOverlap"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        app.buttons["friendPlansLink"].tap()
+        XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let upcoming = app.buttons["upcomingTogetherToggle"]
+        XCTAssertTrue(upcoming.waitForExistence(timeout: 8)); upcoming.tap()
+        let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
+        XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
+        XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 5))
+        capture("\(language)-03-together-soon")
+        app.terminate()
+
+        app.launchArguments = base + ["-previewTrips", "-seedTripExamples", "-tripTestNamespace=\(UUID().uuidString)"]
+        app.launch()
+        XCTAssertTrue(app.buttons["tripCard-example-west"].waitForExistence(timeout: 8))
+        capture("\(language)-05-shared-trips")
+        app.buttons["tripCard-example-west"].tap()
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        capture("\(language)-06-arrivals")
+        app.terminate()
+    }
+
+    func testCaptureMarketingOverlapDetails() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-marketingOverlap", "-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+            app.launch()
+            XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+            app.buttons["friendPlansLink"].tap()
+            XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            let upcoming = app.buttons["upcomingTogetherToggle"]
+            XCTAssertTrue(upcoming.waitForExistence(timeout: 8)); upcoming.tap()
+            let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
+            XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
+            XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 5))
+            capture("\(language)-03-together-soon")
+            app.terminate()
+        }
+    }
+
+    func testCaptureActualMarketingWidgets() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        XCUIDevice.shared.press(.home)
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        if springboard.buttons["Continue"].exists { springboard.buttons["Continue"].tap() }
+        XCUIDevice.shared.press(.home)
+        for page in 1...3 {
+            capture("actual-widget-page-\(page)")
+            if page < 3 { springboard.swipeLeft() }
+        }
+    }
+
     func testCaptureAppStoreScreenshots() {
         continueAfterFailure = false
         let dir = URL(fileURLWithPath: "/Users/wangyang/.gemini/antigravity-insiders/brain/a9fe7251-03e8-4092-990c-527a6ef21b48/raw_screenshots")
