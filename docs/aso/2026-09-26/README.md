@@ -1,5 +1,7 @@
 # U.S. App Store discovery — first implementation pass
 
+**Release status update:** English metadata and bilingual screenshots were submitted with 1.0.4 (23) on September 26, 2026 at 10:08 PM PDT. Apple shows Waiting for Review; automatic release is enabled. The changes below are not yet public. See [release record](../../APP_STORE_1_0_4_23.md). The original preparation notes below describe the earlier paused state.
+
 ## Changes
 
 - Replaced both generic TestFlight links on the public landing page with App Store Connect-generated links to Across Us, Apple ID `6807634842`.

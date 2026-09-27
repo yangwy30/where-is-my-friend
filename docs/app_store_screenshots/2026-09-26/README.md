@@ -1,6 +1,6 @@
 # App Store screenshot order — September 26, 2026
 
-**Reserved for the next update by user decision; not uploaded.** This set moves the redesigned Home Screen widget to position 2. The prior September 25 set is preserved so earlier review links and capture references remain valid.
+**Submitted September 26 at 10:08 PM PDT with 1.0.4 (23); Waiting for Review.** The user subsequently approved replacing the old candidate. See [release record](../../APP_STORE_1_0_4_23.md). This set moves the redesigned Home Screen widget to position 2. The prior September 25 set is preserved so earlier review links and capture references remain valid.
 
 ## Upload sequence
 
@@ -25,7 +25,7 @@ The first image explains the product; the second demonstrates its everyday Home 
 
 Rebuild the custom widget composition with `node scripts/render_widget_presentation_study.mjs`, then the full set with `node scripts/render_marketing_20260925.mjs --set=2026-09-26`, with `sharp` in the Node module path.
 
-## App Store Connect state checked today
+## Earlier App Store Connect state (superseded by the submission above)
 
 - Signed in successfully; no login handoff is currently needed.
 - 1.0.4 build 20 is **Pending Developer Release**; 1.0.3 is **Ready for Distribution**.

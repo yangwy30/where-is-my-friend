@@ -1,9 +1,11 @@
 {
-  "status": "prepared_not_live",
+  "status": "submitted_waiting_for_review",
   "locale": "en-US",
   "name": "Across Us: Friends & Trips",
   "subtitle": "Share cities & travel plans",
   "keywords": "widget,location,group,together,overlap,reunion,flight,arrival",
   "primaryCategory": "retain_current_social_networking",
-  "reason": "First relevance-led ASO experiment; search volume and native rank unmeasured."
+  "reason": "First relevance-led ASO experiment; search volume and native rank unmeasured.",
+  "submittedVersion": "1.0.4 (23)",
+  "submissionId": "3c1cf179-f5bf-45e7-8cac-50cbadead850"
 }

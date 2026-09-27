@@ -10,9 +10,9 @@
 - Archive: `/tmp/across-appstore23-20260926/AcrossUs-1.0.4-23.xcarchive`.
 - Export: `/tmp/across-appstore23-20260926/export/Where Is My Friend.ipa`.
 - Export IPA SHA-256: `f29c5d48e917c198073aae5412d1d5d4749d1024b6d156bb98af09754f22dfe7`.
-- Xcode reported **Upload succeeded** at **9:39 PM PDT on September 26, 2026**. App Store Connect confirms build 23 is **Processing**, build ID `ccfc7335-544d-40d9-b7cb-63f185d37c75`. Apple processing and review submission are separate steps.
+- Xcode reported **Upload succeeded** at **9:39 PM PDT on September 26, 2026**. App Store Connect confirms build 23 is **Complete**, build ID `ccfc7335-544d-40d9-b7cb-63f185d37c75`. Apple processing and review submission are separate steps.
 
-## Store material prepared
+## Store material submitted
 
 - Eight screenshots per language from `app_store_screenshots/2026-09-26/`, with the widget in position 2 and flight map/details in positions 7/8. Both primary sets validated as 1284×2778 PNGs.
 - English name/subtitle/keyword experiment: `aso/2026-09-26/next-release-fields.json`.
@@ -21,4 +21,14 @@
 
 ## Review state
 
-At the start of this release attempt, **1.0.4 (20)** was Pending Developer Release and **1.0.3** was Ready for Distribution. The user asked to resume App Store publishing, but automatic approval review blocked cancelling build 20's pending release because of the user's earlier explicit instruction to preserve it. A specific replacement-or-old-release choice was requested. The cancellation did **not** execute. No screenshots, listing fields or review submission have been changed yet; build 23 is uploaded independently while awaiting that choice.
+- After the user explicitly approved replacing the old candidate, cancelled the pending release of **1.0.4 (20)**. The version became Developer Rejected and editable.
+- Saved build **23** as the sole selected build, with updated bilingual descriptions, promotional text, keywords, What's New and reviewer notes.
+- Uploaded eight independent screenshots for each of English (U.S.) and Simplified Chinese. Verified the final order and actual preview images in both languages. Uploads used the native file chooser after the browser extension upload path was unavailable.
+- Saved English name **Across Us: Friends & Trips** and subtitle **Share cities & travel plans**. Chinese name remains **Across Us**, subtitle **分享城市，发现下一次相聚**. Categories and existing ratings retained.
+- Selected **Automatically release this version**, with release to all users after approval. No scheduled release date or rating reset is selected.
+- Submitted exactly one item, **iOS App 1.0.4 (23)**, on **September 26, 2026 at 10:08 PM PDT**.
+- Apple confirmed **1 Item Submitted**, and the review record shows **Waiting for Review**.
+- Submission ID: `3c1cf179-f5bf-45e7-8cac-50cbadead850`.
+- [Review submission](https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/3c1cf179-f5bf-45e7-8cac-50cbadead850).
+
+The public version remains **1.0.3** while Apple reviews this update. The new metadata and screenshots are submitted, not yet public. No approval or release date is guaranteed.
