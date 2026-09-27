@@ -63,7 +63,7 @@ struct AppRootView: View {
         .task {
             guard store.snapshot.isAuthenticated else { return }
             await store.preparePushRegistrationIfAuthorized()
-            await store.refresh()
+            await store.refresh(minimumInterval: 15)
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-previewFriendRequestNotification"),
                let request = store.snapshot.incomingRequests.first {
@@ -76,7 +76,7 @@ struct AppRootView: View {
             guard phase == .active, store.snapshot.isAuthenticated else { return }
             Task {
                 await store.preparePushRegistrationIfAuthorized()
-                await store.refresh()
+                await store.refresh(minimumInterval: 15)
             }
         }
         .onChange(of: cityLocationContext, initial: true) { _, context in

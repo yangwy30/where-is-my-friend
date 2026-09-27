@@ -292,3 +292,17 @@ test('booking reminder APIs use verified actor and only recipient/context/prefer
  assert.equal((await request('POST','/v1/trips/trip-one/reminders',{participantID:'invalid'})).status,400);
  assert.equal((await request('POST','/v1/trips/trip-one/planning-reminders',{enabled:'true'})).status,400);
 });
+
+test('overlap list and detail are bound to the authenticated viewer',async()=>{
+ const {request,calls}=await harness();const id='a'.repeat(32);
+ for(const path of ['/v2/travel-overlaps','/v2/travel-overlaps/'+id]) {
+  assert.equal((await request('GET',path,undefined,'')).status,401);
+  assert.equal((await request('GET',path)).status,200);
+  assert.equal(calls.at(-1).name,'wif_travel_overlap_snapshot');
+  assert.equal(calls.at(-1).parameters.p_user_id,userID);
+ }
+ assert.equal(calls.at(-1).parameters.p_id,id);
+ const before=calls.filter(c=>c.name==='wif_travel_overlap_snapshot').length;
+ assert.equal((await request('GET','/v2/travel-overlaps/bad')).status,400);
+ assert.equal(calls.filter(c=>c.name==='wif_travel_overlap_snapshot').length,before);
+});

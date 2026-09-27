@@ -18,6 +18,9 @@ actor LocalDemoRepository: AppRepository {
                 ?? DemoData.initialSnapshot()
         }
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testOverlapCity") {
+            TravelCityHistory.remember(TravelCity.examples[0], origin: storageScope, ownerID: self.snapshot.currentUser.id)
+        }
         if ProcessInfo.processInfo.arguments.contains("-marketingOverlap"),
            let friend = self.snapshot.friends.first(where: { $0.username == "lin" }) {
             let zone = TimeZone(identifier: "Asia/Tokyo")!
@@ -25,6 +28,13 @@ actor LocalDemoRepository: AppRepository {
                 startDay: TripDay(Date().addingTimeInterval(3 * 86400), timeZone: zone).value,
                 endDay: TripDay(Date().addingTimeInterval(6 * 86400), timeZone: zone).value,
                 audience: [friend.id])]
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testOverlapSummary"),
+           let friend = self.snapshot.friends.first(where: { $0.username == "lin" }) {
+            personalPlans = (1...5).map { day in
+                let date = TripDay(Date().addingTimeInterval(Double(day) * 86400), timeZone: TimeZone(identifier: "Asia/Tokyo")!).value
+                return PersonalTravelPlan(city: "Tokyo", countryCode: "JP", region: "Tokyo", timeZone: "Asia/Tokyo", startDay: date, endDay: date, audience: [friend.id])
+            }
         }
         if ProcessInfo.processInfo.arguments.contains("-previewCityFallbackCompare") || ProcessInfo.processInfo.arguments.contains("-previewCityFallbackStates") {
             self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield",
@@ -73,7 +83,25 @@ actor LocalDemoRepository: AppRepository {
            let data = UserDefaults.standard.data(forKey: "travel-plans.v1.\(storageScope).\(snapshot.currentUser.id)") {
             personalPlans = (try? JSONDecoder().decode([PersonalTravelPlan].self, from: data)) ?? []
         }
-        return personalTravelSnapshot()
+        var result = personalTravelSnapshot()
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testOverlapSummary") {
+            result.overlapCount = result.overlaps.count; result.overlapVersion = "demo-overlap-summary"
+            result.includesAllOverlaps = result.overlaps.count <= 3; result.overlaps = Array(result.overlaps.prefix(3))
+        }
+        #endif
+        return result
+    }
+
+    func fetchTravelOverlaps(id: String?) async throws -> TravelOverlapSnapshot {
+        try requireAuthentication()
+        let result = personalTravelSnapshot()
+        var version: String?
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testOverlapSummary") { version = "demo-overlap-summary" }
+        #endif
+        return TravelOverlapSnapshot(overlaps: result.overlaps.filter { id == nil || $0.id == id }, overlapCount: result.overlaps.count,
+            overlapVersion: version, includesAllOverlaps: id == nil)
     }
 
     func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {

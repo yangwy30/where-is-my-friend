@@ -69,6 +69,7 @@ enum RepositoryError: LocalizedError, Equatable {
 protocol AppRepository: Sendable {
     func fetchTravelPlans() async throws -> TravelPlanSnapshot
     func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan]
+    func fetchTravelOverlaps(id: String?) async throws -> TravelOverlapSnapshot
     func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot
     func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot
@@ -118,6 +119,12 @@ extension AppRepository {
     }
     func fetchTravelPlans() async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
     func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan] { try await fetchTravelPlans().plans }
+    func fetchTravelOverlaps(id: String?) async throws -> TravelOverlapSnapshot {
+        let result = try await fetchTravelPlans()
+        return TravelOverlapSnapshot(overlaps: result.overlaps.filter { id == nil || $0.id == id }, overlapCount: result.overlaps.count,
+            overlapVersion: result.overlapVersion, includesAllOverlaps: id == nil)
+    }
+
     func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
         let snapshot = try await fetchTravelPlans()
         let rows = snapshot.friendPlans.filter { (friendID == nil || $0.friendID == friendID) && (planID == nil || $0.id == planID) }

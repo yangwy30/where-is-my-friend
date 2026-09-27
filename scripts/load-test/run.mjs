@@ -53,7 +53,7 @@ async function localHTTP(path,{method='GET',headers={},body}={}){
 const report={startedAt:new Date().toISOString(),source:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
  scope:'Local HTTP + actual API handler + actual PostgreSQL RPCs; mocked identity and APNs; no flight calls; not hosted capacity certification',
  machine:{platform:platform(),arch:arch(),cpus:cpus().length,cpu:cpus()[0].model,totalMemoryGB:totalmem()/2**30,freeMemoryGB:freemem()/2**30},
- configuration:{pagination:!!args.pagination,friendCount,planCount,prewarmedHTTPConnections:args.quick?40:1000,poolSize:20,sqlTimeoutMs:6500,poolWaitTimeoutMs:6500,httpTimeoutMs:20000,authSimulatedLatencyMs:25,postgresSharedBuffersMB:128},stages};
+ configuration:{homeOverlapSummary:true,pagination:!!args.pagination,friendCount,planCount,prewarmedHTTPConnections:args.quick?40:1000,poolSize:20,sqlTimeoutMs:6500,poolWaitTimeoutMs:6500,httpTimeoutMs:20000,authSimulatedLatencyMs:25,postgresSharedBuffersMB:128},stages};
 let admin,pool,server,base,accounts,tokens=new Map(),handler,database,monitor;
 const loop=monitorEventLoopDelay({resolution:20});loop.enable();
 const samples=[];
@@ -147,12 +147,16 @@ try{
   await stage('refresh_burst_'+n,n,()=>Promise.all(accounts.slice(0,n).map(async a=>{
    await request(a,'GET','/v1/bootstrap',null,j=>j.currentUser?.id===a.id&&j.friends?.length===friendCount);
    if(args.pagination){
-    await request(a,'GET','/v2/travel-plans',null,j=>j.includesOwnPlans===false&&j.friendPlanSummaries?.reduce((n,x)=>n+x.count,0)===friendCount*planCount);
+    await request(a,'GET','/v2/travel-plans',null,j=>j.includesOwnPlans===false&&j.overlaps?.length===Math.min(3,j.overlapCount)&&j.friendPlanSummaries?.reduce((n,x)=>n+x.count,0)===friendCount*planCount);
     await request(a,'GET','/v2/friend-plans',null,j=>j.items?.length===50&&!!j.nextCursor);
    }else await request(a,'GET','/v1/travel-plans',null,j=>j.plans?.length===planCount&&j.friendPlans?.length===friendCount*planCount);
    await request(a,'GET','/v1/trips',null,j=>j.trips?.length===3);
   })));
  }
+ if(args.pagination&&!args.quick)await stage('app_home_refresh_burst_1000',1000,()=>Promise.all(accounts.map(async a=>{
+  await request(a,'POST','/v1/auth/bootstrap',{},j=>j.currentUser?.id===a.id&&j.friends?.length===friendCount);
+  await request(a,'GET','/v2/travel-plans',null,j=>j.overlaps?.length===Math.min(3,j.overlapCount)&&j.friendPlanSummaries?.length===friendCount);
+ })));
  if(!args.quick&&!args['burst-only'])await stage('steady_refresh_1000_over_60s',1000,()=>Promise.all(accounts.map(async(a,i)=>{
   await sleep(i*60);await request(a,'GET','/v1/bootstrap',null,j=>j.currentUser?.id===a.id);
   if(args.pagination)await request(a,'GET','/v2/travel-plans',null,j=>j.includesOwnPlans===false&&j.friendPlanSummaries?.length===friendCount);
@@ -168,6 +172,16 @@ try{
   }while(cursor);
   report.paginationTraversal={pages,uniquePlans:seen.size,expected:friendCount*planCount};
   if(seen.size!==friendCount*planCount)throw Error('Pagination lost rows');
+  const get=async path=>{const res=await localHTTP(path,{headers:{Authorization:'Bearer '+accounts[0].token}});if(res.status!==200)throw Error('Overlap request failed: '+path);return JSON.parse(res.text);};
+  const overview=await get('/v2/travel-plans'),expanded=await get('/v2/travel-overlaps'),legacy=await get('/v1/travel-plans');
+  if(expanded.overlaps.length!==overview.overlapCount||expanded.overlaps.length!==legacy.overlaps.length||!expanded.includesAllOverlaps)throw Error('Expanded overlap list lost rows');
+  if(expanded.overlaps.some(x=>!legacy.overlaps.some(y=>JSON.stringify(x)===JSON.stringify(y))))throw Error('Expanded and legacy overlap content differs');
+  const target=expanded.overlaps.at(-1);if(!target)throw Error('Overlap load fixture empty');
+  const detail=await get('/v2/travel-overlaps/'+target.id);
+  if(detail.overlaps.length!==1||detail.overlaps[0].id!==target.id)throw Error('Overlap notification detail failed');
+  report.overlapTraversal={preview:overview.overlaps.length,total:overview.overlapCount,expanded:expanded.overlaps.length,legacy:legacy.overlaps.length,detailOutsidePreview:!overview.overlaps.some(x=>x.id===target.id)};
+  await stage('overlap_expansion_burst_100',100,()=>Promise.all(accounts.slice(0,100).map(a=>request(a,'GET','/v2/travel-overlaps',null,j=>j.includesAllOverlaps===true&&j.overlaps?.length===j.overlapCount))));
+
  }
  // Same-identity initialization must not create multiple profiles under concurrent requests.
  const repeat={auth_id:randomUUID(),token:randomUUID()};tokens.set(repeat.token,repeat.auth_id);

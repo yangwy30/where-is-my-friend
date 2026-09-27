@@ -573,11 +573,13 @@ struct UpcomingTogetherCard: View {
     private var overlaps: [TravelOverlap] {
         library.overlaps.filter { !$0.isPast() && store.friend(id: $0.friendID) != nil && !store.snapshot.blockedUserIDs.contains($0.friendID) }
     }
+    private var overlapCount: Int { library.overlapsFullyLoaded ? overlaps.count : library.overlapCount }
+    private var isLoading: Bool { library.isLoading || library.isLoadingOverlaps || (selectedID.map { library.resolvingOverlapIDs.contains($0) } ?? false) }
     private var selected: TravelOverlap? { overlaps.first { $0.id == selectedID } }
     var body: some View {
         // An explicitly opened notification keeps its unavailable state until dismissed.
         // Otherwise, an empty match list must not occupy space on Friends.
-        if !overlaps.isEmpty || selectedID != nil {
+        if overlapCount > 0 || selectedID != nil {
             card.padding(.top, 12)
         }
     }
@@ -592,9 +594,9 @@ struct UpcomingTogetherCard: View {
                         .frame(width: 40, height: 40).background(WIFTheme.fresh.opacity(0.12), in: Circle())
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Together soon").font(.subheadline.weight(.semibold))
-                        Text(overlaps.isEmpty
-                             ? (library.isLoading ? String(localized: "Loading shared dates…") : String(localized: "This overlap is no longer available"))
-                             : (overlaps.count == 1 ? String(localized: "1 upcoming overlap") : String(localized: "\(overlaps.count) upcoming overlaps")))
+                        Text(overlapCount == 0
+                             ? (isLoading ? String(localized: "Loading shared dates…") : String(localized: "This overlap is no longer available"))
+                             : (overlapCount == 1 ? String(localized: "1 upcoming overlap") : String(localized: "\(overlapCount) upcoming overlaps")))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Spacer()
@@ -615,9 +617,18 @@ struct UpcomingTogetherCard: View {
                             Label("Say hello", systemImage: "bubble.left")
                         }.buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("upcomingSayHello")
                     } else if selectedID != nil {
-                        if library.isLoading { ProgressView() }
+                        if isLoading { ProgressView() }
+                        else if let error = library.overlapError {
+                            Text(error).font(.subheadline).multilineTextAlignment(.center)
+                            Button("Try again") { if let selectedID { Task { await library.resolveOverlap(selectedID, minimumInterval: 0) } } }
+                        }
                         else { Text("This overlap is no longer available. Plans or sharing may have changed.").font(.subheadline).multilineTextAlignment(.center) }
                     } else {
+                        if library.isLoadingOverlaps { ProgressView().accessibilityIdentifier("loadingAllOverlaps") }
+                        if let error = library.overlapError {
+                            Text(error).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            Button("Try again") { Task { await library.loadAllOverlaps() } }
+                        }
                         ForEach(overlaps) { overlap in
                             Button { selectedID = overlap.id } label: {
                                 HStack {
@@ -627,7 +638,7 @@ struct UpcomingTogetherCard: View {
                                     }
                                     Spacer(); Image(systemName: "chevron.right").font(.caption)
                                 }.padding(.vertical, 10).contentShape(Rectangle())
-                            }.buttonStyle(.plain).accessibilityIdentifier("upcomingOverlap-\(overlap.friendID)")
+                            }.buttonStyle(.plain).accessibilityIdentifier("upcomingOverlap-\(overlap.id)")
                         }
                     }
                     Button("Manage my plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
@@ -643,7 +654,17 @@ struct UpcomingTogetherCard: View {
             }
         }
         .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 25)).clipped()
-        .onChange(of: selectedID, initial: true) { _, id in if id != nil { expanded = true } }
+        .onChange(of: selectedID, initial: true) { _, id in
+            if let id { expanded = true; Task { await library.resolveOverlap(id) } }
+            else if expanded { Task { await library.loadAllOverlaps() } }
+        }
+        .onChange(of: expanded) { _, open in
+            if open && selectedID == nil { Task { await library.loadAllOverlaps() } }
+        }
+        .onChange(of: library.overlapVersion) { _, _ in
+            guard expanded else { return }
+            Task { if let selectedID { await library.resolveOverlap(selectedID) } else { await library.loadAllOverlaps() } }
+        }
         .sheet(isPresented: $showsPlans) { NavigationStack { TravelPlansView().toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { showsPlans = false } } } } }
     }
 }

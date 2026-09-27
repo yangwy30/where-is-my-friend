@@ -197,6 +197,12 @@ async function handle(request: Request): Promise<Response> {
     }
     const userID = authorization.userID;
 
+    if (request.method === "GET" && segments[0] === "v2" && segments[1] === "travel-overlaps" && segments.length <= 3) {
+        const id = segments[2] ?? null;
+        if (id !== null && !/^[a-f0-9]{32}$/.test(id)) throw new APIError(400, "Invalid overlap ID.");
+        return json(await rpc("wif_travel_overlap_snapshot", {p_user_id: userID, p_id: id}));
+    }
+
     if (request.method === "GET" && path === "/v2/own-plans") {
         return json(await rpc("wif_travel_core_snapshot", {p_user_id: userID, p_include_plans: true}));
     }

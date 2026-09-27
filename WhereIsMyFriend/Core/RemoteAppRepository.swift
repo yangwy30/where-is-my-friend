@@ -565,6 +565,12 @@ actor RemoteAppRepository: AppRepository {
         try await authorizedRequest(path: "/v2/travel-plans", method: "GET", body: Optional<EmptyBody>.none)
     }
 
+    func fetchTravelOverlaps(id: String?) async throws -> TravelOverlapSnapshot {
+        if let id, id.range(of: "^[a-f0-9]{32}$", options: .regularExpression) == nil { throw RepositoryError.invalidServerResponse }
+        let path = "/v2/travel-overlaps" + (id.map { "/" + $0 } ?? "")
+        return try await authorizedRequest(path: path, method: "GET", body: Optional<EmptyBody>.none)
+    }
+
     func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan] {
         let result: TravelPlanSnapshot = try await authorizedRequest(path: "/v2/own-plans", method: "GET", body: Optional<EmptyBody>.none)
         return result.plans

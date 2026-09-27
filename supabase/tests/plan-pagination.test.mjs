@@ -52,3 +52,44 @@ test('private paging helpers reject direct client access and oversized pages',as
   await assert.rejects(db.query('select * from wif_visible_friend_plan_rows'),/permission denied/);
  }finally{await db.close();}
 });
+
+test('home overlap preview keeps the total and detail outside the preview; legacy stays complete',async()=>{
+ const {db}=await fixture();try{
+  const friendship=(await db.query("select id from friendships where status='accepted'")).rows[0].id;
+  const plan=(await db.query(`insert into travel_plans(id,owner_id,city,country_code,region,time_zone,city_key,start_day,end_day)
+   values(gen_random_uuid(),$1,'Tokyo','JP','Tokyo','Asia/Tokyo','tokyo',current_date,current_date+10) returning id`,[b])).rows[0].id;
+  await db.query('insert into travel_plan_audience(plan_id,friend_id,friendship_id) values($1,$2,$3)',[plan,a,friendship]);
+  const overview=await scalar(db,'select wif_travel_overview($1)',[b]);
+  const full=await scalar(db,'select wif_travel_overlap_snapshot($1)',[b]);
+  assert.equal(overview.overlaps.length,3);assert.equal(overview.overlapCount,4);assert.equal(overview.includesAllOverlaps,false);
+  assert.equal(full.overlaps.length,4);assert.equal(full.includesAllOverlaps,true);assert.equal(full.overlapVersion,overview.overlapVersion);
+  assert.deepEqual(full.overlaps.slice(0,3),overview.overlaps);
+  const target=full.overlaps[3];
+  assert.deepEqual((await scalar(db,'select wif_travel_overlap_snapshot($1,null,$2)',[b,target.id])).overlaps,[target]);
+  assert.equal((await scalar(db,'select wif_travel_snapshot($1)',[b])).overlaps.length,4);
+  await db.query("update app_users set display_name='New name' where id=$1",[a]);
+  assert.notEqual((await scalar(db,'select wif_travel_overview($1)',[b])).overlapVersion,overview.overlapVersion);
+  await db.query('delete from travel_plan_audience where plan_id=$1',[plan]);
+  const revoked=await scalar(db,'select wif_travel_overlap_snapshot($1,null,$2)',[b,target.id]);
+  assert.equal(revoked.overlapCount,0);assert.deepEqual(revoked.overlaps,[]);assert.notEqual(revoked.overlapVersion,overview.overlapVersion);
+  await db.query('insert into travel_plan_audience(plan_id,friend_id,friendship_id) values($1,$2,$3)',[plan,a,friendship]);
+  await db.query('insert into user_blocks(blocker_id,blocked_id) values($1,$2)',[a,b]);
+  assert.equal((await scalar(db,'select wif_travel_overview($1)',[b])).overlapCount,0);
+  await db.query('delete from user_blocks');
+  await db.query("update friendships set status='declined' where id=$1",[friendship]);
+  assert.deepEqual((await scalar(db,'select wif_travel_overlap_snapshot($1,null,$2)',[b,target.id])).overlaps,[]);
+  await db.query("update friendships set status='accepted' where id=$1",[friendship]);
+  await db.query('update travel_plans set start_day=current_date-10,end_day=current_date-5 where id=$1',[plan]);
+  assert.equal((await scalar(db,'select wif_travel_overview($1)',[b])).overlapCount,0);
+  await db.query('delete from travel_plans where id=$1',[plan]);
+  assert.equal((await scalar(db,'select wif_travel_overview($1)',[b])).overlapCount,0);
+ }finally{await db.close();}
+});
+test('overlap helpers validate inputs and cannot be called by untrusted clients',async()=>{
+ const {db}=await fixture();try{
+  await assert.rejects(scalar(db,'select wif_travel_overlap_snapshot($1,4)',[b]),/Invalid overlap/);
+  await assert.rejects(scalar(db,"select wif_travel_overlap_snapshot($1,null,'bad')",[b]),/Invalid overlap/);
+  await db.exec('set role authenticated');
+  await assert.rejects(scalar(db,'select wif_travel_overlap_snapshot($1)',[b]),/permission denied/);
+ }finally{await db.close();}
+});

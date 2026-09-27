@@ -651,7 +651,7 @@ final class PrototypeUITests: XCTestCase {
     func testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt() {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testOverlapCity", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
         let entry = app.buttons["upcomingTogetherToggle"]
@@ -698,6 +698,26 @@ final class PrototypeUITests: XCTestCase {
         if !close.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
         close.tap()
         XCTAssertFalse(entry.exists)
+    }
+
+    func testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testOverlapSummary", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
+        let toggle = app.buttons["upcomingTogetherToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        let rows = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-"))
+        XCTAssertEqual(rows.count, 0)
+        toggle.tap()
+        XCTAssertTrue(rows.element(boundBy: 4).waitForExistence(timeout: 5)); XCTAssertEqual(rows.count, 5)
+        capture("home-summary-all-five-overlaps")
+        let id = String(rows.element(boundBy: 4).identifier.dropFirst("upcomingOverlap-".count))
+        app.terminate(); app.open(URL(string: "whereismyfriend://upcoming/" + id)!)
+        XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 8))
+        XCTAssertFalse(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].exists)
+        capture("home-summary-fifth-overlap-cold-link")
     }
 
     func testUnavailableUpcomingLinkIsSafeAfterColdLaunch() {

@@ -130,7 +130,10 @@ final class AppStore: ObservableObject {
     private var visibleOperationCount = 0
     private var operationSequence = 0
     private var latestAppliedOperationSequence = 0
-    private var refreshIsInFlight = false
+    private var refreshTask: Task<Void, Never>?
+    private var refreshTicket: UUID?
+    private var lastRefreshAt: Date?
+    private var lastRefreshOwner: UUID?
 
     init(repository: (any AppRepository)? = nil, profileSaveTimeout: Duration = .seconds(25), pushRegistrationTimeout: Duration = .seconds(20)) {
         self.pushRegistrationTimeout = pushRegistrationTimeout
@@ -163,7 +166,10 @@ final class AppStore: ObservableObject {
         notificationService.onUpcomingForeground = { [weak self] id in
             guard let self, snapshot.isAuthenticated else { return }
             pendingUpcomingNotificationID = id
-            Task { await self.travelPlans.refresh() }
+            Task {
+                await self.travelPlans.resolveOverlap(id, minimumInterval: 0)
+                if self.pendingUpcomingNotificationID == id { self.pendingUpcomingNotificationID = nil }
+            }
         }
         travelObservation = travelPlans.$overlaps.sink { [weak self] values in
             self?.reconcileUpcomingNotifications(values)
@@ -182,16 +188,32 @@ final class AppStore: ObservableObject {
         snapshot.preference(for: friendID)
     }
 
-    func refresh() async {
-        // A refresh started after a profile PATCH can return the pre-write snapshot
-        // first, advance latestAppliedOperationSequence, and discard the save result.
-        guard !refreshIsInFlight, !isSavingProfile, !isDeletingAccount else { return }
-        refreshIsInFlight = true
-        defer { refreshIsInFlight = false }
-        await perform(successMessage: nil, showsActivity: false, presentsErrors: false) {
-            try await self.repository.loadSnapshot()
+    func refresh(minimumInterval: TimeInterval = 0) async {
+        guard !isSavingProfile, !isDeletingAccount else { return }
+        if let refreshTask { await refreshTask.value; return }
+        let owner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
+        if owner == lastRefreshOwner, let stamp = lastRefreshAt, Date().timeIntervalSince(stamp) < minimumInterval {
+            // A successful Friends read must not suppress retries of a failed plan read.
+            await travelPlans.refresh(minimumInterval: minimumInterval)
+            return
         }
-        await travelPlans.refresh(minimumInterval: 15)
+        let ticket = UUID()
+        refreshTicket = ticket
+        let read = Task { [self] in
+            let success = await perform(successMessage: nil, showsActivity: false, presentsErrors: false, preservingRefresh: ticket) {
+                try await self.repository.loadSnapshot()
+            }
+            guard refreshTicket == ticket else { return }
+            if success && snapshot.syncState != .offline { lastRefreshAt = Date(); lastRefreshOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil }
+            await travelPlans.refresh(minimumInterval: minimumInterval)
+        }
+        refreshTask = read
+        await read.value
+        if refreshTicket == ticket { refreshTask = nil; refreshTicket = nil }
+    }
+
+    private func invalidateRefresh() {
+        refreshTicket = nil; refreshTask?.cancel(); refreshTask = nil; lastRefreshAt = nil; lastRefreshOwner = nil
     }
 
     func updateProfile(_ update: ProfileUpdate) async -> Bool {
@@ -606,6 +628,7 @@ final class AppStore: ObservableObject {
         presentsErrors: Bool = true,
         waitsForPendingCityUpdate: Bool = true,
         allowsDuringAccountDeletion: Bool = false,
+        preservingRefresh: UUID? = nil,
         operation: @escaping () async throws -> AppSnapshot
     ) async -> Bool {
         // A later refresh/profile result must not supersede a confirmed account deletion.
@@ -631,6 +654,10 @@ final class AppStore: ObservableObject {
                 snapshot = updated
                 travelPlans.connect(repository: repository, userID: updated.isAuthenticated ? updated.currentUser.id : nil)
                 travelPlans.updateFriendAccess(Set(updated.friends.map(\.id)).subtracting(updated.blockedUserIDs))
+                if previousOwner != (updated.isAuthenticated ? updated.currentUser.id : nil) {
+                    if preservingRefresh != nil && preservingRefresh == refreshTicket { lastRefreshAt = nil; lastRefreshOwner = nil }
+                    else { invalidateRefresh() }
+                }
                 if !updated.isAuthenticated || (previousOwner != nil && previousOwner != updated.currentUser.id) {
                     friendPreferenceSaves.removeAll()
                     sharingSaveID = nil
@@ -726,6 +753,7 @@ final class AppStore: ObservableObject {
         isSavingSharingPreferences = false
         resetPushRegistration()
         discardFriendRequestLink()
+        invalidateRefresh()
         snapshot = DemoData.signedOutSnapshot()
         travelPlans.connect(repository: repository, userID: nil)
         pendingUpcomingID = nil

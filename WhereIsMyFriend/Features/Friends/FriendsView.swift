@@ -159,14 +159,13 @@ struct FriendsView: View {
             while !Task.isCancelled {
                 referenceDate = Date()
                 refreshLocationReminder()
-                if scenePhase == .active { await store.refresh() }
+                if scenePhase == .active { await store.refresh(minimumInterval: 15) }
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
         }
         .onChange(of: selectedUpcomingID, initial: true) { _, id in
             guard let id else { return }
             Task {
-                await travelPlans.refresh()
                 guard selectedUpcomingID == id else { return }
                 proxy.scrollTo("upcomingTogether", anchor: .top)
             }

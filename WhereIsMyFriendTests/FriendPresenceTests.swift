@@ -2410,6 +2410,22 @@ private actor SlowTestRepository: AppRepository {
         return FriendPlanPage(items: result.friendPlans.filter { (friendID == nil || $0.friendID == friendID) && (planID == nil || $0.id == planID) }, nextCursor: nil, version: "local")
     }
 
+    private var overlapResult: TravelOverlapSnapshot?
+    private var overlapReadCount = 0
+    private var overlapReadError: Error?
+    func configureOverlaps(_ result: TravelOverlapSnapshot, error: Error? = nil) { overlapResult = result; overlapReadError = error }
+    func overlapReads() -> Int { overlapReadCount }
+    func fetchTravelOverlaps(id: String?) async throws -> TravelOverlapSnapshot {
+        overlapReadCount += 1
+        var result = overlapResult ?? TravelOverlapSnapshot(overlaps: travel.overlaps, overlapCount: travel.overlaps.count, overlapVersion: travel.overlapVersion)
+        let error = overlapReadError
+        // A delayed transport may still complete after account/consent cancellation.
+        try? await Task.sleep(for: .milliseconds(100))
+        if let error { throw error }
+        if let id { result.overlaps = result.overlaps.filter { $0.id == id }; result.includesAllOverlaps = false }
+        return result
+    }
+
     private var tripReads: [[CloudTrip]] = []
     private var tripReadDelays: [Duration] = []
     private var tripReadCount = 0
@@ -3175,5 +3191,165 @@ extension FriendTravelPlanTests {
         let succeeded = await save.value
         XCTAssertTrue(succeeded); XCTAssertFalse(library.isSaving); XCTAssertEqual(library.plans.count, 1)
         XCTAssertTrue(library.friendPlans.isEmpty); XCTAssertFalse(library.hasSynced)
+    }
+}
+
+@MainActor
+final class HomeOverlapSummaryTests: XCTestCase {
+    private func rows() -> [TravelOverlap] {
+        (1...5).map { i in TravelOverlap(id: String(format: "%032x", i), friendID: DemoData.initialSnapshot().friends[0].id,
+            friendName: "Friend", city: "Tokyo", countryCode: "JP", region: "Tokyo", timeZone: "Asia/Tokyo", startDay: "2099-10-01", endDay: "2099-10-05") }
+    }
+    private func setup() async -> (SlowTestRepository, TravelPlanLibrary, [TravelOverlap]) {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), rows = rows()
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(overlaps: Array(rows.prefix(3)), includesOwnPlans: false,
+            overlapCount: rows.count, overlapVersion: "v1", includesAllOverlaps: false))
+        await repo.configureOverlaps(TravelOverlapSnapshot(overlaps: rows, overlapCount: rows.count, overlapVersion: "v1"))
+        library.connect(repository: repo, userID: UUID()); library.updateFriendAccess([rows[0].friendID]); await library.refresh()
+        return (repo, library, rows)
+    }
+    func testPreviewCountAndExpandedRowsStayCompleteAcrossUnchangedRefresh() async {
+        let (repo, library, rows) = await setup()
+        XCTAssertEqual(library.overlapCount, 5); XCTAssertEqual(library.overlaps.count, 3); XCTAssertFalse(library.overlapsFullyLoaded)
+        async let first: Void = library.loadAllOverlaps()
+        async let second: Void = library.loadAllOverlaps()
+        _ = await (first, second)
+        XCTAssertEqual(library.overlaps, rows); XCTAssertTrue(library.overlapsFullyLoaded); XCTAssertFalse(library.isLoadingOverlaps)
+        let count = await repo.overlapReads(); XCTAssertEqual(count, 1)
+        await library.refresh(); await library.loadAllOverlaps()
+        XCTAssertEqual(library.overlaps, rows)
+        let retainedCount = await repo.overlapReads(); XCTAssertEqual(retainedCount, 1)
+    }
+    func testNotificationTargetOutsidePreviewLoadsAndDuplicateReadsCoalesce() async {
+        let (repo, library, rows) = await setup(); let target = rows[4]
+        async let first = library.resolveOverlap(target.id)
+        async let second = library.resolveOverlap(target.id)
+        let results = await (first, second)
+        XCTAssertEqual(results.0, target); XCTAssertEqual(results.1, target); XCTAssertTrue(library.overlaps.contains(target))
+        XCTAssertEqual(library.overlapCount, 5); XCTAssertFalse(library.overlapsFullyLoaded)
+        _ = await library.resolveOverlap(target.id)
+        let count = await repo.overlapReads(); XCTAssertEqual(count, 1)
+        XCTAssertTrue(library.resolvingOverlapIDs.isEmpty)
+    }
+    func testAccountSwitchDiscardsPendingFullAndDetailReads() async {
+        let (repo, library, rows) = await setup()
+        let full = Task { await library.loadAllOverlaps() }
+        let detail = Task { await library.resolveOverlap(rows[4].id) }
+        try? await Task.sleep(for: .milliseconds(20))
+        library.connect(repository: repo, userID: nil)
+        await full.value; let stale = await detail.value
+        XCTAssertNil(stale); XCTAssertTrue(library.overlaps.isEmpty); XCTAssertEqual(library.overlapCount, 0)
+        XCTAssertFalse(library.isLoadingOverlaps); XCTAssertTrue(library.resolvingOverlapIDs.isEmpty)
+    }
+    func testFriendRemovalDiscardsPendingDetailAndCount() async {
+        let (_, library, rows) = await setup()
+        let detail = Task { await library.resolveOverlap(rows[4].id) }
+        try? await Task.sleep(for: .milliseconds(20)); library.updateFriendAccess([])
+        let result = await detail.value
+        XCTAssertNil(result); XCTAssertTrue(library.overlaps.isEmpty); XCTAssertEqual(library.overlapCount, 0)
+    }
+    func testChangedSummaryInvalidatesExpandedListAndRemovedTarget() async {
+        let (repo, library, rows) = await setup(); await library.loadAllOverlaps()
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(overlaps: [], includesOwnPlans: false, overlapCount: 0, overlapVersion: "v2", includesAllOverlaps: true))
+        await library.refresh()
+        XCTAssertTrue(library.overlaps.isEmpty); XCTAssertEqual(library.overlapCount, 0)
+        await repo.configureOverlaps(TravelOverlapSnapshot(overlaps: [], overlapCount: 0, overlapVersion: "v2"))
+        let missing = await library.resolveOverlap(rows[4].id)
+        XCTAssertNil(missing); XCTAssertTrue(library.overlaps.isEmpty)
+    }
+    func testFailedExpansionCanRetryWithoutErasingSummary() async {
+        let (repo, library, rows) = await setup()
+        let full = TravelOverlapSnapshot(overlaps: rows, overlapCount: 5, overlapVersion: "v1")
+        await repo.configureOverlaps(full, error: RepositoryError.networkUnavailable)
+        await library.loadAllOverlaps()
+        XCTAssertNotNil(library.overlapError); XCTAssertEqual(library.overlaps.count, 3); XCTAssertEqual(library.overlapCount, 5)
+        await repo.configureOverlaps(full); await library.loadAllOverlaps()
+        XCTAssertNil(library.overlapError); XCTAssertEqual(library.overlaps, rows)
+    }
+}
+
+extension AppStoreReliabilityTests {
+    func testRecentAutomaticReadsReuseSuccessfulResultButManualRefreshFetches() async {
+        let repo = SlowTestRepository(loadDelay: .zero)
+        SharedAppStateStore.save(DemoData.initialSnapshot(), origin: repo.storageScope)
+        let store = AppStore(repository: repo)
+        await store.refresh(minimumInterval: 15); await store.refresh(minimumInterval: 15)
+        let reused = await repo.snapshotLoadCount(); XCTAssertEqual(reused, 1)
+        await store.refresh()
+        let forced = await repo.snapshotLoadCount(); XCTAssertEqual(forced, 2)
+    }
+    func testFailedAutomaticReadsAreNotCached() async {
+        let repo = SlowTestRepository(loadError: RepositoryError.networkUnavailable, loadDelay: .zero)
+        let store = AppStore(repository: repo)
+        await store.refresh(minimumInterval: 15); await store.refresh(minimumInterval: 15)
+        let reads = await repo.snapshotLoadCount(); XCTAssertEqual(reads, 2)
+    }
+    func testAuthenticationDuringRefreshStillLoadsTravelOverview() async {
+        let repo = SlowTestRepository(loadDelay: .zero)
+        SharedAppStateStore.save(DemoData.signedOutSnapshot(), origin: repo.storageScope)
+        let store = AppStore(repository: repo)
+        await store.refresh(minimumInterval: 15)
+        XCTAssertTrue(store.snapshot.isAuthenticated)
+        let reads = await repo.travelReads(); XCTAssertEqual(reads, 1)
+        await store.refresh(minimumInterval: 15)
+        let loads = await repo.snapshotLoadCount(); XCTAssertEqual(loads, 1)
+    }
+}
+
+
+extension HomeOverlapSummaryTests {
+    func testForegroundNotificationBeyondPreviewPresentsItsBanner() async {
+        let repo = SlowTestRepository(loadDelay: .zero), rows = rows()
+        let snapshot = DemoData.initialSnapshot()
+        SharedAppStateStore.save(snapshot, origin: repo.storageScope)
+        let key = "upcoming.seen.v1.\(repo.storageScope).\(snapshot.currentUser.id)"
+        UserDefaults.standard.removeObject(forKey: key)
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(overlaps: Array(rows.prefix(3)), includesOwnPlans: false,
+            overlapCount: 5, overlapVersion: "v1", includesAllOverlaps: false))
+        await repo.configureOverlaps(TravelOverlapSnapshot(overlaps: rows, overlapCount: 5, overlapVersion: "v1"))
+        let store = AppStore(repository: repo); await store.refresh()
+        XCTAssertNil(store.upcomingBanner)
+        store.notificationService.onUpcomingForeground?(rows[4].id)
+        for _ in 0..<100 where store.upcomingBanner == nil { try? await Task.sleep(for: .milliseconds(10)) }
+        XCTAssertEqual(store.upcomingBanner, rows[4])
+        store.dismissUpcomingBanner()
+    }
+}
+
+extension HomeOverlapSummaryTests {
+    func testFailedDetailKeepsTotalAndCanRetry() async {
+        let (repo, library, rows) = await setup(); await library.loadAllOverlaps()
+        let full = TravelOverlapSnapshot(overlaps: rows, overlapCount: 5, overlapVersion: "v1")
+        await repo.configureOverlaps(full, error: RepositoryError.networkUnavailable)
+        let failed = await library.resolveOverlap(rows[4].id)
+        XCTAssertNil(failed); XCTAssertNotNil(library.overlapError); XCTAssertEqual(library.overlapCount, 5)
+        XCTAssertFalse(library.overlapsFullyLoaded)
+        await repo.configureOverlaps(full)
+        let result = await library.resolveOverlap(rows[4].id)
+        XCTAssertEqual(result, rows[4]); XCTAssertNil(library.overlapError)
+    }
+    func testSavingPlanRetiresInFlightOverlapResponse() async {
+        let (_, library, _) = await setup()
+        let full = Task { await library.loadAllOverlaps() }
+        try? await Task.sleep(for: .milliseconds(20))
+        let saved = await library.save(PersonalTravelPlan(city: "Tokyo", countryCode: "JP", region: "Tokyo", timeZone: "Asia/Tokyo", startDay: "2099-10-01", endDay: "2099-10-05"))
+        await full.value
+        XCTAssertTrue(saved); XCTAssertTrue(library.overlaps.isEmpty); XCTAssertEqual(library.overlapCount, 0)
+        XCTAssertFalse(library.isLoadingOverlaps)
+    }
+}
+
+extension AppStoreReliabilityTests {
+    func testRecentHomeSnapshotDoesNotSuppressFailedPlanRetry() async {
+        let repo = SlowTestRepository(loadDelay: .zero)
+        SharedAppStateStore.save(DemoData.initialSnapshot(), origin: repo.storageScope)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(), error: RepositoryError.networkUnavailable)
+        let store = AppStore(repository: repo)
+        await store.refresh(minimumInterval: 15); XCTAssertFalse(store.travelPlans.hasSynced)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot())
+        await store.refresh(minimumInterval: 15); XCTAssertTrue(store.travelPlans.hasSynced)
+        let loads = await repo.snapshotLoadCount(), plans = await repo.travelReads()
+        XCTAssertEqual(loads, 1); XCTAssertEqual(plans, 2)
     }
 }

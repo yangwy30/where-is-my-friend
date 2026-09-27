@@ -167,16 +167,26 @@ struct FriendPlanPage: Codable, Sendable {
     var resetRequired: Bool = false
 }
 
+struct TravelOverlapSnapshot: Codable, Sendable {
+    var overlaps: [TravelOverlap]
+    var overlapCount: Int
+    var overlapVersion: String?
+    var includesAllOverlaps: Bool = true
+}
+
 struct TravelPlanSnapshot: Codable {
     var plans: [PersonalTravelPlan] = []
     var overlaps: [TravelOverlap] = []
     var friendPlans: [FriendTravelPlan] = []
     var friendPlanSummaries: [FriendPlanSummary]?
     var includesOwnPlans = true
+    var overlapCount: Int?
+    var overlapVersion: String?
+    var includesAllOverlaps = true
 }
 
 extension TravelPlanSnapshot {
-    enum CodingKeys: String, CodingKey { case plans, overlaps, friendPlans, friendPlanSummaries, includesOwnPlans }
+    enum CodingKeys: String, CodingKey { case plans, overlaps, friendPlans, friendPlanSummaries, includesOwnPlans, overlapCount, overlapVersion, includesAllOverlaps }
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         plans = try values.decode([PersonalTravelPlan].self, forKey: .plans)
@@ -184,6 +194,9 @@ extension TravelPlanSnapshot {
         friendPlans = try values.decodeIfPresent([FriendTravelPlan].self, forKey: .friendPlans) ?? []
         friendPlanSummaries = try values.decodeIfPresent([FriendPlanSummary].self, forKey: .friendPlanSummaries)
         includesOwnPlans = try values.decodeIfPresent(Bool.self, forKey: .includesOwnPlans) ?? true
+        overlapCount = try values.decodeIfPresent(Int.self, forKey: .overlapCount)
+        overlapVersion = try values.decodeIfPresent(String.self, forKey: .overlapVersion)
+        includesAllOverlaps = try values.decodeIfPresent(Bool.self, forKey: .includesAllOverlaps) ?? true
     }
 }
 
@@ -201,6 +214,12 @@ enum UpcomingTravelLink {
 final class TravelPlanLibrary: ObservableObject {
     @Published private(set) var plans: [PersonalTravelPlan] = []
     @Published private(set) var overlaps: [TravelOverlap] = []
+    @Published private(set) var overlapCount = 0
+    @Published private(set) var overlapVersion: String?
+    @Published private(set) var overlapsFullyLoaded = true
+    @Published private(set) var isLoadingOverlaps = false
+    @Published private(set) var resolvingOverlapIDs: Set<String> = []
+    @Published private(set) var overlapError: String?
     @Published private(set) var friendPlans: [FriendTravelPlan] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isSaving = false
@@ -229,7 +248,7 @@ final class TravelPlanLibrary: ObservableObject {
         self.repository = repository; ownerID = userID; scope = newScope; accountScope = newScope
         friendSummaries = nil; lastRefreshAt = nil; allowedFriendIDs = nil; accessRevision += 1
         cacheEpoch = newScope.map { AccountLocalData.epoch(for: $0) } ?? 0
-        plans = []; overlaps = []; friendPlans = []; errorMessage = nil; hasSynced = false; isLoading = false; isSaving = false
+        resetOverlaps(); plans = []; friendPlans = []; errorMessage = nil; hasSynced = false; isLoading = false; isSaving = false
         if let newScope, let data = UserDefaults.standard.data(forKey: newScope),
            let saved = try? JSONDecoder().decode([PersonalTravelPlan].self, from: data) { plans = saved }
     }
@@ -238,7 +257,7 @@ final class TravelPlanLibrary: ObservableObject {
         guard let previous = allowedFriendIDs else { allowedFriendIDs = ids; return }
         guard previous != ids else { return }
         allowedFriendIDs = ids; accessRevision += 1; cancelRefresh()
-        friendPlans = []; friendSummaries = nil; overlaps = []; hasSynced = false; lastRefreshAt = nil
+        friendPlans = []; friendSummaries = nil; resetOverlaps(); hasSynced = false; lastRefreshAt = nil
     }
 
     func refresh(minimumInterval: TimeInterval = 0) async {
@@ -276,11 +295,12 @@ final class TravelPlanLibrary: ObservableObject {
             // Cancellation is control flow during account/navigation changes,
             // not evidence that the server rejected a shared plan.
             guard !(error is CancellationError), (error as? URLError)?.code != .cancelled else { return }
-            overlaps = []; friendPlans = []; friendSummaries = nil; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
+            resetOverlaps(); friendPlans = []; friendSummaries = nil; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
         }
     }
 
     private func cancelRefresh() {
+        cancelOverlapReads()
         ownRefreshID = nil; ownRefreshTask?.cancel(); ownRefreshTask = nil
         refreshID = nil
         refreshTask?.cancel()
@@ -335,7 +355,11 @@ final class TravelPlanLibrary: ObservableObject {
         let accessChanged = expectedAccess.map { $0 != accessRevision } ?? false
         if accessChanged { result.friendPlans = []; result.friendPlanSummaries = []; result.overlaps = [] }
         guard let scope, AccountLocalData.epoch(for: scope) == cacheEpoch else { return }
-        if result.includesOwnPlans { plans = result.plans }; overlaps = result.overlaps; hasSynced = true; errorMessage = nil
+        if result.includesOwnPlans { plans = result.plans }
+        if accessChanged { resetOverlaps() }
+        else { applyOverlapSnapshot(TravelOverlapSnapshot(overlaps: result.overlaps, overlapCount: result.overlapCount ?? result.overlaps.count,
+                    overlapVersion: result.overlapVersion, includesAllOverlaps: result.includesAllOverlaps)) }
+        hasSynced = true; errorMessage = nil
         lastRefreshAt = accessChanged ? nil : Date(); friendSummaries = result.friendPlanSummaries
         if accessChanged { hasSynced = false }
         // Shared full dates are memory-only: no offline or cross-account browsing cache.
@@ -344,6 +368,93 @@ final class TravelPlanLibrary: ObservableObject {
             return $0.id.uuidString < $1.id.uuidString
         }
         if let data = try? JSONEncoder().encode(plans) { UserDefaults.standard.set(data, forKey: scope) }
+    }
+
+    private var overlapEpoch = 0
+    private var overlapTask: Task<TravelOverlapSnapshot, Error>?
+    private var overlapTicket: UUID?
+    private var overlapDetailTasks: [String: Task<TravelOverlapSnapshot, Error>] = [:]
+    private var overlapDetailTickets: [String: UUID] = [:]
+    private var overlapResolvedAt: [String: Date] = [:]
+
+    private func cancelOverlapReads() {
+        overlapEpoch += 1; overlapTicket = nil; overlapTask?.cancel(); overlapTask = nil; isLoadingOverlaps = false
+        overlapDetailTasks.values.forEach { $0.cancel() }; overlapDetailTasks = [:]; overlapDetailTickets = [:]; resolvingOverlapIDs = []; overlapResolvedAt = [:]
+    }
+
+    private func resetOverlaps() {
+        cancelOverlapReads(); overlapCount = 0; overlapVersion = nil; overlapsFullyLoaded = true; overlapError = nil; overlaps = []
+    }
+
+    private func applyOverlapSnapshot(_ result: TravelOverlapSnapshot) {
+        let sameVersion = result.overlapVersion != nil && result.overlapVersion == overlapVersion
+        if !sameVersion { cancelOverlapReads() }
+        overlapCount = result.overlapCount; overlapError = nil
+        if result.includesAllOverlaps || !sameVersion {
+            overlapsFullyLoaded = result.includesAllOverlaps
+            overlaps = result.overlaps
+        } else if !overlapsFullyLoaded {
+            let ids = Set(result.overlaps.map(\.id))
+            overlaps = result.overlaps + overlaps.filter { !ids.contains($0.id) && !$0.isPast() }
+        }
+        overlapVersion = result.overlapVersion
+    }
+
+    func loadAllOverlaps() async {
+        guard let repository, ownerID != nil, !Task.isCancelled, !isSaving else { return }
+        if overlapsFullyLoaded && hasSynced { return }
+        if let overlapTask { _ = try? await overlapTask.value; return }
+        let ticket = UUID(), epoch = overlapEpoch, account = generation, mutation = mutationEpoch
+        let task = Task { try await repository.fetchTravelOverlaps(id: nil) }
+        overlapTask = task; overlapTicket = ticket; isLoadingOverlaps = true; overlapError = nil
+        defer { if overlapTicket == ticket { overlapTask = nil; overlapTicket = nil; isLoadingOverlaps = false } }
+        do {
+            let result = try await task.value
+            guard overlapTicket == ticket, epoch == overlapEpoch, account == generation, mutation == mutationEpoch else { return }
+            applyOverlapSnapshot(result)
+        } catch {
+            guard overlapTicket == ticket, epoch == overlapEpoch, account == generation, mutation == mutationEpoch else { return }
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { overlapError = String(localized: "Couldn’t load shared plans. Try again.") }
+        }
+    }
+
+    @discardableResult
+    func resolveOverlap(_ id: String, minimumInterval: TimeInterval = 15) async -> TravelOverlap? {
+        guard id.range(of: "^[a-f0-9]{32}$", options: .regularExpression) != nil,
+              let repository, ownerID != nil, !isSaving, !Task.isCancelled else { return nil }
+        if let stamp = overlapResolvedAt[id], Date().timeIntervalSince(stamp) < minimumInterval { return overlaps.first { $0.id == id && !$0.isPast() } }
+        if let existing = overlapDetailTasks[id] {
+            let account = generation, epoch = overlapEpoch, mutation = mutationEpoch
+            let result = try? await existing.value
+            guard account == generation, epoch == overlapEpoch, mutation == mutationEpoch else { return nil }
+            return result?.overlaps.first { $0.id == id && !$0.isPast() }
+        }
+        let ticket = UUID(), epoch = overlapEpoch, account = generation, mutation = mutationEpoch
+        let task = Task { try await repository.fetchTravelOverlaps(id: id) }
+        overlapDetailTasks[id] = task; overlapDetailTickets[id] = ticket; resolvingOverlapIDs.insert(id); overlapError = nil
+        defer {
+            if overlapDetailTickets[id] == ticket { overlapDetailTasks[id] = nil; overlapDetailTickets[id] = nil; resolvingOverlapIDs.remove(id) }
+        }
+        do {
+            let result = try await task.value
+            guard overlapDetailTickets[id] == ticket, epoch == overlapEpoch, account == generation, mutation == mutationEpoch else { return nil }
+            if result.overlapVersion != nil && result.overlapVersion != overlapVersion {
+                cancelOverlapReads(); overlapsFullyLoaded = false; overlapVersion = result.overlapVersion; overlaps = []
+            }
+            overlapCount = result.overlapCount; overlapError = nil
+            overlaps.removeAll { $0.id == id }
+            let row = result.overlaps.first { $0.id == id && !$0.isPast() }
+            overlapResolvedAt[id] = Date()
+            if let row { overlaps.append(row) }
+            return row
+        } catch {
+            guard overlapDetailTickets[id] == ticket, epoch == overlapEpoch, account == generation, mutation == mutationEpoch else { return nil }
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
+                overlaps.removeAll { $0.id == id }; overlapsFullyLoaded = false
+                overlapError = String(localized: "Couldn’t load shared plans. Try again.")
+            }
+            return nil
+        }
     }
 
     private var ownRefreshTask: Task<[PersonalTravelPlan], Error>?
