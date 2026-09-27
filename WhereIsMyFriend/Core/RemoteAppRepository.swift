@@ -1,6 +1,23 @@
 import Foundation
 import Supabase
 
+enum BackendEnvironmentPolicy {
+    // The historical project named "staging" is the live backend.
+    private static let protectedProjects: Set<String> = ["cdhpaujazbuppbxyhjxq", "zgqjctiuycrhwrstorxw", "rjascsekngqbnzgwseyr"]
+
+    static func allows(bundleID: String?, apiURL: URL, supabaseURL: URL) -> Bool {
+        guard bundleID?.hasSuffix(".staging") == true else { return true }
+        guard apiURL.scheme == "https", supabaseURL.scheme == "https",
+              let host = supabaseURL.host?.lowercased(), apiURL.host?.lowercased() == host,
+              host.hasSuffix(".supabase.co"), apiURL.port == nil, supabaseURL.port == nil,
+              apiURL.user == nil, apiURL.password == nil, supabaseURL.user == nil, supabaseURL.password == nil,
+              apiURL.path == "/functions/v1/api", ["", "/"].contains(supabaseURL.path),
+              apiURL.query == nil, apiURL.fragment == nil, supabaseURL.query == nil, supabaseURL.fragment == nil else { return false }
+        let project = String(host.dropLast(".supabase.co".count))
+        return project.range(of: "^[a-z]{20}$", options: .regularExpression) != nil && !protectedProjects.contains(project)
+    }
+}
+
 struct APIConfiguration: Equatable, Sendable {
     let baseURL: URL
 

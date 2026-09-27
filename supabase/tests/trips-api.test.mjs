@@ -50,7 +50,7 @@ test('collaboration endpoints accept only the authenticated actor and strict fie
     assert.equal((await request('POST','/v1/trips/trip-one/preferences',{enabled:'true'})).status,400);
 });
 
-async function harness({ databaseError = null, cached = null, upstreamStatus, authError = null } = {}) {
+async function harness({ databaseError = null, cached = null, upstreamStatus, authError = null, resolvedUserID = userID } = {}) {
     const calls = [];
     let handler;
     const database = {
@@ -59,7 +59,8 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
             : { data: { user: null }, error: { message: "invalid", status:401, code:'bad_jwt' } } },
         rpc: async (name, parameters) => {
             calls.push({ name, parameters });
-            if (name === "wif_resolve_app_user") return { data: userID, error: null };
+            if (name === "wif_resolve_app_user") return { data: resolvedUserID, error: null };
+            if (name === "wif_ensure_app_user") return { data: userID, error: databaseError };
             if (name === "wif_flight_lookup_acquire") return { data: { cached, acquired: !cached }, error: databaseError };
             return { data: name === "wif_trip_list" ? [] : { id: "trip-one" }, error: databaseError, status:upstreamStatus };
         },
@@ -305,4 +306,19 @@ test('overlap list and detail are bound to the authenticated viewer',async()=>{
  const before=calls.filter(c=>c.name==='wif_travel_overlap_snapshot').length;
  assert.equal((await request('GET','/v2/travel-overlaps/bad')).status,400);
  assert.equal(calls.filter(c=>c.name==='wif_travel_overlap_snapshot').length,before);
+});
+
+
+test('routine authenticated bootstrap reuses the resolved profile but first sign-in still initializes',async()=>{
+ for(const body of [{},{displayName:null}]){
+  const {request,calls}=await harness();assert.equal((await request('POST','/v1/auth/bootstrap',body)).status,200);
+  assert.equal(calls.filter(c=>c.name==='wif_ensure_app_user').length,0);
+  assert.equal(calls.find(c=>c.name==='wif_snapshot').parameters.p_user_id,userID);
+ }
+ const named=await harness();assert.equal((await named.request('POST','/v1/auth/bootstrap',{displayName:'New Friend Name'})).status,200);
+ assert.equal(named.calls.find(c=>c.name==='wif_ensure_app_user').parameters.p_display_name,'New Friend Name');
+ const fresh=await harness({resolvedUserID:null});assert.equal((await fresh.request('POST','/v1/auth/bootstrap',{})).status,200);
+ assert.equal(fresh.calls.find(c=>c.name==='wif_ensure_app_user').parameters.p_auth_user_id,authID);
+ const invalid=await harness();assert.equal((await invalid.request('POST','/v1/auth/bootstrap',{displayName:12})).status,400);
+ assert.equal(invalid.calls.filter(c=>c.name==='wif_ensure_app_user').length,0);
 });

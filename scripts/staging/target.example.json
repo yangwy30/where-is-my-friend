@@ -1,0 +1,7 @@
+{
+  "environment": "isolated-staging",
+  "projectName": "across-us-isolated-staging",
+  "projectRef": "REPLACE_WITH_NEW_PROJECT_REF",
+  "organizationID": "REPLACE_WITH_TEST_ORGANIZATION",
+  "region": "us-east-2"
+}

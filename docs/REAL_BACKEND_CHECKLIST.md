@@ -1,5 +1,7 @@
 # Connecting the real backend
 
+**2026-09-27 更新：** 已建立与正式 App 分离的云端测试项目；Staging 改为单独配置、默认未配置时停止连接。当前状态与测试结果见 [独立环境报告](ISOLATED_STAGING_20260927.md)。下方早期部署记录需结合该报告阅读。
+
 The client is intentionally complete before infrastructure. The selected route is remote Supabase Staging; Docker is optional. Use this short checklist together with the detailed [Supabase implementation plan](./SUPABASE_PRODUCTION_PLAN.md).
 
 1. Register the final App ID, App Group, Sign in with Apple capability, Push Notifications and background modes in the Apple Developer portal.

@@ -113,6 +113,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+        C92700000000000000000001 /* Staging.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Staging.xcconfig; sourceTree = SOURCE_ROOT; };
         B92600000000000000000003 /* HomeWidgetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Shared/Components/HomeWidgetViews.swift; sourceTree = SOURCE_ROOT; };
 		C91500000000000000000003 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Shared/Models/CityRegions.swift; sourceTree = SOURCE_ROOT; };
 		C91500000000000000000006 = {isa = PBXFileReference; lastKnownFileType = text.json; path = "supabase/functions/_shared/city-regions.v1.json"; sourceTree = SOURCE_ROOT; };
@@ -189,6 +190,7 @@
 		200000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+                C92700000000000000000001 /* Staging.xcconfig */,
 				200000000000000000000003 /* WhereIsMyFriend */,
 				200000000000000000000017 /* WhereIsMyFriendWidget */,
 				200000000000000000000018 /* WhereIsMyFriendTests */,
@@ -655,6 +657,7 @@
 			TEST_TARGET_NAME = WhereIsMyFriend;
 		}; name = Release; };
 		800000000000000000000011 /* Staging */ = {
+            baseConfigurationReference = C92700000000000000000001 /* Staging.xcconfig */;
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -694,14 +697,14 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
-			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
+			WIF_API_BASE_URL = "$(WIF_STAGING_API_BASE_URL)";
 			WIF_APS_ENVIRONMENT = development;
-			WIF_DISPLAY_NAME = "Across Us";
+			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = staging-invite.example.invalid;
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
-			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
-			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
+			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
+			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;
 		}; name = Staging; };
 		800000000000000000000013 /* Staging */ = {isa = XCBuildConfiguration; buildSettings = {
@@ -747,6 +750,7 @@
 			TEST_TARGET_NAME = WhereIsMyFriend;
 		}; name = Staging; };
 		800000000000000000000016 /* Staging TestFlight */ = {
+            baseConfigurationReference = C92700000000000000000001 /* Staging.xcconfig */;
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -787,14 +791,14 @@
 			VALIDATE_PRODUCT = YES;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
-			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
+			WIF_API_BASE_URL = "$(WIF_STAGING_API_BASE_URL)";
 			WIF_APS_ENVIRONMENT = production;
-			WIF_DISPLAY_NAME = "Across Us";
+			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = "";
 			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
-			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
-			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
+			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
+			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;
 		}; name = "Staging TestFlight"; };
 		800000000000000000000018 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {

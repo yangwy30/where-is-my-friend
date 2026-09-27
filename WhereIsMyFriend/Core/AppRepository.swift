@@ -162,7 +162,8 @@ enum AppEnvironment {
         if wantsRemote {
             guard
                 let configuration = APIConfiguration.fromBundle(),
-                let supabaseConfiguration = SupabaseConfiguration.fromBundle()
+                let supabaseConfiguration = SupabaseConfiguration.fromBundle(),
+                BackendEnvironmentPolicy.allows(bundleID: Bundle.main.bundleIdentifier, apiURL: configuration.baseURL, supabaseURL: supabaseConfiguration.projectURL)
             else { return UnavailableAppRepository() }
             return RemoteAppRepository(
                 configuration: configuration,

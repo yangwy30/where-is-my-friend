@@ -182,10 +182,15 @@ async function handle(request: Request): Promise<Response> {
         if (displayName !== null && displayName !== undefined && typeof displayName !== "string") {
             throw new APIError(400, "Invalid displayName.");
         }
-        const userID = await rpc("wif_ensure_app_user", {
-            p_auth_user_id: authorization.authUserID,
-            p_display_name: typeof displayName === "string" ? displayName : null,
-        });
+        // authorize already resolved an active profile. Routine refreshes do not
+        // need another initialization RPC or its per-account transaction lock.
+        // Keep initialization/name handling for first sign-in and explicit names.
+        const userID = authorization.userID && (displayName === null || displayName === undefined)
+            ? authorization.userID
+            : await rpc("wif_ensure_app_user", {
+                p_auth_user_id: authorization.authUserID,
+                p_display_name: typeof displayName === "string" ? displayName : null,
+            });
         if (typeof userID !== "string" || !isUUID(userID)) {
             throw new APIError(500, "The account could not be initialized.");
         }

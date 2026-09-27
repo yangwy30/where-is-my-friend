@@ -1,0 +1,6 @@
+// Dedicated test backend only. Unconfigured builds fail closed.
+// Keep production URLs out of this file and its optional local override.
+WIF_STAGING_API_BASE_URL =
+WIF_STAGING_SUPABASE_URL =
+WIF_STAGING_PUBLISHABLE_KEY =
+#include? "Staging.local.xcconfig"

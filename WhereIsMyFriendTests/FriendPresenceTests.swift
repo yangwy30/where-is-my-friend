@@ -3353,3 +3353,23 @@ extension AppStoreReliabilityTests {
         XCTAssertEqual(loads, 1); XCTAssertEqual(plans, 2)
     }
 }
+
+final class BackendEnvironmentIsolationTests: XCTestCase {
+    func testStagingRejectsLiveAndMismatchedBackends() {
+        let fresh = URL(string: "https://abcdefghijklmnopqrst.supabase.co")!
+        let freshAPI = fresh.appendingPathComponent("functions/v1/api")
+        XCTAssertTrue(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend.staging", apiURL: freshAPI, supabaseURL: fresh))
+        for project in ["cdhpaujazbuppbxyhjxq", "zgqjctiuycrhwrstorxw", "rjascsekngqbnzgwseyr"] {
+            let live = URL(string: "https://\(project).supabase.co")!
+            XCTAssertFalse(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend.staging", apiURL: live.appendingPathComponent("functions/v1/api"), supabaseURL: live))
+            XCTAssertFalse(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend.staging", apiURL: freshAPI, supabaseURL: live))
+        }
+        for raw in ["http://abcdefghijklmnopqrst.supabase.co/functions/v1/api", "https://abcdefghijklmnopqrst.supabase.co.evil.example/functions/v1/api", "https://abcdefghijklmnopqrst.supabase.co/functions/v1/other", "https://abcdefghijklmnopqrst.supabase.co/functions/v1/api?redirect=live"] {
+            XCTAssertFalse(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend.staging", apiURL: URL(string: raw)!, supabaseURL: fresh))
+        }
+    }
+    func testReleaseBackendRemainsAvailable() {
+        let live = URL(string: "https://cdhpaujazbuppbxyhjxq.supabase.co")!
+        XCTAssertTrue(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend", apiURL: live.appendingPathComponent("functions/v1/api"), supabaseURL: live))
+    }
+}
