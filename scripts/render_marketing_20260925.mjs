@@ -31,7 +31,7 @@ for (const [locale, specs] of Object.entries(copy)) {
     const font=locale==='en'?'Helvetica Neue':'Hiragino Sans GB';
     const fontSize=locale==='en'?124:114;
     const title=s.title.map((line,i)=>`<text x="90" y="${275+i*148}" font-size="${fontSize}" font-weight="700" letter-spacing="${locale==='en'?-4:0}">${esc(line)}</text>`).join('');
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="2796" viewBox="0 0 1290 2796">
+    const svg=s.compositionSVG ? fs.readFileSync(path.resolve(out,s.compositionSVG),'utf8') : `<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="2796" viewBox="0 0 1290 2796">
       <defs><linearGradient id="bg" x2=".7" y2="1"><stop stop-color="${colors[0]}"/><stop offset="1" stop-color="${colors[1]}"/></linearGradient>
       <clipPath id="screen"><rect x="${frameX}" y="${frameY}" width="${frameWidth}" height="${frameHeight}" rx="${radius}"/></clipPath>
       <filter id="shadow" x="-20%" y="-10%" width="140%" height="130%"><feGaussianBlur stdDeviation="24"/></filter></defs>

@@ -11,7 +11,7 @@
     },
     {
       "path": "en/1284x2778/02-widgets.png",
-      "sha256": "5560c6952299876570b0f86dd5071df2834fd05bfa96e358bffefca038134f8b"
+      "sha256": "945c14eda521858cae2b699e7d47a9543efd5159c50121aeb7c146313a14dfe5"
     },
     {
       "path": "en/1284x2778/03-friend-plans.png",
@@ -43,7 +43,7 @@
     },
     {
       "path": "en/1320x2868/02-widgets.png",
-      "sha256": "b8ee14da79bf41ef35d25470b220517de8a18475f88a4b0b38cab6956426f5fd"
+      "sha256": "56e1e2b333c0c7a58ed8ad5fc28d06fec40a870d495bd7bd20c9070e595021aa"
     },
     {
       "path": "en/1320x2868/03-friend-plans.png",
@@ -75,7 +75,7 @@
     },
     {
       "path": "zh-Hans/1284x2778/02-widgets.png",
-      "sha256": "8cf039917036bfc19e49a40ee165467b31e44a82920c6dd861d93404f30528fd"
+      "sha256": "3546f420519a5981939fcb60c6083add6718df85e37e2536ebb9db970e7fd23b"
     },
     {
       "path": "zh-Hans/1284x2778/03-friend-plans.png",
@@ -107,7 +107,7 @@
     },
     {
       "path": "zh-Hans/1320x2868/02-widgets.png",
-      "sha256": "5307fe925faadb6dd534a2b36b952d15b95181572dcace6738487bfb4738ce07"
+      "sha256": "d79c3b877811d166d765c8f222af721707fa3ed113db446ce95323c296833e1f"
     },
     {
       "path": "zh-Hans/1320x2868/03-friend-plans.png",
@@ -134,5 +134,6 @@
       "sha256": "a8b97b92f3e72021cca78e631498c2c85cc3b95bb11237e8e045ec03a9acccdf"
     }
   ],
-  "publicationDecision": "User chose to preserve approved 1.0.4 (20) and use this set in the next update."
+  "publicationDecision": "User chose to preserve approved 1.0.4 (20) and use this set in the next update.",
+  "widgetComposition": "Real widget captures composited on sourced iOS 27 blue wallpaper; no Dock/Search; see widget-study/wallpaper-source.json."
 }

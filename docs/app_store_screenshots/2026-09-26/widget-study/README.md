@@ -14,13 +14,13 @@ These are official website marketing examples, not a survey of current App Store
 
 `comparison.png` shows the current next-release poster on the left and a proposed composition on the right.
 
-- Retain real system wallpaper, the installed directory widget, and its Across Us Home Screen label.
+- Use the sourced iOS 27 blue static wallpaper with the real installed directory widget. Typeset the Across Us label below the widget.
 - Crop away Search, Dock and unrelated application icons.
 - Use a nearly square Home Screen detail with a modest outer corner radius, instead of a tall phone-shaped crop.
 - Add a small real Here together widget as a separate secondary product detail.
 - Keep the existing brand palette, title and position 2.
 
-Both components are unchanged real SwiftUI captures. The main image is cropped from the installed Home Screen widget; the small component comes from the shared production-view preview. The two-component poster is an editorial composition and does not claim to be one full Home Screen screenshot.
+Both components are unchanged real SwiftUI captures. The directory comes from the installed Home Screen widget, clipped to its card; the small component comes from the shared production-view preview. The background uses the iOS 27 blue wallpaper listed in [9to5Mac’s June 10, 2026 gallery](https://9to5mac.com/2026/06/10/download-the-new-ios-27-and-ipados-27-wallpapers-here/). The two-component poster is an editorial composition, not a recaptured full Home Screen. The simulator’s Settings surface lacked a wallpaper selection control; no wallpaper setting was altered.
 
 ## Files and status
 
@@ -28,4 +28,6 @@ Both components are unchanged real SwiftUI captures. The main image is cropped f
 - Matching SVG sources and `comparison.png`.
 - Reproduce with `node scripts/render_widget_presentation_study.mjs`, with `sharp` in the module path.
 
-This study does not replace the prepared eight-image upload set or modify the app. The user's instruction to keep approved 1.0.4 (20) unchanged and defer new store images to the next update remains in effect. No App Store Connect action was taken.
+The iOS 27 wallpaper revision is now used as position 2 in the prepared next-update screenshot set. The app itself is unchanged. The user's instruction to keep approved 1.0.4 (20) unchanged and defer new store images to the next update remains in effect. No App Store Connect action was taken.
+
+Wallpaper provenance, delivered source resolution and checksum are recorded in `wallpaper-source.json`. The original installed-widget screenshot is retained, unmodified, for source evidence. Run the study renderer before the set renderer when updating the composition.

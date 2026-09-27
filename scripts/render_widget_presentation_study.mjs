@@ -1,4 +1,4 @@
-// Research draft: rearrange untouched real widget captures into a promotional composition.
+// Promotional composition: real widget pixels on the sourced iOS 27 blue wallpaper.
 import fs from 'node:fs';
 import path from 'node:path';
 import {createRequire} from 'node:module';
@@ -7,11 +7,19 @@ const sharp=createRequire(import.meta.url)('sharp');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'docs/app_store_screenshots/2026-09-26/widget-study');
 fs.mkdirSync(out,{recursive:true});
-const home=await sharp(path.join(root,'docs/widget_redesign/2026-09-26/actual-widget-page-2.png'))
+const wallpaper=await sharp(path.join(out,'ios27-blue.png')).resize(1320,2868)
  .extract({left:0,top:880,width:1320,height:1340}).png().toBuffer();
+const directory=await sharp(path.join(root,'docs/widget_redesign/2026-09-26/actual-widget-page-2.png'))
+ .extract({left:94,top:934,width:1132,height:1182}).png().toBuffer();
+const uri=b=>`data:image/png;base64,${b.toString('base64')}`;
+const home=await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1340">
+ <defs><clipPath id="widget"><rect x="94" y="54" width="1132" height="1182" rx="132"/></clipPath></defs>
+ <image width="1320" height="1340" href="${uri(wallpaper)}"/>
+ <image x="94" y="54" width="1132" height="1182" href="${uri(directory)}" clip-path="url(#widget)"/>
+ <text x="660" y="1295" text-anchor="middle" font-family="Helvetica Neue,sans-serif" font-size="42" fill="#FFFFFF">Across Us</text>
+ </svg>`)).png().toBuffer();
 const together=await sharp(path.join(root,'docs/widget_redesign/2026-09-26/widget-Here-together-Small-Light.png'))
  .extract({left:405,top:738,width:510,height:510}).png().toBuffer();
-const uri=b=>`data:image/png;base64,${b.toString('base64')}`;
 for(const locale of ['zh-Hans','en']){
  const chinese=locale==='zh-Hans';
  const title=chinese?['把朋友，','放在主屏幕']:['Friends, one','glance away.'];
@@ -41,6 +49,6 @@ for(const locale of ['zh-Hans','en']){
  fs.writeFileSync(path.join(out,`${locale}-wallpaper-detail.svg`),svg);
  await sharp(Buffer.from(svg)).resize(1284,2778).flatten({background:'#F8F7EF'}).removeAlpha().png().toFile(path.join(out,`${locale}-wallpaper-detail.png`));
 }
-const before=await sharp(path.join(root,'docs/app_store_screenshots/2026-09-26/zh-Hans/1284x2778/02-widgets.png')).resize(385,833).toBuffer();
+const before=await sharp(path.join(root,'docs/app_store_screenshots/2026-09-25/zh-Hans/1284x2778/08-widgets.png')).resize(385,833).toBuffer();
 const after=await sharp(path.join(out,'zh-Hans-wallpaper-detail.png')).resize(385,833).toBuffer();
 await sharp({create:{width:810,height:873,channels:3,background:'#E6EBE2'}}).composite([{input:before,left:10,top:20},{input:after,left:415,top:20}]).png().toFile(path.join(out,'comparison.png'));

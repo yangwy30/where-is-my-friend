@@ -20,10 +20,10 @@ The first image explains the product; the second demonstrates its everyday Home 
 - `en/1284x2778/` and `zh-Hans/1284x2778/`: primary eight-image upload sets, filenames match the intended order.
 - Matching `1320x2868/` sets are also provided.
 - `gallery.html` and both contact sheets show the final ordering.
-- `copy.json` maps each numbered output to the retained real capture in the September 25 set. The widget capture is from the actual redesigned installed widget; the same English system capture is used for both poster locales.
+- `copy.json` maps each numbered output to the retained real capture in the September 25 set. The widget cards use actual redesigned SwiftUI captures. Position 2 combines them with the sourced iOS 27 blue wallpaper as an editorial close-up, without Dock/Search or a tall phone-shaped crop; it is not a single full Home Screen capture. See `widget-study/README.md` and `wallpaper-source.json` for provenance.
 - `listing.json` contains the current bilingual listing copy.
 
-Rebuild with `node scripts/render_marketing_20260925.mjs --set=2026-09-26`, with `sharp` in the Node module path.
+Rebuild the custom widget composition with `node scripts/render_widget_presentation_study.mjs`, then the full set with `node scripts/render_marketing_20260925.mjs --set=2026-09-26`, with `sharp` in the Node module path.
 
 ## App Store Connect state checked today
 

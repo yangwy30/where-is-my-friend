@@ -29,7 +29,8 @@
       "frameY": 650,
       "frameHeight": 1640,
       "radius": 62,
-      "raw": "../2026-09-25/raw/en/08-widgets.png"
+      "raw": "../2026-09-25/raw/en/08-widgets.png",
+      "compositionSVG": "widget-study/en-wallpaper-detail.svg"
     },
     {
       "id": "03-friend-plans",
@@ -140,7 +141,8 @@
       "frameY": 650,
       "frameHeight": 1640,
       "radius": 62,
-      "raw": "../2026-09-25/raw/zh-Hans/08-widgets.png"
+      "raw": "../2026-09-25/raw/zh-Hans/08-widgets.png",
+      "compositionSVG": "widget-study/zh-Hans-wallpaper-detail.svg"
     },
     {
       "id": "03-friend-plans",
