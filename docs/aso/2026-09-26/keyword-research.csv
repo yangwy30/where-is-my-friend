@@ -1,0 +1,13 @@
+query,family,decision,reason,public_us_listing_evidence,search_volume,native_iphone_rank,evidence_type
+Across Us,brand,保留,品牌识别；不保证美国 iPhone 自然首位,https://apps.apple.com/us/app/across-us/id6807634842,unknown,not_measured,US product listing found through web search; not native ranking
+friend city sharing,cities,优先,城市分享意图与当前功能直接匹配,https://apps.apple.com/us/app/youintown-friends-and-travel/id6769513590,unknown,not_measured,US product listing found through web search; not native ranking
+share travel plans,plans,优先,分享城市日期，区别于完整行程规划,https://apps.apple.com/us/app/flock-group-travel/id6755789809,unknown,not_measured,US product listing found through web search; not native ranking
+travel with friends,plans,优先,现有好友的旅行与相聚；不承诺陌生人配对,https://apps.apple.com/us/app/flock-group-travel/id6755789809,unknown,not_measured,US product listing found through web search; not native ranking
+travel overlap,overlap,次级,功能匹配，但尚无热度证据,https://apps.apple.com/us/app/droozi-travel-networking/id6708242315,unknown,not_measured,US product listing found through web search; not native ranking
+group trip,trips,优先,共同目的地、成员、航班；不宣称提供订票与分账,https://apps.apple.com/us/app/welago-group-trip-planner/id6770325388,unknown,not_measured,US product listing found through web search; not native ranking
+group travel,trips,优先,覆盖共同出行，避免完整 itinerary 承诺,https://apps.apple.com/us/app/flock-group-travel/id6755789809,unknown,not_measured,US product listing found through web search; not native ranking
+friend location widget,widget,有条件,需明确城市级更新；该类产品可能被期待精确实时定位,https://apps.apple.com/us/app/bump-real-life-is-happening/id6471519217,unknown,not_measured,US product listing found through web search; not native ranking
+friend widget,widget,次级,保留 widget 词根，画面说明显示的是城市,https://apps.apple.com/us/app/bump-real-life-is-happening/id6471519217,unknown,not_measured,US product listing found through web search; not native ranking
+flight arrivals,flights,支持词,展示成员航班抵达安排，不宣称实时飞机雷达,https://apps.apple.com/us/app/flight-tracker/id533365777,unknown,not_measured,US product listing found through web search; not native ranking
+trip planner,planner,不作为主目标,结果产品提供完整日程、地点安排等；当前功能不等价,https://apps.apple.com/us/app/trip-planner-share-itinerary/id6748044059,unknown,not_measured,US product listing found through web search; not native ranking
+live location tracker,tracking,排除,精确实时追踪的核心需求不匹配,https://apps.apple.com/us/app/bump-real-life-is-happening/id6471519217,unknown,not_measured,US product listing found through web search; not native ranking

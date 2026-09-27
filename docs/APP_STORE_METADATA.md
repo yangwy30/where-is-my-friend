@@ -2,6 +2,8 @@
 
 ## Latest prepared listing — September 26, 2026
 
+The first U.S. ASO experiment is now prepared in the current listing: **Across Us: Friends & Trips** / **Share cities & travel plans**, with a relevance-focused 61-character keyword field. See [research, campaign links and rollout limits](aso/2026-09-26/README.md). These store fields are **not live**; app publication remains paused. Website download links are handled separately from the App Store release.
+
 Use [the new bilingual introduction](APP_INTRO_20260925.md) and [eight bilingual screenshots, with widgets in position 2](app_store_screenshots/2026-09-26/README.md) for the build 22 feature set plus unreleased Chinese UI localization improvements and the Home Screen widget redesign. Publish with a new build containing both. Assets are complete locally; they have **not been saved to App Store Connect**. App Store Connect login was verified on September 26; screenshots are locked on the approved pending version. The user chose to preserve that approved version and reserve the new screenshots for the next update. Do not withdraw the approved version for this screenshot request.
 
 Last verified on September 26: **1.0.4 (20)** was **Pending Developer Release**, with manual release. Build **1.0.4 (22)** was available in internal TestFlight. Recheck the store state before changing the approved version; the new screenshots include features from build 22.
