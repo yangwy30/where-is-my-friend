@@ -1,3 +1,4 @@
+import {deliveryGate, drainQueues, workerFetch, settleBatch} from '../functions/_shared/queue-drain.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
@@ -135,7 +136,7 @@ test('push worker routes booking deliveries correctly and rechecks before APNs',
    name==='wif_trip_booking_allowed'?eligible:true};}};
   class SignJWT {setProtectedHeader(){return this;}setIssuer(){return this;}setIssuedAt(){return this;}async sign(){return 'test-provider-token';}}
   vm.runInNewContext(stripTypeScriptTypes(source,{mode:'transform'}),{
-   Request,Response,URL,console,crypto,AbortSignal,createClient:()=>database,normalizeAPNsPrivateKey:x=>x,importPKCS8:async()=>({}),SignJWT,
+   deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto,AbortSignal,createClient:()=>database,normalizeAPNsPrivateKey:x=>x,importPKCS8:async()=>({}),SignJWT,
    decryptAPNSToken:async()=> 'test-device-token',classifyAPNsResponse,deliverTripBookingReminders,
    fetch:async(url,options)=>{sends.push({url,options});return new Response('',{status:200});},
    Deno:{env:{get:()=> 'test-only'},serve:fn=>{handler=fn;}},

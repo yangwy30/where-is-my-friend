@@ -1,3 +1,5 @@
+import {deliverTripBookingReminders} from '../functions/_shared/trip-booking-reminders.mjs';
+import {deliveryGate, drainQueues, workerFetch, settleBatch} from '../functions/_shared/queue-drain.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
@@ -18,8 +20,8 @@ test('friend invitation immediate wake-up sends its own APNs payload without cla
    title:'Friend request',body:'A friend wants to connect.',encrypted_apns_token:'encrypted-test-token',expires_at:2000000000};
  class JWT {setProtectedHeader(){return this;}setIssuer(){return this;}setIssuedAt(){return this;}async sign(){return 'test-provider-token';}}
  vm.runInNewContext(stripTypeScriptTypes(source,{mode:'transform'}),{
-  Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
-  createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name==='wif_friend_invitation_claim'?[{delivery_id:delivery.delivery_id}]
+  deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
+  createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name.startsWith('wif_push_worker_')?true:name==='wif_friend_invitation_claim'?[{delivery_id:delivery.delivery_id}]
    :name==='wif_friend_invitation_prepare'?delivery:name==='wif_friend_invitation_complete'?true:[],error:null};}}),
   importPKCS8:async()=>({}),SignJWT:JWT,decryptAPNSToken:async()=> 'test-token',
   fetch:async(url,init)=>{sent.push({url,init});return new Response('',{status:200});},
@@ -37,8 +39,8 @@ test('friend invitation immediate wake-up sends its own APNs payload without cla
 test('push worker authenticates before signing/claiming, idle queues do not sign, readiness probe never sends',async()=>{
     let handler,signing=0,sends=0;const calls=[];
     const source=(await readFile(new URL('../functions/push-worker/index.ts',import.meta.url),'utf8')).replace(/^import .*;\n/gm,'');
-    const context={Request,Response,URL,console,crypto:webcrypto,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
-        createClient:()=>({rpc:async(name)=>{calls.push(name);return {data:[],error:null};}}),
+    const context={deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto:webcrypto,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
+        createClient:()=>({rpc:async(name)=>{calls.push(name);return {data:name.startsWith('wif_push_worker_')?true:[],error:null};}}),
         importPKCS8:async()=>{signing++;throw new TypeError('Invalid test key');},
         SignJWT:class {},decryptAPNSToken:async()=>{throw new Error('Must not decrypt without work');},
         fetch:async()=>{sends++;throw new Error('Unexpected APNs request');},
@@ -55,6 +57,9 @@ test('push worker authenticates before signing/claiming, idle queues do not sign
     const health=await request('worker-secret',{action:'check-signing'});
     assert.equal(health.status,503);assert.equal((await health.json()).signingReady,false);
     assert.equal(calls.length,count);assert.equal(signing,1);assert.equal(sends,0);
+    const capacity=await request('worker-secret',{action:'check-capacity'});
+    assert.equal(capacity.status,200);assert.equal(calls.at(-1),'wif_capacity_health');
+    assert.equal(signing,1);assert.equal(sends,0);
 });
 
 test('parallel deliveries share one signing operation instead of minting a token per device',async()=>{
@@ -62,8 +67,8 @@ test('parallel deliveries share one signing operation instead of minting a token
     const source=(await readFile(new URL('../functions/push-worker/index.ts',import.meta.url),'utf8')).replace(/^import .*;\n/gm,'');
     const delivery={delivery_id:'test-delivery',device_id:'test-device',environment:'sandbox',bundle_id:'test.bundle',event_id:'event',deep_link:'test://event',title:'Test',body:'Test',encrypted_apns_token:'test'};
     class JWT { setProtectedHeader(){return this;} setIssuer(){return this;} setIssuedAt(){return this;} async sign(){return 'test-provider-token';} }
-    const context={Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
-        createClient:()=>({rpc:async(name)=>({data:name==='wif_claim_notification_deliveries'?[delivery,{...delivery,delivery_id:'second'}]:['wif_travel_claim','wif_trip_invitation_claim'].includes(name)?[]:true,error:null})}),
+    const context={deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
+        createClient:()=>({rpc:async(name)=>({data:name.startsWith('wif_push_worker_')?true:name==='wif_claim_notification_deliveries'?[delivery,{...delivery,delivery_id:'second'}]:['wif_travel_claim','wif_trip_invitation_claim'].includes(name)?[]:true,error:null})}),
         importPKCS8:async()=>{signing++;await new Promise(resolve=>setTimeout(resolve,20));return {};},SignJWT:JWT,
         decryptAPNSToken:async()=> 'test-token',fetch:async()=>{sends++;return new Response('{}',{status:200});},
         Deno:{env:{get:name=>name==='PUSH_WORKER_SECRET'?'worker-secret':'test-config'},serve:callback=>{handler=callback;}}
@@ -78,8 +83,8 @@ test('trip invitation reaches APNs with the account-bound join link and correct 
     const source=(await readFile(new URL('../functions/push-worker/index.ts',import.meta.url),'utf8')).replace(/^import .*;\n/gm,'');
     const delivery={delivery_id:'invite-delivery',device_id:'test-device',environment:'production',bundle_id:'test.bundle',event_id:'11111111-2222-4333-8444-555555555555',deep_link:'whereismyfriend://trips/join/11111111-2222-4333-8444-555555555555',title:'Trip invitation',body:'Open Across Us to review.',encrypted_apns_token:'test',expires_at:2000000000};
     class JWT {setProtectedHeader(){return this;}setIssuer(){return this;}setIssuedAt(){return this;}async sign(){return 'test-provider-token';}}
-    const context={Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
-      createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name==='wif_trip_invitation_claim'?[{delivery_id:delivery.delivery_id}]:name==='wif_trip_invitation_prepare'?delivery:name.endsWith('_complete')?true:[],error:null};}}),
+    const context={deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
+      createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name.startsWith('wif_push_worker_')?true:name==='wif_trip_invitation_claim'?[{delivery_id:delivery.delivery_id}]:name==='wif_trip_invitation_prepare'?delivery:name.endsWith('_complete')?true:[],error:null};}}),
       importPKCS8:async()=>({}),SignJWT:JWT,decryptAPNSToken:async()=> 'test-token',
       fetch:async(url,options)=>{requests.push({url,options});return new Response('{}',{status:200});},
       Deno:{env:{get:name=>name==='PUSH_WORKER_SECRET'?'worker-secret':'test-config'},serve:callback=>{handler=callback;}}
@@ -100,8 +105,8 @@ test('environment mismatch ends the failed delivery without retrying it or disab
     const delivery={delivery_id:'existing-failed-delivery',device_id:'valid-device',environment:'sandbox',bundle_id:'test.bundle',event_id:'event',deep_link:'test://event',title:'Test',body:'Test',encrypted_apns_token:'test'};
     class JWT {setProtectedHeader(){return this;}setIssuer(){return this;}setIssuedAt(){return this;}async sign(){return 'test-provider-token';}}
     vm.runInNewContext(stripTypeScriptTypes(source,{mode:'transform'}),{
-      Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
-      createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name==='wif_claim_notification_deliveries'?[delivery]:['wif_complete_notification_delivery','wif_colocation_delivery_allowed'].includes(name)?true:[],error:null};}}),
+      deliveryGate, drainQueues: (queues, options) => drainQueues(queues, {...options, maxRounds: 1}), workerFetch, settleBatch, deliverTripBookingReminders, AbortSignal, Request,Response,URL,console,crypto:webcrypto,AbortSignal,deliverUpcoming,deliverTripInvitations,deliverFriendInvitations,normalizeAPNsPrivateKey,classifyAPNsResponse,
+      createClient:()=>({rpc:async(name,args)=>{calls.push({name,args});return {data:name.startsWith('wif_push_worker_')?true:name==='wif_claim_notification_deliveries'?[delivery]:['wif_complete_notification_delivery','wif_colocation_delivery_allowed'].includes(name)?true:[],error:null};}}),
       importPKCS8:async()=>({}),SignJWT:JWT,decryptAPNSToken:async()=> 'test-token',
       fetch:async()=>{sends++;return Response.json({reason:'BadEnvironmentKeyInToken'},{status:403});},
       Deno:{env:{get:name=>name==='PUSH_WORKER_SECRET'?'worker-secret':'test-config'},serve:callback=>handler=callback},

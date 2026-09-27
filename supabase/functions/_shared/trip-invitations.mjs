@@ -1,5 +1,6 @@
+import {settleBatch} from './queue-drain.mjs';
 // Lease IDs only. Resolve account-bound invitation and device ownership again at send time.
-export async function deliverTripInvitations(database, token, send) {
+export async function deliverTripInvitations(database, token, send, {run = task => task()} = {}) {
     const {data,error}=await database.rpc('wif_trip_invitation_claim',{p_token:token});
     if(error) throw new Error('Trip invitation queue unavailable.');
     const outcomes=[];
@@ -15,7 +16,7 @@ export async function deliverTripInvitations(database, token, send) {
         return send({...prepared.data,kind:'trip-invitation'});
     }
     for(let start=0;start<(data??[]).length;start+=5) {
-        outcomes.push(...await Promise.all(data.slice(start,start+5).map(deliver)));
+        outcomes.push(...await settleBatch(data.slice(start,start+5).map(row => run(() => deliver(row)))));
     }
     return outcomes;
 }

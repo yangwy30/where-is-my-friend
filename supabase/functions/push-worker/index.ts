@@ -1,3 +1,4 @@
+import { deliveryGate, drainQueues, workerFetch, settleBatch } from "../_shared/queue-drain.mjs";
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { importPKCS8, SignJWT } from "npm:jose@6.2.8";
 import { classifyAPNsResponse, decryptAPNSToken } from "../_shared/push-security.mjs";
@@ -35,9 +36,6 @@ let providerTokenInFlight: Promise<string> | null = null;
 
 if (!supabaseURL || !serviceRoleKey) throw new Error("Supabase service configuration is required.");
 
-const database = createClient(supabaseURL, serviceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-});
 
 function json(value: unknown, status = 200) {
     return new Response(JSON.stringify(value), {
@@ -71,6 +69,7 @@ async function providerToken(): Promise<string> {
 }
 
 async function complete(
+    database: ReturnType<typeof createClient>,
     delivery: ClaimedDelivery,
     claimToken: string,
     result: { outcome: string; error?: string; apnsID?: string | null; retryAfterSeconds?: number | null; disableDevice?: boolean },
@@ -120,13 +119,13 @@ async function complete(
     if (error) throw new Error(`Could not complete delivery ${delivery.delivery_id}: ${error.message}`);
 }
 
-async function send(delivery: ClaimedDelivery, claimToken: string) {
+async function send(database: ReturnType<typeof createClient>, delivery: ClaimedDelivery, claimToken: string, signal: AbortSignal) {
     try {
         if (!delivery.kind) {
             const check = await database.rpc("wif_colocation_delivery_allowed", {p_id: delivery.delivery_id, p_token: claimToken});
             if (check.error) throw new Error("Could not verify current city sharing.");
             if (check.data !== true) {
-                await complete(delivery, claimToken, {outcome: "failed", error: "Same-city presence is no longer current."});
+                await complete(database, delivery, claimToken, {outcome: "failed", error: "Same-city presence is no longer current."});
                 return "failed";
             }
         }
@@ -135,7 +134,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
             const check = await database.rpc("wif_trip_booking_allowed", {p_id:delivery.event_id,p_device:delivery.device_id});
             if (check.error) throw new Error("Could not verify trip reminder eligibility.");
             if (check.data !== true) {
-                await complete(delivery,claimToken,{outcome:"failed"});
+                await complete(database, delivery,claimToken,{outcome:"failed"});
                 return "failed";
             }
         }
@@ -145,7 +144,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
             : "https://api.push.apple.com";
         const response = await fetch(`${host}/3/device/${deviceToken}`, {
             method: "POST",
-            signal: AbortSignal.timeout(15000),
+            signal: AbortSignal.any([signal, AbortSignal.timeout(12000)]),
             headers: {
                 authorization: `bearer ${token}`,
                 "apns-topic": delivery.bundle_id,
@@ -168,7 +167,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
         const errorBody = response.ok ? {} : await response.json().catch(() => ({})) as APNsError;
         const classification = classifyAPNsResponse(response.status, errorBody.reason ?? "");
         const responseAPNsID = response.headers.get("apns-id");
-        await complete(delivery, claimToken, {
+        await complete(database, delivery, claimToken, {
             ...classification,
             error: response.ok ? undefined : `APNs ${response.status}: ${errorBody.reason ?? "Unknown"}`,
             apnsID: responseAPNsID && /^[0-9a-f-]{36}$/i.test(responseAPNsID) ? responseAPNsID : null,
@@ -176,7 +175,7 @@ async function send(delivery: ClaimedDelivery, claimToken: string) {
         return classification.outcome;
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown APNs network failure";
-        await complete(delivery, claimToken, {
+        await complete(database, delivery, claimToken, {
             outcome: "retry",
             error: message,
             retryAfterSeconds: 300,
@@ -204,48 +203,58 @@ Deno.serve(async request => {
         }
     }
 
-    const claimToken = crypto.randomUUID();
-    if (options?.action === "trip-reminders") {
-        try {
-            const outcomes = await deliverTripBookingReminders(database,claimToken,(delivery: ClaimedDelivery) => send(delivery,claimToken));
-            return json({claimed:outcomes.length,delivered:outcomes.filter(value=>value==="delivered").length});
-        } catch { return json({message:"Trip reminder queue unavailable."},503); }
-    }
-    const { data, error } = options?.action === "invitations" ? {data: [], error: null} : await database.rpc("wif_claim_notification_deliveries", {
-        p_limit: 20,
-        p_claim_token: claimToken,
+    const started = Date.now();
+    const deadline = started + 35000;
+    const signal = AbortSignal.timeout(55000);
+    const database = createClient(supabaseURL!, serviceRoleKey!, {
+        auth: { autoRefreshToken: false, persistSession: false },
+        db: { retry: false },
+        global: { fetch: workerFetch(signal) },
     });
-    if (error) return json({ message: "The notification queue could not be claimed." }, 500);
-    const deliveries = (data ?? []) as ClaimedDelivery[];
-    const outcomes: string[] = [];
-    // Bound the extra pre-send database checks instead of bursting 20 at once.
-    for (let offset = 0; offset < deliveries.length; offset += 3) {
-        outcomes.push(...await Promise.all(deliveries.slice(offset, offset + 3).map(delivery => send(delivery, claimToken))));
+    if (options?.action === "check-capacity") {
+        const health = await database.rpc("wif_capacity_health");
+        return health.error ? json({message: "Capacity health unavailable."}, 503) : json(health.data);
     }
-    let friendInvitationError = false;
-    try {
-        outcomes.push(...await deliverFriendInvitations(database, claimToken, (delivery: ClaimedDelivery) => send(delivery, claimToken)));
-    } catch { friendInvitationError = true; }
-    let invitationError = false;
-    try {
-        outcomes.push(...await deliverTripInvitations(database, claimToken, (delivery: ClaimedDelivery) => send(delivery, claimToken)));
-    } catch { invitationError = true; }
-    let upcomingError = false;
-    try {
-        if (options?.action !== "invitations") outcomes.push(...await deliverUpcoming(database, claimToken, (delivery: ClaimedDelivery) => send(delivery, claimToken)));
-    } catch { upcomingError = true; }
-    let bookingReminderError = false;
-    try {
-        if (options?.action !== "invitations") outcomes.push(...await deliverTripBookingReminders(database,claimToken,(delivery: ClaimedDelivery) => send(delivery,claimToken)));
-    } catch { bookingReminderError = true; }
-    return json({
-        bookingReminderError,
-        friendInvitationError,
-        upcomingError,
-        invitationError,
-        claimed: outcomes.length,
-        delivered: outcomes.filter(value => value === "delivered").length,
-        retried: outcomes.filter(value => value === "retry").length,
-        failed: outcomes.filter(value => value === "failed").length,
-    });
+    const slotToken = crypto.randomUUID();
+    const lane = options?.action === "invitations" || options?.action === "trip-reminders" ? "interactive" : "scheduled";
+    const slot = await database.rpc("wif_push_worker_acquire", {p_token: slotToken, p_lane: lane});
+    if (slot.error) return json({message: "Worker capacity unavailable."}, 503);
+    if (slot.data !== true) return json({state: "busy", claimed: 0, delivered: 0});
+    const run = deliveryGate({concurrency: 6, deadline});
+    const batch = (deliver: Function) => async () => {
+        const token = crypto.randomUUID();
+        return deliver(database, token, (row: ClaimedDelivery) => send(database, row, token, signal), {run});
+    };
+    const queues: Record<string, () => Promise<string[]>> = {};
+    if (options?.action !== "invitations" && options?.action !== "trip-reminders") {
+        queues.colocation = async () => {
+            const token = crypto.randomUUID();
+            const {data, error} = await database.rpc("wif_claim_notification_deliveries", {p_limit: 20, p_claim_token: token});
+            if (error) throw new Error("Notification queue unavailable.");
+            return settleBatch((data ?? []).map((row: ClaimedDelivery) => run(() => send(database, row, token, signal))));
+        };
+        queues.upcoming = batch(deliverUpcoming);
+    }
+    if (options?.action !== "trip-reminders") {
+        queues.friendInvitations = batch(deliverFriendInvitations);
+        queues.tripInvitations = batch(deliverTripInvitations);
+    }
+    if (options?.action !== "invitations") queues.booking = batch(deliverTripBookingReminders);
+    let summary;
+    try { summary = await drainQueues(queues, {deadline, maxRounds: 10}); }
+    finally {
+        // On a timeout/crash the 60-second SQL lease, not a local timer, restores capacity.
+        try { await database.rpc("wif_push_worker_release", {p_token: slotToken, p_lane: lane}); } catch { /* expires */ }
+    }
+    const totals = Object.values(summary).reduce((sum: Record<string, number>, queue: any) => {
+        for (const field of ["claimed", "delivered", "retried", "failed", "deferred"]) sum[field] += queue[field];
+        return sum;
+    }, {claimed: 0, delivered: 0, retried: 0, failed: 0, deferred: 0});
+    const result = {...totals, queues: summary, elapsedMs: Date.now() - started,
+        friendInvitationError: summary.friendInvitations?.error ?? false,
+        invitationError: summary.tripInvitations?.error ?? false,
+        upcomingError: summary.upcoming?.error ?? false,
+        bookingReminderError: summary.booking?.error ?? false};
+    console.log(JSON.stringify({event: "push_queue_drain", ...result}));
+    return json(result, Object.values(summary).some((queue: any) => queue.error) ? 503 : 200);
 });

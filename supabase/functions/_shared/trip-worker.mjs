@@ -7,7 +7,7 @@ export async function refreshOneFlight(rpc, apiKey, fetcher = fetch) {
     const job = await rpc('wif_trip_claim_refresh', { p_token: token });
     if (!job) return { state: 'idle', updated: 0 };
     let result = null;
-    try { result = await fetchFlightLookup(job, apiKey, fetcher); }
+    try { result = job.cached ?? await fetchFlightLookup(job, apiKey, fetcher); }
     catch { /* Persist failure without leaking provider credentials or inventing a flight. */ }
     const updated = await rpc('wif_trip_finish_refresh', {
         p_token: token, p_number: job.flightNumber, p_date: job.date, p_result: result,

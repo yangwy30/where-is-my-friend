@@ -73,7 +73,7 @@ test('refresh leases prevent duplicate calls; only active verified flights quali
         assert.ok(await claim());
         assert.equal(await claim(),null);
         assert.equal(await scalar(db,"select calls from trip_flight_lookup_limits where bucket='background'"),1);
-        await db.exec("update trip_flight_refresh_jobs set lease_until=now()-interval '1 minute'; update trip_flight_lookup_limits set calls=20 where bucket='background'");
+        await db.exec("update trip_flight_refresh_jobs set lease_until=now()-interval '1 minute'; update flight_lookup_requests set lease_until=now()-interval '1 minute'; update trip_flight_lookup_limits set calls=20 where bucket='background'");
         assert.equal(await claim(),null);
         assert.equal(await scalar(db,"select tracking_state from flights where id='live-flight'"),'quota_limited');
         assert.equal(await scalar(db,"select calls from trip_flight_lookup_limits where bucket='global'"),1);
@@ -87,12 +87,12 @@ test('refresh persists selected route only; failure preserves previous time/stat
         await run({id:'other-leg',status:'landed'});
         const missing=await scalar(db,"select to_jsonb(f) from flights f where id='live-flight'");
         assert.equal(missing.status,old.status); assert.equal(missing.verified_at,old.verified_at); assert.equal(missing.tracking_state,'not_found');
-        await db.exec('update trip_flight_refresh_jobs set available_at=now()');
+        await db.exec('update trip_flight_refresh_jobs set available_at=now(); update flight_lookup_requests set retry_at=now()');
         const token=crypto.randomUUID();
         await scalar(db,'select wif_trip_claim_refresh($1)',[token]);
         await scalar(db,'select wif_trip_finish_refresh($1,$2,$3,null)',[token,'UA353',date]);
         assert.equal(await scalar(db,"select tracking_state from flights where id='live-flight'"),'unavailable');
-        await db.exec('update trip_flight_refresh_jobs set available_at=now()');
+        await db.exec('update trip_flight_refresh_jobs set available_at=now(); update flight_lookup_requests set retry_at=now()');
         await run({status:'airborne'});
         const current=await scalar(db,"select to_jsonb(f) from flights f where id='live-flight'");
         assert.equal(current.revision,old.revision); assert.equal(current.status,'airborne');
@@ -147,13 +147,13 @@ test('significant arrival delay threshold is 30 minutes; no initial opt-in means
         const revised=minutes=>({...candidate.arrival,revisedTime:{utc:new Date(Date.parse(candidate.arrival.scheduledTime.utc)+minutes*60000).toISOString()}});
         await run({arrival:revised(29)});
         assert.equal(await scalar(db,'select count(*)::int from trip_flight_events'),0);
-        await db.exec('update trip_flight_refresh_jobs set available_at=now()');
+        await db.exec('update trip_flight_refresh_jobs set available_at=now(); update flight_lookup_requests set retry_at=now()');
         await run({arrival:revised(30)});
         assert.equal(await scalar(db,"select status from flights where id='live-flight'"),'delayed');
         assert.equal(await scalar(db,'select count(*)::int from trip_flight_events'),1);
         assert.equal(await scalar(db,'select count(*)::int from trip_flight_deliveries'),0);
         await scalar(db,"select wif_trip_preferences($1,'live-trip',true)",[bob]);
-        await db.exec('update trip_flight_refresh_jobs set available_at=now()');
+        await db.exec('update trip_flight_refresh_jobs set available_at=now(); update flight_lookup_requests set retry_at=now()');
         await run({arrival:revised(60)});
         assert.equal(await scalar(db,'select count(*)::int from trip_flight_events'),1);
         assert.equal(await scalar(db,'select count(*)::int from trip_flight_deliveries'),0);
@@ -168,7 +168,7 @@ test('flight edited mid-request cannot receive a previous candidate update; expi
         const result={source:'aerodatabox',flightNumber:'UA353',date,fetchedAt:new Date().toISOString(),flights:[{...candidate,status:'landed'}]};
         assert.equal(await scalar(db,'select wif_trip_finish_refresh($1,$2,$3,$4)',[token,'UA353',date,JSON.stringify(result)]),0);
         assert.equal(await scalar(db,"select status from flights where id='live-flight'"),'scheduled');
-        await db.exec('update trip_flight_refresh_jobs set available_at=now()');
+        await db.exec('update trip_flight_refresh_jobs set available_at=now(); update flight_lookup_requests set retry_at=now()');
         await scalar(db,'select wif_trip_claim_refresh($1)',[token]);
         await db.exec("update trip_flight_refresh_jobs set lease_until=now()-interval '1 minute'");
         assert.equal(await scalar(db,'select wif_trip_finish_refresh($1,$2,$3,$4)',[token,'UA353',date,JSON.stringify(result)]),0);
@@ -206,7 +206,7 @@ test('trip-worker HTTP refuses public keys and never consumes quota before authe
     const source=(await readFile(new URL('../functions/trip-worker/index.ts',import.meta.url),'utf8')).replace(/^import .*;\n/gm,'');
     vm.runInNewContext(stripTypeScriptTypes(source,{mode:'transform'}),{
         Request,Response,AbortSignal,JSON,Date,
-        createClient:()=>({}),
+        createClient:()=>({rpc:async name=>{assert.equal(name,"wif_capacity_health");return {data:{ready:true},error:null};}}),
         refreshOneFlight:async()=>{refreshCalls++; return {state:'idle',updated:0};},
         deliverTripUpdates:async()=>({claimed:0,delivered:0}),
         Deno:{env:{get:name=>name==='PUSH_WORKER_SECRET'?'worker-only':'configured'},serve:cb=>handler=cb},
@@ -218,4 +218,6 @@ test('trip-worker HTTP refuses public keys and never consumes quota before authe
     assert.equal(refreshCalls,0);
     assert.equal((await handler(new Request('https://example.com',{method:'POST',headers:{Authorization:'Bearer worker-only'}}))).status,200);
     assert.equal(refreshCalls,1);
+    const health=await handler(new Request('https://example.com',{method:'POST',headers:{Authorization:'Bearer worker-only'},body:JSON.stringify({action:'check-capacity'})}));
+    assert.equal(health.status,200);assert.deepEqual(await health.json(),{ready:true});assert.equal(refreshCalls,1);
 });

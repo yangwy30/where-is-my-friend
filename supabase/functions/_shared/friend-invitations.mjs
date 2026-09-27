@@ -1,5 +1,6 @@
+import {settleBatch} from './queue-drain.mjs';
 // Claims contain identifiers only; re-check the request and device owner at send time.
-export async function deliverFriendInvitations(database, token, send) {
+export async function deliverFriendInvitations(database, token, send, {run = task => task()} = {}) {
     const {data,error}=await database.rpc('wif_friend_invitation_claim',{p_token:token});
     if(error) throw new Error('Friend invitation queue unavailable.');
     const outcomes=[];
@@ -15,7 +16,7 @@ export async function deliverFriendInvitations(database, token, send) {
         return send({...prepared.data,kind:'friend-invitation'});
     }
     for(let start=0;start<(data??[]).length;start+=3) {
-        outcomes.push(...await Promise.all(data.slice(start,start+3).map(deliver)));
+        outcomes.push(...await settleBatch(data.slice(start,start+3).map(row => run(() => deliver(row)))));
     }
     return outcomes;
 }

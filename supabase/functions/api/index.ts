@@ -1,3 +1,4 @@
+import { sharedFlightLookup } from "../_shared/shared-flight-lookup.mjs";
 import { presenceAdministrativeArea } from "../_shared/city-regions.mjs";
 import { pushRoute } from "../_shared/push-routing.mjs";
 import { wakeInvitationWorker } from "../_shared/invitation-wakeup.mjs";
@@ -327,13 +328,7 @@ async function handle(request: Request): Promise<Response> {
                     throw new APIError(400, "Only flight number and departure date are accepted.");
                 }
                 const input = flightLookupInput(body.flightNumber, body.date);
-                const reservation = await rpc("wif_trip_flight_lookup_begin", {
-                    p_user_id: userID, p_trip_id: tripID, p_number: input.flightNumber, p_date: input.date,
-                }) as { cached: unknown };
-                if (reservation.cached) return json(reservation.cached);
-                const result = await fetchFlightLookup(input, Deno.env.get("RAPIDAPI_KEY"));
-                await rpc("wif_trip_flight_lookup_cache", { p_number: input.flightNumber, p_date: input.date, p_result: result });
-                return json(result);
+                return json(await sharedFlightLookup(rpc, userID, tripID, input, Deno.env.get("RAPIDAPI_KEY")));
             } catch (error) {
                 if (error instanceof FlightLookupError) throw new APIError(error.status, error.message);
                 throw error;

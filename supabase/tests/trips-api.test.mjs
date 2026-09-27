@@ -1,3 +1,4 @@
+import {sharedFlightLookup} from '../functions/_shared/shared-flight-lookup.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -40,7 +41,7 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
         rpc: async (name, parameters) => {
             calls.push({ name, parameters });
             if (name === "wif_resolve_app_user") return { data: userID, error: null };
-            if (name === "wif_trip_flight_lookup_begin") return { data: { cached }, error: databaseError };
+            if (name === "wif_flight_lookup_acquire") return { data: { cached, acquired: !cached }, error: databaseError };
             return { data: name === "wif_trip_list" ? [] : { id: "trip-one" }, error: databaseError, status:upstreamStatus };
         },
     };
@@ -51,6 +52,9 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
         Request, Response, URL, console, isUUID, normalizeAPIPath, FlightLookupError, flightLookupInput, travelPlanInput,
         resilientSupabaseFetch, temporaryStatus, authFailureStatus, wakeInvitationWorker,
         fetchFlightLookup: async input => { calls.push({ name: "provider", parameters: input }); return { source: "aerodatabox", ...input, flights: [] }; },
+        sharedFlightLookup: (rpc, actor, trip, input, key) => sharedFlightLookup(rpc, actor, trip, input, key, {
+            provider: async input => { calls.push({name: 'provider', parameters: input}); return {source: 'aerodatabox', ...input, flights: []}; },
+        }),
         createClient: () => database,
         Deno: { env: { get: name => name === "SUPABASE_URL" ? "https://example.supabase.co" : "test-only" },
             serve: callback => { handler = callback; } },
@@ -183,7 +187,7 @@ test("flight lookup authenticates and authorizes before provider use, caches res
     assert.equal(calls.filter(c=>c.name==='provider').length,0);
     assert.equal((await request('POST',path,body)).status,200);
     const tripCalls=calls.filter(c=>c.name!=='wif_resolve_app_user');
-    assert.deepEqual(tripCalls.map(c=>c.name),['wif_trip_flight_lookup_begin','provider','wif_trip_flight_lookup_cache']);
+    assert.deepEqual(tripCalls.map(c=>c.name),['wif_flight_lookup_acquire','provider','wif_flight_lookup_finish']);
     assert.equal(tripCalls[0].parameters.p_user_id,userID);
     assert.equal(tripCalls[1].parameters.flightNumber,'UA353');
     const hit=await harness({cached:{source:'aerodatabox',flights:[]}});

@@ -44,6 +44,8 @@ Deno.serve(async request => {
     if (request.method!=="POST") return json({message:"Method not allowed."},405);
     if (!secret || request.headers.get("Authorization")!==`Bearer ${secret}`) return json({message:"Authentication required."},401);
     try {
+        const options = await request.json().catch(() => ({}));
+        if (options?.action === "check-capacity") return json(await rpc("wif_capacity_health", {}));
         const refresh = await refreshOneFlight(rpc,Deno.env.get("RAPIDAPI_KEY"));
         const push = encryptionKey && keyID && teamID && privateKey
             ? await deliverTripUpdates(rpc,send) : {state:"not_configured"};

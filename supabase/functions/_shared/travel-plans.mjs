@@ -31,18 +31,21 @@ export function travelPlanInput(body) {
 
 // Only IDs are leased. Access, device ownership and current overlap are checked
 // again immediately before sending; removed consent never uses queued text.
-export async function deliverUpcoming(database, token, send) {
+export async function deliverUpcoming(database, token, send, {run = task => task()} = {}) {
     const {data, error}=await database.rpc('wif_travel_claim',{p_token:token});
     if(error) throw new Error('Upcoming reminder queue unavailable.');
     const results=[];
     for(const row of data??[]) {
+        const outcome = await run(async () => {
         const prepared=await database.rpc('wif_travel_prepare',{p_id:row.delivery_id,p_token:token});
-        if(prepared.error) { results.push('retry'); continue; }
+        if(prepared.error) return 'retry';
         if(!prepared.data) {
             await database.rpc('wif_travel_complete',{p_id:row.delivery_id,p_token:token,p_outcome:'failed',p_disable_device:false});
-            results.push('failed'); continue;
+            return 'failed';
         }
-        results.push(await send({...prepared.data,kind:'upcoming'}));
+        return send({...prepared.data,kind:'upcoming'});
+        });
+        results.push(outcome);
     }
     return results;
 }
