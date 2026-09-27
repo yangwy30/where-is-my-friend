@@ -1,0 +1,7 @@
+{
+  "name": "across-us-local-load-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {"test:load": "node run.mjs"},
+  "dependencies": {"embedded-postgres": "17.10.0-beta.17", "pg": "8.16.3"}
+}

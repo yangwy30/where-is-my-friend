@@ -1,0 +1,213 @@
+{
+  "startedAt": "2026-09-27T07:09:04.259Z",
+  "source": "31dd74dac6a26429a22e05195d1c248d9f8fead1",
+  "scope": "Local HTTP + actual API handler + actual PostgreSQL RPCs; mocked identity and APNs; no flight calls; not hosted capacity certification",
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 8,
+    "cpu": "Apple M1 Pro",
+    "totalMemoryGB": 16,
+    "freeMemoryGB": 0.7812042236328125
+  },
+  "configuration": {
+    "friendCount": 20,
+    "planCount": 3,
+    "prewarmedHTTPConnections": 1000,
+    "poolSize": 20,
+    "sqlTimeoutMs": 6500,
+    "poolWaitTimeoutMs": 6500,
+    "httpTimeoutMs": 20000,
+    "authSimulatedLatencyMs": 25,
+    "postgresSharedBuffersMB": 128
+  },
+  "stages": [],
+  "postgres": "PostgreSQL 17.10 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.3.2), 64-bit",
+  "dataset": {
+    "plans": 3000,
+    "trips": 600,
+    "users": 1000,
+    "events": 5000,
+    "flights": 3000,
+    "friendships": 10000,
+    "audienceRows": 60000
+  },
+  "morningScheduling": {
+    "syntheticLocalTime": "09:15 UTC",
+    "runs": [
+      {
+        "count": 500,
+        "ms": 62.61983399999917
+      },
+      {
+        "count": 500,
+        "ms": 64.15537500000028
+      },
+      {
+        "count": 0,
+        "ms": 58.463167000000794
+      }
+    ],
+    "total": 1000
+  },
+  "notifications": {
+    "runs": [
+      {
+        "status": 200,
+        "ms": 7833.082375,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7831,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 7438.978708000001,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7438,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 7022.921249999999,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7022,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 6667.023040999997,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 6667,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 6229.180208000005,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 6227,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      }
+    ],
+    "uniqueDelivered": 1000,
+    "duplicateSends": 0,
+    "peakSimulatedAPNsConcurrency": 3,
+    "sinkLatencyMs": 50,
+    "state": [
+      {
+        "status": "delivered",
+        "count": 1000
+      }
+    ],
+    "note": "Runs invoked back-to-back locally. Production cron waits one minute between scheduled runs; APNs latency/signing/decryption are simulated."
+  },
+  "finishedAt": "2026-09-27T07:09:45.965Z",
+  "eventLoopDelayMs": {
+    "p95": 22.511615,
+    "max": 58.949631
+  },
+  "finalDatabase": {
+    "numbackends": 4,
+    "deadlocks": "0",
+    "temp_bytes": "0"
+  }
+}
