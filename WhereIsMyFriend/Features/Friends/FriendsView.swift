@@ -289,7 +289,7 @@ struct FriendsView: View {
 
     private var friendPlansLink: some View {
         let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
-        let count = travelPlans.visibleFriendPlans(friendIDs: allowed, at: referenceDate).count
+        let count = travelPlans.friendPlanCount(friendIDs: allowed, at: referenceDate)
         return NavigationLink { FriendTravelPlansView() } label: {
             HStack(spacing: 5) {
                 Text("Friend plans")

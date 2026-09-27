@@ -386,6 +386,26 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue((search.value as? String)?.contains("New York") == true)
     }
 
+    func testFriendPlanSecondPageOpensDetails() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testPagedFriendPlans", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+        app.buttons["friendPlansLink"].tap()
+        let later = app.buttons["friendPlan-A7150000-0000-0000-0000-000000000003"]
+        XCTAssertFalse(later.exists)
+        let more = app.buttons["loadMoreFriendPlans"]
+        XCTAssertTrue(more.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !more.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
+        more.tap()
+        for _ in 0..<5 where !later.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
+        XCTAssertTrue(later.waitForExistence(timeout: 5))
+        capture("friend-plans-second-page")
+        later.tap()
+        XCTAssertTrue(app.buttons["copyFriendPlanDetail"].waitForExistence(timeout: 5))
+    }
+
     func testFriendPlanBadgeOpensThatFriendsSharedCities() {
         continueAfterFailure = false
         let app = XCUIApplication()

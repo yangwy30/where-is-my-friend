@@ -22,7 +22,7 @@ struct TravelPlansView: View {
                 if let error = library.errorMessage {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(error).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        Button("Try again") { Task { await library.refresh() } }
+                        Button("Try again") { Task { await library.refreshOwnPlans() } }
                     }
                 }
                 if visiblePlans.isEmpty {
@@ -82,8 +82,8 @@ struct TravelPlansView: View {
         .toolbar { ToolbarItem(placement: .topBarTrailing) {
             Button { editing = newPlan() } label: { Image(systemName: "plus") }.accessibilityLabel("Add travel plan")
         } }
-        .refreshable { await library.refresh() }
-        .task { await library.refresh() }
+        .refreshable { await library.refreshOwnPlans() }
+        .task { await library.refreshOwnPlans() }
         .sheet(item: $editing) { plan in PersonalPlanEditor(plan: plan) }
         .sheet(isPresented: $importingTrip, onDismiss: {
             if let importedPlan { editing = importedPlan; self.importedPlan = nil }
@@ -319,7 +319,7 @@ struct TravelCityPicker: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
             }
         }
-        .task(id: store.snapshot.currentUser.id) { await loadTripShortcuts() }
+        .task(id: store.snapshot.currentUser.id) { await library.refreshOwnPlans(); await loadTripShortcuts() }
         .task(id: query) {
             cities = []; error = nil; isSearching = false
             let text = query.trimmingCharacters(in: .whitespacesAndNewlines)

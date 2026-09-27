@@ -159,6 +159,7 @@ final class AppStore: ObservableObject {
             self?.handleIncomingURL(url) ?? false
         }
         travelPlans.connect(repository: selectedRepository, userID: snapshot.isAuthenticated ? snapshot.currentUser.id : nil)
+        travelPlans.updateFriendAccess(Set(snapshot.friends.map(\.id)).subtracting(snapshot.blockedUserIDs))
         notificationService.onUpcomingForeground = { [weak self] id in
             guard let self, snapshot.isAuthenticated else { return }
             pendingUpcomingNotificationID = id
@@ -190,7 +191,7 @@ final class AppStore: ObservableObject {
         await perform(successMessage: nil, showsActivity: false, presentsErrors: false) {
             try await self.repository.loadSnapshot()
         }
-        await travelPlans.refresh()
+        await travelPlans.refresh(minimumInterval: 15)
     }
 
     func updateProfile(_ update: ProfileUpdate) async -> Bool {
@@ -629,6 +630,7 @@ final class AppStore: ObservableObject {
                 let previousOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
                 snapshot = updated
                 travelPlans.connect(repository: repository, userID: updated.isAuthenticated ? updated.currentUser.id : nil)
+                travelPlans.updateFriendAccess(Set(updated.friends.map(\.id)).subtracting(updated.blockedUserIDs))
                 if !updated.isAuthenticated || (previousOwner != nil && previousOwner != updated.currentUser.id) {
                     friendPreferenceSaves.removeAll()
                     sharingSaveID = nil

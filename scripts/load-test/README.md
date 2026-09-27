@@ -10,6 +10,7 @@ Requires Node 22.22+ (for `stripTypeScriptTypes`) and a platform supported by th
 npm ci --prefix scripts/load-test
 node scripts/load-test/run.mjs --output=/tmp/across-load-normal
 node scripts/load-test/run.mjs --dense=1 --output=/tmp/across-load-dense
+node scripts/load-test/run.mjs --dense=1 --pagination=1 --output=/tmp/across-load-paginated
 node scripts/load-test/run.mjs --notifications-only=1 --output=/tmp/across-load-notifications
 ```
 
@@ -27,6 +28,12 @@ For a runtime installed elsewhere, pass `--runtime=/absolute/path/to/that/npm/pr
 - 16 competing edits use one plan revision: exactly one success and 15 explicit conflicts are expected.
 - A simulated 09:15 UTC scheduling window generates 1,000 reminders in batches of 500 / 500 / 0, checking the cap and deduplication. These local-only daily rows are removed before the separate delivery fixture.
 - 1,000 persisted booking-notification records pass through actual SQL claim/prepare/complete operations and the production push-worker handler. The APNs sink is simulated at 50ms; calls are never sent over the network. Worker invocations run back-to-back, unlike production cron.
+
+## Pagination comparison
+
+`--pagination=1` measures the new overview plus the first 50-item page. A burst actor performs four requests (Friends, overview, first page, Trips), compared with three legacy requests. The steady homepage refresh uses Friends + overview only. A separate cursor walk verifies all expected plans without duplicates. The report records whether the bootstrap lock is already part of the migrations.
+
+`--burst-only=1` omits the steady and notification stages for targeted iteration. `--profile=1 --quick=1 --dense=1` captures nested PostgreSQL execution plans and a local-only custom-plan experiment; these are diagnostics, not load results, and do not alter production.
 
 ## Measurement and limits
 

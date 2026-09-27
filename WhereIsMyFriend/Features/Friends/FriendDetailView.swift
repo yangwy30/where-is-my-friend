@@ -9,11 +9,12 @@ struct FriendDetailView: View {
     @State private var showsRemoveConfirmation = false
     @State private var showsBlockConfirmation = false
     @State private var referenceDate = Date()
+    @StateObject private var planFeed = FriendPlanFeed()
 
     private var sharedPlans: [FriendTravelPlan] {
         let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
-        return travelPlans.visibleFriendPlans(friendIDs: allowed, at: referenceDate)
-            .filter { $0.friendID == friend.id }
+        guard planFeed.matches(travelPlans) else { return [] }
+        return planFeed.items.filter { $0.friendID == friend.id && allowed.contains($0.friendID) && !$0.isPast(at: referenceDate) }
     }
 
     private var currentFriend: FriendPresence {
@@ -37,7 +38,7 @@ struct FriendDetailView: View {
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.top, 3)
 
-                if !sharedPlans.isEmpty { sharedPlansSection.padding(.top, 24) }
+                if !sharedPlans.isEmpty || planFeed.isLoading || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
                 citySurface.padding(.top, 20)
 
                 sectionLabel("Between you two").padding(.top, 24)
@@ -108,17 +109,18 @@ struct FriendDetailView: View {
         .navigationTitle(currentFriend.displayName.components(separatedBy: " ").first ?? currentFriend.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
-        .refreshable { await store.refresh(); referenceDate = Date() }
-        .task {
+        .refreshable { await store.refresh(); await planFeed.refresh(); referenceDate = Date() }
+        .task(id: "\(travelPlans.accountScope ?? "")|\(travelPlans.accessRevision)") {
+            planFeed.connect(travelPlans, friendID: friend.id)
             await store.preparePushRegistrationIfAuthorized()
             while !Task.isCancelled {
                 referenceDate = Date()
-                if scenePhase == .active { await travelPlans.refresh() }
+                if scenePhase == .active { await planFeed.refresh(minimumInterval: 15) }
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { referenceDate = Date(); await travelPlans.refresh() } }
+            if phase == .active { Task { referenceDate = Date(); await planFeed.refresh(minimumInterval: 15) } }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -180,6 +182,11 @@ struct FriendDetailView: View {
     private var sharedPlansSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionLabel("Travel plans")
+            if sharedPlans.isEmpty, planFeed.isLoading { ProgressView().padding(.vertical, 16) }
+            if sharedPlans.isEmpty, let error = planFeed.errorMessage {
+                Text(error).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                Button("Try again") { Task { await planFeed.refresh() } }.frame(minHeight: 44)
+            }
             ForEach(sharedPlans) { plan in
                 NavigationLink {
                     FriendTravelPlanDetailView(planID: plan.id)
@@ -201,6 +208,11 @@ struct FriendDetailView: View {
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("friendDetailPlan-\(plan.id)")
                 Divider().overlay(WIFTheme.border.opacity(0.4))
+            }
+            if planFeed.nextCursor != nil {
+                Button { Task { await planFeed.loadMore() } } label: { Text(planFeed.errorMessage == nil ? String(localized: "Load more") : String(localized: "Try again")) }
+                    .frame(maxWidth: .infinity, minHeight: 44).disabled(planFeed.isLoading)
+                    .accessibilityIdentifier("loadMoreProfilePlans")
             }
         }
     }

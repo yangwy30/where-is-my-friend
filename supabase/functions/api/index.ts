@@ -197,6 +197,40 @@ async function handle(request: Request): Promise<Response> {
     }
     const userID = authorization.userID;
 
+    if (request.method === "GET" && path === "/v2/own-plans") {
+        return json(await rpc("wif_travel_core_snapshot", {p_user_id: userID, p_include_plans: true}));
+    }
+    if (request.method === "GET" && path === "/v2/travel-plans") {
+        return json(await rpc("wif_travel_overview", {p_user_id: userID}));
+    }
+    if (request.method === "GET" && path === "/v2/friend-plans") {
+        const query = new URL(request.url).searchParams;
+        for (const key of query.keys()) {
+            if (!["cursor", "friendID", "planID", "limit"].includes(key) || query.getAll(key).length !== 1) {
+                throw new APIError(400, "Invalid page parameters.");
+            }
+        }
+        const friendID = query.get("friendID"), planID = query.get("planID");
+        if ((friendID !== null && !isUUID(friendID)) || (planID !== null && !isUUID(planID))) throw new APIError(400, "Invalid plan filter.");
+        const limit = query.has("limit") ? Number(query.get("limit")) : 50;
+        if (!Number.isInteger(limit) || limit < 1 || limit > 50) throw new APIError(400, "Invalid page size.");
+        let cursor: {startDay: string; id: string; version: string} | null = null;
+        if (query.has("cursor")) {
+            try {
+                const raw = query.get("cursor")!;
+                if (raw.length > 512) throw new Error();
+                cursor = JSON.parse(raw);
+                if (!cursor || Object.keys(cursor).sort().join(",") !== "id,startDay,version"
+                    || !isUUID(cursor.id) || typeof cursor.version !== "string" || !/^[a-f0-9]{32}$/.test(cursor.version)
+                    || typeof cursor.startDay !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(cursor.startDay)
+                    || new Date(cursor.startDay).toISOString().slice(0,10) !== cursor.startDay) throw new Error();
+            } catch { throw new APIError(400, "Invalid page cursor."); }
+        }
+        return json(await rpc("wif_friend_plan_page", {p_user_id: userID, p_limit: limit,
+            p_after_day: cursor?.startDay ?? null, p_after_id: cursor?.id ?? null, p_version: cursor?.version ?? null,
+            p_friend_id: friendID, p_plan_id: planID}));
+    }
+
     if (request.method === "GET" && path === "/v1/travel-plans") {
         return json(await rpc("wif_travel_snapshot", { p_user_id: userID }));
     }

@@ -68,6 +68,8 @@ enum RepositoryError: LocalizedError, Equatable {
 
 protocol AppRepository: Sendable {
     func fetchTravelPlans() async throws -> TravelPlanSnapshot
+    func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan]
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot
     func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot
     func fetchTrips() async throws -> [CloudTrip]
@@ -115,6 +117,15 @@ extension AppRepository {
         try await updateCurrentCity(city: city, countryCode: countryCode, source: source, observedAt: observedAt, administrativeArea: nil)
     }
     func fetchTravelPlans() async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
+    func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan] { try await fetchTravelPlans().plans }
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
+        let snapshot = try await fetchTravelPlans()
+        let rows = snapshot.friendPlans.filter { (friendID == nil || $0.friendID == friendID) && (planID == nil || $0.id == planID) }
+            .sorted { $0.startDay == $1.startDay ? $0.id.uuidString < $1.id.uuidString : $0.startDay < $1.startDay }
+        // Demo and small test repositories provide full data; production uses the server cursor.
+        return FriendPlanPage(items: rows, nextCursor: nil, version: "local")
+    }
+
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
     func deleteTravelPlan(id: UUID, revision: Int) async throws -> TravelPlanSnapshot { throw RepositoryError.unsupportedInCurrentMode }
     func fetchTrips() async throws -> [CloudTrip] { throw RepositoryError.unsupportedInCurrentMode }

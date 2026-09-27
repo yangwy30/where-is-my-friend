@@ -4,7 +4,7 @@ import {readFile,readdir,writeFile,mkdtemp,mkdir} from 'node:fs/promises';
 import {resolve,join,dirname} from 'node:path';
 import {tmpdir,cpus,totalmem,freemem,platform,arch} from 'node:os';
 import {pathToFileURL,fileURLToPath} from 'node:url';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {createServer,request as httpRequest,Agent} from 'node:http';
 import net from 'node:net';
@@ -53,7 +53,7 @@ async function localHTTP(path,{method='GET',headers={},body}={}){
 const report={startedAt:new Date().toISOString(),source:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),
  scope:'Local HTTP + actual API handler + actual PostgreSQL RPCs; mocked identity and APNs; no flight calls; not hosted capacity certification',
  machine:{platform:platform(),arch:arch(),cpus:cpus().length,cpu:cpus()[0].model,totalMemoryGB:totalmem()/2**30,freeMemoryGB:freemem()/2**30},
- configuration:{friendCount,planCount,prewarmedHTTPConnections:args.quick?40:1000,poolSize:20,sqlTimeoutMs:6500,poolWaitTimeoutMs:6500,httpTimeoutMs:20000,authSimulatedLatencyMs:25,postgresSharedBuffersMB:128},stages};
+ configuration:{pagination:!!args.pagination,friendCount,planCount,prewarmedHTTPConnections:args.quick?40:1000,poolSize:20,sqlTimeoutMs:6500,poolWaitTimeoutMs:6500,httpTimeoutMs:20000,authSimulatedLatencyMs:25,postgresSharedBuffersMB:128},stages};
 let admin,pool,server,base,accounts,tokens=new Map(),handler,database,monitor;
 const loop=monitorEventLoopDelay({resolution:20});loop.enable();
 const samples=[];
@@ -101,6 +101,21 @@ try{
  accounts=(await admin.query('select * from load_accounts order by n')).rows.map(a=>({...a,token:randomUUID()}));
  for(const a of accounts)tokens.set(a.token,a.auth_id);
  report.dataset=(await admin.query(`select jsonb_build_object('users',(select count(*) from app_users),'friendships',(select count(*) from friendships),'plans',(select count(*) from travel_plans),'audienceRows',(select count(*) from travel_plan_audience),'trips',(select count(*) from trips),'flights',(select count(*) from flights),'events',(select count(*) from colocation_events)) as counts`)).rows[0].counts;
+ if(args.profile){
+  const timings={};
+  for(const mode of ['baseline','custom']){
+   if(mode==='custom')for(const name of ['wif_friend_plan_page(uuid,integer,date,uuid,text,uuid,uuid)','wif_travel_overview(uuid)','wif_travel_core_snapshot(uuid,boolean)'])await admin.query('alter function public.'+name+' set plan_cache_mode=force_custom_plan');
+   for(const name of ['wif_travel_core_snapshot','wif_travel_overview','wif_friend_plan_page']){
+    const times=[];for(let i=0;i<25;i++){const t=performance.now();await admin.query('select public.'+name+'($1)',[accounts[i].id]);times.push(performance.now()-t);}timings[mode+':'+name]=timing(times);
+   }
+   const notices=[];const listener=n=>notices.push(n.message);admin.on('notice',listener);
+   await admin.query("load 'auto_explain';set auto_explain.log_min_duration=0;set auto_explain.log_analyze=on;set auto_explain.log_buffers=on;set auto_explain.log_timing=off;set auto_explain.log_nested_statements=on;set auto_explain.log_format=json;set client_min_messages=log");
+   for(const name of ['wif_travel_overview','wif_friend_plan_page'])await admin.query('select public.'+name+'($1)',[accounts[29].id]);
+   await admin.query('set auto_explain.log_min_duration=-1');admin.removeListener('notice',listener);
+   await writeFile(join(output,'sql-plans-'+mode+'.json'),JSON.stringify(notices,null,2));
+  }
+  report.profile=timings;progress('SQL profile: '+JSON.stringify(timings));
+ }
  pool=new Pool({host:'127.0.0.1',port,user:'postgres',password:secret,database:'postgres',max:20,connectionTimeoutMillis:6500,
   options:'-c role=service_role -c statement_timeout=6500'});
  ({handler,database}=await createHarness(pool,tokens,rpcMetrics));
@@ -119,7 +134,7 @@ try{
  const warmConnections=[];for(let i=0;i<(args.quick?40:1000);i++){warmConnections.push(localHTTP('/__load_ready'));if(i%25===24)await sleep(35);}
  const ready=await Promise.all(warmConnections);if(ready.some(r=>r.status!==200))throw Error('HTTP connection warmup failed');
  monitor=setInterval(()=>samples.push({waiting:pool.waitingCount,connections:pool.totalCount,rssMB:process.memoryUsage().rss/2**20}),100);
- if(!args['notifications-only']) {
+ if(!args['notifications-only']&&!args.profile) {
  const warmup=await stage('warmup',10,()=>Promise.all(accounts.slice(0,10).map(a=>request(a,'GET','/v1/bootstrap',null,j=>j.currentUser?.id===a.id&&j.friends?.length===friendCount))));
  if(warmup.errors)throw Error('Warmup validation failed; no load stages run');
  const levels=args.quick?[10]:[100,500,1000];
@@ -131,14 +146,29 @@ try{
  for(const n of levels){
   await stage('refresh_burst_'+n,n,()=>Promise.all(accounts.slice(0,n).map(async a=>{
    await request(a,'GET','/v1/bootstrap',null,j=>j.currentUser?.id===a.id&&j.friends?.length===friendCount);
-   await request(a,'GET','/v1/travel-plans',null,j=>j.plans?.length===planCount&&j.friendPlans?.length===friendCount*planCount);
+   if(args.pagination){
+    await request(a,'GET','/v2/travel-plans',null,j=>j.includesOwnPlans===false&&j.friendPlanSummaries?.reduce((n,x)=>n+x.count,0)===friendCount*planCount);
+    await request(a,'GET','/v2/friend-plans',null,j=>j.items?.length===50&&!!j.nextCursor);
+   }else await request(a,'GET','/v1/travel-plans',null,j=>j.plans?.length===planCount&&j.friendPlans?.length===friendCount*planCount);
    await request(a,'GET','/v1/trips',null,j=>j.trips?.length===3);
   })));
  }
- if(!args.quick)await stage('steady_refresh_1000_over_60s',1000,()=>Promise.all(accounts.map(async(a,i)=>{
+ if(!args.quick&&!args['burst-only'])await stage('steady_refresh_1000_over_60s',1000,()=>Promise.all(accounts.map(async(a,i)=>{
   await sleep(i*60);await request(a,'GET','/v1/bootstrap',null,j=>j.currentUser?.id===a.id);
-  await request(a,'GET','/v1/travel-plans',null,j=>j.plans?.length===planCount&&j.friendPlans?.length===friendCount*planCount);
+  if(args.pagination)await request(a,'GET','/v2/travel-plans',null,j=>j.includesOwnPlans===false&&j.friendPlanSummaries?.length===friendCount);
+  else await request(a,'GET','/v1/travel-plans',null,j=>j.plans?.length===planCount&&j.friendPlans?.length===friendCount*planCount);
  })));
+ if(args.pagination){
+  const seen=new Set();let cursor=null,pages=0;
+  do{
+   const res=await localHTTP('/v2/friend-plans'+(cursor?'?cursor='+encodeURIComponent(JSON.stringify(cursor)):''),{headers:{Authorization:'Bearer '+accounts[0].token}});
+   const page=JSON.parse(res.text);if(res.status!==200||page.resetRequired)throw Error('Page traversal failed');
+   for(const row of page.items){if(seen.has(row.id))throw Error('Duplicate paginated row');seen.add(row.id);}
+   cursor=page.nextCursor;pages++;if(pages>100)throw Error('Cursor failed to finish');
+  }while(cursor);
+  report.paginationTraversal={pages,uniquePlans:seen.size,expected:friendCount*planCount};
+  if(seen.size!==friendCount*planCount)throw Error('Pagination lost rows');
+ }
  // Same-identity initialization must not create multiple profiles under concurrent requests.
  const repeat={auth_id:randomUUID(),token:randomUUID()};tokens.set(repeat.token,repeat.auth_id);
  await admin.query('insert into auth.users(id) values($1)',[repeat.auth_id]);
@@ -154,8 +184,9 @@ try{
  // Candidate remedy is applied ONLY to this temporary cluster, never the repository migrations or production.
  const originalBootstrap=(await admin.query("select pg_get_functiondef('public.wif_ensure_app_user(uuid,text)'::regprocedure) as sql")).rows[0].sql;
  const lockPoint='    select id into v_user_id';
+ report.bootstrapFixPresent=originalBootstrap.includes('wif:bootstrap:');
  if(!originalBootstrap.includes(lockPoint))throw Error('Bootstrap experiment source changed');
- const candidateBootstrap=originalBootstrap.replace(lockPoint,"    perform pg_advisory_xact_lock(hashtextextended('wif:bootstrap:'||p_auth_user_id::text,0));\n"+lockPoint);
+ const candidateBootstrap=report.bootstrapFixPresent?originalBootstrap:originalBootstrap.replace(lockPoint,"    perform pg_advisory_xact_lock(hashtextextended('wif:bootstrap:'||p_auth_user_id::text,0));\n"+lockPoint);
  await writeFile(join(output,'bootstrap-lock-candidate.sql'),candidateBootstrap);
  await admin.query(candidateBootstrap);
  report.bootstrapSQLRaceAfterLocalLock={rounds:20,concurrency:20,errors:[],profileCounts:[]};
@@ -178,7 +209,7 @@ try{
   const result=await admin.query(`explain (analyze,buffers,format json) select public.${name}($1)`,[accounts[1].id]);report.explains[name]=result.rows[0]['QUERY PLAN'];
  }
  }
- if(!args.quick){
+ if(!args.quick&&!args.profile&&!args['burst-only']){
   progress('Testing 1,000 real SQL notification records with a simulated APNs sink');
   await admin.query(`insert into trips(id,name,start_date,end_date,destination_airport) select 'notify-'||g,'Load notification trip',(current_date+7)::text,(current_date+10)::text,'LAX' from generate_series(0,199) g;
    insert into trip_members(trip_id,user_id,role) select 'notify-'||((n-1)/5),id,case when (n-1)%5=0 then 'owner' else 'member' end from load_accounts;
@@ -214,6 +245,8 @@ try{
    state:(await admin.query('select status,count(*)::int from trip_booking_deliveries group by status')).rows,
    note:'Runs invoked back-to-back locally. Production cron waits one minute between scheduled runs; APNs latency/signing/decryption are simulated.'};
  }
+ report.apiSHA256=createHash('sha256').update(await readFile(join(root,'supabase/functions/api/index.ts'))).digest('hex');
+ report.migrations=(await readdir(join(root,'supabase/migrations'))).filter(f=>f.endsWith('.sql')).sort();
  report.finishedAt=new Date().toISOString();report.eventLoopDelayMs={p95:loop.percentile(95)/1e6,max:loop.max/1e6};
  report.finalDatabase=(await admin.query('select numbackends,deadlocks,temp_bytes from pg_stat_database where datname=current_database()')).rows[0];
  await writeFile(join(output,'results.json'),JSON.stringify(report,null,2));

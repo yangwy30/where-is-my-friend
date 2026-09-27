@@ -1,6 +1,14 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Couldn’t load your plans. Try again." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂时无法加载你的计划，请重试。" } } }
+    },
+    "Load more" : {
+      "localizations" : {
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "加载更多" } }
+      }
+    },
 "1 friend": {
     "localizations": {
       "zh-Hans": {

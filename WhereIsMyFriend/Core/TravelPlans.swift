@@ -148,19 +148,42 @@ struct FriendTravelPlan: Identifiable, Codable, Equatable {
     }
 }
 
+struct FriendPlanSummary: Codable, Equatable {
+    let friendID: UUID
+    let count: Int
+    let nextPlan: FriendTravelPlan
+}
+
+struct FriendPlanCursor: Codable, Equatable, Sendable {
+    let startDay: String
+    let id: UUID
+    let version: String
+}
+
+struct FriendPlanPage: Codable, Sendable {
+    var items: [FriendTravelPlan]
+    var nextCursor: FriendPlanCursor?
+    var version: String
+    var resetRequired: Bool = false
+}
+
 struct TravelPlanSnapshot: Codable {
     var plans: [PersonalTravelPlan] = []
     var overlaps: [TravelOverlap] = []
     var friendPlans: [FriendTravelPlan] = []
+    var friendPlanSummaries: [FriendPlanSummary]?
+    var includesOwnPlans = true
 }
 
 extension TravelPlanSnapshot {
-    enum CodingKeys: String, CodingKey { case plans, overlaps, friendPlans }
+    enum CodingKeys: String, CodingKey { case plans, overlaps, friendPlans, friendPlanSummaries, includesOwnPlans }
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         plans = try values.decode([PersonalTravelPlan].self, forKey: .plans)
         overlaps = try values.decode([TravelOverlap].self, forKey: .overlaps)
         friendPlans = try values.decodeIfPresent([FriendTravelPlan].self, forKey: .friendPlans) ?? []
+        friendPlanSummaries = try values.decodeIfPresent([FriendPlanSummary].self, forKey: .friendPlanSummaries)
+        includesOwnPlans = try values.decodeIfPresent(Bool.self, forKey: .includesOwnPlans) ?? true
     }
 }
 
@@ -183,6 +206,11 @@ final class TravelPlanLibrary: ObservableObject {
     @Published private(set) var isSaving = false
     @Published var errorMessage: String?
     @Published private(set) var hasSynced = false
+    @Published private(set) var accountScope: String?
+    @Published private(set) var accessRevision = 0
+    private var allowedFriendIDs: Set<UUID>?
+    private var friendSummaries: [FriendPlanSummary]?
+    private var lastRefreshAt: Date?
     private var repository: (any AppRepository)?
     private var scope: String?
     private var ownerID: UUID?
@@ -198,14 +226,23 @@ final class TravelPlanLibrary: ObservableObject {
         guard newScope != scope else { return }
         generation += 1
         cancelRefresh()
-        self.repository = repository; ownerID = userID; scope = newScope
+        self.repository = repository; ownerID = userID; scope = newScope; accountScope = newScope
+        friendSummaries = nil; lastRefreshAt = nil; allowedFriendIDs = nil; accessRevision += 1
         cacheEpoch = newScope.map { AccountLocalData.epoch(for: $0) } ?? 0
         plans = []; overlaps = []; friendPlans = []; errorMessage = nil; hasSynced = false; isLoading = false; isSaving = false
         if let newScope, let data = UserDefaults.standard.data(forKey: newScope),
            let saved = try? JSONDecoder().decode([PersonalTravelPlan].self, from: data) { plans = saved }
     }
 
-    func refresh() async {
+    func updateFriendAccess(_ ids: Set<UUID>) {
+        guard let previous = allowedFriendIDs else { allowedFriendIDs = ids; return }
+        guard previous != ids else { return }
+        allowedFriendIDs = ids; accessRevision += 1; cancelRefresh()
+        friendPlans = []; friendSummaries = nil; overlaps = []; hasSynced = false; lastRefreshAt = nil
+    }
+
+    func refresh(minimumInterval: TimeInterval = 0) async {
+        if refreshTask == nil, hasSynced, let lastRefreshAt, Date().timeIntervalSince(lastRefreshAt) < minimumInterval { return }
         guard !Task.isCancelled, !isSaving, let repository, ownerID != nil else { return }
         let version = generation
         let epoch = mutationEpoch
@@ -239,11 +276,12 @@ final class TravelPlanLibrary: ObservableObject {
             // Cancellation is control flow during account/navigation changes,
             // not evidence that the server rejected a shared plan.
             guard !(error is CancellationError), (error as? URLError)?.code != .cancelled else { return }
-            overlaps = []; friendPlans = []; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
+            overlaps = []; friendPlans = []; friendSummaries = nil; errorMessage = String(localized: "Couldn’t load shared plans. Try again."); hasSynced = false
         }
     }
 
     private func cancelRefresh() {
+        ownRefreshID = nil; ownRefreshTask?.cancel(); ownRefreshTask = nil
         refreshID = nil
         refreshTask?.cancel()
         refreshTask = nil
@@ -252,7 +290,7 @@ final class TravelPlanLibrary: ObservableObject {
 
     func save(_ plan: PersonalTravelPlan) async -> Bool {
         guard !isSaving, let repository, ownerID != nil else { return false }
-        let version = generation
+        let version = generation, sharingVersion = accessRevision
         mutationEpoch += 1
         cancelRefresh()
         isSaving = true
@@ -260,7 +298,7 @@ final class TravelPlanLibrary: ObservableObject {
         do {
             let result = try await repository.saveTravelPlan(try plan.validated())
             guard generation == version else { return false }
-            apply(result); return true
+            apply(result, expectedAccess: sharingVersion); return true
         } catch {
             guard generation == version else { return false }
             errorMessage = mutationError(error)
@@ -270,7 +308,7 @@ final class TravelPlanLibrary: ObservableObject {
 
     func delete(_ plan: PersonalTravelPlan) async -> Bool {
         guard !isSaving, let repository, ownerID != nil else { return false }
-        let version = generation
+        let version = generation, sharingVersion = accessRevision
         mutationEpoch += 1
         cancelRefresh()
         isSaving = true
@@ -278,7 +316,7 @@ final class TravelPlanLibrary: ObservableObject {
         do {
             let result = try await repository.deleteTravelPlan(id: plan.id, revision: plan.revision)
             guard generation == version else { return false }
-            apply(result); return true
+            apply(result, expectedAccess: sharingVersion); return true
         } catch {
             guard generation == version else { return false }
             errorMessage = mutationError(error); return false
@@ -292,18 +330,137 @@ final class TravelPlanLibrary: ObservableObject {
         return error.localizedDescription
     }
 
-    private func apply(_ result: TravelPlanSnapshot) {
+    private func apply(_ incoming: TravelPlanSnapshot, expectedAccess: Int? = nil) {
+        var result = incoming
+        let accessChanged = expectedAccess.map { $0 != accessRevision } ?? false
+        if accessChanged { result.friendPlans = []; result.friendPlanSummaries = []; result.overlaps = [] }
         guard let scope, AccountLocalData.epoch(for: scope) == cacheEpoch else { return }
-        plans = result.plans; overlaps = result.overlaps; hasSynced = true; errorMessage = nil
+        if result.includesOwnPlans { plans = result.plans }; overlaps = result.overlaps; hasSynced = true; errorMessage = nil
+        lastRefreshAt = accessChanged ? nil : Date(); friendSummaries = result.friendPlanSummaries
+        if accessChanged { hasSynced = false }
         // Shared full dates are memory-only: no offline or cross-account browsing cache.
-        friendPlans = result.friendPlans.sorted {
+        friendPlans = (result.friendPlanSummaries?.map(\.nextPlan) ?? result.friendPlans).sorted {
             if $0.startDay != $1.startDay { return $0.startDay < $1.startDay }
             return $0.id.uuidString < $1.id.uuidString
         }
         if let data = try? JSONEncoder().encode(plans) { UserDefaults.standard.set(data, forKey: scope) }
     }
 
+    private var ownRefreshTask: Task<[PersonalTravelPlan], Error>?
+    private var ownRefreshID: UUID?
+    func refreshOwnPlans() async {
+        guard let repository, ownerID != nil, !isSaving else { return }
+        let currentGeneration = generation, currentMutation = mutationEpoch
+        let ticket: UUID, read: Task<[PersonalTravelPlan], Error>
+        if let existing = ownRefreshTask, let id = ownRefreshID { read = existing; ticket = id }
+        else { ticket = UUID(); read = Task { try await repository.fetchOwnTravelPlans() }; ownRefreshTask = read; ownRefreshID = ticket }
+        defer { if ownRefreshID == ticket { ownRefreshTask = nil; ownRefreshID = nil } }
+        do {
+            let result = try await read.value
+            guard generation == currentGeneration, mutationEpoch == currentMutation, ownRefreshID == ticket,
+                  let scope, AccountLocalData.epoch(for: scope) == cacheEpoch else { return }
+            plans = result; errorMessage = nil
+            if let data = try? JSONEncoder().encode(plans) { UserDefaults.standard.set(data, forKey: scope) }
+        } catch {
+            guard generation == currentGeneration, mutationEpoch == currentMutation, !(error is CancellationError) else { return }
+            errorMessage = String(localized: "Couldn’t load your plans. Try again.")
+        }
+    }
+
+    func friendPlanCount(friendIDs: Set<UUID>, at now: Date = Date()) -> Int {
+        if let friendSummaries {
+            return friendSummaries.filter { friendIDs.contains($0.friendID) && !$0.nextPlan.isPast(at: now) }.reduce(0) { $0 + $1.count }
+        }
+        return visibleFriendPlans(friendIDs: friendIDs, at: now).count
+    }
+
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
+        guard let repository, ownerID != nil else { throw CancellationError() }
+        let version = generation, access = accessRevision
+        let result = try await repository.fetchFriendPlanPage(cursor: cursor, friendID: friendID, planID: planID)
+        guard version == generation, access == accessRevision else { throw CancellationError() }
+        return result
+    }
+
     func visibleFriendPlans(friendIDs: Set<UUID>, at now: Date = Date()) -> [FriendTravelPlan] {
         friendPlans.filter { friendIDs.contains($0.friendID) && !$0.isPast(at: now) }
     }
+}
+
+/// Memory-only, account-scoped paging. A changed server version restarts the list.
+@MainActor
+final class FriendPlanFeed: ObservableObject {
+    @Published private(set) var items: [FriendTravelPlan] = []
+    @Published private(set) var isLoading = false
+    @Published private(set) var hasLoaded = false
+    @Published private(set) var nextCursor: FriendPlanCursor?
+    @Published private(set) var errorMessage: String?
+    private(set) var accountScope: String?
+    private var accessRevision = 0
+    func matches(_ library: TravelPlanLibrary) -> Bool { accountScope == library.accountScope && accessRevision == library.accessRevision }
+    private weak var library: TravelPlanLibrary?
+    private var friendID: UUID?
+    private var planID: UUID?
+    private var version: String?
+    private var epoch = 0
+    private var requestID: UUID?
+    private var task: Task<FriendPlanPage, Error>?
+    private var lastRefreshAt: Date?
+
+    func connect(_ library: TravelPlanLibrary, friendID: UUID? = nil, planID: UUID? = nil) {
+        guard self.library !== library || !matches(library) || self.friendID != friendID || self.planID != planID else { return }
+        epoch += 1; task?.cancel(); task = nil; requestID = nil
+        self.library = library; accountScope = library.accountScope; accessRevision = library.accessRevision; self.friendID = friendID; self.planID = planID
+        items = []; nextCursor = nil; version = nil; errorMessage = nil; hasLoaded = false; isLoading = false; lastRefreshAt = nil
+    }
+
+    func refresh(minimumInterval: TimeInterval = 0) async {
+        if hasLoaded, let lastRefreshAt, Date().timeIntervalSince(lastRefreshAt) < minimumInterval { return }
+        await load(cursor: nil)
+    }
+
+    func loadMore() async {
+        guard !isLoading, let nextCursor else { return }
+        await load(cursor: nextCursor)
+    }
+
+    private func load(cursor: FriendPlanCursor?) async {
+        guard !Task.isCancelled, let library, accountScope != nil, matches(library) else { return }
+        // Join repeated refreshes; loading a new first page retires an older page request.
+        if let task, cursor == nil, requestCursor == nil { _ = try? await task.value; return }
+        if task != nil { epoch += 1; task?.cancel() }
+        let currentEpoch = epoch, ticket = UUID(), scope = accountScope
+        let friend = friendID, plan = planID
+        let read = Task { try await library.fetchFriendPlanPage(cursor: cursor, friendID: friend, planID: plan) }
+        task = read; requestID = ticket; requestCursor = cursor; isLoading = true; errorMessage = nil
+        var restart = false
+        do {
+            let page = try await read.value
+            guard requestID == ticket, epoch == currentEpoch, scope == library.accountScope, matches(library) else { return }
+            if page.resetRequired || (cursor != nil && version != page.version) {
+                items = []; nextCursor = nil; version = nil; hasLoaded = false
+                restart = true
+            } else if cursor == nil {
+                if version != page.version || page.version == "local" || !hasLoaded {
+                    items = page.items; nextCursor = page.nextCursor; version = page.version
+                }
+                hasLoaded = true; lastRefreshAt = Date()
+            } else {
+                let existing = Set(items.map(\.id))
+                items.append(contentsOf: page.items.filter { !existing.contains($0.id) })
+                nextCursor = page.nextCursor
+            }
+        } catch {
+            guard requestID == ticket, epoch == currentEpoch, scope == library.accountScope, matches(library) else { return }
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
+                if cursor == nil { items = []; nextCursor = nil; hasLoaded = false }
+                errorMessage = String(localized: "Couldn’t load shared plans. Try again.")
+            }
+        }
+        if requestID == ticket { task = nil; requestID = nil; requestCursor = nil; isLoading = false }
+        // The first page cannot itself request a restart. At most one replacement read.
+        if restart { await load(cursor: nil) }
+    }
+
+    private var requestCursor: FriendPlanCursor?
 }

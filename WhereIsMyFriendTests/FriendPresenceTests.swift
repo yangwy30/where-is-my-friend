@@ -2393,6 +2393,23 @@ private actor SlowTestRepository: AppRepository {
     private var travel = TravelPlanSnapshot()
     private var travelError: Error?
     private var travelReadCount = 0
+    private var travelSaveDelay: Duration = .zero
+    func setTravelSaveDelay(_ value: Duration) { travelSaveDelay = value }
+    private var pageResults: [FriendPlanPage] = []
+    private var pageReadCount = 0
+    func configurePages(_ pages: [FriendPlanPage]) { pageResults = pages; pageReadCount = 0 }
+    func pageReads() -> Int { pageReadCount }
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
+        pageReadCount += 1
+        if !pageResults.isEmpty {
+            let result = pageResults.removeFirst()
+            try? await Task.sleep(for: .milliseconds(80))
+            return result
+        }
+        let result = try await fetchTravelPlans()
+        return FriendPlanPage(items: result.friendPlans.filter { (friendID == nil || $0.friendID == friendID) && (planID == nil || $0.id == planID) }, nextCursor: nil, version: "local")
+    }
+
     private var tripReads: [[CloudTrip]] = []
     private var tripReadDelays: [Duration] = []
     private var tripReadCount = 0
@@ -2427,6 +2444,7 @@ private actor SlowTestRepository: AppRepository {
         return false
     }
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {
+        try await Task.sleep(for: travelSaveDelay)
         travel = TravelPlanSnapshot(plans: [plan]); return travel
     }
 
@@ -3045,5 +3063,117 @@ extension AppStoreReliabilityTests {
         await first.value
         XCTAssertFalse(store.preference(for: id).sharesMyCity)
         XCTAssertFalse(store.isSavingFriendPreference(for: id))
+    }
+}
+
+
+extension FriendTravelPlanTests {
+    @MainActor
+    func testOverviewRetainsEveryFriendsBadgeAndAccuratePlanCount() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        let rows = (0..<75).map { _ in shared() }
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlanSummaries: rows.map { FriendPlanSummary(friendID: $0.friendID, count: 10, nextPlan: $0) }))
+        library.connect(repository: repo, userID: owner); await library.refresh()
+        XCTAssertEqual(library.friendPlans.count, 75)
+        XCTAssertEqual(library.friendPlanCount(friendIDs: Set(rows.map(\.friendID))), 750)
+        XCTAssertEqual(library.visibleFriendPlans(friendIDs: [rows[74].friendID]).first, rows[74])
+    }
+
+    @MainActor
+    func testFeedLoadsMoreOnceAndUnchangedRefreshPreservesTheLoadedTail() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), feed = FriendPlanFeed()
+        library.connect(repository: repo, userID: UUID()); feed.connect(library)
+        let first = shared(), second = shared()
+        let cursor = FriendPlanCursor(startDay: first.startDay, id: first.id, version: "a")
+        await repo.configurePages([
+            FriendPlanPage(items: [first], nextCursor: cursor, version: "a"),
+            FriendPlanPage(items: [first, second], nextCursor: nil, version: "a"),
+            FriendPlanPage(items: [first], nextCursor: cursor, version: "a")
+        ])
+        await feed.refresh()
+        async let one: Void = feed.loadMore()
+        async let two: Void = feed.loadMore()
+        _ = await (one, two)
+        XCTAssertEqual(feed.items, [first, second]); XCTAssertNil(feed.nextCursor)
+        let count = await repo.pageReads(); XCTAssertEqual(count, 2)
+        await feed.refresh()
+        XCTAssertEqual(feed.items, [first, second]); XCTAssertNil(feed.nextCursor)
+    }
+
+    @MainActor
+    func testChangedPageRestartsWithoutKeepingRevokedRows() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), feed = FriendPlanFeed()
+        library.connect(repository: repo, userID: UUID()); feed.connect(library)
+        let old = shared(), fresh = shared()
+        await repo.configurePages([
+            FriendPlanPage(items: [old], nextCursor: FriendPlanCursor(startDay: old.startDay, id: old.id, version: "a"), version: "a"),
+            FriendPlanPage(items: [], nextCursor: nil, version: "b", resetRequired: true),
+            FriendPlanPage(items: [fresh], nextCursor: nil, version: "b")
+        ])
+        await feed.refresh(); await feed.loadMore()
+        XCTAssertEqual(feed.items, [fresh]); XCTAssertFalse(feed.isLoading); XCTAssertNil(feed.errorMessage)
+        let count = await repo.pageReads(); XCTAssertEqual(count, 3)
+    }
+
+    @MainActor
+    func testAccountSwitchRetiresPendingPageAndClearsMemory() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), feed = FriendPlanFeed(), old = shared(), fresh = shared()
+        library.connect(repository: repo, userID: UUID()); feed.connect(library)
+        await repo.configurePages([FriendPlanPage(items: [old], nextCursor: nil, version: "a"), FriendPlanPage(items: [fresh], nextCursor: nil, version: "b")])
+        let pending = Task { await feed.refresh() }
+        try? await Task.sleep(for: .milliseconds(20))
+        library.connect(repository: repo, userID: UUID()); feed.connect(library)
+        await feed.refresh(); await pending.value
+        XCTAssertEqual(feed.items, [fresh]); XCTAssertFalse(feed.isLoading)
+        library.connect(repository: repo, userID: nil); feed.connect(library)
+        XCTAssertTrue(feed.items.isEmpty); XCTAssertFalse(feed.hasLoaded)
+    }
+}
+
+
+extension FriendTravelPlanTests {
+    @MainActor
+    func testLightOverviewDoesNotEraseOwnPlansAndOwnReadKeepsSharedOverview() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID(), own = shared().privateDraft(), friend = shared()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        library.connect(repository: repo, userID: owner)
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(plans: [own])); await library.refresh()
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(friendPlanSummaries: [FriendPlanSummary(friendID: friend.friendID, count: 5, nextPlan: friend)], includesOwnPlans: false))
+        await library.refresh(); XCTAssertEqual(library.plans, [own])
+        let updated = shared().privateDraft()
+        await repo.configureTravel(snapshot: TravelPlanSnapshot(plans: [updated])); await library.refreshOwnPlans()
+        XCTAssertEqual(library.plans, [updated]); XCTAssertEqual(library.friendPlans, [friend])
+    }
+}
+
+
+extension FriendTravelPlanTests {
+    @MainActor
+    func testFriendRemovalAndReadditionCannotReviveAPreviousPage() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), feed = FriendPlanFeed(), row = shared()
+        library.connect(repository: repo, userID: UUID()); library.updateFriendAccess([row.friendID]); feed.connect(library)
+        await repo.configurePages([FriendPlanPage(items: [row], nextCursor: nil, version: "a")]); await feed.refresh()
+        XCTAssertEqual(feed.items, [row]); XCTAssertTrue(feed.matches(library))
+        library.updateFriendAccess([]); XCTAssertFalse(feed.matches(library))
+        library.updateFriendAccess([row.friendID]); XCTAssertFalse(feed.matches(library))
+        feed.connect(library); XCTAssertTrue(feed.items.isEmpty); XCTAssertFalse(feed.hasLoaded)
+    }
+}
+
+
+extension FriendTravelPlanTests {
+    @MainActor
+    func testFriendAccessChangeDuringSaveDoesNotLeaveSavingStuck() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), owner = UUID(), row = shared()
+        defer { UserDefaults.standard.removeObject(forKey: "travel-plans.v1.\(repo.storageScope).\(owner)") }
+        library.connect(repository: repo, userID: owner); library.updateFriendAccess([row.friendID])
+        await repo.setTravelSaveDelay(.milliseconds(100))
+        let save = Task { await library.save(row.privateDraft()) }
+        try? await Task.sleep(for: .milliseconds(20)); XCTAssertTrue(library.isSaving)
+        library.updateFriendAccess([])
+        let succeeded = await save.value
+        XCTAssertTrue(succeeded); XCTAssertFalse(library.isSaving); XCTAssertEqual(library.plans.count, 1)
+        XCTAssertTrue(library.friendPlans.isEmpty); XCTAssertFalse(library.hasSynced)
     }
 }

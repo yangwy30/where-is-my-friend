@@ -2,7 +2,7 @@ const usernamePattern = /^[a-z0-9_]{3,20}$/;
 
 export function normalizeAPIPath(input) {
     const pathname = input.includes("://") ? new URL(input).pathname : input;
-    const markerIndex = pathname.lastIndexOf("/v1");
+    const markerIndex = [...pathname.matchAll(/\/v[12](?=\/|$)/g)].at(-1)?.index ?? -1;
     if (markerIndex < 0) return "/";
     const route = pathname.slice(markerIndex).replace(/\/+$/, "");
     return route || "/";

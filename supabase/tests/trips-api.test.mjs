@@ -14,6 +14,25 @@ const userID = "10000000-0000-0000-0000-000000000001";
 const authID = "20000000-0000-0000-0000-000000000001";
 const participantID = "30000000-0000-0000-0000-000000000001";
 
+test('paged plan endpoints bind viewer identity, validate filters and reject malformed cursors',async()=>{
+ const {request,calls}=await harness();
+ assert.equal((await request('GET','/v2/own-plans')).status,200);
+ assert.equal(calls.at(-1).name,'wif_travel_core_snapshot');assert.equal(calls.at(-1).parameters.p_include_plans,true);
+ assert.equal((await request('GET','/v2/travel-plans')).status,200);
+ assert.equal(calls.at(-1).name,'wif_travel_overview');assert.equal(calls.at(-1).parameters.p_user_id,userID);
+ assert.equal((await request('GET','/v2/friend-plans?limit=20&friendID='+participantID)).status,200);
+ assert.equal(calls.at(-1).name,'wif_friend_plan_page');assert.equal(calls.at(-1).parameters.p_friend_id,participantID);
+ for(const q of ['limit=51','limit=0','limit=1.5','cursor=null','cursor={}','friendID=other','limit=1&limit=2','userID='+userID]) {
+  const before=calls.filter(c=>c.name==='wif_friend_plan_page').length;
+  assert.equal((await request('GET','/v2/friend-plans?'+q)).status,400,q);
+  assert.equal(calls.filter(c=>c.name==='wif_friend_plan_page').length,before);
+ }
+ const cursor={startDay:'2026-10-01',id:participantID,version:'a'.repeat(32)};
+ assert.equal((await request('GET','/v2/friend-plans?cursor='+encodeURIComponent(JSON.stringify(cursor)))).status,200);
+ assert.equal(calls.at(-1).parameters.p_after_id,participantID);
+ assert.equal((await request('GET','/v2/friend-plans',undefined,'')).status,401);
+});
+
 test('collaboration endpoints accept only the authenticated actor and strict fields',async()=>{
     const {request,calls}=await harness();
     for(const [action,payload,name] of [

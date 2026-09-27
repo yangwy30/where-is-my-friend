@@ -76,6 +76,31 @@ actor LocalDemoRepository: AppRepository {
         return personalTravelSnapshot()
     }
 
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
+        try requireAuthentication()
+        var rows = personalTravelSnapshot().friendPlans
+        var limit = 50
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testPagedFriendPlans") {
+            rows += rows.enumerated().map { index, row in
+                FriendTravelPlan(id: UUID(uuidString: String(format: "a7150000-0000-0000-0000-%012d", index + 3))!, friendID: row.friendID,
+                    friendName: row.friendName, city: row.city, countryCode: row.countryCode, region: row.region,
+                    timeZone: row.timeZone, startDay: row.startDay, endDay: row.endDay)
+            }
+            limit = 2
+        }
+        #endif
+        rows = rows.filter { (friendID == nil || $0.friendID == friendID) && (planID == nil || $0.id == planID) }
+            .sorted { $0.startDay == $1.startDay ? $0.id.uuidString < $1.id.uuidString : $0.startDay < $1.startDay }
+        let encoder = JSONEncoder(); encoder.outputFormatting = .sortedKeys
+        let version = SHA256.hash(data: try encoder.encode(rows)).map { String(format: "%02x", $0) }.joined()
+        if let cursor, cursor.version != version { return FriendPlanPage(items: [], nextCursor: nil, version: version, resetRequired: true) }
+        if let cursor { rows = rows.filter { $0.startDay > cursor.startDay || ($0.startDay == cursor.startDay && $0.id.uuidString > cursor.id.uuidString) } }
+        let page = Array(rows.prefix(limit))
+        let next = rows.count > limit ? page.last.map { FriendPlanCursor(startDay: $0.startDay, id: $0.id, version: version) } : nil
+        return FriendPlanPage(items: page, nextCursor: next, version: version)
+    }
+
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {
         try requireAuthentication()
         var saved = try plan.validated()

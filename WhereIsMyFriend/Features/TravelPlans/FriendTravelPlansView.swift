@@ -5,9 +5,12 @@ struct FriendTravelPlansView: View {
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.scenePhase) private var scenePhase
     @State private var editing: PersonalTravelPlan?
+    @StateObject private var feed = FriendPlanFeed()
 
     private var plans: [FriendTravelPlan] {
-        library.visibleFriendPlans(friendIDs: Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs))
+        guard feed.matches(library) else { return [] }
+        let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
+        return feed.items.filter { allowed.contains($0.friendID) && !$0.isPast() }
     }
 
     var body: some View {
@@ -38,14 +41,14 @@ struct FriendTravelPlansView: View {
                 }
                 .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh).accessibilityIdentifier("addMyFriendPlan")
 
-                if let error = library.errorMessage, !library.hasSynced {
+                if let error = feed.errorMessage, !feed.hasLoaded {
                     VStack(alignment: .leading, spacing: 10) {
                         Label("Shared plans are unavailable", systemImage: "calendar.badge.exclamationmark").font(.headline)
                         Text(error).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                        Button("Try again") { Task { await library.refresh() } }.frame(minHeight: 44)
+                        Button("Try again") { Task { await feed.refresh() } }.frame(minHeight: 44)
                     }
                     .accessibilityIdentifier("friendPlansError")
-                } else if library.isLoading && plans.isEmpty {
+                } else if feed.isLoading && plans.isEmpty {
                     ProgressView().frame(maxWidth: .infinity).padding(.vertical, 32)
                 } else if plans.isEmpty {
                     ContentUnavailableView {
@@ -63,6 +66,12 @@ struct FriendTravelPlansView: View {
                     ForEach(plans) { plan in
                         FriendTravelPlanCard(plan: plan) { editing = plan.privateDraft() }
                     }
+                    if feed.nextCursor != nil {
+                        Button { Task { await feed.loadMore() } } label: { Text(feed.errorMessage == nil ? String(localized: "Load more") : String(localized: "Try again")) }
+                            .frame(maxWidth: .infinity, minHeight: 44).disabled(feed.isLoading)
+                            .accessibilityIdentifier("loadMoreFriendPlans")
+                        if feed.isLoading { ProgressView() }
+                    }
                 }
             }
             .foregroundStyle(WIFTheme.primaryText).padding(WIFTheme.screenInset).padding(.bottom, 20)
@@ -76,15 +85,16 @@ struct FriendTravelPlansView: View {
             }
         }
         .sheet(item: $editing) { PersonalPlanEditor(plan: $0) }
-        .refreshable { await library.refresh() }
-        .task {
+        .refreshable { await feed.refresh() }
+        .task(id: "\(library.accountScope ?? "")|\(library.accessRevision)") {
+            feed.connect(library)
             while !Task.isCancelled {
-                if scenePhase == .active { await library.refresh() }
-                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+                if scenePhase == .active { await feed.refresh(minimumInterval: 15) }
+                do { try await Task.sleep(for: .seconds(Double.random(in: 60...75))) } catch { return }
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await library.refresh() } }
+            if phase == .active { Task { await feed.refresh(minimumInterval: 15) } }
         }
         .accessibilityIdentifier("friendPlansScreen")
     }
@@ -135,10 +145,12 @@ struct FriendTravelPlanDetailView: View {
     @Environment(\.scenePhase) private var scenePhase
     let planID: UUID
     @State private var draft: PersonalTravelPlan?
+    @StateObject private var feed = FriendPlanFeed()
 
     private var plan: FriendTravelPlan? {
-        library.visibleFriendPlans(friendIDs: Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs))
-            .first { $0.id == planID }
+        guard feed.matches(library) else { return nil }
+        let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
+        return feed.items.first { $0.id == planID && allowed.contains($0.friendID) && !$0.isPast() }
     }
 
     var body: some View {
@@ -160,7 +172,7 @@ struct FriendTravelPlanDetailView: View {
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                 }
                 .padding(WIFTheme.screenInset).padding(.top, 20)
-            } else if library.isLoading {
+            } else if feed.isLoading {
                 ProgressView().padding(40)
             } else {
                 ContentUnavailableView {
@@ -168,7 +180,7 @@ struct FriendTravelPlanDetailView: View {
                 } description: {
                     Text("The plan may have ended, or its owner changed sharing. Connect to refresh.")
                 } actions: {
-                    Button("Try again") { Task { await library.refresh() } }
+                    Button("Try again") { Task { await feed.refresh() } }
                 }
                 .accessibilityIdentifier("friendPlanUnavailable")
             }
@@ -176,14 +188,15 @@ struct FriendTravelPlanDetailView: View {
         .wifAmbientBackground().foregroundStyle(WIFTheme.primaryText)
         .navigationTitle("Friend’s plan").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
-        .task {
+        .task(id: "\(library.accountScope ?? "")|\(library.accessRevision)") {
+            feed.connect(library, planID: planID)
             while !Task.isCancelled {
-                if scenePhase == .active { await library.refresh() }
-                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+                if scenePhase == .active { await feed.refresh(minimumInterval: 15) }
+                do { try await Task.sleep(for: .seconds(Double.random(in: 60...75))) } catch { return }
             }
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await library.refresh() } }
+            if phase == .active { Task { await feed.refresh(minimumInterval: 15) } }
         }
         .sheet(item: $draft) { PersonalPlanEditor(plan: $0) }
         .accessibilityIdentifier("friendPlanDetail")

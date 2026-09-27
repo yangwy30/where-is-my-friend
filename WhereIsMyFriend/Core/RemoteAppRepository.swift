@@ -562,7 +562,28 @@ actor RemoteAppRepository: AppRepository {
     }
 
     func fetchTravelPlans() async throws -> TravelPlanSnapshot {
-        try await authorizedRequest(path: "/v1/travel-plans", method: "GET", body: Optional<EmptyBody>.none)
+        try await authorizedRequest(path: "/v2/travel-plans", method: "GET", body: Optional<EmptyBody>.none)
+    }
+
+    func fetchOwnTravelPlans() async throws -> [PersonalTravelPlan] {
+        let result: TravelPlanSnapshot = try await authorizedRequest(path: "/v2/own-plans", method: "GET", body: Optional<EmptyBody>.none)
+        return result.plans
+    }
+
+    func fetchFriendPlanPage(cursor: FriendPlanCursor?, friendID: UUID?, planID: UUID?) async throws -> FriendPlanPage {
+        var components = URLComponents()
+        components.path = "/v2/friend-plans"
+        var items: [URLQueryItem] = []
+        if let cursor {
+            let data = try JSONEncoder().encode(cursor)
+            guard let value = String(data: data, encoding: .utf8) else { throw RepositoryError.invalidServerResponse }
+            items.append(URLQueryItem(name: "cursor", value: value))
+        }
+        if let friendID { items.append(URLQueryItem(name: "friendID", value: friendID.uuidString)) }
+        if let planID { items.append(URLQueryItem(name: "planID", value: planID.uuidString)) }
+        if !items.isEmpty { components.queryItems = items }
+        guard let path = components.string else { throw RepositoryError.invalidServerResponse }
+        return try await authorizedRequest(path: path, method: "GET", body: Optional<EmptyBody>.none)
     }
 
     func saveTravelPlan(_ plan: PersonalTravelPlan) async throws -> TravelPlanSnapshot {

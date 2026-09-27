@@ -9,6 +9,8 @@ test("API route normalization preserves the v1 contract behind an Edge Function 
     );
     assert.equal(normalizeAPIPath("/v1/bootstrap/"), "/v1/bootstrap");
     assert.equal(normalizeAPIPath("/health"), "/");
+    assert.equal(normalizeAPIPath("https://example.test/functions/v1/api/v2/friend-plans?limit=50"), "/v2/friend-plans");
+    assert.equal(normalizeAPIPath("/api/v2/travel-plans"), "/v2/travel-plans");
 });
 
 test("debug usernames are normalized and strictly validated", () => {

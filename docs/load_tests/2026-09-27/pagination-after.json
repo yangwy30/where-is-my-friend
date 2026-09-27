@@ -1,0 +1,1742 @@
+{
+  "startedAt": "2026-09-27T07:57:58.312Z",
+  "source": "14ea7e3ca71dfccffd416b0c7194ffadd57d8895",
+  "scope": "Local HTTP + actual API handler + actual PostgreSQL RPCs; mocked identity and APNs; no flight calls; not hosted capacity certification",
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 8,
+    "cpu": "Apple M1 Pro",
+    "totalMemoryGB": 16,
+    "freeMemoryGB": 1.1467437744140625
+  },
+  "configuration": {
+    "pagination": true,
+    "friendCount": 100,
+    "planCount": 10,
+    "prewarmedHTTPConnections": 1000,
+    "poolSize": 20,
+    "sqlTimeoutMs": 6500,
+    "poolWaitTimeoutMs": 6500,
+    "httpTimeoutMs": 20000,
+    "authSimulatedLatencyMs": 25,
+    "postgresSharedBuffersMB": 128
+  },
+  "stages": [
+    {
+      "name": "warmup",
+      "users": 10,
+      "elapsedMs": 71.1,
+      "requests": 10,
+      "errors": 0,
+      "statuses": {
+        "200": 10
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 69.13,
+        "p95": 69.65,
+        "p99": 69.65,
+        "max": 69.65
+      },
+      "responseBytes": {
+        "p50": 40276,
+        "p95": 40282,
+        "p99": 40282,
+        "max": 40282
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 140.64145329201403,
+      "endpoints": {
+        "/v1/bootstrap": {
+          "requests": 10,
+          "errors": 0,
+          "statuses": {
+            "200": 10
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 69.13,
+            "p95": 69.65,
+            "p99": 69.65,
+            "max": 69.65
+          },
+          "responseBytes": {
+            "p50": 40276,
+            "p95": 40282,
+            "p99": 40282,
+            "max": 40282
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 10,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 12.28,
+            "p95": 16.87,
+            "p99": 16.87,
+            "max": 16.87
+          },
+          "executionMs": {
+            "p50": 3.12,
+            "p95": 3.69,
+            "p99": 3.69,
+            "max": 3.69
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 10,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 0.01,
+            "p95": 0.24,
+            "p99": 0.24,
+            "max": 0.24
+          },
+          "executionMs": {
+            "p50": 12.89,
+            "p95": 14.43,
+            "p99": 14.43,
+            "max": 14.43
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 0,
+      "peakRssMB": 0
+    },
+    {
+      "name": "bootstrap_burst_100",
+      "users": 100,
+      "elapsedMs": 87.12,
+      "requests": 100,
+      "errors": 0,
+      "statuses": {
+        "200": 100
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 72.85,
+        "p95": 86.39,
+        "p99": 86.51,
+        "max": 86.51
+      },
+      "responseBytes": {
+        "p50": 623,
+        "p95": 623,
+        "p99": 623,
+        "max": 623
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 1147.9062906699576,
+      "endpoints": {
+        "/v1/auth/bootstrap": {
+          "requests": 100,
+          "errors": 0,
+          "statuses": {
+            "200": 100
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 72.85,
+            "p95": 86.39,
+            "p99": 86.51,
+            "max": 86.51
+          },
+          "responseBytes": {
+            "p50": 623,
+            "p95": 623,
+            "p99": 623,
+            "max": 623
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 7.59,
+            "p95": 14.64,
+            "p99": 16.9,
+            "max": 16.9
+          },
+          "executionMs": {
+            "p50": 0.79,
+            "p95": 2.71,
+            "p99": 5.74,
+            "max": 5.74
+          },
+          "codes": []
+        },
+        "wif_ensure_app_user": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 11.92,
+            "p95": 14.61,
+            "p99": 15.02,
+            "max": 15.02
+          },
+          "executionMs": {
+            "p50": 2.49,
+            "p95": 6.07,
+            "p99": 7.08,
+            "max": 7.08
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 13.57,
+            "p95": 19.32,
+            "p99": 19.59,
+            "max": 19.59
+          },
+          "executionMs": {
+            "p50": 5.79,
+            "p95": 8.76,
+            "p99": 11.17,
+            "max": 11.17
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 0,
+      "peakRssMB": 137.171875
+    },
+    {
+      "name": "bootstrap_burst_500",
+      "users": 500,
+      "elapsedMs": 209.53,
+      "requests": 500,
+      "errors": 0,
+      "statuses": {
+        "200": 500
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 145.66,
+        "p95": 198.86,
+        "p99": 201.18,
+        "max": 201.41
+      },
+      "responseBytes": {
+        "p50": 623,
+        "p95": 623,
+        "p99": 623,
+        "max": 623
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 2386.241883794816,
+      "endpoints": {
+        "/v1/auth/bootstrap": {
+          "requests": 500,
+          "errors": 0,
+          "statuses": {
+            "200": 500
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 145.66,
+            "p95": 198.86,
+            "p99": 201.18,
+            "max": 201.41
+          },
+          "responseBytes": {
+            "p50": 623,
+            "p95": 623,
+            "p99": 623,
+            "max": 623
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 19.85,
+            "p95": 22.94,
+            "p99": 24.09,
+            "max": 24.27
+          },
+          "executionMs": {
+            "p50": 0.76,
+            "p95": 2.24,
+            "p99": 7.82,
+            "max": 8.43
+          },
+          "codes": []
+        },
+        "wif_ensure_app_user": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 28.24,
+            "p95": 31.13,
+            "p99": 31.29,
+            "max": 31.31
+          },
+          "executionMs": {
+            "p50": 0.96,
+            "p95": 3.18,
+            "p99": 4.44,
+            "max": 8.75
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 43.32,
+            "p95": 84.33,
+            "p99": 86.71,
+            "max": 86.83
+          },
+          "executionMs": {
+            "p50": 4.47,
+            "p95": 8.96,
+            "p99": 10.76,
+            "max": 11.06
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 443,
+      "peakRssMB": 158.671875
+    },
+    {
+      "name": "bootstrap_burst_1000",
+      "users": 1000,
+      "elapsedMs": 370.13,
+      "requests": 1000,
+      "errors": 0,
+      "statuses": {
+        "200": 1000
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 252.55,
+        "p95": 348.81,
+        "p99": 354,
+        "max": 355.2
+      },
+      "responseBytes": {
+        "p50": 623,
+        "p95": 623,
+        "p99": 623,
+        "max": 623
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 2701.7421895422935,
+      "endpoints": {
+        "/v1/auth/bootstrap": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 252.55,
+            "p95": 348.81,
+            "p99": 354,
+            "max": 355.2
+          },
+          "responseBytes": {
+            "p50": 623,
+            "p95": 623,
+            "p99": 623,
+            "max": 623
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 17.18,
+            "p95": 35.01,
+            "p99": 39.44,
+            "max": 39.78
+          },
+          "executionMs": {
+            "p50": 0.6,
+            "p95": 1.21,
+            "p99": 2.16,
+            "max": 3.15
+          },
+          "codes": []
+        },
+        "wif_ensure_app_user": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 31.75,
+            "p95": 132.25,
+            "p99": 139.44,
+            "max": 140.57
+          },
+          "executionMs": {
+            "p50": 0.89,
+            "p95": 3.03,
+            "p99": 4.35,
+            "max": 5.53
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 97.92,
+            "p95": 136.29,
+            "p99": 139.11,
+            "max": 140.48
+          },
+          "executionMs": {
+            "p50": 4.03,
+            "p95": 6.53,
+            "p99": 8.93,
+            "max": 9.33
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 784,
+      "peakRssMB": 174.421875
+    },
+    {
+      "name": "refresh_burst_100",
+      "users": 100,
+      "elapsedMs": 737.01,
+      "requests": 400,
+      "errors": 0,
+      "statuses": {
+        "200": 400
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 127.56,
+        "p95": 393.5,
+        "p99": 480.02,
+        "max": 512.51
+      },
+      "responseBytes": {
+        "p50": 40190,
+        "p95": 79092,
+        "p99": 79123,
+        "max": 79124
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 542.7301022617621,
+      "endpoints": {
+        "/v1/bootstrap": {
+          "requests": 100,
+          "errors": 0,
+          "statuses": {
+            "200": 100
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 80.77,
+            "p95": 94.23,
+            "p99": 95.23,
+            "max": 95.23
+          },
+          "responseBytes": {
+            "p50": 40248,
+            "p95": 40300,
+            "p99": 40311,
+            "max": 40311
+          },
+          "validationFailures": 0
+        },
+        "/v2/travel-plans": {
+          "requests": 100,
+          "errors": 0,
+          "statuses": {
+            "200": 100
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 273.92,
+            "p95": 460.34,
+            "p99": 512.51,
+            "max": 512.51
+          },
+          "responseBytes": {
+            "p50": 79047,
+            "p95": 79122,
+            "p99": 79124,
+            "max": 79124
+          },
+          "validationFailures": 0
+        },
+        "/v2/friend-plans": {
+          "requests": 100,
+          "errors": 0,
+          "statuses": {
+            "200": 100
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 257.28,
+            "p95": 389.15,
+            "p99": 484.16,
+            "max": 484.16
+          },
+          "responseBytes": {
+            "p50": 12268,
+            "p95": 12279,
+            "p99": 12280,
+            "max": 12280
+          },
+          "validationFailures": 0
+        },
+        "/v1/trips": {
+          "requests": 100,
+          "errors": 0,
+          "statuses": {
+            "200": 100
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 87.01,
+            "p95": 142.04,
+            "p99": 188.88,
+            "max": 188.88
+          },
+          "responseBytes": {
+            "p50": 13016,
+            "p95": 13019,
+            "p99": 13022,
+            "max": 13022
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 400,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 39.03,
+            "p95": 145.13,
+            "p99": 257.51,
+            "max": 258.11
+          },
+          "executionMs": {
+            "p50": 0.59,
+            "p95": 19.22,
+            "p99": 40.08,
+            "max": 63.33
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 22.06,
+            "p95": 45.51,
+            "p99": 53.18,
+            "max": 53.18
+          },
+          "executionMs": {
+            "p50": 11.07,
+            "p95": 18.52,
+            "p99": 23.24,
+            "max": 23.24
+          },
+          "codes": []
+        },
+        "wif_travel_overview": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 81.39,
+            "p95": 245.13,
+            "p99": 253.79,
+            "max": 253.79
+          },
+          "executionMs": {
+            "p50": 77.86,
+            "p95": 146.9,
+            "p99": 170.44,
+            "max": 170.44
+          },
+          "codes": []
+        },
+        "wif_friend_plan_page": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 63.55,
+            "p95": 107.38,
+            "p99": 257.89,
+            "max": 257.89
+          },
+          "executionMs": {
+            "p50": 23.43,
+            "p95": 49.37,
+            "p99": 71.48,
+            "max": 71.48
+          },
+          "codes": []
+        },
+        "wif_trip_list": {
+          "calls": 100,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 18.31,
+            "p95": 36.34,
+            "p99": 36.7,
+            "max": 36.7
+          },
+          "executionMs": {
+            "p50": 2.48,
+            "p95": 13.35,
+            "p99": 29.48,
+            "max": 29.48
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 80,
+      "peakRssMB": 251.53125
+    },
+    {
+      "name": "refresh_burst_500",
+      "users": 500,
+      "elapsedMs": 3271.51,
+      "requests": 2000,
+      "errors": 0,
+      "statuses": {
+        "200": 2000
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 631.79,
+        "p95": 1847.85,
+        "p99": 2030.08,
+        "max": 2056.47
+      },
+      "responseBytes": {
+        "p50": 40190,
+        "p95": 79274,
+        "p99": 79274,
+        "max": 79274
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 611.3385885017299,
+      "endpoints": {
+        "/v1/bootstrap": {
+          "requests": 500,
+          "errors": 0,
+          "statuses": {
+            "200": 500
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 239.51,
+            "p95": 368.66,
+            "p99": 375.65,
+            "max": 378.01
+          },
+          "responseBytes": {
+            "p50": 40411,
+            "p95": 40411,
+            "p99": 40411,
+            "max": 40411
+          },
+          "validationFailures": 0
+        },
+        "/v2/travel-plans": {
+          "requests": 500,
+          "errors": 0,
+          "statuses": {
+            "200": 500
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 1233.38,
+            "p95": 1990.17,
+            "p99": 2040.07,
+            "max": 2056.47
+          },
+          "responseBytes": {
+            "p50": 79274,
+            "p95": 79274,
+            "p99": 79274,
+            "max": 79274
+          },
+          "validationFailures": 0
+        },
+        "/v2/friend-plans": {
+          "requests": 500,
+          "errors": 0,
+          "statuses": {
+            "200": 500
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 1361.1,
+            "p95": 1933.27,
+            "p99": 2000.58,
+            "max": 2010
+          },
+          "responseBytes": {
+            "p50": 12306,
+            "p95": 12306,
+            "p99": 12306,
+            "max": 12306
+          },
+          "validationFailures": 0
+        },
+        "/v1/trips": {
+          "requests": 500,
+          "errors": 0,
+          "statuses": {
+            "200": 500
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 417.4,
+            "p95": 683.32,
+            "p99": 727.19,
+            "max": 751.59
+          },
+          "responseBytes": {
+            "p50": 13034,
+            "p95": 13034,
+            "p99": 13034,
+            "max": 13034
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 2000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 191.82,
+            "p95": 1170.32,
+            "p99": 1462.72,
+            "max": 1512.78
+          },
+          "executionMs": {
+            "p50": 0.84,
+            "p95": 11.67,
+            "p99": 32.4,
+            "max": 87.6
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 134.16,
+            "p95": 264.26,
+            "p99": 273.23,
+            "max": 274.77
+          },
+          "executionMs": {
+            "p50": 10.97,
+            "p95": 20.55,
+            "p99": 24.68,
+            "max": 27.02
+          },
+          "codes": []
+        },
+        "wif_travel_overview": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 923.12,
+            "p95": 1397.71,
+            "p99": 1480,
+            "max": 1501.44
+          },
+          "executionMs": {
+            "p50": 72.25,
+            "p95": 132.22,
+            "p99": 166.79,
+            "max": 214.89
+          },
+          "codes": []
+        },
+        "wif_friend_plan_page": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 410.53,
+            "p95": 538.99,
+            "p99": 956.26,
+            "max": 972.56
+          },
+          "executionMs": {
+            "p50": 20.72,
+            "p95": 62.65,
+            "p99": 82.76,
+            "max": 133.61
+          },
+          "codes": []
+        },
+        "wif_trip_list": {
+          "calls": 500,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 90.76,
+            "p95": 170.98,
+            "p99": 173.48,
+            "max": 173.78
+          },
+          "executionMs": {
+            "p50": 2.98,
+            "p95": 6.69,
+            "p99": 13.71,
+            "max": 31.47
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 480,
+      "peakRssMB": 302.109375
+    },
+    {
+      "name": "refresh_burst_1000",
+      "users": 1000,
+      "elapsedMs": 6167.64,
+      "requests": 4000,
+      "errors": 0,
+      "statuses": {
+        "200": 4000
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 1278.82,
+        "p95": 3495.18,
+        "p99": 3719.14,
+        "max": 3790.71
+      },
+      "responseBytes": {
+        "p50": 40190,
+        "p95": 79274,
+        "p99": 79274,
+        "max": 79285
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 648.545972357736,
+      "endpoints": {
+        "/v1/bootstrap": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 375.03,
+            "p95": 609.28,
+            "p99": 629.21,
+            "max": 631.14
+          },
+          "responseBytes": {
+            "p50": 40411,
+            "p95": 40411,
+            "p99": 40411,
+            "max": 40412
+          },
+          "validationFailures": 0
+        },
+        "/v2/travel-plans": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 2190.74,
+            "p95": 3624.71,
+            "p99": 3765.59,
+            "max": 3790.71
+          },
+          "responseBytes": {
+            "p50": 79274,
+            "p95": 79274,
+            "p99": 79274,
+            "max": 79285
+          },
+          "validationFailures": 0
+        },
+        "/v2/friend-plans": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 2622.28,
+            "p95": 3636.04,
+            "p99": 3708.65,
+            "max": 3724.41
+          },
+          "responseBytes": {
+            "p50": 12306,
+            "p95": 12306,
+            "p99": 12306,
+            "max": 12307
+          },
+          "validationFailures": 0
+        },
+        "/v1/trips": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 885.31,
+            "p95": 1477.37,
+            "p99": 1539.17,
+            "max": 1546.23
+          },
+          "responseBytes": {
+            "p50": 13067,
+            "p95": 13070,
+            "p99": 13070,
+            "max": 13073
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 4000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 423.66,
+            "p95": 2813.56,
+            "p99": 3166.68,
+            "max": 3288.29
+          },
+          "executionMs": {
+            "p50": 0.55,
+            "p95": 5.19,
+            "p99": 30.24,
+            "max": 93.73
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 242.26,
+            "p95": 480.99,
+            "p99": 495.19,
+            "max": 502.34
+          },
+          "executionMs": {
+            "p50": 9.74,
+            "p95": 18.64,
+            "p99": 21.99,
+            "max": 28.13
+          },
+          "codes": []
+        },
+        "wif_travel_overview": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 1696.86,
+            "p95": 3143.17,
+            "p99": 3220.69,
+            "max": 3255.14
+          },
+          "executionMs": {
+            "p50": 70.13,
+            "p95": 121.52,
+            "p99": 147.24,
+            "max": 177.47
+          },
+          "codes": []
+        },
+        "wif_friend_plan_page": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 759.79,
+            "p95": 1325.26,
+            "p99": 3266.78,
+            "max": 3288.17
+          },
+          "executionMs": {
+            "p50": 22.57,
+            "p95": 74.11,
+            "p99": 94.93,
+            "max": 155.95
+          },
+          "codes": []
+        },
+        "wif_trip_list": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 108.38,
+            "p95": 185.97,
+            "p99": 783.65,
+            "max": 1344.19
+          },
+          "executionMs": {
+            "p50": 3.29,
+            "p95": 5.35,
+            "p99": 6.44,
+            "max": 8.23
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 980,
+      "peakRssMB": 395.3125
+    },
+    {
+      "name": "steady_refresh_1000_over_60s",
+      "users": 1000,
+      "elapsedMs": 60023.11,
+      "requests": 2000,
+      "errors": 0,
+      "statuses": {
+        "200": 2000
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 47.71,
+        "p95": 52.24,
+        "p99": 52.91,
+        "max": 57.33
+      },
+      "responseBytes": {
+        "p50": 78957,
+        "p95": 79274,
+        "p99": 79274,
+        "max": 79285
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 33.3204968429467,
+      "endpoints": {
+        "/v1/bootstrap": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 29.66,
+            "p95": 31.24,
+            "p99": 31.96,
+            "max": 45.04
+          },
+          "responseBytes": {
+            "p50": 40411,
+            "p95": 40411,
+            "p99": 40411,
+            "max": 40413
+          },
+          "validationFailures": 0
+        },
+        "/v2/travel-plans": {
+          "requests": 1000,
+          "errors": 0,
+          "statuses": {
+            "200": 1000
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 51.34,
+            "p95": 52.59,
+            "p99": 53.18,
+            "max": 57.33
+          },
+          "responseBytes": {
+            "p50": 79274,
+            "p95": 79274,
+            "p99": 79274,
+            "max": 79285
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 2000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 0.01,
+            "p95": 0.03,
+            "p99": 0.04,
+            "max": 9.13
+          },
+          "executionMs": {
+            "p50": 0.26,
+            "p95": 0.52,
+            "p99": 1.58,
+            "max": 5.7
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 0,
+            "p95": 0,
+            "p99": 0.01,
+            "max": 0.03
+          },
+          "executionMs": {
+            "p50": 2.74,
+            "p95": 3.15,
+            "p99": 3.75,
+            "max": 5.27
+          },
+          "codes": []
+        },
+        "wif_travel_overview": {
+          "calls": 1000,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 0,
+            "p95": 0.01,
+            "p99": 0.01,
+            "max": 0.03
+          },
+          "executionMs": {
+            "p50": 23.57,
+            "p95": 24.46,
+            "p99": 24.86,
+            "max": 29.17
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 0,
+      "peakRssMB": 396.109375
+    },
+    {
+      "name": "same_account_bootstrap_race",
+      "users": 32,
+      "elapsedMs": 68.69,
+      "requests": 32,
+      "errors": 0,
+      "statuses": {
+        "200": 32
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 60.81,
+        "p95": 67.96,
+        "p99": 68.31,
+        "max": 68.31
+      },
+      "responseBytes": {
+        "p50": 624,
+        "p95": 624,
+        "p99": 624,
+        "max": 624
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 465.8274920264653,
+      "endpoints": {
+        "/v1/auth/bootstrap": {
+          "requests": 32,
+          "errors": 0,
+          "statuses": {
+            "200": 32
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 60.81,
+            "p95": 67.96,
+            "p99": 68.31,
+            "max": 68.31
+          },
+          "responseBytes": {
+            "p50": 624,
+            "p95": 624,
+            "p99": 624,
+            "max": 624
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 32,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 13.54,
+            "p95": 31.3,
+            "p99": 32.59,
+            "max": 32.59
+          },
+          "executionMs": {
+            "p50": 1.7,
+            "p95": 4.44,
+            "p99": 4.51,
+            "max": 4.51
+          },
+          "codes": []
+        },
+        "wif_ensure_app_user": {
+          "calls": 32,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 5.07,
+            "p95": 9.5,
+            "p99": 10.04,
+            "max": 10.04
+          },
+          "executionMs": {
+            "p50": 1.86,
+            "p95": 4.11,
+            "p99": 4.13,
+            "max": 4.13
+          },
+          "codes": []
+        },
+        "wif_snapshot": {
+          "calls": 32,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 3.94,
+            "p95": 7.36,
+            "p99": 8.49,
+            "max": 8.49
+          },
+          "executionMs": {
+            "p50": 4.43,
+            "p95": 12.21,
+            "p99": 15.91,
+            "max": 15.91
+          },
+          "codes": []
+        }
+      },
+      "peakPoolWaiters": 0,
+      "peakRssMB": 396.203125
+    },
+    {
+      "name": "same_plan_revision_race",
+      "users": 16,
+      "elapsedMs": 411.03,
+      "requests": 16,
+      "errors": 15,
+      "statuses": {
+        "200": 1,
+        "409": 15
+      },
+      "transportErrors": {},
+      "latencyMs": {
+        "p50": 300.85,
+        "p95": 410.73,
+        "p99": 410.73,
+        "max": 410.73
+      },
+      "responseBytes": {
+        "p50": 58,
+        "p95": 330364,
+        "p99": 330364,
+        "max": 330364
+      },
+      "validationFailures": 0,
+      "completedRequestsPerSecond": 38.92646881275264,
+      "endpoints": {
+        "/v1/travel-plans/e06907ee-f1ca-4b94-b9d2-407169093aa7": {
+          "requests": 16,
+          "errors": 15,
+          "statuses": {
+            "200": 1,
+            "409": 15
+          },
+          "transportErrors": {},
+          "latencyMs": {
+            "p50": 300.85,
+            "p95": 410.73,
+            "p99": 410.73,
+            "max": 410.73
+          },
+          "responseBytes": {
+            "p50": 58,
+            "p95": 330364,
+            "p99": 330364,
+            "max": 330364
+          },
+          "validationFailures": 0
+        }
+      },
+      "rpc": {
+        "wif_resolve_app_user": {
+          "calls": 16,
+          "errors": 0,
+          "poolWaitMs": {
+            "p50": 0,
+            "p95": 0.03,
+            "p99": 0.03,
+            "max": 0.03
+          },
+          "executionMs": {
+            "p50": 1.76,
+            "p95": 2.38,
+            "p99": 2.38,
+            "max": 2.38
+          },
+          "codes": []
+        },
+        "wif_travel_save_v2": {
+          "calls": 16,
+          "errors": 15,
+          "poolWaitMs": {
+            "p50": 0,
+            "p95": 0.01,
+            "p99": 0.01,
+            "max": 0.01
+          },
+          "executionMs": {
+            "p50": 271.72,
+            "p95": 380.99,
+            "p99": 380.99,
+            "max": 380.99
+          },
+          "codes": [
+            "P0001"
+          ]
+        }
+      },
+      "peakPoolWaiters": 0,
+      "peakRssMB": 398.15625,
+      "expectedConflicts": 15,
+      "correct": true
+    }
+  ],
+  "postgres": "PostgreSQL 17.10 on x86_64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.3.2), 64-bit",
+  "dataset": {
+    "plans": 10000,
+    "trips": 600,
+    "users": 1000,
+    "events": 5000,
+    "flights": 3000,
+    "friendships": 50000,
+    "audienceRows": 1000000
+  },
+  "paginationTraversal": {
+    "pages": 20,
+    "uniquePlans": 1000,
+    "expected": 1000
+  },
+  "duplicateProfiles": 1,
+  "bootstrapSQLRace": {
+    "rounds": 20,
+    "concurrency": 20,
+    "errors": [],
+    "profileCounts": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "bootstrapFixPresent": true,
+  "bootstrapSQLRaceAfterLocalLock": {
+    "rounds": 20,
+    "concurrency": 20,
+    "errors": [],
+    "profileCounts": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "explains": {
+    "wif_snapshot": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 3.705,
+          "Actual Total Time": 3.706,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 620,
+          "Shared Read Blocks": 2,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.007,
+        "Triggers": [],
+        "Execution Time": 3.709
+      }
+    ],
+    "wif_travel_snapshot": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 28.645,
+          "Actual Total Time": 28.645,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 18029,
+          "Shared Read Blocks": 39,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.003,
+        "Triggers": [],
+        "Execution Time": 28.647
+      }
+    ],
+    "wif_trip_list": [
+      {
+        "Plan": {
+          "Node Type": "Result",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Startup Cost": 0,
+          "Total Cost": 0.26,
+          "Plan Rows": 1,
+          "Plan Width": 32,
+          "Actual Startup Time": 1.945,
+          "Actual Total Time": 1.945,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 393,
+          "Shared Read Blocks": 42,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.005,
+        "Triggers": [],
+        "Execution Time": 1.946
+      }
+    ]
+  },
+  "morningScheduling": {
+    "syntheticLocalTime": "09:15 UTC",
+    "runs": [
+      {
+        "count": 500,
+        "ms": 64.74737500000629
+      },
+      {
+        "count": 500,
+        "ms": 62.615499999999884
+      },
+      {
+        "count": 0,
+        "ms": 57.61945800000103
+      }
+    ],
+    "total": 1000
+  },
+  "notifications": {
+    "runs": [
+      {
+        "status": 200,
+        "ms": 7769.106333999996,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7768,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 7373.461165999994,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7373,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 7015.929167000009,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 7015,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 6658.040415999989,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 6657,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      },
+      {
+        "status": 200,
+        "ms": 6312.716874999998,
+        "body": {
+          "claimed": 200,
+          "delivered": 200,
+          "retried": 0,
+          "failed": 0,
+          "deferred": 0,
+          "queues": {
+            "booking": {
+              "rounds": 10,
+              "claimed": 200,
+              "delivered": 200,
+              "retried": 0,
+              "failed": 0,
+              "deferred": 0,
+              "error": false
+            }
+          },
+          "elapsedMs": 6312,
+          "friendInvitationError": false,
+          "invitationError": false,
+          "upcomingError": false,
+          "bookingReminderError": false
+        }
+      }
+    ],
+    "uniqueDelivered": 1000,
+    "duplicateSends": 0,
+    "peakSimulatedAPNsConcurrency": 3,
+    "sinkLatencyMs": 50,
+    "state": [
+      {
+        "status": "delivered",
+        "count": 1000
+      }
+    ],
+    "note": "Runs invoked back-to-back locally. Production cron waits one minute between scheduled runs; APNs latency/signing/decryption are simulated."
+  },
+  "apiSHA256": "4cc82c28a097e60d0fec761246b5ff1a932e774320e7e81b07820e744b690166",
+  "migrations": [
+    "20260812190000_initial_backend.sql",
+    "20260812220000_supabase_auth_identity.sql",
+    "20260812234500_push_delivery_pipeline.sql",
+    "20260816100000_service_role_auth_resolution.sql",
+    "20260906010000_unified_trips_foundation.sql",
+    "20260906020000_trip_self_service.sql",
+    "20260906030000_trip_flight_lookup.sql",
+    "20260907010000_trip_cloud_collaboration.sql",
+    "20260909010000_trip_live_updates.sql",
+    "20260911010000_personal_travel_plans.sql",
+    "20260912010000_trip_invitation_notifications.sql",
+    "20260915010000_city_region_metadata.sql",
+    "20260915020000_presence_identity_and_freshness.sql",
+    "20260915030000_friend_invitation_notifications.sql",
+    "20260915040000_friend_travel_plans.sql",
+    "20260916010000_travel_identity_and_retry.sql",
+    "20260916020000_trip_lifecycle.sql",
+    "20260917010000_trip_booking_reminders.sql",
+    "20260923010000_default_friend_plan_browsing.sql",
+    "20260927010000_capacity_guardrails.sql",
+    "20260927020000_plan_pagination_and_bootstrap.sql"
+  ],
+  "finishedAt": "2026-09-27T08:00:03.271Z",
+  "eventLoopDelayMs": {
+    "p95": 22.773759,
+    "max": 73.990143
+  },
+  "finalDatabase": {
+    "numbackends": 4,
+    "deadlocks": "0",
+    "temp_bytes": "0"
+  }
+}
