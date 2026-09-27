@@ -3,7 +3,7 @@
 ## Changes
 
 - Replaced both generic TestFlight links on the public landing page with App Store Connect-generated links to Across Us, Apple ID `6807634842`.
-- Navigation and hero use distinct campaign tokens. No advertising campaign, purchase or outreach was started.
+- Navigation, hero and the redesigned footer use distinct campaign tokens. No advertising campaign, purchase or outreach was started.
 - Prepared a first English ASO metadata experiment for the next permitted release:
   - **Across Us: Friends & Trips** (26/30 characters)
   - **Share cities & travel plans** (27/30 characters)
@@ -25,7 +25,7 @@ Apple's [search guidance](https://developer.apple.com/app-store/search/) support
 
 ## Attribution setup
 
-`campaign-links.json` contains two observed generated website links and three optional distribution examples using the same provider token. The provider token is a public attribution identifier intended to appear in URLs, not a credential. Optional channel examples have not been posted anywhere.
+`campaign-links.json` contains two observed generated website links, a footer link added for the redesigned homepage, and three optional distribution examples using the same provider token. The provider token is a public attribution identifier intended to appear in URLs, not a credential. Optional channel examples have not been posted anywhere.
 
 The [Apple campaign-link documentation](https://developer.apple.com/help/app-store-connect-analytics/acquisition/campaign-links) explains the provider/campaign tokens and reporting thresholds. The current UI says a campaign needs installs from at least five individual Apple Accounts before it appears; do not interpret an initially empty report as broken tracking. Campaign links measure attributed acquisition, not a standalone real-time click counter. No new cookies or user-content telemetry were added to the website.
 
