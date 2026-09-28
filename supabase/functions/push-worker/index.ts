@@ -220,7 +220,7 @@ Deno.serve(async request => {
         return health.error ? json({message: "Capacity health unavailable."}, 503) : json(health.data);
     }
     const slotToken = crypto.randomUUID();
-    const lane = options?.action === "invitations" || options?.action === "trip-reminders" ? "interactive" : "scheduled";
+    const lane = ["invitations", "trip-reminders", "colocation"].includes(options?.action) ? "interactive" : "scheduled";
     const slot = await database.rpc("wif_push_worker_acquire", {p_token: slotToken, p_lane: lane});
     if (slot.error) return json({message: "Worker capacity unavailable."}, 503);
     if (slot.data !== true) return json({state: "busy", claimed: 0, delivered: 0});
@@ -237,13 +237,13 @@ Deno.serve(async request => {
             if (error) throw new Error("Notification queue unavailable.");
             return settleBatch((data ?? []).map((row: ClaimedDelivery) => run(() => send(database, row, token, signal))));
         };
-        queues.upcoming = batch(deliverUpcoming);
+        if (options?.action !== "colocation") queues.upcoming = batch(deliverUpcoming);
     }
-    if (options?.action !== "trip-reminders") {
+    if (options?.action !== "trip-reminders" && options?.action !== "colocation") {
         queues.friendInvitations = batch(deliverFriendInvitations);
         queues.tripInvitations = batch(deliverTripInvitations);
     }
-    if (options?.action !== "invitations") queues.booking = batch(deliverTripBookingReminders);
+    if (options?.action !== "invitations" && options?.action !== "colocation") queues.booking = batch(deliverTripBookingReminders);
     let summary;
     try { summary = await drainQueues(queues, {deadline, maxRounds: 10}); }
     finally {

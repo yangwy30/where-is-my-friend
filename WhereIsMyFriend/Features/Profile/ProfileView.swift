@@ -518,7 +518,9 @@ private struct LocationAccessView: View {
                         Text("Automatic city updates")
                             .font(.headline)
                             .foregroundStyle(WIFTheme.primaryText)
-                        Text("Refresh after meaningful location changes")
+                        Text(locationService.authorizationStatus == .authorizedAlways
+                             ? "Refresh after meaningful location changes"
+                             : "Choose Always in Settings to update in the background.")
                             .font(.subheadline)
                             .foregroundStyle(WIFTheme.secondaryText)
                     }
@@ -624,8 +626,9 @@ private struct LocationAccessView: View {
 
     private var locationPermissionFooter: LocalizedStringKey {
         switch locationService.authorizationStatus {
-        case .authorizedAlways: "Automatic city changes are available."
-        case .authorizedWhenInUse: "Choose automatic updates to request Always access."
+        case .authorizedAlways: store.snapshot.sharingPreferences.backgroundUpdatesEnabled
+            ? "Automatic city changes are available." : "Automatic city updates are off."
+        case .authorizedWhenInUse: "Your city updates when you open the app. Choose Always for background updates."
         case .denied, .restricted: "Location access is off. You can still choose a city manually from the Friends screen."
         case .notDetermined: "Permission is requested only when you use a location feature."
         @unknown default: "Location access is unavailable."

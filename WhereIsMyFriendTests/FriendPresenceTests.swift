@@ -161,6 +161,117 @@ final class CityRegionCatalogTests: XCTestCase {
 
 final class CityRefreshRegressionTests: XCTestCase {
     @MainActor
+    func testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates() async throws {
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        manager.permission = .authorizedAlways
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        service.configure(.init(ownerID: UUID(), isActive: false, automaticAllowed: true, backgroundEnabled: true))
+        let old = CLLocation(coordinate: .init(latitude: 37.4, longitude: -121.9), altitude: 0,
+                             horizontalAccuracy: 3000, verticalAccuracy: -1, timestamp: Date().addingTimeInterval(-600))
+        service.locationManager(manager, didUpdateLocations: [old])
+        try await Task.sleep(for: .milliseconds(30))
+        service.locationManager(manager, didUpdateLocations: [old])
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertEqual(manager.requests, 1)
+        XCTAssertNil(service.latestCity)
+        XCTAssertTrue(geocoder.callbacks.isEmpty)
+        let fresh = CLLocation(latitude: 37.4, longitude: -121.9)
+        service.locationManager(manager, didUpdateLocations: [fresh])
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertEqual(geocoder.callbacks.count, 1)
+        service.configure(.init())
+    }
+
+    @MainActor
+    func testColdBackgroundLocationUploadsWithoutCreatingARootView() async throws {
+        SharedAppStateStore.reset()
+        defer { SharedAppStateStore.reset() }
+        let repository = SlowTestRepository(mode: .remote)
+        var snapshot = DemoData.initialSnapshot()
+        snapshot.currentPresence = .init(city: nil, countryCode: nil, updatedAt: nil, source: .foregroundLocation)
+        snapshot.sharingPreferences.backgroundUpdatesEnabled = true
+        await repository.configureSnapshot(snapshot)
+        SharedAppStateStore.save(snapshot, origin: repository.storageScope)
+        let store = AppStore(repository: repository)
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        manager.permission = .authorizedAlways
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        var begins = 0, ends = 0
+        let runtime = CityUpdateRuntime(store: store, locationService: service, isActive: false,
+            beginTask: { _ in begins += 1; return UIBackgroundTaskIdentifier(rawValue: 42) },
+            endTask: { _ in ends += 1 })
+        defer { runtime.setActive(true) }
+        XCTAssertEqual(manager.significantStarts, 1)
+        let point = CLLocation(latitude: 37.4, longitude: -121.9)
+        service.locationManager(manager, didUpdateLocations: [point])
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertEqual(begins, 1)
+        XCTAssertEqual(ends, 0)
+        XCTAssertEqual(geocoder.callbacks.count, 1)
+        geocoder.callbacks.first?([MKPlacemark(coordinate: point.coordinate,
+            addressDictionary: ["City": "Milpitas", "CountryCode": "US", "State": "CA"])], nil)
+        try await Task.sleep(for: .milliseconds(150))
+        let cities = await repository.uploadedCities()
+        XCTAssertEqual(cities, ["Milpitas"])
+        XCTAssertEqual(store.snapshot.currentPresence.source, .significantChange)
+        XCTAssertEqual(store.snapshot.currentPresence.updatedAt, point.timestamp)
+        XCTAssertEqual(ends, 1)
+    }
+
+    @MainActor
+    func testBackgroundExpiryRejectsLateGeocoderAndReleasesExecutionTime() async throws {
+        SharedAppStateStore.reset()
+        defer { SharedAppStateStore.reset() }
+        let repository = SlowTestRepository(mode: .remote)
+        var snapshot = DemoData.initialSnapshot()
+        snapshot.currentPresence = .init(city: nil, countryCode: nil, updatedAt: nil, source: .foregroundLocation)
+        snapshot.sharingPreferences.backgroundUpdatesEnabled = true
+        await repository.configureSnapshot(snapshot)
+        SharedAppStateStore.save(snapshot, origin: repository.storageScope)
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        manager.permission = .authorizedAlways
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        var expire: (@MainActor @Sendable () -> Void)?, ends = 0
+        let runtime = CityUpdateRuntime(store: AppStore(repository: repository), locationService: service, isActive: false,
+            beginTask: { callback in expire = callback; return UIBackgroundTaskIdentifier(rawValue: 43) },
+            endTask: { _ in ends += 1 })
+        defer { runtime.setActive(true) }
+        let point = CLLocation(latitude: 37.4, longitude: -121.9)
+        service.locationManager(manager, didUpdateLocations: [point])
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertNotNil(expire)
+        expire?()
+        geocoder.callbacks.first?([MKPlacemark(coordinate: point.coordinate,
+            addressDictionary: ["City": "Late city", "CountryCode": "US"])], nil)
+        try await Task.sleep(for: .milliseconds(80))
+        let cities = await repository.uploadedCities()
+        XCTAssertTrue(cities.isEmpty)
+        XCTAssertNil(service.latestCity)
+        XCTAssertEqual(ends, 1)
+    }
+
+    @MainActor
+    func testWhileUsingDoesNotPretendBackgroundMonitoringIsRunning() async throws {
+        SharedAppStateStore.reset()
+        defer { SharedAppStateStore.reset() }
+        let repository = SlowTestRepository(mode: .remote)
+        var snapshot = DemoData.initialSnapshot()
+        snapshot.currentPresence = .init(city: nil, countryCode: nil, updatedAt: nil, source: .foregroundLocation)
+        snapshot.sharingPreferences.backgroundUpdatesEnabled = true
+        await repository.configureSnapshot(snapshot)
+        SharedAppStateStore.save(snapshot, origin: repository.storageScope)
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        let runtime = CityUpdateRuntime(store: AppStore(repository: repository), locationService: service, isActive: false,
+            beginTask: { _ in XCTFail("No background work without Always"); return .invalid }, endTask: { _ in })
+        defer { runtime.setActive(true) }
+        XCTAssertEqual(manager.significantStarts, 0)
+        service.locationManager(manager, didUpdateLocations: [CLLocation(latitude: 37.4, longitude: -121.9)])
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertTrue(geocoder.callbacks.isEmpty)
+    }
+
+    @MainActor
     func testStateWithoutLocalityIsNotPublishedAsACity() async throws {
         let manager = StubCityManager(), geocoder = StubCityGeocoder()
         let service = CityLocationService(manager: manager, geocoder: geocoder)
@@ -462,7 +573,9 @@ final class LocationPermissionReminderTests: XCTestCase {
         }
         XCTAssertTrue(eligible())
         XCTAssertTrue(eligible(.denied))
-        for status: CLAuthorizationStatus in [.authorizedAlways, .authorizedWhenInUse, .restricted] {
+        XCTAssertTrue(eligible(.authorizedWhenInUse))
+        XCTAssertEqual(LocationPermissionReminderPolicy.action(for: .authorizedWhenInUse), .openSettings)
+        for status: CLAuthorizationStatus in [.authorizedAlways, .restricted] {
             XCTAssertFalse(eligible(status))
             XCTAssertEqual(LocationPermissionReminderPolicy.action(for: status), .none)
         }

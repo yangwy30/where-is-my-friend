@@ -139,7 +139,7 @@ async function rpc(name: string, parameters: JsonRecord): Promise<unknown> {
     return data;
 }
 
-function wakeInvitations(action: "invitations" | "trip-reminders" = "invitations") {
+function wakeInvitations(action: "invitations" | "trip-reminders" | "colocation" = "invitations") {
     wakeInvitationWorker({action, baseURL: supabaseURL, secret: Deno.env.get("PUSH_WORKER_SECRET"),
         waitUntil: typeof EdgeRuntime !== "undefined" ? (task: Promise<unknown>) => EdgeRuntime.waitUntil(task) : undefined});
 }
@@ -539,14 +539,18 @@ async function handle(request: Request): Promise<Response> {
         let administrativeArea: string | null;
         try { administrativeArea = presenceAdministrativeArea(body); }
         catch { throw new APIError(400, "Invalid administrative area."); }
-        return json(await rpc("wif_update_presence_v2", {
+        const snapshot = await rpc("wif_update_presence_v2", {
             p_user_id: userID,
             p_city: requiredString(body, "city"),
             p_country_code: requiredString(body, "countryCode"),
             p_source: requiredString(body, "source"),
             p_client_updated_at: clientUpdatedAt,
             p_administrative_area: administrativeArea,
-        }));
+        });
+        // The RPC commits same-city events before this best-effort wake-up.
+        // Its result remains successful even if APNs/worker invocation fails.
+        wakeInvitations("colocation");
+        return json(snapshot);
     }
     if ((request.method === "PUT" || request.method === "DELETE") && path === "/v1/devices/push-token") {
         const body = await readBody(request);

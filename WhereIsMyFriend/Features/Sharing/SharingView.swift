@@ -39,7 +39,9 @@ struct CitySharingSheet: View {
                                 Text("Background updates")
                                     .font(.body.weight(.semibold))
                                     .foregroundStyle(WIFTheme.primaryText)
-                                Text("Automatically keep your city updated as you travel")
+                                Text(locationService.authorizationStatus == .authorizedAlways
+                                     ? "Automatically keep your city updated as you travel"
+                                     : "Choose Always in Settings to update in the background.")
                                     .font(.caption)
                                     .foregroundStyle(WIFTheme.secondaryText)
                             }

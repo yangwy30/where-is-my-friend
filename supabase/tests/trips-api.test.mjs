@@ -8,6 +8,7 @@ import { isUUID, normalizeAPIPath } from "../functions/_shared/domain.mjs";
 import { FlightLookupError, flightLookupInput } from "../functions/_shared/flight-lookup.mjs";
 import { travelPlanInput } from "../functions/_shared/travel-plans.mjs";
 import { wakeInvitationWorker } from "../functions/_shared/invitation-wakeup.mjs";
+import { presenceAdministrativeArea } from "../functions/_shared/city-regions.mjs";
 import { resilientSupabaseFetch, temporaryStatus, authFailureStatus } from "../functions/_shared/upstream-policy.mjs";
 
 const userID = "10000000-0000-0000-0000-000000000001";
@@ -50,7 +51,7 @@ test('collaboration endpoints accept only the authenticated actor and strict fie
     assert.equal((await request('POST','/v1/trips/trip-one/preferences',{enabled:'true'})).status,400);
 });
 
-async function harness({ databaseError = null, cached = null, upstreamStatus, authError = null, resolvedUserID = userID } = {}) {
+async function harness({ databaseError = null, cached = null, upstreamStatus, authError = null, resolvedUserID = userID, onWake = null } = {}) {
     const calls = [];
     let handler;
     const database = {
@@ -70,7 +71,7 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
     const javascript = stripTypeScriptTypes(source, { mode: "transform" });
     vm.runInNewContext(javascript, {
         Request, Response, URL, console, isUUID, normalizeAPIPath, FlightLookupError, flightLookupInput, travelPlanInput,
-        resilientSupabaseFetch, temporaryStatus, authFailureStatus, wakeInvitationWorker,
+        resilientSupabaseFetch, temporaryStatus, authFailureStatus, presenceAdministrativeArea, wakeInvitationWorker: onWake ?? wakeInvitationWorker,
         fetchFlightLookup: async input => { calls.push({ name: "provider", parameters: input }); return { source: "aerodatabox", ...input, flights: [] }; },
         sharedFlightLookup: (rpc, actor, trip, input, key) => sharedFlightLookup(rpc, actor, trip, input, key, {
             provider: async input => { calls.push({name: 'provider', parameters: input}); return {source: 'aerodatabox', ...input, flights: []}; },
@@ -84,6 +85,21 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     })) };
 }
+
+test('same-city wake follows a successful authorized presence write; failures never wake or repeat the write',async()=>{
+ const wakes=[];
+ const body={city:'Tokyo',countryCode:'JP',source:'foregroundLocation',clientUpdatedAt:new Date().toISOString()};
+ const good=await harness({onWake:o=>wakes.push(o.action)});
+ assert.equal((await good.request('PUT','/v1/presence/current',body,'')).status,401);
+ assert.equal(wakes.length,0);
+ assert.equal((await good.request('PUT','/v1/presence/current',body)).status,200);
+ assert.deepEqual(wakes,['colocation']);
+ assert.equal(good.calls.filter(c=>c.name==='wif_update_presence_v2').length,1);
+ const failed=await harness({databaseError:{code:'XX000',message:'temporary'},onWake:o=>wakes.push(o.action)});
+ assert.equal((await failed.request('PUT','/v1/presence/current',body)).status,500);
+ assert.equal(wakes.length,1);
+ assert.equal(failed.calls.filter(c=>c.name==='wif_update_presence_v2').length,1);
+});
 
 test('upstream Auth timeouts never become expired sessions or reach application writes', async()=>{
     for(const error of [{status:504,message:'Gateway Timeout'}, {status:503,message:'Service unavailable'},

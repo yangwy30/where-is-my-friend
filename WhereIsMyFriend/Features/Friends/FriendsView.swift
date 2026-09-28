@@ -210,7 +210,9 @@ struct FriendsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Keep your city up to date")
                 .font(.headline).foregroundStyle(WIFTheme.primaryText)
-            Text("Turn on location to spot friends in the same city.")
+            Text(locationService.authorizationStatus == .authorizedWhenInUse
+                 ? "Choose Always to spot same-city friends while the app is closed."
+                 : "Turn on location to spot friends in the same city.")
                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             if dynamicTypeSize.isAccessibilitySize {
@@ -230,16 +232,27 @@ struct FriendsView: View {
     @ViewBuilder
     private var locationReminderActions: some View {
         Button {
-            let action = LocationPermissionReminderPolicy.action(for: locationService.authorizationStatus)
-            locationReminders.dismiss(for: store.snapshot.currentUser.id)
+            let status = locationService.authorizationStatus
+            let action = LocationPermissionReminderPolicy.action(for: status)
+            let owner = store.snapshot.currentUser.id
+            locationReminders.dismiss(for: owner)
             switch action {
             case .requestPermission: locationService.requestForegroundCity()
             case .openSettings:
-                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                Task {
+                    if status == .authorizedWhenInUse && !store.snapshot.sharingPreferences.backgroundUpdatesEnabled {
+                        var preferences = store.snapshot.sharingPreferences
+                        preferences.backgroundUpdatesEnabled = true
+                        guard await store.setSharingPreferences(preferences) else { return }
+                    }
+                    guard store.snapshot.isAuthenticated, store.snapshot.currentUser.id == owner else { return }
+                    if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                }
             case .none: break
             }
         } label: {
-            Text(locationService.authorizationStatus == .denied ? "Open Settings" : "Enable location")
+            Text(locationService.authorizationStatus == .authorizedWhenInUse ? "Choose Always"
+                 : locationService.authorizationStatus == .denied ? "Open Settings" : "Enable location")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(WIFTheme.canvas)
                 .padding(.horizontal, 16).frame(minHeight: 44)

@@ -6,7 +6,7 @@ struct WhereIsMyFriendApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppRootView()
+            AppRootView(runtime: pushDelegate.runtime)
                 .tint(WIFTheme.fresh)
         }
     }

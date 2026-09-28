@@ -2,6 +2,7 @@ import CoreLocation
 import Foundation
 import UIKit
 import UserNotifications
+import Combine
 
 struct ResolvedCity: Equatable, Sendable {
     let city: String
@@ -69,7 +70,7 @@ enum LocationPermissionReminderPolicy {
     static func action(for status: CLAuthorizationStatus) -> Action {
         switch status {
         case .notDetermined: .requestPermission
-        case .denied: .openSettings
+        case .denied, .authorizedWhenInUse: .openSettings
         default: .none
         }
     }
@@ -330,6 +331,11 @@ final class CityLocationService: NSObject, ObservableObject {
         manager.startMonitoringSignificantLocationChanges()
     }
 
+    func cancelBackgroundResolution() {
+        guard !context.isActive else { return }
+        cancelResolution()
+    }
+
     private func resolve(_ location: CLLocation, source: PresenceSource) {
         guard context.ownerID != nil,
               explicitRequest || (context.automaticAllowed && (context.isActive || monitoring)),
@@ -416,7 +422,15 @@ extension CityLocationService: CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Task { @MainActor in
-            guard let location = locations.filter({ CityLocationPolicy.accepts($0) }).max(by: { $0.timestamp < $1.timestamp }) else { return }
+            guard let location = locations.filter({ CityLocationPolicy.accepts($0) }).max(by: { $0.timestamp < $1.timestamp }) else {
+                // A background wake can carry an old cached fix. Ask once for a
+                // fresh fix instead of publishing it or discarding the wake entirely.
+                if monitoring, context.automaticAllowed, !context.isActive, !isResolving,
+                   lastRequestAt.map({ Date().timeIntervalSince($0) >= 60 }) ?? true {
+                    requestCurrentLocation(source: .significantChange, explicit: false)
+                }
+                return
+            }
             resolve(location, source: explicitRequest ? requestedSource : (context.isActive ? .foregroundLocation : .significantChange))
         }
     }
@@ -554,7 +568,136 @@ extension Notification.Name {
     static let pushRegistrationFailed = Notification.Name("WhereIsMyFriend.pushRegistrationFailed")
 }
 
+/// Owns location and upload work even when iOS launches us without a visible scene.
+@MainActor
+final class CityUpdateRuntime {
+    let store: AppStore
+    let locationService: CityLocationService
+    private(set) var isActive: Bool
+    private var observations = Set<AnyCancellable>()
+    private var resolving = false
+    private var ownerID: UUID?
+    private var uploads: [UUID: Task<Void, Never>] = [:]
+    private var backgroundID: UIBackgroundTaskIdentifier = .invalid
+    private var deadline: Task<Void, Never>?
+    private let beginTask: (@escaping @MainActor @Sendable () -> Void) -> UIBackgroundTaskIdentifier
+    private let endTask: (UIBackgroundTaskIdentifier) -> Void
+
+    init(store: AppStore? = nil, locationService: CityLocationService? = nil,
+         isActive: Bool? = nil,
+         beginTask: @escaping (@escaping @MainActor @Sendable () -> Void) -> UIBackgroundTaskIdentifier = { expired in
+             UIApplication.shared.beginBackgroundTask(withName: "City update") {
+                 Task { @MainActor in expired() }
+             }
+         }, endTask: @escaping (UIBackgroundTaskIdentifier) -> Void = { UIApplication.shared.endBackgroundTask($0) }) {
+        self.store = store ?? AppStore()
+        self.locationService = locationService ?? CityLocationService()
+        self.isActive = isActive ?? (UIApplication.shared.applicationState == .active)
+        self.beginTask = beginTask
+        self.endTask = endTask
+        let store = self.store, locationService = self.locationService
+        locationService.$latestCity.compactMap { $0 }.removeDuplicates().sink { [weak self] in
+            self?.receive($0)
+        }.store(in: &observations)
+        locationService.$isResolving.sink { [weak self] value in
+            guard let self else { return }
+            self.resolving = value
+            if value { self.protectBackgroundWork() }
+            else { self.finishIfIdleLater() }
+        }.store(in: &observations)
+        store.$snapshot.sink { [weak self] in self?.configure($0) }.store(in: &observations)
+    }
+
+    func setActive(_ active: Bool) {
+        isActive = active
+        store.setAppActive(active)
+        configure(store.snapshot)
+        if active { endBackgroundWork() }
+        else if resolving || !uploads.isEmpty { protectBackgroundWork() }
+    }
+
+    private func configure(_ snapshot: AppSnapshot) {
+        let owner = snapshot.isAuthenticated && store.repositoryMode == .remote ? snapshot.currentUser.id : nil
+        if ownerID != owner {
+            for task in uploads.values { task.cancel() }
+            uploads.removeAll()
+            endBackgroundWork()
+        }
+        ownerID = owner
+        locationService.configure(.init(ownerID: owner, isActive: isActive,
+            automaticAllowed: CityLocationPolicy.automaticAllowed(sharingEnabled: snapshot.sharingPreferences.citySharingEnabled,
+                                                                   presence: snapshot.currentPresence),
+            backgroundEnabled: snapshot.sharingPreferences.backgroundUpdatesEnabled))
+    }
+
+    private func receive(_ update: ResolvedCity) {
+        guard let owner = update.ownerID, owner == ownerID, store.snapshot.isAuthenticated else { return }
+        protectBackgroundWork()
+        let ticket = UUID()
+        uploads[ticket] = Task { [weak self] in
+            guard let self else { return }
+            defer { self.uploads[ticket] = nil; self.finishIfIdleLater() }
+            guard !Task.isCancelled, self.ownerID == owner else { return }
+            await self.store.updateCurrentCity(city: update.city, countryCode: update.countryCode,
+                source: update.source, observedAt: update.observedAt,
+                automaticOwnerID: update.isAutomatic ? owner : nil, expectedOwnerID: owner,
+                administrativeArea: update.administrativeArea)
+            // AppStore may defer a city write behind another mutation. Keep the
+            // short execution allowance until that write drains, not just enqueues.
+            while !Task.isCancelled && self.store.hasPendingCityWork(for: owner) {
+                do { try await Task.sleep(for: .milliseconds(100)) } catch { return }
+            }
+        }
+    }
+
+    private func protectBackgroundWork() {
+        guard !isActive, backgroundID == .invalid else { return }
+        backgroundID = beginTask { [weak self] in self?.expireBackgroundWork() }
+        guard backgroundID != .invalid else { return }
+        deadline = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(25)) } catch { return }
+            self?.expireBackgroundWork()
+        }
+    }
+
+    private func finishIfIdleLater() {
+        // Published resolution completion precedes the corresponding city value.
+        Task { [weak self] in
+            await Task.yield()
+            guard let self, !self.resolving, self.uploads.isEmpty else { return }
+            self.endBackgroundWork()
+        }
+    }
+
+    private func expireBackgroundWork() {
+        guard !isActive else { endBackgroundWork(); return }
+        locationService.cancelBackgroundResolution()
+        for task in uploads.values { task.cancel() }
+        uploads.removeAll()
+        endBackgroundWork()
+    }
+
+    private func endBackgroundWork() {
+        deadline?.cancel()
+        deadline = nil
+        let identifier = backgroundID
+        backgroundID = .invalid
+        if identifier != .invalid { endTask(identifier) }
+    }
+}
+
+@MainActor
 final class PushRegistrationDelegate: NSObject, UIApplicationDelegate {
+    let runtime = CityUpdateRuntime()
+
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Instantiated before scene construction; cached consent/identity restore
+        // the significant-change subscription on a location-driven cold launch.
+        runtime.setActive(application.applicationState == .active)
+        return true
+    }
+
     func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data

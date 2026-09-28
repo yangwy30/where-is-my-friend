@@ -108,3 +108,16 @@ test('invitation wake-up is post-commit background work, private and non-blockin
  assert.equal(wakeInvitationWorker({...options,fetcher:()=>{throw new Error('unavailable');}}),true);
  await assert.doesNotReject(Promise.all(tasks));
 });
+
+test('same-city wake-up is bounded across a burst and still leaves a scheduled fallback on failure',async()=>{
+ const tasks=[],calls=[],limiter=new Map();
+ const options={baseURL:'https://example.supabase.co',secret:'synthetic',action:'colocation',limiter,
+  waitUntil:t=>tasks.push(t),fetcher:async(url,init)=>{calls.push(init);return new Response('{}',{status:503});}};
+ assert.equal(wakeInvitationWorker({...options,now:10000}),true);
+ assert.equal(wakeInvitationWorker({...options,now:10001}),false);
+ assert.equal(wakeInvitationWorker({...options,now:15000}),true);
+ await assert.doesNotReject(Promise.all(tasks));
+ assert.equal(calls.length,2);assert.deepEqual(JSON.parse(calls[0].body),{action:'colocation'});
+ assert.equal(calls[0].redirect,'error');
+ assert.equal(wakeInvitationWorker({...options,action:'unknown'}),false);
+});

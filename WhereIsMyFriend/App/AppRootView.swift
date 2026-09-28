@@ -8,10 +8,17 @@ struct AppRootView: View {
     @AppStorage("prototype.hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("location.hasSeenSetup.v1") private var hasSeenLocationSetup = false
     @State private var finishedLocationSetupThisLaunch = false
-    @StateObject private var store = AppStore()
-    @StateObject private var locationService = CityLocationService()
+    private let runtime: CityUpdateRuntime
+    @StateObject private var store: AppStore
+    @StateObject private var locationService: CityLocationService
     @StateObject private var locationReminders = LocationPermissionReminderStore()
     @StateObject private var appearanceController = WIFAppearanceController()
+
+    init(runtime: CityUpdateRuntime) {
+        self.runtime = runtime
+        _store = StateObject(wrappedValue: runtime.store)
+        _locationService = StateObject(wrappedValue: runtime.locationService)
+    }
 
     private var skipsOnboarding: Bool {
         ProcessInfo.processInfo.arguments.contains("-skipOnboarding")
@@ -61,7 +68,7 @@ struct AppRootView: View {
         .tint(WIFTheme.fresh)
         .preferredColorScheme(appearanceController.appearance.colorScheme)
         .task {
-            guard store.snapshot.isAuthenticated else { return }
+            guard scenePhase == .active, store.snapshot.isAuthenticated else { return }
             await store.preparePushRegistrationIfAuthorized()
             await store.refresh(minimumInterval: 15)
             #if DEBUG
@@ -72,15 +79,12 @@ struct AppRootView: View {
             #endif
         }
         .onChange(of: scenePhase, initial: true) { _, phase in
-            store.setAppActive(phase == .active)
+            runtime.setActive(phase == .active)
             guard phase == .active, store.snapshot.isAuthenticated else { return }
             Task {
                 await store.preparePushRegistrationIfAuthorized()
                 await store.refresh(minimumInterval: 15)
             }
-        }
-        .onChange(of: cityLocationContext, initial: true) { _, context in
-            locationService.configure(context)
         }
         .onChange(of: store.snapshot.isAuthenticated ? store.snapshot.currentUser.id : nil) { _, ownerID in
             if locationReminders.presentedOwnerID != ownerID {
@@ -106,20 +110,6 @@ struct AppRootView: View {
         .onOpenURL { _ = store.handleIncomingURL($0) }
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
             if let url = activity.webpageURL { _ = store.handleIncomingURL(url) }
-        }
-        .onReceive(locationService.$latestCity.compactMap { $0 }.removeDuplicates()) { update in
-            guard store.snapshot.isAuthenticated, update.ownerID == cityLocationContext.ownerID else { return }
-            Task {
-                await store.updateCurrentCity(
-                    city: update.city,
-                    countryCode: update.countryCode,
-                    source: update.source,
-                    observedAt: update.observedAt,
-                    automaticOwnerID: update.isAutomatic ? update.ownerID : nil,
-                    expectedOwnerID: update.ownerID,
-                    administrativeArea: update.administrativeArea
-                )
-            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .pushTokenUpdated)) { notification in
             guard store.snapshot.isAuthenticated, let token = notification.object as? String else { return }
@@ -261,5 +251,5 @@ private struct IncomingInviteView: View {
 }
 
 #Preview {
-    AppRootView()
+    AppRootView(runtime: CityUpdateRuntime())
 }

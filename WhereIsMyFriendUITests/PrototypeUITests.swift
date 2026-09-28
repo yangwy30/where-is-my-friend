@@ -1,6 +1,35 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testWhileUsingReminderExplainsAlwaysAndSnoozesAfterOpeningSettings() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        XCTAssertTrue(app.buttons["enableLocationReminder"].waitForExistence(timeout: 8))
+        app.buttons["enableLocationReminder"].tap()
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let allow = springboard.alerts.buttons["Allow While Using App"]
+        XCTAssertTrue(allow.waitForExistence(timeout: 5))
+        allow.tap()
+        app.terminate()
+        app.launchArguments = locationReminderArguments()
+        app.launch()
+        let action = app.buttons["enableLocationReminder"]
+        XCTAssertTrue(action.waitForExistence(timeout: 8))
+        XCTAssertEqual(action.label, "Choose Always")
+        XCTAssertTrue(app.staticTexts["Choose Always to spot same-city friends while the app is closed."].exists)
+        XCTAssertEqual(springboard.alerts.count, 0)
+        capture("Always location weekly reminder")
+        action.tap()
+        XCTAssertTrue(XCUIApplication(bundleIdentifier: "com.apple.Preferences").wait(for: .runningForeground, timeout: 8))
+        app.activate()
+        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertFalse(action.exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
     func testLocationReminderDoesNotRepeatAfterOpeningFriendPlans() {
         continueAfterFailure = false
         let app = XCUIApplication()

@@ -1,6 +1,21 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Choose Always" : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择“始终”" } } }
+    },
+    "Choose Always to spot same-city friends while the app is closed." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择“始终”允许定位，不打开 App 也能发现同城好友。" } } }
+    },
+    "Choose Always in Settings to update in the background." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在设置中选择“始终”，才能在后台更新。" } } }
+    },
+    "Your city updates when you open the app. Choose Always for background updates." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "目前只在打开 App 时更新城市。选择“始终”以开启后台更新。" } } }
+    },
+    "Automatic city updates are off." : {
+      "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "自动更新城市已关闭。" } } }
+    },
     "Couldn’t load your plans. Try again." : {
       "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂时无法加载你的计划，请重试。" } } }
     },

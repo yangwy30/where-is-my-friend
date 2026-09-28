@@ -746,6 +746,11 @@ final class AppStore: ObservableObject {
         )
     }
 
+    func hasPendingCityWork(for ownerID: UUID) -> Bool {
+        snapshot.isAuthenticated && snapshot.currentUser.id == ownerID
+            && (pendingCityUpdate != nil || activeOperationCount > 0)
+    }
+
     private func applySessionExpirationIfNeeded(_ error: Error) {
         guard error as? RepositoryError == .sessionExpired else { return }
         friendPreferenceSaves.removeAll()
