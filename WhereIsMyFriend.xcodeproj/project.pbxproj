@@ -525,6 +525,7 @@
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = YES;
+            WIF_DIAGNOSTICS_ENABLED = NO;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "http://127.0.0.1:54321/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
@@ -561,6 +562,7 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			VALIDATE_PRODUCT = YES;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
+            WIF_DIAGNOSTICS_ENABLED = YES;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend;
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
@@ -696,6 +698,7 @@
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
+            WIF_DIAGNOSTICS_ENABLED = YES;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
 			WIF_API_BASE_URL = "$(WIF_STAGING_API_BASE_URL)";
 			WIF_APS_ENVIRONMENT = development;
@@ -790,6 +793,7 @@
 			TARGETED_DEVICE_FAMILY = 1;
 			VALIDATE_PRODUCT = YES;
 			WIF_ALLOWS_LOCAL_DEMO = NO;
+            WIF_DIAGNOSTICS_ENABLED = YES;
 			WIF_APP_GROUP = group.com.yangwy30.whereismyfriend.staging;
 			WIF_API_BASE_URL = "$(WIF_STAGING_API_BASE_URL)";
 			WIF_APS_ENVIRONMENT = production;

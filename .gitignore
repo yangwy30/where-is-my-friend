@@ -32,3 +32,6 @@ docs/trips_tab_preview.png
 # Dedicated cloud test environment: local settings and temporary credentials.
 Config/Staging.local.xcconfig
 .staging-private/
+
+# Operational monitor credentials and private deployment backups.
+.ops-private/

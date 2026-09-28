@@ -1,3 +1,4 @@
+import { backgroundObservation, postHeartbeat, postObservation, pushConfigurationReasons } from "../_shared/observability.mjs";
 import { deliveryGate, drainQueues, workerFetch, settleBatch } from "../_shared/queue-drain.mjs";
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { importPKCS8, SignJWT } from "npm:jose@6.2.8";
@@ -165,6 +166,9 @@ async function send(database: ReturnType<typeof createClient>, delivery: Claimed
             }),
         });
         const errorBody = response.ok ? {} : await response.json().catch(() => ({})) as APNsError;
+        if (Deno.env.get("WIF_OBSERVABILITY_ENABLED") === "true" && pushConfigurationReasons.has(errorBody.reason ?? "")) {
+            backgroundObservation(postObservation(supabaseURL!, serviceRoleKey!, {eventID: crypto.randomUUID(), feature: "notifications", kind: "push_configuration", status: response.status, elapsedMs: 0, version: "server"}));
+        }
         const classification = classifyAPNsResponse(response.status, errorBody.reason ?? "");
         const responseAPNsID = response.headers.get("apns-id");
         await complete(database, delivery, claimToken, {
@@ -256,5 +260,8 @@ Deno.serve(async request => {
         upcomingError: summary.upcoming?.error ?? false,
         bookingReminderError: summary.booking?.error ?? false};
     console.log(JSON.stringify({event: "push_queue_drain", ...result}));
+    if (Deno.env.get("WIF_OBSERVABILITY_ENABLED") === "true" && lane === "scheduled") {
+        backgroundObservation(postHeartbeat(supabaseURL!, serviceRoleKey!, "push", !Object.values(summary).some((queue: any) => queue.error)));
+    }
     return json(result, Object.values(summary).some((queue: any) => queue.error) ? 503 : 200);
 });

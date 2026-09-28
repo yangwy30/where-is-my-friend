@@ -3373,3 +3373,54 @@ final class BackendEnvironmentIsolationTests: XCTestCase {
         XCTAssertTrue(BackendEnvironmentPolicy.allows(bundleID: "com.yangwy30.whereismyfriend", apiURL: live.appendingPathComponent("functions/v1/api"), supabaseURL: live))
     }
 }
+
+final class ClientDiagnosticTests: XCTestCase {
+    func testDiagnosticsKeepOnlyFeatureAndUseSameProjectCollector() throws {
+        XCTAssertEqual(ClientDiagnosticEvent.feature(path: "/v2/friend-plans?friendID=private"), "plans")
+        XCTAssertNil(ClientDiagnosticEvent.feature(path: "/v1/devices/push-token"))
+        XCTAssertEqual(ClientDiagnosticEvent.collector(for: URL(string: "https://test.supabase.co/functions/v1/api")!)?.absoluteString,
+                       "https://test.supabase.co/functions/v1/ops-monitor/client-events")
+        for value in ["http://test.supabase.co/functions/v1/api", "https://test.supabase.co.evil.example/functions/v1/api", "https://user:password@test.supabase.co/functions/v1/api"] {
+            XCTAssertNil(ClientDiagnosticEvent.collector(for: URL(string: value)!))
+        }
+    }
+
+    func testDecodeFailureReportsOnceWithoutChangingTheOriginalError() async throws {
+        let configuration = URLSessionConfiguration.ephemeral; configuration.protocolClasses = [StubURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel(); StubURLProtocol.setHandler(nil) }
+        let reported = expectation(description: "One diagnostic"); reported.assertForOverFulfill = true
+        StubURLProtocol.setHandler { request in
+            if request.url?.path.hasSuffix("client-events") == true {
+                XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer synthetic")
+                XCTAssertEqual(request.timeoutInterval, 3)
+                reported.fulfill()
+                return .response(statusCode: 503, data: Data()) // Must not recurse on reporting failure.
+            }
+            XCTAssertNotNil(UUID(uuidString: request.value(forHTTPHeaderField: "x-wif-request-id") ?? ""))
+            return .response(statusCode: 200, data: Data("not-json".utf8))
+        }
+        let client = RESTClient(baseURL: URL(string: "https://test.supabase.co/functions/v1/api")!, publishableKey: "synthetic", session: session, diagnosticsEnabled: true)
+        for _ in 0..<2 {
+            do { let _: TravelPlanSnapshot = try await client.request(path: "/v2/travel-plans", method: "GET", body: Optional<String>.none, bearerToken: "synthetic"); XCTFail("Expected decoding failure") }
+            catch { XCTAssertTrue(error is DecodingError) }
+        }
+        await fulfillment(of: [reported], timeout: 2)
+    }
+
+    func testOfflineAndNormalSessionExpiryDoNotReportIncidents() async throws {
+        let configuration = URLSessionConfiguration.ephemeral; configuration.protocolClasses = [StubURLProtocol.self]
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel(); StubURLProtocol.setHandler(nil) }
+        let reported = expectation(description: "No diagnostic"); reported.isInverted = true
+        let client = RESTClient(baseURL: URL(string: "https://test.supabase.co/functions/v1/api")!, publishableKey: "synthetic", session: session, diagnosticsEnabled: true)
+        for status in [0,401,403,409] {
+            StubURLProtocol.setHandler { request in
+                if request.url?.path.hasSuffix("client-events") == true { reported.fulfill() }
+                return status == 0 ? .failure(URLError(.notConnectedToInternet)) : .response(statusCode: status, data: Data("{}".utf8))
+            }
+            do { let _: TravelPlanSnapshot = try await client.request(path: "/v2/travel-plans", method: "GET", body: Optional<String>.none, bearerToken: "synthetic"); XCTFail("Expected failure") } catch {}
+        }
+        await fulfillment(of: [reported], timeout: 0.2)
+    }
+}

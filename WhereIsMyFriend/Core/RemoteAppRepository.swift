@@ -322,6 +322,7 @@ actor RemoteAppRepository: AppRepository {
         sessionGeneration += 1
         authenticationTransition = true
         sessionIsUsable = false
+        await client.resetDiagnostics()
         defer { authenticationTransition = false }
         do {
             _ = try await authentication.signInWithApple(payload)
@@ -353,6 +354,7 @@ actor RemoteAppRepository: AppRepository {
         sessionGeneration += 1
         authenticationTransition = true
         sessionIsUsable = false
+        await client.resetDiagnostics()
         defer { authenticationTransition = false }
         let ownerID = cachedSnapshot()?.currentUser.id
         try? await unregisterPushDevice()
@@ -374,6 +376,7 @@ actor RemoteAppRepository: AppRepository {
         let ownerID = try activeUserID()
         sessionGeneration += 1
         authenticationTransition = true
+        await client.resetDiagnostics()
         defer { authenticationTransition = false }
         let snapshot = try await requestSnapshot(path: "/v1/account", method: "DELETE", body: EmptyBody(), allowsAuthTransition: true)
         // Supabase Auth deletes its local session before contacting the server.
@@ -800,15 +803,58 @@ actor RemoteAppRepository: AppRepository {
 
 struct EmptyResponse: Decodable {}
 
+struct ClientDiagnosticEvent: Codable, Sendable, Equatable {
+    let eventID: String
+    let feature: String
+    let kind: String
+    let status: Int
+    let elapsedMs: Int
+    let version: String
+
+    static func feature(path: String) -> String? {
+        let clean = path.split(separator: "?", maxSplits: 1).first.map(String.init) ?? path
+        if clean.hasPrefix("/v1/auth/") { return "login" }
+        if ["/v1/travel-plans", "/v2/travel-plans", "/v2/friend-plans", "/v2/own-plans", "/v2/travel-overlaps"].contains(where: { clean == $0 || clean.hasPrefix($0 + "/") }) { return "plans" }
+        if clean.hasPrefix("/v1/trip") { return "trips" }
+        if clean == "/v1/bootstrap" || clean == "/v1/profile" || clean == "/v1/account" || clean.hasPrefix("/v1/friends/") { return "home" }
+        return nil
+    }
+    static func collector(for base: URL) -> URL? {
+        guard base.scheme == "https", base.host?.hasSuffix(".supabase.co") == true,
+              base.path == "/functions/v1/api", base.user == nil, base.password == nil, base.query == nil, base.fragment == nil else { return nil }
+        return base.deletingLastPathComponent().appendingPathComponent("ops-monitor/client-events")
+    }
+}
+
+private final class DiagnosticSessionDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
 actor RESTClient {
     private let baseURL: URL
     private let publishableKey: String
     private let session: URLSession
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let diagnosticSession: URLSession
+    private let diagnosticsEnabled: Bool
+    private var diagnosticEpoch = 0
+    private var diagnosticLastSent: [String: Date] = [:]
 
-    init(baseURL: URL, publishableKey: String, session: URLSession = .shared) {
+    deinit { diagnosticSession.invalidateAndCancel() }
+
+    func resetDiagnostics() { diagnosticEpoch += 1; diagnosticLastSent = [:] }
+
+    init(baseURL: URL, publishableKey: String, session: URLSession = .shared, diagnosticsEnabled: Bool = (Bundle.main.object(forInfoDictionaryKey: "WIFDiagnosticsEnabled") as? String) == "YES") {
         self.baseURL = baseURL
+        self.diagnosticsEnabled = diagnosticsEnabled
+        let diagnosticConfiguration = session.configuration
+        diagnosticConfiguration.httpCookieStorage = nil
+        diagnosticConfiguration.urlCredentialStorage = nil
+        self.diagnosticSession = URLSession(configuration: diagnosticConfiguration, delegate: DiagnosticSessionDelegate(), delegateQueue: nil)
         self.publishableKey = publishableKey
         self.session = session
         encoder = JSONEncoder()
@@ -826,7 +872,10 @@ actor RESTClient {
         guard let url = APIConfiguration(baseURL: baseURL).endpoint(path: path) else {
             throw RepositoryError.serverNotConfigured
         }
+        let started = Date(), trace = UUID().uuidString, epoch = diagnosticEpoch
         var request = URLRequest(url: url)
+        request.setValue(trace, forHTTPHeaderField: "x-wif-request-id")
+        request.setValue(Self.diagnosticVersion, forHTTPHeaderField: "x-wif-app-version")
         if path == "/v1/profile" || path == "/v1/devices/push-token" { request.timeoutInterval = 15 }
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -844,6 +893,7 @@ actor RESTClient {
         do {
             (data, response) = try await session.data(for: request)
         } catch let error as URLError {
+            if error.code == .timedOut { recordDiagnostic(path: path, kind: "timeout", status: 0, trace: trace, started: started, epoch: epoch, token: bearerToken) }
             switch error.code {
             case .notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost,
                     .cannotFindHost, .dnsLookupFailed, .internationalRoamingOff:
@@ -853,9 +903,12 @@ actor RESTClient {
             }
         }
         guard let http = response as? HTTPURLResponse else {
+            recordDiagnostic(path: path, kind: "decode_error", status: 0, trace: trace, started: started, epoch: epoch, token: bearerToken)
             throw RepositoryError.invalidServerResponse
         }
+        let returnedTrace = http.value(forHTTPHeaderField: "x-wif-request-id").flatMap(UUID.init(uuidString:))?.uuidString ?? trace
         guard (200..<300).contains(http.statusCode) else {
+            if http.statusCode >= 500 { recordDiagnostic(path: path, kind: "server_error", status: http.statusCode, trace: returnedTrace, started: started, epoch: epoch, token: bearerToken) }
             // Trip 403 means membership/ownership denial, not an expired Auth session.
             if http.statusCode == 401 || (http.statusCode == 403 && !path.hasPrefix("/v1/trip")) {
                 throw RepositoryError.sessionExpired
@@ -870,7 +923,33 @@ actor RESTClient {
         if let empty = EmptyResponse() as? Response, data.isEmpty {
             return empty
         }
-        return try decoder.decode(Response.self, from: data)
+        do { return try decoder.decode(Response.self, from: data) }
+        catch {
+            recordDiagnostic(path: path, kind: "decode_error", status: http.statusCode, trace: returnedTrace, started: started, epoch: epoch, token: bearerToken)
+            throw error
+        }
+    }
+
+    private static var diagnosticVersion: String {
+        let raw = "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0")(\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"))"
+        return raw.range(of: "^[a-zA-Z0-9._+()-]{1,32}$", options: .regularExpression) == nil ? "unknown" : raw
+    }
+
+    private func recordDiagnostic(path: String, kind: String, status: Int, trace: String, started: Date, epoch: Int, token: String?) {
+        guard diagnosticsEnabled, epoch == diagnosticEpoch, !Task.isCancelled, let token,
+              let url = ClientDiagnosticEvent.collector(for: baseURL), let feature = ClientDiagnosticEvent.feature(path: path) else { return }
+        let key = feature + ":" + kind
+        if let previous = diagnosticLastSent[key], Date().timeIntervalSince(previous) < 60 { return }
+        diagnosticLastSent[key] = Date()
+        let event = ClientDiagnosticEvent(eventID: trace, feature: feature, kind: kind, status: status,
+            elapsedMs: min(120000, max(0, Int(Date().timeIntervalSince(started) * 1000))), version: Self.diagnosticVersion)
+        guard let body = try? encoder.encode(event) else { return }
+        var report = URLRequest(url: url); report.httpMethod = "POST"; report.timeoutInterval = 3
+        report.httpBody = body; report.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        report.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization"); report.setValue(publishableKey, forHTTPHeaderField: "apikey")
+        let session = diagnosticSession
+        // One attempt, memory-only, never reports a reporting failure or delays the original operation.
+        Task { _ = try? await session.data(for: report) }
     }
 }
 

@@ -1,0 +1,10 @@
+import {randomBytes} from 'node:crypto';import {writeFile,mkdir} from 'node:fs/promises';import {resolve} from 'node:path';
+import {loadTarget} from '../staging/target.mjs';import {assertIsolation,command} from '../staging/management.mjs';
+const target=await loadTarget('.staging-private/target.json');await assertIsolation(target);
+await mkdir('.ops-private',{recursive:true,mode:0o700});
+const token=randomBytes(32).toString('hex'),file=resolve('.ops-private/staging.env');
+await writeFile(file,'WIF_OBSERVABILITY_ENABLED=true\nOPS_PROBE_TOKEN='+token+'\n',{mode:0o600});
+await command(['secrets','set','--project-ref',target.projectRef,'--env-file',file]);
+for(const fn of ['api','ops-monitor'])await command(['functions','deploy',fn,'--project-ref',target.projectRef,'--use-api']);
+await writeFile('.ops-private/staging-monitor.json',JSON.stringify({projectRef:target.projectRef,probeToken:token,url:target.origin+'/functions/v1/ops-monitor/status/'+token}),{mode:0o600});
+console.log(JSON.stringify({deployed:true,projectRef:target.projectRef,functions:['api','ops-monitor'],realNotifications:false}));

@@ -1,3 +1,4 @@
+import { apiObservation, postObservation, backgroundObservation } from "../_shared/observability.mjs";
 import { sharedFlightLookup } from "../_shared/shared-flight-lookup.mjs";
 import { presenceAdministrativeArea } from "../_shared/city-regions.mjs";
 import { pushRoute } from "../_shared/push-routing.mjs";
@@ -19,7 +20,7 @@ class APIError extends Error {
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "apikey, authorization, content-type, x-client-info",
+    "Access-Control-Allow-Headers": "apikey, authorization, content-type, x-client-info, x-wif-request-id, x-wif-app-version",
     "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 };
 
@@ -590,12 +591,26 @@ async function handle(request: Request): Promise<Response> {
     throw new APIError(404, "Endpoint not found.");
 }
 
+const diagnosticLimiter = new Map();
 Deno.serve(async request => {
+    const started = Date.now();
+    let response: Response;
     try {
-        return await handle(request);
+        response = await handle(request);
     } catch (error) {
-        if (error instanceof APIError) return json({ message: error.message }, error.status);
-        console.error(error);
-        return json({ message: "The server could not complete the request." }, 500);
+        if (error instanceof APIError) response = json({ message: error.message }, error.status);
+        else {
+            console.error(JSON.stringify({event: "unhandled_api_error", errorType: error instanceof Error ? error.name : "Unknown"}));
+            response = json({ message: "The server could not complete the request." }, 500);
+        }
     }
+    if (Deno.env.get("WIF_OBSERVABILITY_ENABLED") === "true") try {
+        const incoming = request.headers.get("x-wif-request-id");
+        const id = incoming && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(incoming) ? incoming : crypto.randomUUID();
+        response.headers.set("x-wif-request-id", id);
+        response.headers.set("Access-Control-Expose-Headers", "x-wif-request-id");
+        const event = apiObservation(request, response.status, Date.now() - started, {id, limiter: diagnosticLimiter});
+        if (event) backgroundObservation(postObservation(supabaseURL!, serviceRoleKey!, event));
+    } catch { console.warn(JSON.stringify({event: "diagnostic_capture_unavailable"})); }
+    return response;
 });

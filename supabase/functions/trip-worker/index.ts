@@ -1,3 +1,4 @@
+import { backgroundObservation, postHeartbeat, postObservation, pushConfigurationReasons } from "../_shared/observability.mjs";
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { importPKCS8, SignJWT } from "npm:jose@6.2.8";
 import { classifyAPNsResponse, decryptAPNSToken } from "../_shared/push-security.mjs";
@@ -35,6 +36,9 @@ async function send(delivery: Record<string, string>) {
             deepLink:delivery.deep_link,eventID:delivery.event_id}),
     });
     const error = response.ok ? {} : await response.json().catch(()=>({}));
+    if (Deno.env.get("WIF_OBSERVABILITY_ENABLED") === "true" && pushConfigurationReasons.has(error.reason ?? "")) {
+        backgroundObservation(postObservation(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {eventID: crypto.randomUUID(), feature: "notifications", kind: "push_configuration", status: response.status, elapsedMs: 0, version: "server"}));
+    }
     return classifyAPNsResponse(response.status,error.reason ?? "");
 }
 const json = (value: unknown, status=200) => new Response(JSON.stringify(value), {
@@ -49,6 +53,7 @@ Deno.serve(async request => {
         const refresh = await refreshOneFlight(rpc,Deno.env.get("RAPIDAPI_KEY"));
         const push = encryptionKey && keyID && teamID && privateKey
             ? await deliverTripUpdates(rpc,send) : {state:"not_configured"};
+        if (Deno.env.get("WIF_OBSERVABILITY_ENABLED") === "true") backgroundObservation(postHeartbeat(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, "trip", (push as any).state !== "not_configured"));
         return json({refresh,push});
     } catch { return json({message:"Trip update worker could not complete. Retry is safe."},500); }
 });
