@@ -12,7 +12,7 @@ No flight subscription, provider quota, app screens, or notification preferences
 
 - **Backend monitoring: deployed and verified.** Correct status token returns 200; wrong token returns 404; unauthenticated client collection returns 401. Both scheduled workers have naturally reported successful heartbeats after deployment.
 - **Client diagnostics: implemented, awaiting an App release.** Existing distributed clients do not yet send the new decode/timeout reports. The next release must also review the repository's other pending API dependencies before upload.
-- **External email alerts: not activated.** UptimeRobot submission was blocked before execution pending explicit owner approval to disclose the dedicated read-only status URL/token and alert email to that provider. After approval, the owner must also complete UptimeRobot's email activation. Do not interpret an HTTP 200 submission receipt as an active monitor or delivered email.
+- **External email alerts: activation pending.** The owner explicitly authorized disclosure of the dedicated read-only status URL/token and alert email to UptimeRobot. The official activation request completed with HTTP 200; its receipt is stored privately. The owner must open the provider's confirmation email and click Activate. Email delivery and active monitoring have not yet been verified; an HTTP 200 submission receipt proves neither.
 
 ## Verification
 
@@ -30,4 +30,4 @@ Test logs and `.xcresult` bundles are local temporary artifacts; protected deplo
 
 This is incident detection, not complete analytics or automatic repair. Samples are rate limited; thresholds are counts rather than a full request error-rate denominator. Push signing and queue health do not prove that a specific phone displayed a notification. External checks are intended every five minutes, so alerts are not instantaneous.
 
-See [operations runbook](../scripts/ops/README.md) for scripts, thresholds, safeguards and recovery procedure. Finish provider authorization/owner activation before claiming email coverage; include the client code in a separately verified future app release.
+See [operations runbook](../scripts/ops/README.md) for scripts, thresholds, safeguards and recovery procedure. Confirm owner activation and independent periodic checks before claiming email coverage; include the client code in a separately verified future app release.
