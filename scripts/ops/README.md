@@ -37,4 +37,4 @@ Client reporting requires a future App release. Debug disables it; Staging and R
 
 To disable event instrumentation safely, set `WIF_OBSERVABILITY_ENABLED=false`; coordinate external monitoring expectations to avoid misleading alerts. Preserve the additive schema and original function backups. No destructive rollback is required.
 
-Provider references: [official setup](https://uptimerobot.com/quick-monitor-setup/), [pricing](https://uptimerobot.com/pricing/). External monitoring and email delivery are not active until owner activation is confirmed.
+Provider references: [official setup](https://uptimerobot.com/quick-monitor-setup/), [pricing](https://uptimerobot.com/pricing/). Owner activation is confirmed for monitor `804105616`: the dashboard shows Up, a five-minute interval and the owner as alert recipient; a real external probe is recorded by the backend. Production outage/recovery mail delivery has not been artificially exercised.
