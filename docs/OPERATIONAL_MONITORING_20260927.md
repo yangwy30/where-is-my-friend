@@ -22,6 +22,7 @@ No flight subscription, provider quota, app screens, or notification preferences
 - A separate regression test applies monitoring directly to the production schema baseline without the two pending business migrations.
 - The queue test confirms retries keep their original age and ineligible deliveries do not generate backlog alerts.
 - Release configuration simulator build: **passed**, with diagnostics enabled and code signing disabled.
+- Final environment cleanup: old TripFlights backend restored to `ACTIVE_HEALTHY`; isolated staging paused. All five legacy business tables matched the fresh pre-test backup exactly (7 trips, 26 participants, 31 flights, 2 notes, 0 push subscriptions). The production App backend stayed active. No paid plan was activated.
 
 Test logs and `.xcresult` bundles are local temporary artifacts; protected deployment and smoke receipts live in `.ops-private/`. No probe URL, token, operator email, database key or user records belong in this report.
 
