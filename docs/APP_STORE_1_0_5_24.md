@@ -39,6 +39,11 @@ Chinese What's New:
 
 ## Distribution state
 
-Final archive/export and Apple processing are in progress. TestFlight availability and App Store review submission must be recorded only after Apple confirms them.
+- Final archive succeeded: `/tmp/across-release105/AcrossUs-1.0.5-24-final.xcarchive`, source commit `358497f`.
+- App and widget are both 1.0.5 (24), with production bundle IDs/backend/APNs, local demo disabled, diagnostics enabled and the complete nine-type privacy manifest verified against source.
+- App Privacy changes are published. The bilingual public privacy policy returns HTTP 200 and contains the matching diagnostic description.
+- Distribution export is **blocked by Xcode login**: `No Accounts` and missing Apple Distribution signing identity. Xcode Settings > Apple Accounts visibly has no signed-in account. The owner has been asked to sign in there; the browser App Store Connect session remains valid.
+- **Not uploaded to TestFlight and not submitted for App Review yet.** Resume export from the verified final archive after Xcode login, validate the exported signature/configuration, upload, confirm Apple processing and test-group assignment, then select build 24 for 1.0.5 and submit.
+- Backend monitoring remains healthy after rollout, with successive external probes observed approximately five minutes apart.
 
 Private migration/API backups, read-only verification output and rollout receipts are in `.ops-private/release-105/`; the pagination rollback bundle is at the private path printed by its deployment command. Do not remove v2 endpoints after new clients are distributed. Prefer a forward-compatible fix; preserve the additive migrations.
