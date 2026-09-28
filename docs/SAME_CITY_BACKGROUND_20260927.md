@@ -38,7 +38,7 @@ The earlier app kept the location service and city-upload subscription in `AppRo
 - UI screenshots were exported from `/tmp/across-background-final.xcresult` and inspected in `/tmp/across-background-ui-evidence/`; English Always and Chinese location reminders fit the existing card layout.
 - Production **API 28 / push-worker 22** deployed with exact baseline/source checks and private backups under `.ops-private/same-city-wake/`. Post-deploy monitor returns 200, with no active failure/backlog flags.
 - Release configuration simulator compilation: **passed**.
-- **Client code is not distributed yet.** The existing 1.0.5 (24) App Store submission is unchanged and does not contain this follow-up. A new build is required for the reminder/lifecycle changes. The backend wake improvement is already active for compatible existing clients.
+- **Client code is available in TestFlight 1.0.5 (25) and submitted for App Review.** After owner approval, the earlier build24 submission was withdrawn and replaced with build25; see the [release record](APP_STORE_1_0_5_25.md). The backend wake improvement is already active for compatible existing clients. Public users need the new client for the reminder/lifecycle changes.
 
 Simulator tests do not establish physical-device wake timing, arrival-to-banner latency, or APNs screen presentation. A real journey with two opted-in devices, Always location, automatic updates and notifications enabled remains the acceptance check. Low power, Background App Refresh, network availability, Focus and iOS scheduling can affect results; no immediate-delivery guarantee is made.
 

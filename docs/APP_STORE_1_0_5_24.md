@@ -1,5 +1,7 @@
 # Across Us 1.0.5 (24)
 
+**Superseded:** the owner subsequently approved replacing this submission with [1.0.5 (25)](APP_STORE_1_0_5_25.md), which adds background city and Always reminder fixes. Build24's review submission was withdrawn on September 27, 2026; the historical verification below still describes build24.
+
 ## Release scope
 
 - Friend plans use permission-aware cursor pagination; the legacy API still returns complete lists for older clients.

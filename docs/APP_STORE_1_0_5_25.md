@@ -35,4 +35,13 @@ Keep the existing bilingual descriptions, screenshots, keywords, diagnostics dec
 
 ## Distribution state
 
-Archive/export preparation is in progress. Do not describe build 25 as uploaded or submitted until confirmed by Apple. The original review submission is `34e033cb-be03-4691-b1c4-206891eff236`; the original build ID is `fb1a626c-f4c3-45dc-9f49-66ea8e8c8bb2`.
+- Source frozen at `14b5771`. Archive and distribution export succeeded at `/tmp/across-release105-build25/AcrossUs-1.0.5-25.xcarchive` and `/tmp/across-release105-build25/export/Where Is My Friend.ipa`.
+- App and widget passed strict Apple Distribution signature verification. Both are 1.0.5 (25), with production identifiers/backend/APNs, local demo disabled and diagnostics enabled. The packaged privacy manifest matches source.
+- Exported IPA SHA-256: `90754a8bc421cfbf519da2667cbbb4d11548d4998b14d0370b269a1b5d0e77be`.
+- Xcode confirmed **Upload succeeded** on September 27, 2026 at **10:19 PM PDT**. Apple subsequently showed **Complete** for build ID `35d3f102-c63c-46dd-901c-c23c3687d16e`.
+- [TestFlight build 25](https://appstoreconnect.apple.com/teams/9b0eb9fa-54ee-4f56-83ae-1e79e3cf4125/apps/6807634842/testflight/ios/35d3f102-c63c-46dd-901c-c23c3687d16e) is assigned to **Testers / Internal / 1 tester**. Bilingual test notes were saved, including the real-journey timing check. No new testers or external groups were added.
+- After build25 was ready, cancelled submission `34e033cb-be03-4691-b1c4-206891eff236` containing build24 (`fb1a626c-f4c3-45dc-9f49-66ea8e8c8bb2`). Apple made 1.0.5 editable as Developer Rejected; this was an owner-requested withdrawal, not an Apple rejection.
+- Replaced the selected build with **25**, saved updated English/Chinese What's New and reviewer notes, and retained automatic release after approval with existing ratings.
+- Submitted exactly one item, **1.0.5 (25)**, on **September 27, 2026 at 10:29 PM PDT**. Apple displayed **1 Item Submitted**; its review record confirms **Waiting for Review**.
+- New submission ID: `1e70df43-404b-42f5-b502-fbef60c474f3`. [Review record](https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/1e70df43-404b-42f5-b502-fbef60c474f3).
+- Local confirmation screenshots: `/tmp/across-release105-build25/apple-submitted.png` and `apple-review-status.png`. Public 1.0.4 remains available while review is pending; approval and release timing are not guaranteed.
