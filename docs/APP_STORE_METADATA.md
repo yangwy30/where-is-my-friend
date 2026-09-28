@@ -214,5 +214,9 @@ Confirm these answers again immediately before App Store submission if the imple
 | Device ID / APNs registration | Yes | No | App Functionality |
 | Coarse Location | Yes | No | App Functionality |
 | Contacts (the in-app friend graph only; no address-book import) | Yes | No | App Functionality |
+| Other User Content (plans and shared trips) | Yes | No | App Functionality |
+| Search History (flight lookup requests) | Yes | No | App Functionality |
+| Performance Data (bounded request timing) | Yes | No | App Functionality |
+| Other Diagnostic Data (bounded error categories) | Yes | No | App Functionality |
 
-Do not select Precise Location, Advertising Data, Diagnostics, or third-party tracking unless a later build actually begins collecting them. App Store Connect answers must include Apple, Supabase, and any other third-party SDK behavior present in the submitted binary.
+Version 1.0.5 adds authenticated operational diagnostics. The daily account pseudonym can be associated with an account, so declare these diagnostics linked to identity. No crash stack collection was added. Do not select Precise Location, Advertising Data, Crash Data, or third-party tracking unless the implementation begins collecting them. App Store Connect answers must include Apple, Supabase, and any other third-party SDK behavior present in the submitted binary.

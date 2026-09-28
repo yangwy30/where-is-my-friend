@@ -99,5 +99,12 @@ test('monitoring installs on the actual production baseline without the unreleas
   assert.equal(await value(db,"select to_regprocedure('public.wif_travel_overview(uuid)') is null"),true);
   assert.equal(await record(db,event({kind:'server_error',status:503})),true);
   const health=await value(db,'select wif_ops_health()');assert.equal(health.features[0].server_errors,1);assert.ok(Array.isArray(health.queues));
+  // Production installed 0400 first. Upgrade in the actual release order as well.
+  for(const name of ['20260927020000_plan_pagination_and_bootstrap.sql','20260927030000_home_overlap_summary.sql'])await db.exec(await readFile(new URL('../migrations/'+name,import.meta.url),'utf8'));
+  const appID=await value(db,'select wif_ensure_app_user($1)',[actor]);
+  const overview=await value(db,'select wif_travel_overview($1)',[appID]);assert.equal(overview.overlapCount,0);assert.equal(overview.includesAllOverlaps,true);
+  const legacy=await value(db,'select wif_travel_snapshot($1)',[appID]);assert.ok(Array.isArray(legacy.friendPlans));assert.ok(Array.isArray(legacy.plans));
+  assert.equal((await value(db,'select wif_friend_plan_page($1)',[appID])).items.length,0);
+  assert.equal((await value(db,'select wif_ops_health()')).features[0].server_errors,1);
  }finally{await db.close();}
 });
