@@ -42,8 +42,13 @@ Chinese What's New:
 - Final archive succeeded: `/tmp/across-release105/AcrossUs-1.0.5-24-final.xcarchive`, source commit `358497f`.
 - App and widget are both 1.0.5 (24), with production bundle IDs/backend/APNs, local demo disabled, diagnostics enabled and the complete nine-type privacy manifest verified against source.
 - App Privacy changes are published. The bilingual public privacy policy returns HTTP 200 and contains the matching diagnostic description.
-- Distribution export is **blocked by Xcode login**: `No Accounts` and missing Apple Distribution signing identity. Xcode Settings > Apple Accounts visibly has no signed-in account. The owner has been asked to sign in there; the browser App Store Connect session remains valid.
-- **Not uploaded to TestFlight and not submitted for App Review yet.** Resume export from the verified final archive after Xcode login, validate the exported signature/configuration, upload, confirm Apple processing and test-group assignment, then select build 24 for 1.0.5 and submit.
+- After the owner restored Xcode login, distribution export succeeded. Both app and widget passed strict Apple Distribution signature verification; production configuration and the exact privacy manifest were checked in the exported IPA.
+- Exported IPA SHA-256: `b8e7964bbd630679f862eaa2d151bdc063149b491e6f4d89d9be19267079a391`.
+- Xcode confirmed **Upload succeeded** on September 27, 2026 at **8:29 PM PDT**. App Store Connect subsequently confirmed **Complete**. Build ID: `fb1a626c-f4c3-45dc-9f49-66ea8e8c8bb2`.
+- [TestFlight build](https://appstoreconnect.apple.com/teams/9b0eb9fa-54ee-4f56-83ae-1e79e3cf4125/apps/6807634842/testflight/ios/fb1a626c-f4c3-45dc-9f49-66ea8e8c8bb2) is assigned to the existing **Testers / Internal / 1 tester** group. Bilingual What to Test notes were saved with the **Saved** confirmation. No new testers or external groups were added.
+- Selected build 24 as the sole build for 1.0.5 and submitted exactly one item on **September 27, 2026 at 8:35 PM PDT**. Apple displayed **1 Item Submitted**, and its review record confirms **Waiting for Review** for **1.0.5 (24)**.
+- Submission ID: `34e033cb-be03-4691-b1c4-206891eff236`. [Apple review record](https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/34e033cb-be03-4691-b1c4-206891eff236).
+- Release remains **automatic after approval**, to all users, with existing ratings retained. Public version **1.0.4 (23)** remains available while review is pending. Approval or a release date is not guaranteed.
 - Backend monitoring remains healthy after rollout, with successive external probes observed approximately five minutes apart.
 
 Private migration/API backups, read-only verification output and rollout receipts are in `.ops-private/release-105/`; the pagination rollback bundle is at the private path printed by its deployment command. Do not remove v2 endpoints after new clients are distributed. Prefer a forward-compatible fix; preserve the additive migrations.

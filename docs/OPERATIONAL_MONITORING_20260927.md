@@ -11,7 +11,7 @@ No flight subscription, provider quota, app screens, or notification preferences
 ## Activation boundaries
 
 - **Backend monitoring: deployed and verified.** Correct status token returns 200; wrong token returns 404; unauthenticated client collection returns 401. Both scheduled workers have naturally reported successful heartbeats after deployment.
-- **Client diagnostics: implemented, awaiting an App release.** Existing distributed clients do not yet send the new decode/timeout reports. The next release must also review the repository's other pending API dependencies before upload.
+- **Client diagnostics: available in TestFlight 1.0.5 (24), submitted for App Review.** Production migrations 0200/0300 and API 27 were subsequently deployed and verified as part of that release. Existing public 1.0.4 clients do not yet send the new decode/timeout reports; users need the new client. See the [1.0.5 release record](APP_STORE_1_0_5_24.md).
 - **External monitoring: activated and checking.** The owner authorized the dedicated health URL/token and alert email disclosure, then completed activation. UptimeRobot monitor `804105616` shows **Up**, checks every **5 minutes**, and lists the owner's account under “To be notified”. The backend independently recorded its first external probe at `2026-09-28 03:01:04 UTC`; the protected health endpoint also returned 200. The private submission receipt alone was not used as activation evidence. Actual outage/recovery email delivery has not been exercised against production; no artificial production outage was introduced.
 
 ## Verification
@@ -30,4 +30,4 @@ Test logs and `.xcresult` bundles are local temporary artifacts; protected deplo
 
 This is incident detection, not complete analytics or automatic repair. Samples are rate limited; thresholds are counts rather than a full request error-rate denominator. Push signing and queue health do not prove that a specific phone displayed a notification. External checks are intended every five minutes, so alerts are not instantaneous.
 
-See [operations runbook](../scripts/ops/README.md) for scripts, thresholds, safeguards and recovery procedure. Include the client code in a separately verified future app release. The active monitor is available in the owner's [UptimeRobot dashboard](https://dashboard.uptimerobot.com/monitors/804105616).
+See [operations runbook](../scripts/ops/README.md) for scripts, thresholds, safeguards and recovery procedure. The client code is included in the separately verified 1.0.5 release, currently awaiting Apple review. The active monitor is available in the owner's [UptimeRobot dashboard](https://dashboard.uptimerobot.com/monitors/804105616).

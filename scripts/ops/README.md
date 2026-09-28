@@ -6,6 +6,8 @@ Production backend: `cdhpaujazbuppbxyhjxq`. Its historical dashboard name contai
 
 The 2026-09-27 rollout installed only migration `20260927040000_operational_monitoring.sql` and instrumentation around the existing production functions. Pending migrations `20260927020000` and `20260927030000` and their API changes were deliberately excluded. Do not deploy the entire repository API or upload a new client as part of a monitoring-only repair.
 
+The subsequent authorized [1.0.5 release](../../docs/APP_STORE_1_0_5_24.md) installed 0200/0300 and API version 27 after compatibility testing. They are no longer pending in production. The scripts below describe the original monitoring rollout and must not be replayed against this newer state.
+
 - `prepare-production.mjs` is a **one-time rollout preparation script** that downloads the deployed source and proves a narrow patch against the pre-monitoring Git HEAD (`f2012c5`). It is not a general deployment command and must not be rerun over the completed deployment/backups.
 - `deploy-production.mjs` requires a passing isolated smoke receipt, exact function versions and source hashes. Without `--apply`, it prepares SQL only. The rollout is already applied; do not replay it.
 - `verify-production.mjs` checks the protected status URL, invalid-token rejection, unauthenticated collector rejection, worker state and function versions. It does not inject faults or send push notifications.
