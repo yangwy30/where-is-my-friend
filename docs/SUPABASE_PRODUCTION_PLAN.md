@@ -436,7 +436,7 @@ PR：
 4. iOS Debug build + unit tests
 5. migration drift / generated types 检查
 
-仓库中的 `.github/workflows/ios.yml` 已落实无 secrets 的 PR/main 门禁：Ubuntu job 以 Node 24 执行 PGlite migration、Edge 边界、AES-GCM 与仓库密钥扫描；macOS 26 job 分别构建 Debug、独立 Staging scheme、Release，并运行 iOS 单元测试。GitHub Actions 仅授予 `contents: read`，checkout 不持久化凭据。
+仓库中的 `.github/workflows/ios.yml` 已落实无 secrets 的 PR/main 门禁：Ubuntu job 以 Node 24 执行 PGlite migration、Edge 边界、AES-GCM 与仓库密钥扫描；Xcode 27 job 分别构建 Debug、独立 Staging scheme、Release，并运行 iOS 单元测试；UI 测试由 `scripts/ci/run-ios-tests.sh` 拆成三个并行分片（不含生成营销截图的 `testCapture*`）。GitHub Actions 仅授予 `contents: read`，checkout 不持久化凭据。
 
 `npm run backend:test` 使用 PGlite，不要求开发者电脑安装 Docker。以后需要验证完整 Supabase Auth/Edge runtime parity 时，可以只在 GitHub runner 启动 Supabase 容器；这不改变远程 Staging 主流程。
 
