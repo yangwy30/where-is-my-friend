@@ -1211,6 +1211,15 @@ final class TripMapTests: XCTestCase {
         calendar.timeZone = TimeZone(identifier: "Europe/London")!
         XCTAssertEqual(calendar.component(.day, from: london.arrivalSortDate), 21)
     }
+
+    func testReturnBoardReadsInSharedDepartureTime() throws {
+        // Arrivals land in four zones; departures all leave LAX, so they read in order at a glance.
+        let flights = TripFlight.previewFlights.filter { $0.direction == .inbound }
+            .sorted { $0.departureSortDate < $1.departureSortDate }
+        XCTAssertEqual(flights.map(\.id), ["wang-in", "mia-in", "david-in", "alex-in"])
+        XCTAssertEqual(flights.map(\.departureTime), ["13:15", "14:05", "16:20", "17:30"])
+        XCTAssertEqual(Set(flights.compactMap(\.departureTimeZoneLabel)).count, 1)
+    }
 }
 
 @MainActor

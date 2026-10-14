@@ -1,6 +1,11 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Departing %@ time" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%@ 当地出发时间"}}}},
+    "Local departure times" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "出发地当地时间"}}}},
+    "departs %@, %@ %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ %2$@ %3$@ 出发"}}}},
+    "arrives %@, %@ %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ %2$@ %3$@ 抵达"}}}},
+    "date unconfirmed" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "日期未确认"}}}},
     "Favorite. They’ll appear first on Friends." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "已收藏，TA 会排在朋友页最前面。"}}}},
     "Removed from favorites." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "已取消收藏。"}}}},
     "You and %@ are now friends." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你和 %@ 已成为好友。"}}}},

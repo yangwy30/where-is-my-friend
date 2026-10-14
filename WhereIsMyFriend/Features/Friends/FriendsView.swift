@@ -12,6 +12,7 @@ struct FriendsView: View {
     @State private var isAddingFriend = false
     @StateObject private var invitationDraft = FriendInvitationDraft()
     @State private var isScreenVisible = false
+    @State private var isHeaderCollapsed = false
     @State private var referenceDate = Date()
     @Binding private var selectedSameCityEventID: UUID?
     @Binding private var selectedUpcomingID: String?
@@ -122,6 +123,7 @@ struct FriendsView: View {
                                 friendCard(friend)
                             }
                             .buttonStyle(.plain)
+                            .contextMenu { friendCardMenu(friend) }
                             .accessibilityIdentifier("friendCard-\(friend.id)")
                         }
                     }
@@ -131,6 +133,15 @@ struct FriendsView: View {
             .frame(maxWidth: .infinity)
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 24)
+        }
+        // Once the large title scrolls away, a compact bar keeps the title and Add friend in reach.
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 64
+        } action: { _, collapsed in
+            withAnimation(.easeOut(duration: 0.18)) { isHeaderCollapsed = collapsed }
+        }
+        .overlay(alignment: .top) {
+            if isHeaderCollapsed { compactHeader.transition(.opacity) }
         }
         .wifAmbientBackground()
         .toolbar(.hidden, for: .navigationBar)
@@ -333,7 +344,7 @@ struct FriendsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     title
                     cityStatus
-                    addFriendButton
+                    addFriendButton()
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             } else {
@@ -345,11 +356,30 @@ struct FriendsView: View {
 
                     Spacer()
 
-                    addFriendButton
+                    addFriendButton()
                 }
             }
         }
         .padding(.top, 12)
+    }
+
+    private var compactHeader: some View {
+        HStack {
+            Text("Friends")
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                .foregroundStyle(WIFTheme.primaryText)
+                // The large title is still in the accessibility tree; don't announce it twice.
+                .accessibilityHidden(true)
+            Spacer()
+            addFriendButton(identifier: "addFriendButtonCompact")
+        }
+        .padding(.horizontal, WIFTheme.screenInset)
+        .padding(.bottom, 6)
+        .background {
+            WIFTheme.canvas.opacity(0.72)
+                .background(.ultraThinMaterial)
+                .ignoresSafeArea(edges: .top)
+        }
     }
 
     private var title: some View {
@@ -407,7 +437,7 @@ struct FriendsView: View {
         .accessibilityIdentifier("homeSyncStatus")
     }
 
-    private var addFriendButton: some View {
+    private func addFriendButton(identifier: String = "addFriendButton") -> some View {
         WIFGlassEffectGroup(spacing: 10) {
             Button {
                 invitationDraft.reset()
@@ -433,7 +463,7 @@ struct FriendsView: View {
             .buttonStyle(.plain)
             .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.16), interactive: true, in: Circle())
             .accessibilityLabel("Add a friend")
-            .accessibilityIdentifier("addFriendButton")
+            .accessibilityIdentifier(identifier)
         }
     }
 
@@ -479,12 +509,32 @@ struct FriendsView: View {
                            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
     }
 
+    private func nextPlan(for friend: FriendPresence) -> FriendTravelPlan? {
+        travelPlans.visibleFriendPlans(
+            friendIDs: Set(friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs), at: referenceDate
+        ).first { $0.friendID == friend.id }
+    }
+
+    /// Long-press shortcuts so the common actions don't require opening the detail page.
+    @ViewBuilder
+    private func friendCardMenu(_ friend: FriendPresence) -> some View {
+        Button {
+            Task { await store.setFavorite(friendID: friend.id, isFavorite: !friend.isFavorite) }
+        } label: {
+            Label(friend.isFavorite ? "Remove favorite" : "Add favorite",
+                  systemImage: friend.isFavorite ? "star.slash" : "star")
+        }
+        if let plan = nextPlan(for: friend) {
+            ShareLink(item: greeting(for: plan)) {
+                Label("Share a meetup invite", systemImage: "square.and.arrow.up")
+            }
+        }
+    }
+
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
         let isSameCity = isFriendInSameCity(friend)
-        let nextPlan = travelPlans.visibleFriendPlans(
-            friendIDs: Set(friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs), at: referenceDate
-        ).first { $0.friendID == friend.id }
+        let nextPlan = nextPlan(for: friend)
 
         return VStack(spacing: 6) {
             CityEmblemView(friend: friend, size: 88)

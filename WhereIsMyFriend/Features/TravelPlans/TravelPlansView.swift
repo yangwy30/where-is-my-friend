@@ -272,6 +272,12 @@ struct PersonalPlanEditor: View {
                     }
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("travelPlanBoundary")
+                }
+                .padding(24)
+            }
+            // Save stays on screen instead of below five paragraphs of settings; errors sit beside it.
+            .safeAreaInset(edge: .bottom) {
+                VStack(alignment: .leading, spacing: 8) {
                     if let error { Text(error).font(.caption).foregroundStyle(WIFTheme.destructive).accessibilityIdentifier("travelPlanError") }
                     if plan.audience.count > 100 {
                         Text("Choose up to 100 friends for this plan.").font(.caption).foregroundStyle(WIFTheme.destructive)
@@ -291,7 +297,8 @@ struct PersonalPlanEditor: View {
                     .opacity(plan.city.isEmpty ? 0.5 : 1)
                     .accessibilityIdentifier("saveTravelPlan")
                 }
-                .padding(24)
+                .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 8)
+                .background(WIFTheme.canvas.opacity(0.72).background(.ultraThinMaterial).ignoresSafeArea(edges: .bottom))
             }
             .wifAmbientBackground().navigationTitle(plan.revision == 0 ? "New travel plan" : "Edit travel plan").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {

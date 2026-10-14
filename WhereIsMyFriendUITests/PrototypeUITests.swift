@@ -1504,6 +1504,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(plan.waitForExistence(timeout: 5))
         XCTAssertTrue(plan.label.contains("Tokyo"))
         XCTAssertFalse(app.buttons["friendDetailPlan-A7150000-0000-0000-0000-000000000002"].exists)
+        for _ in 0..<3 where !plan.isHittable { app.swipeUp() }
         capture("friend-shared-plans")
         plan.tap()
         XCTAssertTrue(app.scrollViews["friendPlanDetail"].waitForExistence(timeout: 3))
@@ -2627,7 +2628,8 @@ final class PrototypeUITests: XCTestCase {
             scroll.swipeDown()
         }
         app.segmentedControls["tripDirectionPicker"].buttons["Return"].tap()
-        XCTAssertTrue(app.staticTexts["Local arrival times"].exists)
+        // Return legs leave together from the trip airport, so the board reads in its departure time.
+        XCTAssertTrue(app.staticTexts["Departing Los Angeles time"].exists)
         XCTAssertFalse(app.buttons["mapTraveler-mia-out"].exists)
         XCTAssertTrue(app.buttons["flightCard-mia-in"].exists)
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "4 of 5 flights added")).firstMatch.exists)

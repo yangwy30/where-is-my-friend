@@ -109,8 +109,10 @@ struct FriendDetailView: View {
                     .foregroundStyle(WIFTheme.secondaryText)
                     .padding(.top, 3)
 
-                if !sharedPlans.isEmpty || planFeed.isLoading || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
                 citySurface(for: currentFriend).padding(.top, 20)
+                // Where they are now comes first (F12). Plans load after the view appears, so they
+                // also belong below the city: arriving late, they no longer shove it down the screen.
+                if !sharedPlans.isEmpty || planFeed.isLoading || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
 
                 sectionLabel("Between you two").padding(.top, 24)
 

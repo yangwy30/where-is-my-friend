@@ -114,15 +114,19 @@ private struct FriendTravelPlanCard: View {
             }
             .buttonStyle(.plain).accessibilityIdentifier("friendPlan-\(plan.id)")
             Divider().overlay(WIFTheme.border)
-            VStack(alignment: .leading, spacing: 4) {
+            // One row instead of two full-width links: the card is about the friend's city, not its buttons.
+            HStack(spacing: 8) {
                 Button(action: onCopy) { Label("Add to my travel plans", systemImage: "calendar.badge.plus").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }
                     .accessibilityIdentifier("copyFriendPlan-\(plan.id)")
-                ShareLink(item: greeting(for: plan)) { Label("Share a meetup invite", systemImage: "square.and.arrow.up").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }
-                    .accessibilityHint("Choose an app to send your invitation.")
-                    .accessibilityIdentifier("shareFriendPlanInvite-\(plan.id)")
+                ShareLink(item: greeting(for: plan)) {
+                    Image(systemName: "square.and.arrow.up")
+                        .frame(width: 44, height: 44).contentShape(Rectangle())
+                }
+                .accessibilityLabel("Share a meetup invite")
+                .accessibilityHint("Choose an app to send your invitation.")
+                .accessibilityIdentifier("shareFriendPlanInvite-\(plan.id)")
             }
-            .font(.caption.weight(.medium)).buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
-            .frame(minHeight: 44)
+            .font(.subheadline.weight(.medium)).buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
         }
         .padding(18).background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 24))
     }
@@ -193,6 +197,7 @@ struct FriendTravelPlanDetailView: View {
     }
 }
 
-private func greeting(for plan: FriendTravelPlan) -> String {
+/// The meetup invite shared from a friend's plan, the plan feed, or a friend card's menu.
+func greeting(for plan: FriendTravelPlan) -> String {
     String(localized: "I saw you’ll be in \(plan.city) on \(plan.dateLabel). Want to meet up?")
 }
