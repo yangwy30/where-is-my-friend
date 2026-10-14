@@ -1,3 +1,4 @@
+import CryptoKit
 import SwiftUI
 import UIKit
 
@@ -174,16 +175,42 @@ enum WIFTripTheme {
         light: UIColor(red: 0.176, green: 0.502, blue: 0.710, alpha: 1),
         dark: UIColor(red: 0.357, green: 0.741, blue: 0.922, alpha: 1)
     )
+}
 
-    static let warm = Color.adaptive(
-        light: UIColor(red: 0.773, green: 0.357, blue: 0.204, alpha: 1),
-        dark: UIColor(red: 0.973, green: 0.604, blue: 0.420, alpha: 1)
-    )
+/// One hue per person, shared by every avatar so a friend looks the same on
+/// Friends, Trips, the same-city header and widgets. Keyed by display name because
+/// trip rows only carry names; `fill` takes white initials, `tint` takes ink.
+enum WIFPersonPalette {
+    private static func hex(_ light: UInt32, _ dark: UInt32) -> Color {
+        func ui(_ v: UInt32) -> UIColor {
+            UIColor(red: Double((v >> 16) & 255) / 255, green: Double((v >> 8) & 255) / 255,
+                    blue: Double(v & 255) / 255, alpha: 1)
+        }
+        return Color.adaptive(light: ui(light), dark: ui(dark))
+    }
 
-    static let violet = Color.adaptive(
-        light: UIColor(red: 0.424, green: 0.357, blue: 0.690, alpha: 1),
-        dark: UIColor(red: 0.706, green: 0.620, blue: 0.933, alpha: 1)
-    )
+    // Jade, lake, terracotta, ochre, plum, slate, moss, rose clay.
+    static let fills: [Color] = [
+        hex(0x1E7A5C, 0x3E9C7B), hex(0x2F6F86, 0x4A8EA6), hex(0xB2603F, 0xC77A5A), hex(0x9E7424, 0xB68C3C),
+        hex(0x7E5274, 0x9C6E91), hex(0x50618F, 0x6E80AE), hex(0x5E7434, 0x7A9150), hex(0xA4525C, 0xBC6F78)
+    ]
+    static let tints: [Color] = [
+        hex(0xDCEFE3, 0x26453A), hex(0xDCEBEF, 0x263F48), hex(0xF3E2D9, 0x4A3229), hex(0xF1E7D2, 0x463A22),
+        hex(0xEDE0EA, 0x40303D), hex(0xE2E6F1, 0x2F3648), hex(0xE6ECD8, 0x37422A), hex(0xF1DFE1, 0x48302F)
+    ]
+
+    /// SHA-256 of the normalised name: stable across launches (unlike `hashValue`) and
+    /// spread evenly enough that friends rarely bunch on one hue. The server's
+    /// `avatarPalette` is 1 for every new account, so it can't tell people apart.
+    static func index(for name: String) -> Int {
+        let normalised = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let digest = SHA256.hash(data: Data(normalised.utf8))
+        let prefix = digest.prefix(4).reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
+        return Int(prefix % UInt32(fills.count))
+    }
+
+    static func fill(for name: String) -> Color { fills[index(for: name)] }
+    static func tint(for name: String) -> Color { tints[index(for: name)] }
 }
 
 /// A content backdrop with enough depth and color for Liquid Glass to refract.

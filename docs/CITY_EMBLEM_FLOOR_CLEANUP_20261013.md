@@ -43,6 +43,6 @@ All 211 imagesets changed (the 212th entry in `CityEmblems/` is the folder's own
 ## Known limitations
 - A few emblems keep tiny, faint light specks at the far ends of the shadow band (for example
   santiago and seattle). They are only visible when zoomed in.
-- The cleanup was checked on contact sheets over both canvases, not yet in the running app.
-- The dark-mode `CityEmblemView.floorGlow` mitigation, if kept, now draws light under emblems that
-  no longer have any glare. It should be re-evaluated in-app.
+- The cleanup was checked on contact sheets over both canvases and on the Friends grid in the app.
+- The interim dark-mode `CityEmblemView.floorGlow` mitigation was removed after an in-app
+  comparison: it washed out the new dark shadows. Cleaned assets were checked in the app (dark mode).

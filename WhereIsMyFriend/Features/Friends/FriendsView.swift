@@ -503,21 +503,27 @@ struct FriendsView: View {
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                     .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.82)
 
+                // Green is reserved for the live same-city state; a recent update is the
+                // normal case and stays quiet, while an old one earns a clock.
                 HStack(spacing: 4) {
-                    Circle()
-                        .fill(isSameCity ? WIFTheme.fresh : freshnessDotColor(freshness))
-                        .frame(width: 5, height: 5)
-
                     if isSameCity {
+                        Circle()
+                            .fill(WIFTheme.fresh)
+                            .frame(width: 5, height: 5)
+
                         Text("Same city")
                             .foregroundStyle(WIFTheme.fresh)
 
                         Text("·")
                             .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
+                    } else if freshness != .fresh {
+                        Image(systemName: "clock")
+                            .imageScale(.small)
+                            .foregroundStyle(WIFTheme.secondaryText)
                     }
 
                     Text(friend.relativeUpdateText(at: referenceDate))
-                        .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
+                        .foregroundStyle(isSameCity ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
                 .font(.caption2.weight(.medium))
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
@@ -543,10 +549,6 @@ struct FriendsView: View {
         .accessibilityLabel(
             "\(friend.displayName), \(friend.cityDisplay), \(isSameCity ? "\(String(localized: "Same city")), " : "")\(friend.relativeUpdateLongText(at: referenceDate))\(nextPlan != nil ? ", \(String(localized: "Has shared travel plans"))" : "")"
         )
-    }
-
-    private func freshnessDotColor(_ freshness: PresenceFreshness) -> Color {
-        freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.42)
     }
 
 }

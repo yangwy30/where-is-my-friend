@@ -767,7 +767,7 @@ private struct TripFlightCard: View {
                     HStack(alignment: .top) {
                         endpoint(flight.origin, time: flight.departureTime, caption: "Departure")
                         Spacer()
-                        Image(systemName: "airplane").font(.subheadline).foregroundStyle(flight.accent).padding(.top, 22)
+                        Image(systemName: "airplane").font(.subheadline).foregroundStyle(WIFTheme.fresh).padding(.top, 22)
                         Spacer()
                         endpoint(flight.destination, time: flight.arrivalTime, caption: "Arrival", trailing: true)
                     }
@@ -1859,15 +1859,7 @@ struct TripFlight: Identifiable, Codable {
         return arrival
     }
 
-    static func color(for traveler: String) -> Color {
-        switch traveler {
-        case "Mia Chen": return WIFTripTheme.warm
-        case "David Kim": return Color(red: 0.74, green: 0.49, blue: 0.16)
-        case "Lin Zhao": return WIFTripTheme.violet
-        case "Alex Rivera": return Color(red: 0.16, green: 0.57, blue: 0.50)
-        default: return WIFTripTheme.sky
-        }
-    }
+    static func color(for traveler: String) -> Color { WIFPersonPalette.fill(for: traveler) }
 
     static let previewFlights: [TripFlight] = {
         let date = Calendar.current.date(from: DateComponents(year: 2026, month: 4, day: 15)) ?? Date()

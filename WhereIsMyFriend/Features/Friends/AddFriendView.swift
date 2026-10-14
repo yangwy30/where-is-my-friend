@@ -142,6 +142,7 @@ struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @StateObject private var draft: FriendInvitationDraft
     @State private var withdrawing: FriendRequest?
     @FocusState private var usernameFocused: Bool
@@ -177,6 +178,9 @@ struct AddFriendView: View {
                     }
                 }
                 .padding(WIFTheme.screenInset)
+                // Answered requests fold away instead of snapping the rest of the sheet upward.
+                .animation(reduceMotion ? nil : .snappy, value: store.snapshot.incomingRequests.map(\.id))
+                .animation(reduceMotion ? nil : .snappy, value: store.snapshot.outgoingRequests.map(\.id))
             }
             .accessibilityIdentifier("addFriendScreen")
             .scrollDismissesKeyboard(.interactively)

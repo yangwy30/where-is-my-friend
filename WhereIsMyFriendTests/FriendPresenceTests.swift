@@ -158,6 +158,34 @@ final class AppAccentContrastTests: XCTestCase {
         }
     }
 
+    func testPersonPaletteIsStableAcrossLaunchesAndSpellings() {
+        // Pinned so a change to the hash can't silently recolour everyone's friends.
+        XCTAssertEqual(WIFPersonPalette.index(for: "Mia Chen"), 3)
+        XCTAssertEqual(WIFPersonPalette.index(for: "Lin Zhao"), 1)
+        XCTAssertEqual(WIFPersonPalette.index(for: "  mia CHEN "), WIFPersonPalette.index(for: "Mia Chen"))
+    }
+
+    func testPersonPaletteInitialsStayLegibleInBothAppearances() {
+        for appearance in [UIUserInterfaceStyle.light, .dark] {
+            let traits = UITraitCollection(userInterfaceStyle: appearance)
+            for fill in WIFPersonPalette.fills {
+                // Bold initials on a filled avatar: WCAG large-text minimum.
+                XCTAssertGreaterThanOrEqual(contrast(.white, UIColor(fill).resolvedColor(with: traits)), 3,
+                                            "White initials on avatar fill in \(appearance)")
+            }
+            for tint in WIFPersonPalette.tints {
+                XCTAssertGreaterThanOrEqual(
+                    contrast(UIColor(WIFTheme.primaryText).resolvedColor(with: traits), UIColor(tint).resolvedColor(with: traits)), 4.5,
+                    "Ink initials on avatar tint in \(appearance)")
+            }
+        }
+    }
+
+    private func contrast(_ a: UIColor, _ b: UIColor) -> Double {
+        let (la, lb) = (luminance(a), luminance(b))
+        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    }
+
     private func luminance(_ color: UIColor) -> Double {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         XCTAssertTrue(color.getRed(&red, green: &green, blue: &blue, alpha: &alpha))

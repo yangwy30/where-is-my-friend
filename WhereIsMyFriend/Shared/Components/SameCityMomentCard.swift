@@ -165,6 +165,7 @@ struct SameCityReunionCard: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .sensoryFeedback(.selection, trigger: expanded)
                 .accessibilityIdentifier("sameCityReunionToggle")
                 .accessibilityValue(expanded ? Text("Expanded") : Text("Collapsed"))
 
@@ -224,7 +225,7 @@ struct SameCityReunionCard: View {
     }
 
     private func avatar(_ friend: FriendPresence, size: CGFloat) -> some View {
-        let tint = friend.avatarPalette % 3 == 1 ? WIFTheme.eventBlue : WIFTheme.elevatedSurface
+        let tint = WIFPersonPalette.tint(for: friend.displayName)
         return Text(friend.initials)
             .font(.system(size: size * 0.32, weight: .semibold, design: .rounded))
             .foregroundStyle(WIFTheme.primaryText)
