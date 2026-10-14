@@ -34,7 +34,7 @@ struct LocationSetupView: View {
             Text(locationService.authorizationStatus == .denied ? "Open Settings" : "Enable location")
               .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 16)
           }
-          .foregroundStyle(.white)
+          .foregroundStyle(WIFTheme.onFresh)
           .background(WIFTheme.fresh, in: RoundedRectangle(cornerRadius: 20))
           .accessibilityIdentifier("enableInitialLocation")
         }
@@ -96,6 +96,24 @@ struct OnboardingView: View {
     }
   }
 
+  private var chapterLabel: LocalizedStringKey {
+    switch step {
+    case 0: "A WORLD OF FRIENDS"
+    case 1: "SAME-CITY NOTIFICATIONS"
+    case 2: "A SHARED ADVENTURE"
+    default: "ON YOUR TERMS"
+    }
+  }
+
+  private var worldDescription: LocalizedStringKey {
+    switch step {
+    case 0: "Preview: friends in New York, Paris and Tokyo"
+    case 1: "Example: you and Mia meet in Paris"
+    case 2: "Example: friends travel to Paris from different cities"
+    default: "City-level sharing: Paris, France"
+    }
+  }
+
   private var subtitle: LocalizedStringKey {
     switch step {
     case 0: "A little window into your friends’ worlds, wherever life takes you."
@@ -119,12 +137,7 @@ struct OnboardingView: View {
                 .frame(minHeight: 70, alignment: .bottom)
             }
             VStack(alignment: .leading, spacing: 16) {
-              Text(
-                [
-                  "A WORLD OF FRIENDS", "SAME-CITY NOTIFICATIONS", "A SHARED ADVENTURE",
-                  "ON YOUR TERMS",
-                ][step]
-              )
+              Text(chapterLabel)
               .font(.caption2.weight(.bold))
               .tracking(2)
               .foregroundStyle(WIFTheme.fresh)
@@ -428,14 +441,7 @@ struct OnboardingView: View {
           })
     }
     .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      step == 0
-        ? "Preview: friends in New York, Paris and Tokyo"
-        : (step == 1
-          ? "Example: you and Mia meet in Paris"
-          : (step == 2
-            ? "Example: friends travel to Paris from different cities"
-            : "City-level sharing: Paris, France")))
+    .accessibilityLabel(Text(worldDescription))
   }
 
   private func parallax(_ depth: CGFloat, vertical: Bool = false) -> CGFloat {
@@ -527,7 +533,7 @@ struct OnboardingView: View {
     .accessibilityIdentifier("onboardingExampleTrip")
   }
 
-  private func flightRow(person: String, route: String, arrival: String) -> some View {
+  private func flightRow(person: LocalizedStringKey, route: LocalizedStringKey, arrival: String) -> some View {
     ViewThatFits(in: .horizontal) {
       HStack(spacing: 12) {
         flightDescription(person: person, route: route)
@@ -542,7 +548,7 @@ struct OnboardingView: View {
     }
   }
 
-  private func flightDescription(person: String, route: String) -> some View {
+  private func flightDescription(person: LocalizedStringKey, route: LocalizedStringKey) -> some View {
     VStack(alignment: .leading, spacing: 3) {
       Text(person).font(.caption.weight(.semibold))
       Text(route).font(.caption).foregroundStyle(WIFTheme.secondaryText)

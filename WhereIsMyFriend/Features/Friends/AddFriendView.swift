@@ -61,39 +61,51 @@ struct FriendRequestNotificationSheet: View {
     @Environment(\.dismiss) private var dismiss
     let requestID: UUID
     @State private var loading = true
+    @State private var responseError: String?
     private var request: FriendRequest? { store.snapshot.incomingRequests.first { $0.id == requestID } }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                if loading {
-                    ProgressView("Loading friend request…")
-                } else if let request {
-                    Image(systemName: "person.crop.circle.badge.plus").font(.system(size: 48)).foregroundStyle(WIFTheme.fresh)
-                    Text(request.displayName).font(.title2.bold())
-                    Text("@\(request.username) wants to connect with you.")
-                        .foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
-                    Text("Your city-sharing preferences still apply after you accept.")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
-                    Button("Accept") { respond(.accept) }
-                        .controlSize(.large)
-                        .wifGlassButton(tint: WIFTheme.fresh, prominent: true)
-                        .disabled(store.isResponding(to: requestID))
-                        .accessibilityIdentifier("acceptNotificationFriendRequest")
-                    Button("Decline", role: .destructive) { respond(.decline) }
-                        .frame(minHeight: 44)
-                        .disabled(store.isResponding(to: requestID))
-                        .accessibilityIdentifier("declineNotificationFriendRequest")
-                } else {
-                    Text(store.snapshot.syncState == .offline
-                         ? "Couldn’t refresh this request. Check your connection and retry."
-                         : "This request is no longer pending, or belongs to another account.")
-                        .multilineTextAlignment(.center).foregroundStyle(WIFTheme.secondaryText)
-                    Button("Retry") { Task { await refresh() } }
+            ScrollView {
+                VStack(spacing: 20) {
+                    if loading {
+                        ProgressView("Loading friend request…")
+                    } else if let request {
+                        Image(systemName: "person.crop.circle.badge.plus").font(.system(size: 48)).foregroundStyle(WIFTheme.fresh)
+                        Text(request.displayName).font(.title2.bold())
+                        Text("@\(request.username) wants to connect with you.")
+                            .foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
+                        Text("Your city-sharing preferences still apply after you accept.")
+                            .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
+                        Button { respond(.accept) } label: {
+                            Text("Accept").foregroundStyle(WIFTheme.onFresh)
+                        }
+                            .controlSize(.large)
+                            .wifGlassButton(tint: WIFTheme.fresh, prominent: true)
+                            .disabled(store.isResponding(to: requestID))
+                            .accessibilityIdentifier("acceptNotificationFriendRequest")
+                        Button("Decline", role: .destructive) { respond(.decline) }
+                            .frame(minHeight: 44)
+                            .disabled(store.isResponding(to: requestID))
+                            .accessibilityIdentifier("declineNotificationFriendRequest")
+                    } else {
+                        Text(store.snapshot.syncState == .offline
+                             ? "Couldn’t refresh this request. Check your connection and retry."
+                             : "This request is no longer pending, or belongs to another account.")
+                            .multilineTextAlignment(.center).foregroundStyle(WIFTheme.secondaryText)
+                        Button("Retry") { Task { await refresh() } }
+                    }
+                    if let responseError {
+                        Text(responseError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("friendNotificationResponseError")
+                    }
+                    InvitationNotificationStatusView(service: store.notificationService)
                 }
-                InvitationNotificationStatusView(service: store.notificationService)
+                .padding(24).frame(maxWidth: .infinity)
             }
-            .padding(24).frame(maxWidth: .infinity, maxHeight: .infinity).wifAmbientBackground()
+            .wifAmbientBackground()
+            .accessibilityIdentifier("friendRequestNotificationScroll")
             .navigationTitle("Friend request").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {
                 Button("Not now") { store.discardFriendRequestLink(); dismiss() }
@@ -109,35 +121,46 @@ struct FriendRequestNotificationSheet: View {
         loading = false
     }
     private func respond(_ response: FriendRequestResponse) {
+        responseError = nil
         Task {
-            if await store.respond(to: requestID, response: response) {
+            if await store.respond(to: requestID, response: response, onFailure: { responseError = $0 }) {
                 store.discardFriendRequestLink(); dismiss()
             }
         }
     }
 }
 
+final class FriendInvitationDraft: ObservableObject {
+    @Published var username = ""
+    @Published var inviteError: String?
+    @Published var actionError: String?
+
+    func reset() { username = ""; inviteError = nil; actionError = nil }
+}
+
 struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
-    @State private var username = ""
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @StateObject private var draft: FriendInvitationDraft
+    @State private var withdrawing: FriendRequest?
+    @FocusState private var usernameFocused: Bool
+
+    init(draft: FriendInvitationDraft = FriendInvitationDraft()) {
+        _draft = StateObject(wrappedValue: draft)
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    if !store.snapshot.incomingRequests.isEmpty {
+                        requestSection(title: "Friend requests", requests: store.snapshot.incomingRequests, isIncoming: true)
+                    }
                     yourUsernameCard
                     InvitationNotificationStatusView(service: store.notificationService)
                     shareLink
                     inviteForm
-
-                    if !store.snapshot.incomingRequests.isEmpty {
-                        requestSection(
-                            title: "Friend requests",
-                            requests: store.snapshot.incomingRequests,
-                            isIncoming: true
-                        )
-                    }
 
                     if !store.snapshot.outgoingRequests.isEmpty {
                         requestSection(
@@ -156,16 +179,43 @@ struct AddFriendView: View {
                 .padding(WIFTheme.screenInset)
             }
             .accessibilityIdentifier("addFriendScreen")
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .top) {
+                if let actionError = draft.actionError {
+                    HStack(alignment: .top, spacing: 8) {
+                        Text(actionError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("friendActionError")
+                        Spacer(minLength: 4)
+                        Button { draft.actionError = nil } label: {
+                            Text("OK").frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                        }
+                    }.padding(12).background(WIFTheme.surface)
+                }
+            }
             .wifAmbientBackground()
             .navigationTitle("Add friends")
             .navigationBarTitleDisplayMode(.inline)
+            .refreshable { await store.refresh() }
+            .task { await store.refresh() }
+            .alert("Withdraw invitation?", isPresented: Binding(get: { withdrawing != nil }, set: { if !$0 { withdrawing = nil } }), presenting: withdrawing) { request in
+                Button("Withdraw invitation", role: .destructive) {
+                    draft.actionError = nil
+                    Task { _ = await store.cancelFriendRequest(id: request.id, onFailure: { draft.actionError = $0 }) }
+                }
+                Button("Keep invitation", role: .cancel) {}
+            } message: { request in
+                Text("\(request.displayName) will no longer be able to accept this invitation.")
+            }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
+                        .disabled(store.isWorking)
                         .accessibilityIdentifier("doneAddFriendButton")
                 }
             }
         }
+        .interactiveDismissDisabled(store.isWorking)
     }
 
     private var yourUsernameCard: some View {
@@ -208,7 +258,8 @@ struct AddFriendView: View {
                 .foregroundStyle(WIFTheme.primaryText)
 
             HStack(spacing: 10) {
-                TextField("Friend’s username", text: $username)
+                TextField("Friend’s username", text: $draft.username)
+                    .focused($usernameFocused)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .submitLabel(.send)
@@ -228,11 +279,18 @@ struct AddFriendView: View {
                             .frame(minWidth: 50)
                     } else {
                         Text("Invite")
+                            .foregroundStyle(WIFTheme.fresh)
+                            .frame(minWidth: 44, minHeight: 44)
                     }
                 }
                     .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                    .disabled(username.trimmingCharacters(in: .whitespaces).isEmpty || store.isSendingFriendRequest)
+                    .disabled(draft.username.trimmingCharacters(in: .whitespaces).isEmpty || store.isSendingFriendRequest)
                     .accessibilityIdentifier("sendInviteButton")
+            }
+            if let inviteError = draft.inviteError {
+                Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("friendRequestError")
             }
         }
     }
@@ -272,9 +330,11 @@ struct AddFriendView: View {
 
     private func requestRow(_ request: FriendRequest, isIncoming: Bool) -> some View {
         let isResponding = store.isResponding(to: request.id)
-        return HStack(spacing: 12) {
+        let layout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12)) : AnyLayout(HStackLayout(spacing: 12))
+        return layout {
             VStack(alignment: .leading, spacing: 2) {
                 Text(request.displayName).font(.body.weight(.semibold))
+                    .fixedSize(horizontal: false, vertical: true)
                 Text("@\(request.username)").font(.caption).foregroundStyle(WIFTheme.secondaryText)
             }
 
@@ -282,30 +342,41 @@ struct AddFriendView: View {
 
             if isIncoming {
                 Button("Decline") {
-                    Task { await store.respond(to: request.id, response: .decline) }
+                    draft.actionError = nil
+                    Task { await store.respond(to: request.id, response: .decline, onFailure: { draft.actionError = $0 }) }
                 }
                 .font(.caption.weight(.semibold))
+                .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
                 .foregroundStyle(WIFTheme.secondaryText)
                 .disabled(isResponding)
                 .accessibilityIdentifier("declineRequestButton")
 
                 Button {
-                    Task { await store.respond(to: request.id, response: .accept) }
+                    draft.actionError = nil
+                    Task { await store.respond(to: request.id, response: .accept, onFailure: { draft.actionError = $0 }) }
                 } label: {
                     if isResponding {
                         ProgressView()
                             .controlSize(.small)
+                            .frame(minWidth: 44, minHeight: 44)
                     } else {
                         Text("Accept")
+                            .foregroundStyle(WIFTheme.fresh)
+                            .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
                     }
                 }
                 .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
                 .disabled(isResponding)
                 .accessibilityIdentifier("acceptRequestButton")
             } else {
-                Text("Pending")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(WIFTheme.secondaryText)
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Pending").font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    Button("Withdraw invitation") { withdrawing = request }
+                        .font(.caption.weight(.semibold))
+                        .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                        .disabled(isResponding)
+                        .accessibilityIdentifier("withdrawFriendRequest-\(request.id)")
+                }
             }
         }
         .padding(14)
@@ -316,10 +387,12 @@ struct AddFriendView: View {
     }
 
     private func sendInvite() {
-        let value = username
+        usernameFocused = false
+        draft.inviteError = nil
+        let value = draft.username
         Task {
-            if await store.sendFriendRequest(username: value) {
-                username = ""
+            if await store.sendFriendRequest(username: value, onFailure: { draft.inviteError = $0 }) {
+                draft.username = ""
             }
         }
     }

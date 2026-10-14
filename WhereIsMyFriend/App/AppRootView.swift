@@ -13,6 +13,7 @@ struct AppRootView: View {
     @StateObject private var locationService: CityLocationService
     @StateObject private var locationReminders = LocationPermissionReminderStore()
     @StateObject private var appearanceController = WIFAppearanceController()
+    @StateObject private var incomingInviteDraft = FriendInvitationDraft()
 
     init(runtime: CityUpdateRuntime) {
         self.runtime = runtime
@@ -108,6 +109,7 @@ struct AppRootView: View {
             WidgetCenter.shared.reloadAllTimelines()
         }
         .onOpenURL { _ = store.handleIncomingURL($0) }
+        .onChange(of: store.pendingInvite) { _, _ in incomingInviteDraft.reset() }
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
             if let url = activity.webpageURL { _ = store.handleIncomingURL(url) }
         }
@@ -152,7 +154,7 @@ struct AppRootView: View {
         .animation(reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.84),
                    value: store.sameCityBannerEventID)
         .sheet(item: authenticatedInvite) { invite in
-            IncomingInviteView(invite: invite)
+            IncomingInviteView(invite: invite, draft: incomingInviteDraft)
         }
         .sheet(isPresented: Binding(get: { store.snapshot.isAuthenticated && !needsLocationSetup && store.pendingTripInvitationID != nil },
                                    set: { if !$0 { store.discardTripInvitationLink() } })) {
@@ -207,46 +209,67 @@ struct AppRootView: View {
 
 private struct IncomingInviteView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var typeSize
     @EnvironmentObject private var store: AppStore
     let invite: PendingInvite
+    @ObservedObject var draft: FriendInvitationDraft
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                Image(systemName: "link.badge.plus")
-                    .font(.system(size: 58))
-                    .foregroundStyle(WIFTheme.fresh)
-                Text("Connect with @\(invite.username)?")
-                    .font(.title2.bold())
-                    .multilineTextAlignment(.center)
-                Text("Send a friend request to connect.")
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.center)
-                Button {
-                    Task {
-                        await store.acceptPendingInvite()
-                        if store.pendingInvite == nil { dismiss() }
+            ScrollView {
+                VStack(spacing: 20) {
+                    Image(systemName: "link.badge.plus")
+                        .font(.system(size: 58))
+                        .foregroundStyle(WIFTheme.fresh)
+                    Text("Connect with @\(invite.username)?")
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                    Text("Send a friend request to connect.")
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+                    Button {
+                        draft.inviteError = nil
+                        Task {
+                            await store.acceptPendingInvite(onFailure: { message in
+                                guard store.snapshot.isAuthenticated, store.pendingInvite == invite else { return }
+                                draft.inviteError = message
+                            })
+                            if store.pendingInvite == nil { dismiss() }
+                        }
+                    } label: {
+                        if store.isSendingFriendRequest {
+                            ProgressView().frame(maxWidth: .infinity)
+                        } else {
+                            Text("Send friend request").foregroundStyle(WIFTheme.primaryText)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                        }
                     }
-                } label: {
-                    if store.isSendingFriendRequest {
-                        ProgressView().frame(maxWidth: .infinity)
-                    } else {
-                        Text("Send friend request").frame(maxWidth: .infinity)
+                    .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                    .disabled(store.isSendingFriendRequest)
+                    .accessibilityIdentifier("acceptIncomingInvite")
+                    if let inviteError = draft.inviteError {
+                        Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("incomingInviteError")
                     }
+                    Button("Not now", role: .cancel) {
+                        store.discardPendingInvite()
+                        dismiss()
+                    }
+                    .disabled(store.isSendingFriendRequest)
+                    .frame(minHeight: 44)
+                    .accessibilityIdentifier("dismissIncomingInvite")
                 }
-                .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                .disabled(store.isSendingFriendRequest)
-                Button("Not now", role: .cancel) {
-                    store.discardPendingInvite()
-                    dismiss()
-                }
+                .padding(28)
+                .frame(maxWidth: .infinity)
             }
-            .padding(28)
             .wifAmbientBackground()
             .navigationTitle("Friend invite")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .presentationDetents([.medium])
+        .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.medium, .large])
+        .interactiveDismissDisabled(store.isSendingFriendRequest)
     }
 }
 

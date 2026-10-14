@@ -1,6 +1,1053 @@
 import XCTest
 
 final class PrototypeUITests: XCTestCase {
+    func testAuditFriendInvitationFailureIsVisibleAndRetryWorks() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        app.buttons["addFriendButton"].tap()
+        let field = app.textFields["friendUsernameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5))
+        for _ in 0..<6 where !field.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        field.tap(); field.typeText("missing_user_123\n")
+        capture("AUDIT-friend-invitation-error")
+        XCTAssertTrue(app.staticTexts["friendRequestError"].waitForExistence(timeout: 5))
+        XCTAssertEqual(field.value as? String, "missing_user_123")
+        field.replaceText(with: "leo"); field.typeText("\n")
+        let pending = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "withdrawFriendRequest-")).firstMatch
+        for _ in 0..<7 where !pending.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        XCTAssertTrue(pending.waitForExistence(timeout: 5))
+    }
+
+    func testAuditIncomingInviteFailureRemainsVisibleAndCanBeDismissed() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        app.open(URL(string: "whereismyfriend://invite/missing_user_123")!)
+        let send = app.buttons["acceptIncomingInvite"]
+        XCTAssertTrue(send.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !send.isHittable { app.swipeUp() }
+        XCTAssertTrue(send.isHittable)
+        capture("AUDIT-invite-link-action-largest-text")
+        send.tap()
+        let error = app.staticTexts["incomingInviteError"]
+        XCTAssertTrue(error.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !error.isHittable || error.frame.maxY > app.frame.maxY - 12 { app.swipeUp() }
+        XCTAssertTrue(error.isHittable)
+        XCTAssertGreaterThanOrEqual(error.frame.minY, 80)
+        XCTAssertLessThanOrEqual(error.frame.maxY, app.frame.maxY - 12)
+        capture("AUDIT-invite-link-error-largest-text")
+        for _ in 0..<5 where !send.isHittable { app.swipeDown() }
+        XCTAssertTrue(send.isEnabled); send.tap()
+        XCTAssertTrue(error.waitForExistence(timeout: 5))
+        let cancel = app.buttons["Not now"]
+        for _ in 0..<5 where !cancel.isHittable { app.swipeUp() }
+        cancel.tap()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(error.exists)
+    }
+
+    func testAuditIncomingFriendRequestAtLargestText() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testReadableRequest", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        app.open(URL(string: "whereismyfriend://friend-requests/05000000-0000-4000-8000-000000000001")!)
+        let accept = app.buttons["acceptNotificationFriendRequest"]
+        XCTAssertTrue(accept.waitForExistence(timeout: 8))
+        let scroll = app.scrollViews["friendRequestNotificationScroll"]
+        for _ in 0..<5 where !accept.isHittable || accept.frame.maxY > app.frame.maxY { scroll.swipeUp() }
+        XCTAssertTrue(accept.isHittable); assertTouchTarget(accept)
+        XCTAssertLessThanOrEqual(accept.frame.maxY, app.frame.maxY)
+        capture("AUDIT-received-request-largest-text")
+        accept.tap()
+        XCTAssertTrue(accept.waitForNonExistence(timeout: 5))
+    }
+
+    func testAuditIntegratedHeaderShowsPeopleAndOpensFriend() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testSameCityHeader"])
+        let toggle = app.buttons["sameCityReunionToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertTrue(toggle.label.contains("Mia + 2 friends"))
+        XCTAssertLessThan(toggle.frame.maxY, app.frame.height * 0.45)
+        assertTouchTarget(toggle)
+        capture("AUDIT-header-three-collapsed-en")
+        toggle.tap()
+        let friend = app.buttons["sameCityFriend-mia"]
+        XCTAssertTrue(friend.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCityFriend-lin"].exists)
+        XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
+        XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
+        capture("AUDIT-header-three-expanded-en")
+        friend.tap()
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+    }
+
+    func testAuditIntegratedHeaderInDarkMode() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testSameCityHeader"])
+        selectAppearance("nightJadeAppearance", in: app)
+        let toggle = app.buttons["sameCityReunionToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        assertTouchTarget(toggle)
+        capture("AUDIT-header-dark-collapsed")
+        toggle.tap()
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 5))
+        capture("AUDIT-header-dark-expanded")
+        try auditRelevantControls(app, prefixes: ["sameCityReunionToggle", "sameCityFriend-"], name: "integrated-header-dark")
+        selectAppearance("solarJadeAppearance", in: app)
+    }
+
+    func testAuditIntegratedHeaderAtLargestChineseText() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-testSameCityHeader", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        let toggle = app.buttons["sameCityReunionToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5)); assertTouchTarget(toggle)
+        XCTAssertTrue(toggle.label.contains("另外 2 位好友"))
+        XCTAssertEqual(toggle.value as? String, "已折叠")
+        capture("AUDIT-header-large-collapsed-zh")
+        toggle.tap()
+        let friend = app.buttons["sameCityFriend-mia"]
+        for _ in 0..<5 where !friend.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
+        XCTAssertTrue(friend.waitForExistence(timeout: 4)); assertTouchTarget(friend)
+        capture("AUDIT-header-large-expanded-zh")
+        try auditRelevantControls(app, prefixes: ["sameCityFriend-", "sameCityReunionToggle"], name: "integrated-header")
+    }
+
+    func testAuditMutingSameCityAlertDoesNotHideHeader() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        selectAppTab(2, in: app)
+        let entry = app.buttons["notificationSettingsLink"]
+        for _ in 0..<6 where !entry.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        entry.tap(); app.buttons["notificationSameCitySettings"].tap()
+        let toggle = app.switches["notificationFriend-mia"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        if toggle.value as? String == "1" { toggle.switches.firstMatch.tap() }
+        XCTAssertEqual(toggle.value as? String, "0")
+        selectAppTab(0, in: app)
+        XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForExistence(timeout: 5))
+        capture("AUDIT-muted-alert-keeps-same-city-summary")
+    }
+
+    func testAuditRevokedFriendCannotKeepCachedDetailsVisible() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testFriendRevokedAfterOpen"])
+        app.buttons["friendCard-10000000-0000-0000-0000-000000000001"].tap()
+        XCTAssertTrue(app.navigationBars["Friend unavailable"].waitForExistence(timeout: 12))
+        XCTAssertFalse(app.switches["friendCitySharingToggle"].exists)
+        XCTAssertFalse(app.buttons["removeFriendButton"].exists)
+        capture("AUDIT-revoked-friend-unavailable")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["friendCard-10000000-0000-0000-0000-000000000001"].exists)
+    }
+
+    func testAuditOfflineHomeExplainsCachedCitiesAndRetry() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testOfflineHome"])
+        XCTAssertTrue(app.staticTexts["Couldn’t refresh cities"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["retryHomeSync"].exists)
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Last synced ")).firstMatch.exists)
+        capture("AUDIT-offline-home")
+        app.buttons["retryHomeSync"].tap()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].exists)
+    }
+
+    func testAuditPersonalPlanAndProfileProtectUnsavedChanges() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        selectAppTab(2, in: app)
+        app.buttons["editProfileButton"].tap()
+        let name = app.textFields["displayNameField"]
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+        let original = name.value as? String
+        name.replaceText(with: "Unsaved audit name")
+        XCTAssertEqual(name.value as? String, "Unsaved audit name")
+        capture("AUDIT-profile-draft-before-close")
+        app.buttons["closeProfileButton"].tap()
+        capture("AUDIT-profile-discard-dialog")
+        XCTAssertTrue(app.buttons["Keep editing"].firstMatch.waitForExistence(timeout: 3)); app.buttons["Keep editing"].firstMatch.tap()
+        XCTAssertEqual(name.value as? String, "Unsaved audit name")
+        app.buttons["closeProfileButton"].tap()
+        let profileDiscard = app.alerts.buttons["Discard changes"].firstMatch
+        XCTAssertTrue(profileDiscard.waitForExistence(timeout: 3))
+        profileDiscard.tap()
+        capture("AUDIT-profile-after-discard")
+        XCTAssertTrue(name.waitForNonExistence(timeout: 5))
+        app.buttons["editProfileButton"].tap()
+        XCTAssertEqual(name.value as? String, original)
+        app.buttons["closeProfileButton"].tap()
+        let plans = app.buttons["travelPlansLink"]
+        for _ in 0..<6 where !plans.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        plans.tap(); app.buttons["addTravelPlan"].tap()
+        XCTAssertTrue(app.buttons["personalPlanCancel"].waitForExistence(timeout: 5))
+        app.buttons["personalPlanCancel"].tap()
+        XCTAssertFalse(app.buttons["Discard changes"].exists)
+        app.buttons["addTravelPlan"].tap()
+        let audience = app.buttons["travelPlanAudience"]
+        let initialAudience = audience.label
+        audience.tap(); app.buttons["clearTravelAudience"].tap()
+        app.buttons["travelAudienceDone"].tap()
+        let changedAudience = audience.label
+        XCTAssertNotEqual(changedAudience, initialAudience)
+        app.buttons["personalPlanCancel"].tap()
+        XCTAssertTrue(app.buttons["Keep editing"].firstMatch.waitForExistence(timeout: 3))
+        app.buttons["Keep editing"].firstMatch.tap()
+        XCTAssertEqual(audience.label, changedAudience)
+        app.buttons["personalPlanCancel"].tap()
+        capture("AUDIT-discard-plan-confirmation")
+        app.buttons["Discard changes"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["addTravelPlan"].waitForExistence(timeout: 5))
+        app.buttons["addTravelPlan"].tap()
+        XCTAssertEqual(audience.label, initialAudience)
+    }
+
+    func testAuditAuthenticationAtLargestText() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testSignedOut", "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        let signIn = app.buttons["appleSignInButton"]
+        XCTAssertTrue(signIn.waitForExistence(timeout: 8))
+        capture("AUDIT-auth-largest-text")
+        XCTAssertTrue(signIn.isHittable)
+        XCTAssertLessThanOrEqual(signIn.frame.maxY, app.frame.maxY)
+        XCTAssertGreaterThanOrEqual(signIn.frame.minY, 0)
+    }
+
+    func testAuditSharingControlsComeFirstAtLargestText() {
+        continueAfterFailure = false
+        let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        openCitySharingFromProfile(in: app)
+        let toggle = app.switches["citySharingToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        XCTAssertTrue(toggle.isHittable)
+        XCTAssertLessThan(toggle.frame.minY, app.frame.height * 0.5)
+        capture("AUDIT-sharing-controls-first-large-zh")
+        toggle.switches.firstMatch.tap()
+        XCTAssertEqual(toggle.value as? String, "0")
+    }
+
+    func testAuditNotificationSaveFailureIsVisibleFromProfileAndRetryWorks() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-seedTripExamples", "-testNotificationsDenied", "-testTripNotificationFailure"])
+        selectAppTab(2, in: app)
+        let entry = app.buttons["notificationSettingsLink"]
+        for _ in 0..<6 where !entry.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        entry.tap()
+        let trips = app.buttons["notificationSharedTripSettings"]
+        for _ in 0..<5 where !trips.isHittable { app.scrollViews["notificationSettingsScreen"].swipeUp() }
+        trips.tap()
+        let trip = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "notificationTrip-")).firstMatch
+        XCTAssertTrue(trip.waitForExistence(timeout: 8)); trip.tap()
+        let toggle = app.switches["tripFlightAlertsToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        let original = toggle.value as? String
+        for _ in 0..<4 where !toggle.isHittable { app.swipeUp() }
+        toggle.switches.firstMatch.tap()
+        XCTAssertTrue(app.alerts["Could not update notifications"].waitForExistence(timeout: 5))
+        capture("AUDIT-notification-save-failure")
+        app.alerts.buttons["OK"].tap()
+        XCTAssertEqual(toggle.value as? String, original)
+        toggle.switches.firstMatch.tap()
+        XCTAssertEqual(toggle.value as? String, original == "1" ? "0" : "1")
+        app.buttons["tripNotificationsDone"].tap(); trip.tap()
+        XCTAssertEqual(toggle.value as? String, original == "1" ? "0" : "1")
+        app.buttons["tripNotificationsDone"].tap()
+        selectAppTab(1, in: app)
+        XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.alerts.count, 0)
+    }
+
+    func testAuditTripAndFlightProtectUnsavedChangesAndDateCancel() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-previewTrips", "-seedTripExamples"])
+        app.buttons["newTripButton"].tap()
+        app.buttons["tripDestinationPicker"].tap(); app.buttons["Tokyo (NRT)"].tap()
+        app.buttons["tripEditorCancel"].tap()
+        XCTAssertTrue(app.buttons["Keep editing"].firstMatch.waitForExistence(timeout: 3)); app.buttons["Keep editing"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["tripDestinationPicker"].label.contains("Tokyo"))
+        app.buttons["tripEditorCancel"].tap(); app.buttons["Discard changes"].firstMatch.tap()
+        app.buttons["tripCard-example-new-york"].tap()
+        app.buttons["tripNeedsHelpCard"].tap()
+        let number = app.textFields["tripFlightNumberField"]
+        XCTAssertTrue(number.waitForExistence(timeout: 5)); number.tap(); number.typeText("ZZ9999")
+        app.buttons["flightKeyboardDone"].tap()
+        let date = app.buttons["tripFlightDatePicker"]
+        for _ in 0..<5 where !date.isHittable { app.scrollViews.firstMatch.swipeDown() }
+        let before = date.label
+        date.tap()
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 5))
+        let day = app.datePickers.buttons.matching(NSPredicate(format: "label MATCHES %@", ".*\\b15\\b.*")).firstMatch
+        XCTAssertTrue(day.waitForExistence(timeout: 3)); day.tap()
+        app.buttons["flightDateCancel"].tap()
+        XCTAssertEqual(date.label, before)
+        app.buttons["flightEditorCancel"].tap()
+        XCTAssertTrue(app.buttons["Keep editing"].firstMatch.waitForExistence(timeout: 3)); app.buttons["Keep editing"].firstMatch.tap()
+        XCTAssertEqual(number.value as? String, "ZZ9999")
+        app.buttons["flightEditorCancel"].tap()
+        capture("AUDIT-discard-flight-confirmation")
+        app.buttons["Discard changes"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["tripNeedsHelpCard"].waitForExistence(timeout: 5))
+    }
+
+    func testW3NotificationSettingsAtLargestText() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-testNotificationsDenied", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        selectAppTab(2, in: app)
+        let entry = app.buttons["notificationSettingsLink"]
+        for _ in 0..<12 where !entry.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        entry.tap()
+        let sameCity = app.buttons["notificationSameCitySettings"]
+        for _ in 0..<10 where !sameCity.isHittable { app.scrollViews["notificationSettingsScreen"].swipeUp() }
+        assertTouchTarget(sameCity)
+        capture("W3-F16-large-overview-zh")
+        sameCity.tap()
+        let recovery = app.buttons["notificationPermissionRecovery"]
+        for _ in 0..<8 where !recovery.isHittable { app.swipeUp() }
+        assertTouchTarget(recovery)
+        capture("W3-F16-large-permission-zh")
+        let toggle = app.switches["notificationFriend-mia"]
+        for _ in 0..<8 where !toggle.isHittable { app.swipeUp() }
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        assertTouchTarget(toggle)
+        capture("W3-F16-large-friends-zh")
+        try auditRelevantControls(app, prefixes: ["notificationFriend-"], name: "W3-F16-large-friends")
+    }
+
+    func testW3IncomingRequestsAppearFirstAndDisappearAfterResponse() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        app.buttons["addFriendButton"].tap()
+        let accept = app.buttons["acceptRequestButton"].firstMatch
+        XCTAssertTrue(accept.waitForExistence(timeout: 5))
+        XCTAssertTrue(accept.isHittable)
+        XCTAssertLessThan(accept.frame.minY, app.descendants(matching: .any)["currentUsernameCard"].firstMatch.frame.minY)
+        capture("W3-F10-request-first")
+        accept.tap()
+        let remaining = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count == 1"), object: app.buttons.matching(identifier: "acceptRequestButton"))
+        XCTAssertEqual(XCTWaiter.wait(for: [remaining], timeout: 5), .completed)
+        app.buttons["declineRequestButton"].firstMatch.tap()
+        XCTAssertTrue(accept.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.descendants(matching: .any)["currentUsernameCard"].firstMatch.isHittable)
+        capture("W3-F10-invite-after-response")
+    }
+
+    func testW3LiveTokyoSearchCanBeSelected() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        selectAppTab(2, in: app)
+        let plans = app.buttons["travelPlansLink"]
+        for _ in 0..<6 where !plans.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        plans.tap()
+        app.buttons["addTravelPlan"].tap()
+        app.buttons["travelPlanCity"].tap()
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5)); search.tap(); search.typeText("Tokyo, Japan")
+        let city = app.buttons["travelCity-Tokyo"]
+        XCTAssertTrue(city.waitForExistence(timeout: 30))
+        capture("W3-city-live-Tokyo-result")
+        city.tap()
+        XCTAssertTrue(app.buttons["travelPlanCity"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["travelPlanCity"].label.contains("Tokyo"))
+    }
+
+    func testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        XCUIDevice.shared.press(.home)
+        app.open(URL(string: "whereismyfriend://friend/10000000-0000-0000-0000-000000000002")!)
+        XCTAssertTrue(app.navigationBars["Lin"].waitForExistence(timeout: 10))
+        capture("W3-F24-warm-Lin")
+        app.terminate()
+        app.open(URL(string: "whereismyfriend://friend/10000000-0000-0000-0000-000000000001")!)
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 10))
+        capture("W3-F24-cold-Mia")
+        app.open(URL(string: "whereismyfriend://friend/10000000-0000-0000-0000-000000000099")!)
+        XCTAssertTrue(app.alerts["Friend unavailable"].waitForExistence(timeout: 10))
+        capture("W3-F24-unavailable")
+    }
+
+    func testW3NotificationOverviewRoutesAndSavedPreferences() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let app = waveTwoApp(language: language, locale: locale, extra: ["-testNotificationsDenied", "-seedTripExamples"])
+            selectAppTab(2, in: app)
+            let entry = app.buttons["notificationSettingsLink"]
+            for _ in 0..<6 where !entry.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            entry.tap()
+            let sameCity = app.buttons["notificationSameCitySettings"]
+            XCTAssertTrue(sameCity.waitForExistence(timeout: 5))
+            capture("W3-F16-overview-\(language)")
+            app.buttons["notificationFriendInvitations"].tap()
+            XCTAssertTrue(app.buttons["acceptRequestButton"].firstMatch.waitForExistence(timeout: 5))
+            app.buttons["doneAddFriendButton"].tap()
+            sameCity.tap()
+            XCTAssertTrue(app.buttons["notificationPermissionRecovery"].waitForExistence(timeout: 5))
+            let toggle = app.switches["notificationFriend-mia"]
+            XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+            let before = toggle.value as? String
+            toggle.switches.firstMatch.tap()
+            let changed = before == "1" ? "0" : "1"
+            XCTAssertEqual(toggle.value as? String, changed)
+            capture("W3-F16-same-city-\(language)")
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            sameCity.tap()
+            XCTAssertEqual(toggle.value as? String, changed)
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            let trips = app.buttons["notificationSharedTripSettings"]
+            for _ in 0..<5 where !trips.isHittable { app.scrollViews["notificationSettingsScreen"].swipeUp() }
+            trips.tap()
+            let trip = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "notificationTrip-")).firstMatch
+            XCTAssertTrue(trip.waitForExistence(timeout: 8)); trip.tap()
+            let alerts = app.switches["tripFlightAlertsToggle"]
+            XCTAssertTrue(alerts.waitForExistence(timeout: 5))
+            if language == "zh-Hans" {
+                XCTAssertTrue(app.navigationBars["旅行通知"].exists)
+                XCTAssertTrue(alerts.label.contains("好友航班通知"))
+            }
+            let oldAlerts = alerts.value as? String
+            for _ in 0..<4 where !alerts.isHittable { app.swipeUp() }
+            alerts.switches.firstMatch.tap()
+            XCTAssertEqual(alerts.value as? String, oldAlerts == "1" ? "0" : "1")
+            capture("W3-F16-trip-settings-\(language)")
+            app.buttons["tripNotificationsDone"].tap()
+            trip.tap()
+            XCTAssertEqual(alerts.value as? String, oldAlerts == "1" ? "0" : "1")
+            app.buttons["tripNotificationsDone"].tap()
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            let planSettings = app.buttons["notificationPlanSettings"]
+            for _ in 0..<5 where !planSettings.isHittable { app.scrollViews["notificationSettingsScreen"].swipeDown() }
+            planSettings.tap()
+            XCTAssertTrue(app.buttons["addTravelPlan"].waitForExistence(timeout: 5))
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            let invitations = app.buttons["notificationTripInvitations"]
+            for _ in 0..<5 where !invitations.isHittable { app.scrollViews["notificationSettingsScreen"].swipeDown() }
+            invitations.tap()
+            XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 5))
+            app.terminate()
+        }
+    }
+
+    func testChineseOnboardingActionLabels() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-previewOnboarding", "-previewOnboardingStep=3", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.buttons["onboardingContinueButton"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["onboardingContinueButton"].label.contains("开始使用"))
+        XCTAssertTrue(app.buttons["onboardingSkipButton"].label.contains("跳过"))
+        XCTAssertTrue(app.staticTexts["由你决定"].exists)
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "城市级共享：巴黎，法国")).firstMatch.exists)
+        capture("W2-F22-onboarding-zh")
+    }
+
+    func testDateRangeTouchTargetsAtLargestText() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-previewTrips", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        app.buttons["newTripButton"].tap()
+        let dates = app.buttons["tripDatesPicker"]
+        for _ in 0..<7 where !dates.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        dates.tap()
+        let next = app.buttons["rangeNextMonth"]
+        XCTAssertTrue(next.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !next.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        assertTouchTarget(next)
+        let days = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "rangeDay-"))
+        for _ in 0..<6 where days.count == 0 { app.scrollViews.firstMatch.swipeUp() }
+        XCTAssertGreaterThan(days.count, 0)
+        for day in days.allElementsBoundByIndex where day.isHittable { assertTouchTarget(day) }
+        capture("W2-F20-date-range-large-text")
+        try auditRelevantControls(app, prefixes: ["rangeDay-", "rangeNextMonth", "rangePreviousMonth"], name: "F20-date-range")
+    }
+
+    func testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages() {
+        continueAfterFailure = false
+        for (language, locale, allLabel) in [("en", "en_US", "All friends"), ("zh-Hans", "zh_CN", "全部好友")] {
+            let app = waveTwoApp(language: language, locale: locale)
+            app.buttons["friendPlansLink"].tap()
+            let card = app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"]
+            XCTAssertTrue(card.waitForExistence(timeout: 5))
+            XCTAssertLessThan(card.frame.minY, app.frame.height / 2)
+            XCTAssertFalse(app.staticTexts["Where are friends going?"].exists)
+            capture("W2-F19-compact-feed-\(language)")
+            app.buttons["copyFriendPlan-A7150000-0000-0000-0000-000000000001"].tap()
+            let audience = app.buttons["travelPlanAudience"]
+            XCTAssertTrue(audience.waitForExistence(timeout: 4))
+            for _ in 0..<5 where !audience.isHittable { app.scrollViews.firstMatch.swipeUp() }
+            XCTAssertTrue(audience.label.contains(allLabel))
+            capture("W2-default-all-friends-\(language)")
+            audience.tap()
+            let lin = app.switches["travelAudience-lin"], mia = app.switches["travelAudience-mia"]
+            XCTAssertEqual(lin.value as? String, "1")
+            XCTAssertEqual(mia.value as? String, "1")
+            lin.switches.firstMatch.tap()
+            XCTAssertEqual(lin.value as? String, "0")
+            app.buttons["travelAudienceDone"].tap()
+            let save = app.buttons["saveTravelPlan"]
+            for _ in 0..<6 where !save.isHittable { app.scrollViews.firstMatch.swipeUp() }
+            XCTAssertEqual(app.switches["travelPlanAlerts"].value as? String, "0")
+            save.tap()
+            XCTAssertTrue(app.buttons["manageOwnTravelPlans"].waitForExistence(timeout: 5))
+            app.buttons["manageOwnTravelPlans"].tap()
+            let plan = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-")).firstMatch
+            XCTAssertTrue(plan.waitForExistence(timeout: 5)); plan.tap()
+            for _ in 0..<5 where !audience.isHittable { app.scrollViews.firstMatch.swipeUp() }
+            audience.tap()
+            XCTAssertEqual(lin.value as? String, "0", "Editing must preserve the saved opt-out")
+            XCTAssertEqual(mia.value as? String, "1")
+            capture("W2-saved-audience-\(language)")
+            app.terminate()
+        }
+    }
+
+    func testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        app.buttons["friendPlansLink"].tap()
+        let copy = app.buttons["copyFriendPlan-A7150000-0000-0000-0000-000000000001"]
+        let share = app.buttons["shareFriendPlanInvite-A7150000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(share.waitForExistence(timeout: 5))
+        for _ in 0..<4 where !share.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
+        for control in [copy, share] { assertTouchTarget(control) }
+        XCTAssertTrue(share.label.contains("Share a meetup invite"))
+        try auditRelevantControls(app, prefixes: ["copyFriendPlan-", "shareFriendPlanInvite-"], name: "F09-F20-plan-actions")
+        share.tap()
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "Copy").firstMatch.waitForExistence(timeout: 5))
+        capture("W2-F09-system-share")
+        dismissSystemShare(in: app)
+        XCTAssertTrue(share.waitForExistence(timeout: 5))
+        XCTAssertTrue(share.isHittable)
+    }
+
+    func testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        app.buttons["addFriendButton"].tap()
+        let field = app.textFields["friendUsernameField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 5)); field.tap(); field.typeText("leo\n")
+        let withdrawal = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "withdrawFriendRequest-")).firstMatch
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        let oldID = withdrawal.identifier
+        withdrawal.tap()
+        XCTAssertTrue(app.alerts["Withdraw invitation?"].waitForExistence(timeout: 3))
+        capture("W2-F11-withdraw-confirmation")
+        app.alerts.buttons["Keep invitation"].tap()
+        XCTAssertTrue(app.buttons[oldID].exists)
+        app.buttons[oldID].tap(); app.alerts.buttons["Withdraw invitation"].tap()
+        XCTAssertTrue(app.buttons[oldID].waitForNonExistence(timeout: 5))
+        for _ in 0..<7 where !field.isHittable { app.scrollViews["addFriendScreen"].swipeDown() }
+        field.tap(); field.typeText("leo\n")
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        XCTAssertNotEqual(withdrawal.identifier, oldID)
+        capture("W2-F11-invite-again")
+    }
+
+    func testTripSaveStaysAboveKeyboardAndDoneIsAvailable() {
+        continueAfterFailure = false
+        let app = tripsApp(seedExamples: false)
+        XCTAssertTrue(app.buttons["newTripButton"].waitForExistence(timeout: 8)); app.buttons["newTripButton"].tap()
+        app.buttons["tripDestinationPicker"].tap(); app.buttons["Tokyo (NRT)"].tap()
+        let field = app.textFields["tripNameField"]
+        for _ in 0..<4 where !field.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        field.replaceText(with: "Keyboard ready")
+        let save = app.buttons["saveTripButton"]
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["tripKeyboardDone"].exists)
+        XCTAssertTrue(save.isHittable)
+        XCTAssertLessThanOrEqual(save.frame.maxY, app.keyboards.firstMatch.frame.minY)
+        capture("W2-F28-keyboard-save")
+        save.tap()
+        XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Keyboard ready"].exists)
+        app.staticTexts["Keyboard ready"].tap()
+        app.buttons["tripOptionsButton"].tap(); app.buttons["Edit trip"].tap()
+        for _ in 0..<4 where !field.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        field.replaceText(with: "Keyboard edited")
+        app.buttons["tripKeyboardDone"].tap()
+        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 3))
+        save.tap()
+        XCTAssertTrue(app.staticTexts["Keyboard edited"].waitForExistence(timeout: 5))
+    }
+
+    func testFlightControlsAtLargestTextHaveReachableTargets() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-previewTrips", "-seedTripExamples", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        let card = app.buttons["tripCard-example-west"]
+        for _ in 0..<8 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+        card.tap(); app.buttons["addBoardFlightButton"].tap()
+        let number = app.textFields["tripFlightNumberField"]
+        let footer = app.buttons["confirmAddTripFlightButton"]
+        capture("W2-F20-flight-context")
+        func reveal(_ control: XCUIElement) {
+            for _ in 0..<8 {
+                let top = app.navigationBars.firstMatch.frame.maxY + 10
+                let bottom = footer.frame.minY - 10
+                if control.isHittable, control.frame.minY >= top, control.frame.maxY <= bottom { break }
+                let upper = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: (top + 20) / app.frame.height))
+                let lower = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: (bottom - 20) / app.frame.height))
+                if control.frame.minY < top { upper.press(forDuration: 0.05, thenDragTo: lower) }
+                else { lower.press(forDuration: 0.05, thenDragTo: upper) }
+            }
+        }
+        reveal(number)
+        capture("W2-F20-number-target")
+        number.tap(); XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3)); number.typeText("ZZ9999")
+        app.buttons["flightKeyboardDone"].tap()
+        for id in ["clearTripFlightNumber", "lookupFlightButton"] {
+            let control = app.buttons[id]
+            reveal(control)
+            assertTouchTarget(control)
+        }
+        XCTAssertGreaterThanOrEqual(number.frame.width, 290)
+        XCTAssertEqual(number.value as? String, "ZZ9999")
+        capture("W2-F20-flight-large-text")
+        try auditRelevantControls(app, prefixes: ["clearTripFlightNumber", "lookupFlightButton", "confirmAddTripFlightButton"], name: "F20-flight-controls")
+        app.buttons["clearTripFlightNumber"].tap()
+        XCTAssertFalse(app.buttons["lookupFlightButton"].isEnabled)
+        let date = app.buttons["tripFlightDatePicker"]
+        reveal(date)
+        assertTouchTarget(date); date.tap()
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 4))
+        capture("W2-F20-native-calendar")
+    }
+
+    func testChineseFlightStatesAndGeneratedTripNameAreLocalized() {
+        continueAfterFailure = false
+        let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-previewTrips", "-seedTripExamples", "-testFlightToday"])
+        app.buttons["newTripButton"].tap()
+        app.buttons["tripDestinationPicker"].tap(); app.buttons["Tokyo (NRT)"].tap()
+        XCTAssertTrue((app.textFields["tripNameField"].value as? String)?.contains("之旅") == true)
+        XCTAssertTrue(app.buttons["saveTripButton"].label.contains("创建旅行"))
+        XCTAssertTrue(app.staticTexts["目的地"].exists)
+        capture("W2-F22-generated-name-zh")
+        app.navigationBars.buttons["取消"].tap()
+        let card = app.buttons["tripCard-example-west"]
+        for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+        card.tap(); app.buttons["addBoardFlightButton"].tap()
+        XCTAssertTrue(app.navigationBars["添加航班"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["tripFlightDatePicker"].label.contains("今天"))
+        XCTAssertTrue(app.buttons["lookupFlightButton"].label.contains("查询"))
+        app.textFields["tripFlightNumberField"].tap(); app.textFields["tripFlightNumberField"].typeText("ZZ9999\n")
+        let error = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "未找到ZZ9999")).firstMatch
+        XCTAssertTrue(error.waitForExistence(timeout: 8))
+        capture("W2-F22-flight-no-result-zh")
+    }
+
+    func testSystemAppearanceSelectionPersistsAcrossLaunch() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        selectAppearance("systemAppearance", in: app)
+        app.terminate(); app.launch()
+        selectAppTab(2, in: app)
+        let appearance = app.buttons["appearanceSettingsButton"]
+        for _ in 0..<5 where !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        XCTAssertTrue(appearance.label.contains("Follow system")); appearance.tap()
+        XCTAssertEqual(app.buttons["systemAppearance"].value as? String, "1")
+        capture("W2-F21-system-appearance")
+        app.buttons["appearanceDoneButton"].tap(); selectAppTab(0, in: app)
+        capture("W2-F21-system-home")
+    }
+
+    func testSameCityHistoryWrapsLongNamesAtLargestText() throws {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testHistoryRevisit", "-testLongHistory", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
+        selectAppTab(2, in: app)
+        let history = app.buttons["sameCityMomentsLink"]
+        for _ in 0..<6 where !history.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        history.tap()
+        let friend = app.staticTexts["activeStayFriend-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(friend.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !friend.isHittable { app.scrollViews["notificationHistoryScreen"].swipeUp() }
+        XCTAssertTrue(friend.label.contains("Alexandra Catherine Montgomery-Williams"))
+        XCTAssertGreaterThan(friend.frame.height, 60)
+        XCTAssertLessThanOrEqual(friend.frame.maxX, app.frame.maxX)
+        capture("W2-F26-long-history")
+        try auditRelevantControls(app, prefixes: ["activeStayFriend-", "activeStayCity-", "sameCityDuration-"], name: "F26-history-text")
+    }
+
+    func testSameCityHistoryUpdatesWhileScreenRemainsOpen() {
+        continueAfterFailure = false
+        let app = historyApp(extra: "-testHistoryRevisit", language: "en", locale: "en_US", additional: ["-testHistoryClock"])
+        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(duration.waitForExistence(timeout: 5))
+        XCTAssertTrue(duration.label.contains("1 minute"), duration.label)
+        let update = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "2 minutes"), object: duration)
+        XCTAssertEqual(XCTWaiter.wait(for: [update], timeout: 75), .completed)
+        capture("W2-F26-live-time-update")
+    }
+
+    func testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative() {
+        continueAfterFailure = false
+        let app = waveTwoApp(extra: ["-testEmptyFriends"])
+        // Replace the initial cached demo snapshot with the empty repository fixture.
+        app.scrollViews["friendsScreen"].swipeDown()
+        let invite = app.buttons["inviteFirstFriend"]
+        XCTAssertTrue(invite.waitForExistence(timeout: 5)); assertTouchTarget(invite)
+        XCTAssertTrue(invite.isHittable)
+        XCTAssertFalse(app.buttons["friendPlansLink"].exists)
+        capture("W2-F30-first-friend")
+        invite.tap()
+        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "Copy").firstMatch.waitForExistence(timeout: 5))
+        dismissSystemShare(in: app)
+        app.buttons["addFirstFriendByUsername"].tap()
+        XCTAssertTrue(app.textFields["friendUsernameField"].waitForExistence(timeout: 5))
+    }
+
+    private func discardChangesIfOffered(in app: XCUIApplication) {
+        if app.buttons["Discard changes"].exists { app.buttons["Discard changes"].firstMatch.tap() }
+        else if app.buttons["放弃修改"].exists { app.buttons["放弃修改"].firstMatch.tap() }
+    }
+
+    private func waveTwoApp(language: String = "en", locale: String = "en_US", extra: [String] = []) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(\(language))", "-AppleLocale", locale] + extra
+        app.launch()
+        let screen = extra.contains("-previewTrips") ? "tripsScreen" : "friendsScreen"
+        XCTAssertTrue(app.scrollViews[screen].waitForExistence(timeout: 12))
+        return app
+    }
+
+    private func assertTouchTarget(_ control: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertGreaterThanOrEqual(control.frame.width, 43.5, file: file, line: line)
+        XCTAssertGreaterThanOrEqual(control.frame.height, 43.5, file: file, line: line)
+        XCTAssertLessThanOrEqual(control.frame.maxX, XCUIApplication().frame.maxX, file: file, line: line)
+    }
+
+    private func auditRelevantControls(_ app: XCUIApplication, prefixes: [String], name: String) throws {
+        var all: [String] = [], relevant: [String] = []
+        try app.performAccessibilityAudit(for: [.hitRegion, .textClipped]) { issue in
+            let description = "\(issue.compactDescription)\n\(issue.detailedDescription)\n\(issue.element?.debugDescription ?? "No element")"
+            all.append(description)
+            if let id = issue.element?.identifier, prefixes.contains(where: { id.hasPrefix($0) }) { relevant.append(description) }
+            return true
+        }
+        let report = XCTAttachment(string: all.isEmpty ? "No native hit-region or text-clipping issues on this screen." : all.joined(separator: "\n\n"))
+        report.name = "W2-audit-\(name)"; report.lifetime = .keepAlways; add(report)
+        XCTAssertTrue(relevant.isEmpty, relevant.joined(separator: "\n"))
+    }
+
+    private func dismissSystemShare(in app: XCUIApplication) {
+        if app.buttons["Close"].firstMatch.exists { app.buttons["Close"].firstMatch.tap() }
+        else if app.buttons["Cancel"].firstMatch.exists { app.buttons["Cancel"].firstMatch.tap() }
+        else {
+            let sheet = app.otherElements["ActivityListView"]
+            if sheet.exists, sheet.frame.minY > 50 {
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: (sheet.frame.minY - 30) / app.frame.height)).tap()
+            } else { sheet.swipeDown() }
+        }
+        XCTAssertTrue(app.otherElements["ActivityListView"].waitForNonExistence(timeout: 5))
+    }
+
+    private func clearTravelAudience(in app: XCUIApplication) {
+        let audience = app.buttons["travelPlanAudience"]
+        for _ in 0..<5 where !audience.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        audience.tap(); app.buttons["clearTravelAudience"].tap(); app.buttons["travelAudienceDone"].tap()
+        for _ in 0..<5 where !app.buttons["travelPlanCity"].isHittable { app.scrollViews.firstMatch.swipeDown() }
+    }
+
+    func testTravelPurposeLinksAtAccessibilitySize() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewTrips",
+                               "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(en)", "-AppleLocale", "en_US",
+                               "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        let plans = app.buttons["myTravelPlansFromTrips"]
+        XCTAssertTrue(plans.waitForExistence(timeout: 8))
+        XCTAssertLessThanOrEqual(plans.frame.maxX, app.frame.maxX)
+        capture("F08-accessibility-shared-trips")
+        for _ in 0..<4 where !plans.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+        plans.tap()
+        let trips = app.buttons["openSharedTrips"]
+        for _ in 0..<8 where !trips.isHittable { app.scrollViews["travelPlansScreen"].swipeUp() }
+        XCTAssertTrue(trips.isHittable)
+        XCTAssertLessThanOrEqual(trips.frame.maxX, app.frame.maxX)
+        capture("F08-accessibility-personal-plans")
+        trips.tap()
+        XCTAssertTrue(app.buttons["newTripButton"].waitForExistence(timeout: 5))
+    }
+
+    func testTravelPurposesAndNavigationInBothLanguages() {
+        continueAfterFailure = false
+        for (language, locale, sharedTitle, ownTitle, friendTitle) in [
+            ("en", "en_US", "Shared trips", "My travel plans", "Friends’ travel plans"),
+            ("zh-Hans", "zh_CN", "共同旅行", "我的出行计划", "好友出行计划")
+        ] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewTrips", "-seedTripExamples",
+                                   "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+            app.launch()
+            XCTAssertTrue(app.buttons["myTravelPlansFromTrips"].waitForExistence(timeout: 8))
+            XCTAssertTrue(app.staticTexts[sharedTitle].exists)
+            capture("F08-shared-trips-\(language)")
+            app.buttons["myTravelPlansFromTrips"].tap()
+            XCTAssertTrue(app.navigationBars[ownTitle].waitForExistence(timeout: 5))
+            capture("F08-my-travel-plans-\(language)")
+            let backToTrips = app.buttons["openSharedTrips"]
+            for _ in 0..<5 where !backToTrips.isHittable { app.scrollViews["travelPlansScreen"].swipeUp() }
+            backToTrips.tap()
+            XCTAssertTrue(app.buttons["newTripButton"].waitForExistence(timeout: 5))
+            selectAppTab(2, in: app)
+            let profileLink = app.buttons["travelPlansLink"]
+            for _ in 0..<4 where !profileLink.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            XCTAssertTrue(profileLink.label.contains(ownTitle))
+            profileLink.tap()
+            XCTAssertTrue(app.navigationBars[ownTitle].waitForExistence(timeout: 5))
+            selectAppTab(0, in: app)
+            let friendLink = app.buttons["friendPlansLink"]
+            XCTAssertTrue(friendLink.waitForExistence(timeout: 5))
+            XCTAssertTrue(friendLink.label.contains(friendTitle))
+            friendLink.tap()
+            let copy = app.buttons["copyFriendPlan-A7150000-0000-0000-0000-000000000001"]
+            for _ in 0..<5 where !copy.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
+            XCTAssertTrue(copy.label.contains(language == "en" ? "Add to my travel plans" : "添加到我的出行计划"))
+            capture("F08-friend-travel-plans-\(language)")
+            copy.tap()
+            XCTAssertTrue(app.descendants(matching: .any)["travelPlanCopySource"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["travelPlanAudience"].label.contains(language == "en" ? "All friends" : "全部好友"))
+            capture("F08-copy-friend-draft-\(language)")
+            let boundary = app.staticTexts["travelPlanBoundary"]
+            for _ in 0..<5 where !boundary.isHittable { app.scrollViews.firstMatch.swipeUp() }
+            XCTAssertTrue(boundary.label.contains(language == "en" ? "doesn’t join" : "不会加入"))
+            XCTAssertEqual(app.switches["travelPlanAlerts"].value as? String, "0")
+            capture("F08-copy-boundary-\(language)")
+            app.navigationBars.buttons[language == "en" ? "Cancel" : "取消"].tap()
+            discardChangesIfOffered(in: app)
+            XCTAssertTrue(app.scrollViews["friendPlansScreen"].waitForExistence(timeout: 5))
+            app.buttons["manageOwnTravelPlans"].tap()
+            XCTAssertTrue(app.navigationBars[ownTitle].waitForExistence(timeout: 5))
+            XCTAssertEqual(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-")).count, 0)
+            app.terminate()
+        }
+    }
+
+    func testSharedTripDatesCreateIndependentPrivatePlan() {
+        continueAfterFailure = false
+        let app = tripsApp(seedExamples: false)
+        XCTAssertTrue(app.buttons["newTripButton"].waitForExistence(timeout: 8))
+        createTrip(in: app, name: "Tokyo together F08", destination: "Tokyo (NRT)")
+        app.staticTexts["Tokyo together F08"].tap()
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        let useDates = app.buttons["tripDatesToPersonalPlan"]
+        for _ in 0..<7 where !useDates.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        XCTAssertTrue(useDates.isHittable)
+        capture("F08-trip-copy-entry")
+        useDates.tap()
+        XCTAssertTrue(app.navigationBars["Choose a city"].waitForExistence(timeout: 5))
+        // Use the existing Demo / recent city choices to keep this copy-flow regression
+        // independent of live MapKit locality results for metropolitan-area searches.
+        app.searchFields.firstMatch.buttons["Clear text"].tap()
+        let city = app.buttons["travelCity-Tokyo"].firstMatch
+        XCTAssertTrue(city.waitForExistence(timeout: 5))
+        capture("F08-trip-confirm-city")
+        city.tap()
+        XCTAssertTrue(app.navigationBars["New travel plan"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.descendants(matching: .any)["travelPlanCopySource"].label.contains("Tokyo together F08"))
+        XCTAssertTrue(app.buttons["travelPlanCity"].label.contains("Tokyo"))
+        clearTravelAudience(in: app)
+        XCTAssertTrue(app.buttons["travelPlanAudience"].label.contains("Only me"))
+        let copiedDates = app.buttons["travelPlanDates"].label
+        capture("F08-trip-private-draft")
+        let save = app.buttons["saveTravelPlan"]
+        for _ in 0..<5 where !save.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        XCTAssertTrue(app.staticTexts["travelPlanBoundary"].label.contains("saved separately"))
+        XCTAssertEqual(app.switches["travelPlanAlerts"].value as? String, "0")
+        capture("F08-trip-independent-dates")
+        save.tap()
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["tripPeopleButton"].label.contains("1 person"))
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        let ownEntry = app.buttons["myTravelPlansFromTrips"]
+        for _ in 0..<5 where !ownEntry.isHittable { app.scrollViews["tripsScreen"].swipeDown() }
+        ownEntry.tap()
+        let ownPlans = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-"))
+        XCTAssertTrue(ownPlans.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertEqual(ownPlans.count, 1)
+        XCTAssertTrue(ownPlans.firstMatch.label.contains("Only you"))
+        ownPlans.firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Edit travel plan"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["travelPlanDates"].label, copiedDates)
+        app.navigationBars.buttons["Cancel"].tap()
+        discardChangesIfOffered(in: app)
+        let importDates = app.buttons["importSharedTripDates"]
+        for _ in 0..<5 where !importDates.isHittable { app.scrollViews["travelPlansScreen"].swipeUp() }
+        importDates.tap()
+        let savedTrip = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "importTrip-")).firstMatch
+        XCTAssertTrue(savedTrip.waitForExistence(timeout: 5))
+        XCTAssertTrue(savedTrip.label.contains("Tokyo together F08"))
+        capture("F08-import-saved-trip")
+        savedTrip.tap()
+        XCTAssertTrue(app.navigationBars["Choose a city"].waitForExistence(timeout: 5))
+        app.searchFields.firstMatch.buttons["Clear text"].tap()
+        XCTAssertTrue(city.waitForExistence(timeout: 5)); city.tap()
+        XCTAssertTrue(app.navigationBars["New travel plan"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["travelPlanDates"].label, copiedDates)
+        app.navigationBars.buttons["Cancel"].tap()
+        discardChangesIfOffered(in: app)
+        XCTAssertTrue(app.scrollViews["travelPlansScreen"].waitForExistence(timeout: 5))
+        XCTAssertEqual(ownPlans.count, 1)
+    }
+
+    func testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages() {
+        continueAfterFailure = false
+        for (language, locale, travel, moments, device, deleted, retained) in [
+            ("en", "en_US", "flights you add", "stay periods", "not sent to our servers", "personal plans", "may remain in shared trips"),
+            ("zh-Hans", "zh_CN", "你添加的航班", "停留时段", "不会发送至我们的服务器", "个人出行计划", "可能保留")
+        ] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+            app.launch()
+            XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+            selectAppTab(2, in: app)
+            let privacy = app.buttons["privacyDataLink"]
+            for _ in 0..<5 where !privacy.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            privacy.tap()
+            XCTAssertTrue(app.scrollViews["privacyDataScreen"].waitForExistence(timeout: 5))
+            for (id, text) in [("privacyTravelSummary", travel), ("privacyMomentsSummary", moments),
+                               ("privacyDeviceLocationSummary", device), ("privacyDeletionSummary", deleted),
+                               ("privacySharedTripRetention", retained)] {
+                let row = app.staticTexts[id]
+                for _ in 0..<5 where !row.isHittable { app.scrollViews["privacyDataScreen"].swipeUp() }
+                XCTAssertTrue(row.exists)
+                XCTAssertTrue(row.label.contains(text), row.label)
+                if id == "privacyMomentsSummary" || id == "privacyDeviceLocationSummary" || id == "privacySharedTripRetention" {
+                    capture("F04-\(id)-\(language)")
+                }
+            }
+            let policy = app.descendants(matching: .any)["privacyPolicyLink"]
+            for _ in 0..<4 where !policy.isHittable { app.scrollViews["privacyDataScreen"].swipeUp() }
+            XCTAssertTrue(policy.isHittable)
+            app.terminate()
+        }
+    }
+
+    func testLocationSetupAndSolidAccentButtonsInBothThemes() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        let base = ["-skipOnboarding", "-resetDemoData", "-testReadableRequest", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        for appearance in ["solarJadeAppearance", "nightJadeAppearance"] {
+            app.launchArguments = base
+            app.launch()
+            XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+            selectAppearance(appearance, in: app)
+            capture("F05-home-badge-\(appearance)")
+            app.open(URL(string: "whereismyfriend://friend-requests/05000000-0000-4000-8000-000000000001")!)
+            XCTAssertTrue(app.buttons["acceptNotificationFriendRequest"].waitForExistence(timeout: 8))
+            capture("F05-request-button-\(appearance)")
+            app.buttons["Not now"].tap()
+            selectAppTab(2, in: app)
+            let notifications = app.buttons["notificationSettingsLink"]
+            for _ in 0..<4 where !notifications.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
+            notifications.tap()
+            capture("F05-notifications-\(appearance)")
+            app.terminate()
+            app.resetAuthorizationStatus(for: .location)
+            app.launchArguments = base + ["-testLocationSetup"]
+            app.launch()
+            let enable = app.buttons["enableInitialLocation"]
+            XCTAssertTrue(enable.waitForExistence(timeout: 8))
+            XCTAssertTrue(enable.isHittable)
+            capture("F05-location-\(appearance)")
+            app.buttons["skipInitialLocation"].tap()
+            XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+            if appearance == "nightJadeAppearance" { selectAppearance("solarJadeAppearance", in: app) }
+            app.terminate()
+        }
+    }
+
+    func testSameCityHistoryKeepsPreviousVisitSeparateFromCurrentStay() {
+        continueAfterFailure = false
+        for (language, locale, unit) in [("en", "en_US", "1 hour"), ("zh-Hans", "zh_CN", "1小时")] {
+            let app = historyApp(extra: "-testHistoryRevisit", language: language, locale: locale)
+            let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
+            XCTAssertTrue(duration.waitForExistence(timeout: 5))
+            XCTAssertTrue(duration.label.replacingOccurrences(of: " ", with: "").contains(unit.replacingOccurrences(of: " ", with: "")), duration.label)
+            XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
+            XCTAssertFalse(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000002"].exists)
+            capture("F07-repeated-visit-\(language)")
+            app.terminate()
+        }
+    }
+
+    func testSameCityHistoryWithoutSessionShowsRecentMatchInsteadOfDuration() {
+        continueAfterFailure = false
+        let app = historyApp(extra: "-testHistoryMissingSession", language: "en", locale: "en_US")
+        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(duration.waitForExistence(timeout: 5))
+        XCTAssertEqual(duration.label, "Recent city match")
+        XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
+        capture("F07-no-current-session")
+    }
+
+    func testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands() {
+        continueAfterFailure = false
+        for (language, locale, prefix, summary) in [
+            ("en", "en_US", "You’re in ", "Mia is here too"),
+            ("zh-Hans", "zh_CN", "你在", "Mia 也在这里")
+        ] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+            app.launch()
+            let city = app.staticTexts["homeCityStatus"]
+            XCTAssertTrue(city.waitForExistence(timeout: 8))
+            XCTAssertEqual(city.label, "\(prefix)New York, NY")
+            XCTAssertFalse(app.buttons["myCitySharingCard"].exists)
+            XCTAssertFalse(app.buttons["homeCityStatus"].exists)
+            XCTAssertFalse(app.buttons["homeCityRecoveryButton"].exists)
+            city.tap()
+            XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
+            XCTAssertEqual(app.staticTexts["sameCitySummaryTitle"].label, summary)
+            capture("F01-home-\(language)")
+            let sameCity = app.buttons["sameCityReunionToggle"]
+            sameCity.tap()
+            XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 4))
+            XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
+            capture("F01-same-city-expanded-\(language)")
+            sameCity.tap()
+            XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+            openCitySharingFromProfile(in: app)
+            XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 4))
+            app.terminate()
+        }
+    }
+
+    func testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences() {
+        checkFriendSharingDescriptions(language: "en", locale: "en_US",
+            active: "Mia Chen can see your latest city",
+            off: "Mia Chen can’t see your city",
+            paused: "City sharing is paused. Resume it to share with Mia Chen.")
+    }
+
+    func testFriendSharingDescriptionsAreLocalizedInChinese() {
+        checkFriendSharingDescriptions(language: "zh-Hans", locale: "zh_CN",
+            active: "Mia Chen 可以看到你最近的城市",
+            off: "Mia Chen 无法看到你的城市",
+            paused: "城市共享已全局暂停。恢复后将与Mia Chen共享。")
+    }
+
+    func testMissingCityHasContextualRecoveryAndNoFalseSharingClaim() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityFallbackStates", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].waitForExistence(timeout: 8))
+        XCTAssertEqual(app.staticTexts["homeCityStatus"].label, "Your city isn’t set yet")
+        XCTAssertFalse(app.buttons["sameCityReunionToggle"].exists)
+        XCTAssertTrue(app.buttons["homeCityRecoveryButton"].exists)
+        capture("F01-city-not-set")
+        let mia = app.buttons["friendCard-10000000-0000-0000-0000-000000000001"]
+        for _ in 0..<4 where !mia.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
+        mia.tap()
+        expectFriendSharingDescription("Set your city to start sharing with Mia Chen.", in: app)
+        app.navigationBars.buttons.firstMatch.tap()
+        for _ in 0..<4 where !app.buttons["homeCityRecoveryButton"].isHittable { app.scrollViews["friendsScreen"].swipeDown() }
+        app.buttons["homeCityRecoveryButton"].tap()
+        XCTAssertTrue(app.buttons["manualCityButton"].waitForExistence(timeout: 4))
+    }
+
     func testWhileUsingReminderExplainsAlwaysAndSnoozesAfterOpeningSettings() {
         continueAfterFailure = false
         let app = XCUIApplication()
@@ -25,7 +1072,7 @@ final class PrototypeUITests: XCTestCase {
         action.tap()
         XCTAssertTrue(XCUIApplication(bundleIdentifier: "com.apple.Preferences").wait(for: .runningForeground, timeout: 8))
         app.activate()
-        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].waitForExistence(timeout: 5))
         XCTAssertFalse(action.exists)
         app.resetAuthorizationStatus(for: .location)
     }
@@ -42,7 +1089,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.scrollViews["friendPlansScreen"].waitForExistence(timeout: 5))
         XCTAssertFalse(enable.exists)
         app.navigationBars.buttons.firstMatch.tap()
-        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].waitForExistence(timeout: 5))
         XCTAssertFalse(enable.exists)
         app.resetAuthorizationStatus(for: .location)
     }
@@ -62,7 +1109,7 @@ final class PrototypeUITests: XCTestCase {
         capture("Weekly location reminder Chinese")
         app.buttons["dismissLocationReminder"].tap()
         XCTAssertTrue(enable.waitForNonExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["myCitySharingCard"].exists)
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].exists)
         app.resetAuthorizationStatus(for: .location)
     }
 
@@ -78,9 +1125,9 @@ final class PrototypeUITests: XCTestCase {
         capture("Weekly location reminder")
         app.buttons["dismissLocationReminder"].tap()
         XCTAssertTrue(enable.waitForNonExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["myCitySharingCard"].exists)
-        app.tabBars.buttons.element(boundBy: 1).tap()
-        app.tabBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].exists)
+        selectAppTab(1, in: app)
+        selectAppTab(0, in: app)
         XCTAssertFalse(enable.exists)
         app.terminate()
         app.launch()
@@ -102,7 +1149,7 @@ final class PrototypeUITests: XCTestCase {
         let allow = springboard.alerts.buttons["Allow While Using App"]
         XCTAssertTrue(allow.waitForExistence(timeout: 5))
         allow.tap()
-        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["enableLocationReminder"].exists)
         app.resetAuthorizationStatus(for: .location)
     }
@@ -169,14 +1216,14 @@ final class PrototypeUITests: XCTestCase {
         continueAfterFailure = false
         let app = tripsApp(seedExamples: false)
         for theme in ["solarJadeAppearance", "nightJadeAppearance"] {
-            app.tabBars.buttons.element(boundBy: 2).tap()
+            selectAppTab(2, in: app)
             let appearance = app.buttons["appearanceSettingsButton"]
             if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
             XCTAssertTrue(appearance.waitForExistence(timeout: 3))
             appearance.tap()
             app.buttons[theme].tap()
             app.buttons["appearanceDoneButton"].tap()
-            app.tabBars.buttons.element(boundBy: 1).tap()
+            selectAppTab(1, in: app)
             app.buttons["newTripButton"].tap()
             let save = app.buttons["saveTripButton"]
             XCTAssertTrue(save.waitForExistence(timeout: 3))
@@ -194,9 +1241,11 @@ final class PrototypeUITests: XCTestCase {
             XCTAssertEqual(app.datePickers.count, 0)
             app.buttons["rangeNextMonth"].tap()
             app.buttons["Cancel"].firstMatch.tap()
+            discardChangesIfOffered(in: app)
             XCTAssertEqual(dates.value as? String, originalDates)
             capture("Compact trip destination - \(theme)")
             app.buttons["Cancel"].tap()
+            discardChangesIfOffered(in: app)
         }
     }
 
@@ -217,6 +1266,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["confirmAddTripFlightButton"].waitForExistence(timeout: 4))
         capture("Native flight form action")
         app.buttons["Cancel"].tap()
+        discardChangesIfOffered(in: app)
         board.swipeDown()
         let options = app.buttons["tripOptionsButton"]
         XCTAssertTrue(options.isHittable)
@@ -235,7 +1285,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
         let screen = app.scrollViews["friendsScreen"]
         XCTAssertTrue(screen.waitForExistence(timeout: 8))
-        let city = app.buttons["myCitySharingCard"]
+        let city = app.staticTexts["homeCityStatus"]
         XCTAssertTrue(city.isHittable)
         XCTAssertTrue(city.label.contains("Bakersfield, CA"))
         capture("Friends accessibility city layout")
@@ -373,6 +1423,7 @@ final class PrototypeUITests: XCTestCase {
         let committed = summary.label
         summary.tap(); app.buttons["rangeNextMonth"].tap()
         app.buttons["Cancel"].firstMatch.tap()
+        discardChangesIfOffered(in: app)
         XCTAssertEqual(summary.label, committed)
     }
 
@@ -381,14 +1432,15 @@ final class PrototypeUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
-        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 8)); app.buttons["myCitySharingCard"].tap()
+        openCitySharingFromProfile(in: app)
         let manual = app.buttons["manualCityButton"]
         for _ in 0..<3 where !manual.isHittable { app.scrollViews.firstMatch.swipeUp() }
         XCTAssertTrue(manual.waitForExistence(timeout: 3)); manual.tap()
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 3))
         XCTAssertLessThan(search.frame.midY, app.frame.midY)
-        XCTAssertTrue(app.buttons["travelCity-Tokyo"].waitForExistence(timeout: 3)); app.buttons["travelCity-Tokyo"].tap()
+        let city = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelCity-")).firstMatch
+        XCTAssertTrue(city.waitForExistence(timeout: 3)); city.tap()
         XCTAssertTrue(app.buttons["refreshLocationButton"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["refreshLocationButton"].label.contains("Use device location"))
     }
@@ -406,7 +1458,7 @@ final class PrototypeUITests: XCTestCase {
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 3))
         XCTAssertLessThan(search.frame.midY, app.frame.midY)
-        XCTAssertTrue(app.staticTexts["FROM YOUR TRIPS"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["FROM YOUR SHARED TRIPS"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.navigationBars["Choose a city"].buttons["Cancel"].exists)
         capture("plan-city-picker-top-search")
         let tripShortcut = app.buttons["tripCity-example-new-york"]
@@ -469,7 +1521,7 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["travelPlanCity"].tap()
         XCTAssertTrue(app.navigationBars["选择城市"].waitForExistence(timeout: 3))
         XCTAssertEqual(app.searchFields.firstMatch.label, "城市或城镇")
-        XCTAssertTrue(app.staticTexts["从你的行程中"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["从你的共同旅行中"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["查找"].firstMatch.exists)
     }
 
@@ -493,8 +1545,9 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["copyFriendPlanDetail"].waitForExistence(timeout: 5))
         capture("friend-plan-details")
         app.buttons["copyFriendPlanDetail"].tap()
-        XCTAssertTrue(app.navigationBars["New plan"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["New travel plan"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["travelPlanCity"].label.contains("Tokyo"))
+        clearTravelAudience(in: app)
         XCTAssertTrue(app.staticTexts["Only me · choose friends"].exists)
         let browse = app.switches["travelPlanBrowsing"]
         XCTAssertEqual(browse.value as? String, "1")
@@ -517,13 +1570,14 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
         app.launch()
         XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.buttons["friendPlansLink"].label.contains("好友计划"))
+        XCTAssertTrue(app.buttons["friendPlansLink"].label.contains("好友出行计划"))
         app.buttons["friendPlansLink"].tap()
-        XCTAssertTrue(app.staticTexts["朋友接下来去哪"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["好友出行计划"].waitForExistence(timeout: 5))
         capture("friend-plans-chinese")
         let copy = app.buttons["copyFriendPlan-A7150000-0000-0000-0000-000000000001"]
         XCTAssertTrue(copy.waitForExistence(timeout: 3)); copy.tap()
         app.buttons["travelPlanAudience"].tap()
+        app.buttons["clearTravelAudience"].tap()
         let audience = app.switches["travelAudience-lin"]
         XCTAssertTrue(audience.waitForExistence(timeout: 3)); audience.switches.firstMatch.tap()
         app.buttons["travelAudienceDone"].tap()
@@ -546,12 +1600,14 @@ final class PrototypeUITests: XCTestCase {
     func testFriendRequestNotificationRestoresAndCanBeAccepted() {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewFriendRequestNotification", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testReadableRequest", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+        app.open(URL(string: "whereismyfriend://friend-requests/05000000-0000-4000-8000-000000000001")!)
         XCTAssertTrue(app.buttons["acceptNotificationFriendRequest"].waitForExistence(timeout: 8))
         capture("friend-request-notification")
         app.terminate()
-        app.launchArguments.removeAll { $0 == "-previewFriendRequestNotification" || $0 == "-resetDemoData" }
+        app.launchArguments.removeAll { $0 == "-testReadableRequest" || $0 == "-resetDemoData" }
         app.launch()
         XCTAssertTrue(app.buttons["acceptNotificationFriendRequest"].waitForExistence(timeout: 8))
         app.buttons["acceptNotificationFriendRequest"].tap()
@@ -564,7 +1620,7 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testAccountDeletionFailure", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let button = app.buttons["Delete account"]
         for _ in 0..<12 where !button.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         XCTAssertTrue(button.isHittable)
@@ -583,13 +1639,20 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityRegions", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        app.buttons["myCitySharingCard"].tap()
+        // The initial view can precede the repository's city-region fixture.
+        app.scrollViews["friendsScreen"].swipeDown()
+        let loadedCity = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "label CONTAINS %@", "Milpitas"),
+            object: app.staticTexts["homeCityStatus"])
+        XCTAssertEqual(XCTWaiter.wait(for: [loadedCity], timeout: 5), .completed)
+        openCitySharingFromProfile(in: app)
         let region = app.staticTexts["currentCityRegion"]
         XCTAssertTrue(region.waitForExistence(timeout: 5))
         XCTAssertEqual(region.label, "Part of Silicon Valley")
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Milpitas")).firstMatch.exists)
         capture("city-region-milpitas-details")
         app.buttons["Done"].tap()
+        selectAppTab(0, in: app)
         XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForNonExistence(timeout: 5))
         capture("city-region-friends-real-cities")
     }
@@ -644,15 +1707,28 @@ final class PrototypeUITests: XCTestCase {
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
         XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
-        app.buttons["myCitySharingCard"].tap()
+        app.buttons["sameCityReunionToggle"].tap()
+        XCTAssertEqual(app.buttons["sameCityReunionToggle"].value as? String, "Expanded")
+        openCitySharingFromProfile(in: app)
         let sharing = app.switches["citySharingToggle"]
         XCTAssertTrue(sharing.waitForExistence(timeout: 3))
         sharing.switches.firstMatch.tap()
         app.buttons["Done"].tap()
+        selectAppTab(0, in: app)
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForNonExistence(timeout: 5))
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
         capture("friends-without-matches")
+        openCitySharingFromProfile(in: app)
+        XCTAssertTrue(sharing.waitForExistence(timeout: 3))
+        sharing.switches.firstMatch.tap()
+        app.buttons["Done"].tap()
+        selectAppTab(0, in: app)
+        let summary = app.buttons["sameCityReunionToggle"]
+        XCTAssertTrue(summary.waitForExistence(timeout: 5))
+        XCTAssertEqual(summary.value as? String, "Collapsed")
+        XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
+        capture("AUDIT-sharing-resume-keeps-header-collapsed")
     }
 
     func testTravelCitySearchFindsPalmSpringsFromProfile() {
@@ -661,12 +1737,12 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let plans = app.buttons["travelPlansLink"]
         for _ in 0..<4 where !plans.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         XCTAssertTrue(plans.isHittable); plans.tap()
         XCTAssertTrue(app.buttons["addTravelPlan"].waitForExistence(timeout: 3)); app.buttons["addTravelPlan"].tap()
-        XCTAssertTrue(app.navigationBars["New plan"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["New travel plan"].waitForExistence(timeout: 3))
         app.buttons["travelPlanCity"].tap()
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 3)); search.tap(); search.typeText("Palm Springs California")
@@ -686,16 +1762,17 @@ final class PrototypeUITests: XCTestCase {
         let entry = app.buttons["upcomingTogetherToggle"]
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
         XCTAssertFalse(entry.exists)
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let plans = app.buttons["travelPlansLink"]
         for _ in 0..<4 where !plans.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         XCTAssertTrue(plans.isHittable); plans.tap()
         XCTAssertTrue(app.buttons["addTravelPlan"].waitForExistence(timeout: 3)); app.buttons["addTravelPlan"].tap()
-        XCTAssertTrue(app.navigationBars["New plan"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.navigationBars["New travel plan"].waitForExistence(timeout: 3))
         app.buttons["travelPlanCity"].tap()
         XCTAssertTrue(app.buttons["travelCity-Tokyo"].waitForExistence(timeout: 3)); app.buttons["travelCity-Tokyo"].tap()
         capture("travel-plan-private-editor")
         app.buttons["travelPlanAudience"].tap()
+        app.buttons["clearTravelAudience"].tap()
         let audience = app.switches["travelAudience-lin"]
         XCTAssertTrue(audience.waitForExistence(timeout: 3)); audience.switches.firstMatch.tap()
         XCTAssertEqual(audience.value as? String, "1")
@@ -703,14 +1780,14 @@ final class PrototypeUITests: XCTestCase {
         let save = app.buttons["saveTravelPlan"]
         if !save.isHittable { app.scrollViews.firstMatch.swipeUp() }
         save.tap()
-        XCTAssertTrue(app.navigationBars["Travel plans"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(app.navigationBars["My travel plans"].waitForExistence(timeout: 5))
+        selectAppTab(0, in: app)
         XCTAssertTrue(entry.waitForExistence(timeout: 5)); entry.tap()
         let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
         XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
         XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 3))
         capture("upcoming-together-expanded")
-        let manage = app.buttons["Manage my plans"]
+        let manage = app.buttons["My travel plans"]
         if !manage.isHittable { app.scrollViews["friendsScreen"].swipeUp() }; manage.tap()
         let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "travelPlan-")).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 3)); row.tap()
@@ -719,7 +1796,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertEqual(audience.value as? String, "0")
         app.buttons["travelAudienceDone"].tap()
         if !save.isHittable { app.scrollViews.firstMatch.swipeUp() }; save.tap()
-        XCTAssertTrue(app.navigationBars["Travel plans"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["My travel plans"].waitForExistence(timeout: 5))
         app.buttons["Done"].tap()
         XCTAssertFalse(app.buttons["upcomingSayHello"].exists)
         XCTAssertTrue(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].exists)
@@ -764,7 +1841,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
     }
 
-    func testSameCityCardExpandsAndSharesWithoutSendingAutomatically() {
+    func testSameCityHeaderExpandsToFriendRows() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
@@ -773,13 +1850,41 @@ final class PrototypeUITests: XCTestCase {
         let toggle = app.buttons["sameCityReunionToggle"]
         XCTAssertTrue(toggle.waitForExistence(timeout: 5))
         toggle.tap()
-        XCTAssertTrue(app.staticTexts["Same city. Good company."].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["sameCitySayHello"].exists)
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].exists)
         capture("same-city-expanded")
         let close = app.buttons["closeSameCityReunion"]
         if !close.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
         close.tap()
         XCTAssertFalse(app.buttons["sameCitySayHello"].exists)
+    }
+
+    func testSameCityCardStaysCollapsedAfterRefreshTabSwitchAndForeground() {
+        continueAfterFailure = false
+        let app = waveTwoApp()
+        let toggle = app.buttons["sameCityReunionToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        toggle.tap()
+        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 3))
+        toggle.tap()
+        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForNonExistence(timeout: 3))
+
+        app.scrollViews["friendsScreen"].swipeDown()
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        selectAppTab(2, in: app)
+        selectAppTab(0, in: app)
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+        capture("manual-same-city-collapsed-after-refresh-and-foreground")
+
+        toggle.tap()
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
+        XCTAssertEqual(toggle.value as? String, "Expanded")
     }
 
     func testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch() {
@@ -789,16 +1894,34 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let url = URL(string: "whereismyfriend://events/11111111-2222-4333-8444-555555555555")!
         app.open(url)
         XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 5))
+        let toggle = app.buttons["sameCityReunionToggle"]
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
         XCTAssertFalse(app.buttons["sameCitySayHello"].exists)
-        app.buttons["closeSameCityReunion"].tap()
+        toggle.tap()
+        XCTAssertTrue(app.staticTexts["The moment may have expired or sharing may have changed."].waitForExistence(timeout: 3))
+        toggle.tap()
+        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForNonExistence(timeout: 3))
+        // Replaying the event rebuilds the Friends view with the same selected ID.
+        app.open(url)
+        XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 5))
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+        capture("manual-same-city-event-replay-stays-collapsed")
         app.terminate()
         app.open(url)
         XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 8))
-        capture("same-city-unavailable-link")
+        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+        capture("manual-same-city-cold-link-stays-collapsed")
+        toggle.tap()
+        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 3))
+        app.buttons["closeSameCityReunion"].tap()
+        XCTAssertFalse(app.staticTexts["This update is no longer available"].exists)
     }
 
     func testFriendInviteDeepLinkSurvivesRelaunchAndDismissal() {
@@ -891,7 +2014,7 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let tools = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Developer Lab & Tools")).firstMatch
         for _ in 0..<6 where !tools.isHittable {
             app.scrollViews["profileSettingsScreen"].swipeUp()
@@ -979,9 +2102,7 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["doneAddFriendButton"].tap()
         XCTAssertTrue(app.staticTexts["Jamie Park"].waitForExistence(timeout: 3))
 
-        let cityCard = app.buttons["myCitySharingCard"]
-        XCTAssertTrue(cityCard.waitForExistence(timeout: 3))
-        cityCard.tap()
+        openCitySharingFromProfile(in: app)
         XCTAssertTrue(app.descendants(matching: .any)["citySharingSheet"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.switches["backgroundUpdatesToggle"].waitForExistence(timeout: 3))
@@ -995,14 +2116,20 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         XCTAssertTrue(app.buttons["editProfileButton"].waitForExistence(timeout: 3))
+        assertTouchTarget(app.buttons["editProfileButton"])
         app.buttons["editProfileButton"].tap()
 
         let nameField = app.textFields["displayNameField"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 3))
         nameField.replaceText(with: "New Name")
-        app.textFields["profileUsernameField"].replaceText(with: "new_username")
+        let username = app.textFields["profileUsernameField"]
+        username.replaceText(with: "x")
+        app.buttons["saveProfileButton"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["profileValidationMessage"].firstMatch.waitForExistence(timeout: 3))
+        XCTAssertEqual(nameField.value as? String, "New Name")
+        username.replaceText(with: "new_username")
         app.buttons["saveProfileButton"].tap()
         XCTAssertTrue(app.staticTexts["New Name"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["@new_username"].exists)
@@ -1027,7 +2154,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
 
         let settingsLink = app.buttons["notificationSettingsLink"]
         XCTAssertTrue(settingsLink.waitForExistence(timeout: 3))
@@ -1052,7 +2179,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
 
         let appearanceButton = app.buttons["appearanceSettingsButton"]
         if !appearanceButton.isHittable {
@@ -1088,7 +2215,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
         capture("marketing-01-friends")
         app.buttons["sameCityReunionToggle"].tap()
-        XCTAssertTrue(app.buttons["sameCitySayHello"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
         capture("marketing-02-same-city")
         app.terminate()
 
@@ -1101,8 +2228,7 @@ final class PrototypeUITests: XCTestCase {
         trips.terminate()
 
         app.launch()
-        XCTAssertTrue(app.buttons["myCitySharingCard"].waitForExistence(timeout: 5))
-        app.buttons["myCitySharingCard"].tap()
+        openCitySharingFromProfile(in: app)
         XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 3))
         capture("marketing-07-sharing")
         app.terminate()
@@ -1132,7 +2258,7 @@ final class PrototypeUITests: XCTestCase {
         capture("\(language)-02-friend-plans")
         app.navigationBars.buttons.element(boundBy: 0).tap()
         app.buttons["sameCityReunionToggle"].tap()
-        XCTAssertTrue(app.buttons["sameCitySayHello"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 5))
         capture("\(language)-04-here-together")
         app.terminate()
 
@@ -1277,6 +2403,16 @@ final class PrototypeUITests: XCTestCase {
 
     func testWidgetPrivacyAndEdgeStates() {
         continueAfterFailure = false
+        // Privacy is intentionally persistent and may have been changed by another flow.
+        // Establish the visible baseline through the same controls users have.
+        let setup = waveTwoApp()
+        selectAppTab(2, in: setup)
+        let settings = setup.buttons["widgetPrivacySettingsLink"]
+        for _ in 0..<6 where !settings.isHittable { setup.scrollViews["profileSettingsScreen"].swipeUp() }
+        settings.tap()
+        XCTAssertTrue(setup.buttons["widgetPrivacyFull"].waitForExistence(timeout: 5))
+        setup.buttons["widgetPrivacyFull"].tap()
+        setup.terminate()
         let baseline = XCUIApplication()
         baseline.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewWidgets", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         baseline.launch()
@@ -1334,9 +2470,8 @@ final class PrototypeUITests: XCTestCase {
         try? shot1.pngRepresentation.write(to: dir.appendingPathComponent("01_friends_main.png"))
 
         // 2. City Sharing Sheet
-        let cityCard = app.buttons["myCitySharingCard"]
-        if cityCard.waitForExistence(timeout: 3) {
-            cityCard.tap()
+        openCitySharingFromProfile(in: app)
+        if app.switches["citySharingToggle"].waitForExistence(timeout: 3) {
             sleep(2)
             let shot2 = XCUIScreen.main.screenshot()
             try? shot2.pngRepresentation.write(to: dir.appendingPathComponent("02_city_sharing_privacy.png"))
@@ -1344,6 +2479,7 @@ final class PrototypeUITests: XCTestCase {
             if doneButton.waitForExistence(timeout: 2) {
                 doneButton.tap()
             }
+            selectAppTab(0, in: app)
             sleep(1)
         }
 
@@ -1454,6 +2590,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["confirmAddTripFlightButton"].isEnabled)
         capture("Add flight")
         app.buttons["Cancel"].tap()
+        discardChangesIfOffered(in: app)
 
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
@@ -1605,13 +2742,13 @@ final class PrototypeUITests: XCTestCase {
         continueAfterFailure = false
         let app = tripsApp()
         XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 8))
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let appearance = app.buttons["appearanceSettingsButton"]
         if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         appearance.tap()
         app.buttons["nightJadeAppearance"].tap()
         app.buttons["appearanceDoneButton"].tap()
-        app.tabBars.buttons.element(boundBy: 1).tap()
+        selectAppTab(1, in: app)
         app.buttons["tripCard-example-west"].tap()
         XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
         capture("Night Jade routes")
@@ -1619,7 +2756,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 4))
         capture("Night Jade immersive map")
         app.buttons["closeTripMapButton"].tap()
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         appearance.tap()
         app.buttons["solarJadeAppearance"].tap()
@@ -1698,11 +2835,13 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["saveTripButton"].isEnabled)
         capture("Compact new trip form")
         field.tap()
-        field.typeText(name)
+        field.typeText(name + "\n")
+        for _ in 0..<4 where !app.buttons["tripDestinationPicker"].isHittable { app.scrollViews.firstMatch.swipeDown() }
         app.buttons["tripDestinationPicker"].tap()
         capture("Destination search sheet")
         app.buttons[destination].tap()
         capture("New trip form")
+        for _ in 0..<4 where !app.buttons["saveTripButton"].isHittable { app.scrollViews.firstMatch.swipeUp() }
         app.buttons["saveTripButton"].tap()
         XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 4))
         XCTAssertTrue(app.staticTexts[name].exists)
@@ -1737,24 +2876,24 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.buttons["myCitySharingCard"].label.contains("Bakersfield, CA"))
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].label.contains("Bakersfield, CA"))
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Fremont, CA")).firstMatch.waitForExistence(timeout: 3))
         // A previous test may have left Night Jade selected. Make both captures deterministic.
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let initialAppearance = app.buttons["appearanceSettingsButton"]
         if !initialAppearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         XCTAssertTrue(initialAppearance.waitForExistence(timeout: 3)); initialAppearance.tap()
         app.buttons["solarJadeAppearance"].tap()
         app.buttons["appearanceDoneButton"].tap()
-        app.tabBars.buttons.element(boundBy: 0).tap()
+        selectAppTab(0, in: app)
         capture("City fallback visual side-by-side comparison")
-        app.tabBars.buttons.element(boundBy: 2).tap()
+        selectAppTab(2, in: app)
         let appearance = app.buttons["appearanceSettingsButton"]
         if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         XCTAssertTrue(appearance.waitForExistence(timeout: 3)); appearance.tap()
         app.buttons["nightJadeAppearance"].tap()
         app.buttons["appearanceDoneButton"].tap()
-        app.tabBars.buttons.element(boundBy: 0).tap()
+        selectAppTab(0, in: app)
         capture("City fallback comparison Night Jade")
     }
 
@@ -1764,9 +2903,111 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityFallbackStates", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.buttons["myCitySharingCard"].label.contains("Location unavailable"))
+        XCTAssertTrue(app.staticTexts["homeCityStatus"].label.contains("Your city isn’t set yet"))
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Sharing paused")).firstMatch.waitForExistence(timeout: 3))
         capture("City artwork paused and unavailable")
+    }
+
+    private func historyApp(extra: String, language: String, locale: String, additional: [String] = []) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", extra, "-AppleLanguages", "(\(language))", "-AppleLocale", locale] + additional
+        app.launch()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+        app.scrollViews["friendsScreen"].swipeDown()
+        selectAppTab(2, in: app)
+        let moments = app.buttons["sameCityMomentsLink"]
+        XCTAssertTrue(moments.waitForExistence(timeout: 5)); moments.tap()
+        XCTAssertTrue(app.scrollViews["notificationHistoryScreen"].waitForExistence(timeout: 5))
+        return app
+    }
+
+    private func selectAppearance(_ identifier: String, in app: XCUIApplication) {
+        selectAppTab(2, in: app)
+        let appearance = app.buttons["appearanceSettingsButton"]
+        for _ in 0..<5 where !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        appearance.tap()
+        XCTAssertTrue(app.buttons[identifier].waitForExistence(timeout: 4))
+        app.buttons[identifier].tap()
+        app.buttons["appearanceDoneButton"].tap()
+        selectAppTab(0, in: app)
+    }
+
+    private func selectAppTab(_ index: Int, in app: XCUIApplication) {
+        let bar = app.tabBars.firstMatch
+        XCTAssertTrue(bar.waitForExistence(timeout: 5))
+        if bar.buttons.count < 3 { bar.buttons.firstMatch.tap() }
+        let tab = bar.buttons.element(boundBy: index)
+        XCTAssertTrue(tab.waitForExistence(timeout: 4))
+        tab.tap()
+    }
+
+    private func openCitySharingFromProfile(in app: XCUIApplication) {
+        selectAppTab(2, in: app)
+        let sharing = app.buttons["profileCitySharingButton"]
+        for _ in 0..<5 where !sharing.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
+        XCTAssertTrue(sharing.waitForExistence(timeout: 4))
+        sharing.tap()
+        XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 4))
+    }
+
+    private func expectFriendSharingDescription(_ expected: String, in app: XCUIApplication) {
+        let toggle = app.switches["friendCitySharingToggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
+        for _ in 0..<5 where !toggle.isHittable { app.scrollViews.firstMatch.swipeUp() }
+        let updated = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", expected), object: toggle)
+        XCTAssertEqual(XCTWaiter.wait(for: [updated], timeout: 5), .completed)
+    }
+
+    private func checkFriendSharingDescriptions(language: String, locale: String, active: String, off: String, paused: String) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale]
+        app.launch()
+        let mia = app.buttons["friendCard-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(mia.waitForExistence(timeout: 8)); mia.tap()
+        let individual = app.switches["friendCitySharingToggle"]
+        expectFriendSharingDescription(active, in: app)
+        capture("F03-sharing-active-\(language)")
+        individual.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        expectFriendSharingDescription(off, in: app)
+        XCTAssertEqual(individual.value as? String, "0")
+        capture("F03-friend-sharing-off-\(language)")
+        individual.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        expectFriendSharingDescription(active, in: app)
+        app.navigationBars.buttons.firstMatch.tap()
+
+        openCitySharingFromProfile(in: app)
+        let global = app.switches["citySharingToggle"]
+        global.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        let globalOff = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "0"), object: global)
+        XCTAssertEqual(XCTWaiter.wait(for: [globalOff], timeout: 5), .completed)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        selectAppTab(0, in: app)
+        XCTAssertTrue(app.staticTexts["homeSharingPaused"].waitForExistence(timeout: 4))
+        XCTAssertFalse(app.buttons["sameCityReunionToggle"].exists)
+        XCTAssertFalse(app.buttons["homeCityRecoveryButton"].exists)
+        capture("F01-home-sharing-paused-\(language)")
+        mia.tap()
+        expectFriendSharingDescription(paused, in: app)
+        XCTAssertEqual(individual.value as? String, "1")
+        capture("F03-global-sharing-paused-\(language)")
+        individual.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        expectFriendSharingDescription(off, in: app)
+        capture("F03-both-sharing-off-\(language)")
+        app.navigationBars.buttons.firstMatch.tap()
+
+        openCitySharingFromProfile(in: app)
+        global.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        let globalOn = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value == %@", "1"), object: global)
+        XCTAssertEqual(XCTWaiter.wait(for: [globalOn], timeout: 5), .completed)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        selectAppTab(0, in: app)
+        XCTAssertFalse(app.staticTexts["homeSharingPaused"].exists)
+        mia.tap()
+        expectFriendSharingDescription(off, in: app)
+        XCTAssertEqual(individual.value as? String, "0")
+        individual.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
+        expectFriendSharingDescription(active, in: app)
     }
 
     private func tripsApp(seedExamples: Bool = true, asMember: Bool = false) -> XCUIApplication {

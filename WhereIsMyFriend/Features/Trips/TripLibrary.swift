@@ -84,16 +84,13 @@ struct TripPlan: Identifiable, Codable {
     var destination: AirportLocation? { AirportLocation.location(for: destinationAirport) }
     var destinationName: String { destination?.city ?? destinationAirport }
 
-    func initialFlightDate(existing: TripFlight? = nil) -> Date {
-        // Use the trip's calendar day, not today or a UTC midnight conversion.
-        existing?.date ?? startDay.pickerDate
+    func initialFlightDate(existing: TripFlight? = nil, direction: TripDirection = .outbound) -> Date {
+        // A departure date is a calendar day, even after the device changes time zone.
+        existing?.calendarDay.pickerDate ?? (direction == .outbound ? startDay : endDay).pickerDate
     }
 
     var dateLabel: String {
-        if startDay.value.prefix(4) == endDay.value.prefix(4) {
-            return "\(startDay.label) – \(endDay.label), \(endDay.value.prefix(4))"
-        }
-        return "\(startDay.label), \(startDay.value.prefix(4)) – \(endDay.label), \(endDay.value.prefix(4))"
+        TravelDateRangeSelection.label(start: startDay.value, end: endDay.value)
     }
     var addedTravelerCount: Int {
         Set(flights.filter { $0.direction == .outbound }.compactMap(\.travelerID)).count
@@ -115,7 +112,7 @@ struct TripPlan: Identifiable, Codable {
 
         // Return planning stays useful during the trip, until that journey starts.
         let plannedDay = direction == .outbound ? startDay : endDay
-        let firstFlightDay = flightsInDirection.map { TripDay($0.date) }.min() ?? plannedDay
+        let firstFlightDay = flightsInDirection.map(\.calendarDay).min() ?? plannedDay
         let journeyDay = min(plannedDay, firstFlightDay)
         let today = TripDay(now, timeZone: destination?.timeZone ?? .current)
         if today < journeyDay || flightsInDirection.isEmpty {
@@ -171,6 +168,7 @@ struct TripPlan: Identifiable, Codable {
                 let fixtureIDs = ["wang": owner.id, "mia": "example-mia", "david": "example-david", "alex": "example-alex"]
                 flight.travelerID = fixtureIDs[String(flight.id.split(separator: "-").first ?? "")]
                 flight.date = (flight.direction == .outbound ? start : end).pickerDate
+                flight.departureDay = (flight.direction == .outbound ? start : end).value
                 return flight
             }
         }
@@ -199,6 +197,19 @@ struct TripPlan: Identifiable, Codable {
 /// Mutations are acknowledged by the server before they are shown as saved.
 @MainActor
 final class TripLibrary: ObservableObject {
+    #if DEBUG
+    private var simulateNotificationFailure = ProcessInfo.processInfo.arguments.contains("-testTripNotificationFailure")
+    #endif
+    static func storageScope(repository: any AppRepository, ownerID: String) -> String {
+        var value = repository.mode == .remote ? "\(repository.storageScope)-\(ownerID)" : "\(repository.mode.rawValue)-\(ownerID)"
+        #if DEBUG
+        if let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("-tripTestNamespace=") }) {
+            value += "-" + String(argument.dropFirst("-tripTestNamespace=".count))
+        }
+        #endif
+        return value
+    }
+
     @Published private(set) var trips: [TripPlan] = []
     @Published private(set) var scope: String?
     @Published private(set) var currentUserID: String?
@@ -474,6 +485,13 @@ final class TripLibrary: ObservableObject {
 
     func setFlightAlerts(_ enabled: Bool, tripID: String) async -> Bool {
         guard let trip = trips.first(where: { $0.id == tripID }), selfParticipant(in: trip) != nil, trip.cancelledAt == nil else { return false }
+        #if DEBUG
+        if !isCloud && simulateNotificationFailure {
+            simulateNotificationFailure = false
+            errorMessage = String(localized: "Your notification change was not confirmed. Check your connection, reopen this trip, and try again.")
+            return false
+        }
+        #endif
         if !isCloud { return update(tripID) { $0.flightAlertsEnabled = enabled } }
         return await cloudSave { try await $0.updateTripCollaboration(id: tripID, action: "preferences", payload: .init(enabled: enabled)) }
     }
@@ -557,10 +575,16 @@ final class TripLibrary: ObservableObject {
     }
 
     func saveFlight(_ flight: TripFlight, tripID: String, editing: Bool, candidateID: String?) async -> Bool {
-        guard isCloud else { return editing ? editFlight(flight, in: tripID) : addFlight(flight, to: tripID) }
         guard let trip = trips.first(where: { $0.id == tripID }), owns(flight, in: trip) else { return false }
+        // Opening and saving an unchanged flight must not erase provider verification.
+        // Do not replay an old candidate ID: its lookup cache may already have expired.
+        if editing, candidateID == nil, let original = trip.flights.first(where: { $0.id == flight.id }),
+           owns(original, in: trip), original.matchesSelection(number: flight.flightNumber, day: flight.calendarDay, direction: flight.direction) {
+            return true
+        }
+        guard isCloud else { return editing ? editFlight(flight, in: tripID) : addFlight(flight, to: tripID) }
         return await cloudSave { try await $0.mutateTrip(id: tripID, mutation: TripMutation(kind: editing ? "editFlight" : "addFlight",
-            payload: TripPayload(id: flight.id, flightNumber: flight.flightNumber, date: TripDay(flight.date).value,
+            payload: TripPayload(id: flight.id, flightNumber: flight.flightNumber, date: flight.calendarDay.value,
                 direction: flight.direction.rawValue, candidateID: candidateID), revision: flight.revision)) }
     }
 
@@ -634,9 +658,18 @@ final class TripLibrary: ObservableObject {
     }
 
     func decline(_ invitation: TripInvitation) async {
-        let capturedScope = scope, capturedGeneration = generation
+        guard let remote, !isSaving else { return }
+        let capturedScope = scope
+        generation += 1
+        let capturedGeneration = generation, operationID = UUID()
+        saveOperationID = operationID
+        isSaving = true
+        errorMessage = nil
+        defer {
+            if saveOperationID == operationID { isSaving = false; saveOperationID = nil }
+        }
         do {
-            try await remote?.dismissTripInvitation(id: invitation.id, revoke: false)
+            try await remote.dismissTripInvitation(id: invitation.id, revoke: false)
             guard scope == capturedScope, generation == capturedGeneration else { return }
             invitations.removeAll { $0.id == invitation.id }
         } catch {

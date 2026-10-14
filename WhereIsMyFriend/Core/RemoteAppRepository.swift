@@ -402,6 +402,10 @@ actor RemoteAppRepository: AppRepository {
         )
     }
 
+    func cancelFriendRequest(id: UUID) async throws -> AppSnapshot {
+        try await requestSnapshot(path: "/v1/friends/requests/\(id.uuidString)", method: "DELETE", body: EmptyBody())
+    }
+
     func respond(to requestID: UUID, response: FriendRequestResponse) async throws -> AppSnapshot {
         try await requestSnapshot(
             path: "/v1/friends/requests/\(requestID.uuidString)",
@@ -456,10 +460,23 @@ actor RemoteAppRepository: AppRepository {
         await lockMutations()
         defer { unlockMutations() }
         try check(context)
-        // Retire old intent before trying the new one, regardless of connectivity.
-        await mutationQueue.removeSuperseded(ownerID: owner, key: "sharing-preferences")
+        let pending = await mutationQueue.all(ownerID: owner)
+        let preservedPause = !preferences.citySharingEnabled ? pending.first(where: {
+            if case .sharingPreferences(let value) = $0.payload { return !value.citySharingEnabled }
+            return false
+        }) : nil
+        try check(context)
+        // Explicitly enabling sharing replaces an old pause. Changes which keep
+        // sharing paused must retain its barrier until the replacement succeeds.
+        if preservedPause == nil { await mutationQueue.removeSuperseded(ownerID: owner, key: "sharing-preferences") }
         try check(context)
         do {
+            if preservedPause != nil {
+                let snapshot: AppSnapshot = try await authorizedRequest(path: "/v1/sharing", method: "PATCH", body: preferences)
+                try check(context)
+                await mutationQueue.removeSuperseded(ownerID: owner, key: "sharing-preferences")
+                return try await applyingPendingIntent(snapshot, context: context)
+            }
             return try await requestSnapshot(path: "/v1/sharing", method: "PATCH", body: preferences)
         } catch where isRetryable(error) {
             try await queue(.sharingPreferences(preferences), context: context)
@@ -471,6 +488,13 @@ actor RemoteAppRepository: AppRepository {
             }
             cached.syncState = .offline
             return cached
+        } catch {
+            try check(context)
+            if let preservedPause, error as? RepositoryError != .sessionExpired {
+                await mutationQueue.suspendUntilExplicitRetry(id: preservedPause.id)
+                try check(context)
+            }
+            throw error
         }
     }
 
@@ -489,6 +513,20 @@ actor RemoteAppRepository: AppRepository {
             source: source,
             clientUpdatedAt: observedAt
         )
+        let awaitingPause = await mutationQueue.hasPendingSharingPause(ownerID: owner)
+        try check(context)
+        if awaitingPause {
+            // A manual city change can arrive after an offline pause, before
+            // that pause reaches the server. Do not publish it ahead of consent.
+            try await queue(.presence(upload), context: context)
+            try check(context)
+            var cached = try authenticatedCachedSnapshot()
+            cached.currentPresence = CurrentUserPresence(administrativeArea: upload.administrativeArea,
+                city: upload.city, countryCode: upload.countryCode,
+                updatedAt: upload.clientUpdatedAt, source: upload.source)
+            cached.syncState = .offline
+            return cached
+        }
         do {
             return try await requestSnapshot(
                 path: "/v1/presence/current",
@@ -669,7 +707,38 @@ actor RemoteAppRepository: AppRepository {
     private func requestSnapshot<Body: Encodable & Sendable>(
         path: String, method: String, body: Body?, allowsAuthTransition: Bool = false
     ) async throws -> AppSnapshot {
-        try await authorizedRequest(path: path, method: method, body: body, allowsAuthTransition: allowsAuthTransition)
+        let context = try requestContext(authentication: allowsAuthTransition)
+        let snapshot: AppSnapshot = try await authorizedRequest(path: path, method: method, body: body, allowsAuthTransition: allowsAuthTransition)
+        return try await applyingPendingIntent(snapshot, context: context, allowsAuthTransition: allowsAuthTransition)
+    }
+
+    private func applyingPendingIntent(_ value: AppSnapshot, context: RequestContext, allowsAuthTransition: Bool = false) async throws -> AppSnapshot {
+        var snapshot = value
+        try check(context)
+        guard !allowsAuthTransition, snapshot.isAuthenticated,
+              let owner = context.ownerID, snapshot.currentUser.id == owner else { return snapshot }
+        // Bootstrap and unrelated writes return the server's entire snapshot.
+        // During retry backoff it does not yet contain the user's offline intent.
+        // Retain that intent until its own mutation has actually been confirmed.
+        let pending = await mutationQueue.all(ownerID: owner)
+        try check(context)
+        for mutation in pending {
+            switch mutation.payload {
+            case .presence(let upload):
+                snapshot.currentPresence = CurrentUserPresence(administrativeArea: upload.administrativeArea,
+                    city: upload.city, countryCode: upload.countryCode,
+                    updatedAt: upload.clientUpdatedAt, source: upload.source)
+            case .sharingPreferences(let preferences):
+                snapshot.sharingPreferences = preferences
+            case .pushToken:
+                break
+            }
+        }
+        if !pending.isEmpty {
+            snapshot.syncState = .offline
+            if !snapshot.sharingPreferences.citySharingEnabled { ColocationEvaluator.evaluate(snapshot: &snapshot) }
+        }
+        return snapshot
     }
 
     private func authorizedRequest<Response: Decodable & Sendable, Body: Encodable & Sendable>(
@@ -713,9 +782,7 @@ actor RemoteAppRepository: AppRepository {
         try check(context)
         guard (try? await authentication.accessToken()) != nil else { return }
         try check(context)
-        let pending = force
-            ? await mutationQueue.all(ownerID: ownerID)
-            : await mutationQueue.due(ownerID: ownerID)
+        let pending = await mutationQueue.replayable(ownerID: ownerID, force: force)
         var terminalError: Error?
         for mutation in pending {
             try check(context)
@@ -756,6 +823,14 @@ actor RemoteAppRepository: AppRepository {
                 throw RepositoryError.sessionExpired
             } catch {
                 try check(context)
+                if case .sharingPreferences(let preferences) = mutation.payload, !preferences.citySharingEnabled {
+                    // A rejected pause is not permission to publish a queued
+                    // city. Keep the local privacy intent until the user retries
+                    // explicitly or replaces it with a new sharing preference.
+                    if isRetryable(error) { await mutationQueue.markFailed(id: mutation.id) }
+                    else { await mutationQueue.suspendUntilExplicitRetry(id: mutation.id) }
+                    throw error
+                }
                 if isRetryable(error) {
                     await mutationQueue.markFailed(id: mutation.id)
                     throw error

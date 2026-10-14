@@ -18,6 +18,56 @@ actor LocalDemoRepository: AppRepository {
                 ?? DemoData.initialSnapshot()
         }
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testEmptyFriends") {
+            self.snapshot.isAuthenticated = true
+            self.snapshot.friends = []
+            self.snapshot.friendRequests = []
+            self.snapshot.friendPreferences = []
+            self.snapshot.colocationEvents = []
+            self.snapshot.colocationSessions = []
+            // AppStore reads its initial cache before its first async repository refresh.
+            // Keep that cache consistent with this explicitly requested UI-test fixture.
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testLongHistory"),
+           let index = self.snapshot.friends.firstIndex(where: { $0.username == "mia" }) {
+            self.snapshot.friends[index].displayName = "Alexandra Catherine Montgomery-Williams"
+            self.snapshot.friends[index].city = "A very long shared city display name"
+            self.snapshot.currentPresence.city = self.snapshot.friends[index].city
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testReadableRequest"),
+           let request = self.snapshot.incomingRequests.first {
+            self.snapshot.friendRequests = [FriendRequest(
+                id: UUID(uuidString: "05000000-0000-4000-8000-000000000001")!, userID: request.userID,
+                displayName: request.displayName, username: request.username, direction: .incoming,
+                createdAt: Date(), avatarPalette: request.avatarPalette)]
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testHistoryRevisit")
+            || ProcessInfo.processInfo.arguments.contains("-testHistoryMissingSession"),
+           let friend = self.snapshot.friends.first(where: { $0.username == "mia" }),
+           let city = self.snapshot.currentPresence.city,
+           let key = CityIdentity.presenceKey(city: city, countryCode: self.snapshot.currentPresence.countryCode,
+                                             administrativeArea: self.snapshot.currentPresence.administrativeArea) {
+            let now = Date()
+            self.snapshot.friends = [friend]
+            self.snapshot.colocationSessions = [
+                ColocationSession(id: UUID(), friendID: friend.id, cityKey: key,
+                    enteredAt: now.addingTimeInterval(-7 * 86400), leftAt: now.addingTimeInterval(-6 * 86400))
+            ]
+            self.snapshot.colocationEvents = [ColocationEvent(cityKey: key,
+                id: UUID(uuidString: "07000000-0000-4000-8000-000000000001")!, deduplicationKey: "history-previous-visit",
+                city: city, friendIDs: [friend.id], friendNames: [friend.displayName],
+                createdAt: now.addingTimeInterval(-7 * 86400), wasNotified: true)]
+            if ProcessInfo.processInfo.arguments.contains("-testHistoryRevisit") {
+                let start = now.addingTimeInterval(ProcessInfo.processInfo.arguments.contains("-testHistoryClock") ? -70 : -3600)
+                self.snapshot.colocationSessions.append(ColocationSession(id: UUID(), friendID: friend.id, cityKey: key,
+                    enteredAt: start, leftAt: nil))
+                self.snapshot.colocationEvents.append(ColocationEvent(cityKey: key,
+                    id: UUID(uuidString: "07000000-0000-4000-8000-000000000002")!, deduplicationKey: "history-current-visit",
+                    city: city, friendIDs: [friend.id], friendNames: [friend.displayName],
+                    createdAt: start, wasNotified: true))
+            }
+        }
         if ProcessInfo.processInfo.arguments.contains("-testOverlapCity") {
             TravelCityHistory.remember(TravelCity.examples[0], origin: storageScope, ownerID: self.snapshot.currentUser.id)
         }
@@ -73,6 +123,31 @@ actor LocalDemoRepository: AppRepository {
             }
             self.snapshot.colocationEvents = []
             self.snapshot.colocationSessions = []
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testSameCityHeader") {
+            let now = Date()
+            self.snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: "Sunnyvale",
+                countryCode: "US", updatedAt: now.addingTimeInterval(-120), source: .foregroundLocation)
+            let names = ["Mia Chen", "Owen Park", "Zoe Liang"]
+            for index in 0..<min(3, self.snapshot.friends.count) {
+                self.snapshot.friends[index].displayName = names[index]
+                self.snapshot.friends[index].city = "Sunnyvale"
+                self.snapshot.friends[index].countryCode = "US"
+                self.snapshot.friends[index].administrativeArea = "CA"
+                self.snapshot.friends[index].updatedAt = now.addingTimeInterval(-Double(8 + index * 7) * 60)
+            }
+            self.snapshot.colocationEvents = []
+            self.snapshot.colocationSessions = []
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testOfflineHome") {
+            self.snapshot.syncState = .offline
+            self.snapshot.lastSyncedAt = Date().addingTimeInterval(-1800)
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
+        }
+        if ProcessInfo.processInfo.arguments.contains("-testSignedOut") {
+            self.snapshot = DemoData.signedOutSnapshot()
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
         }
         #endif
     }
@@ -273,9 +348,17 @@ actor LocalDemoRepository: AppRepository {
         return commit()
     }
 
+    func cancelFriendRequest(id: UUID) async throws -> AppSnapshot {
+        try requireAuthentication()
+        guard let request = snapshot.friendRequests.first(where: { $0.id == id }) else { return snapshot }
+        guard request.direction == .outgoing else { throw RepositoryError.requestNotFound }
+        snapshot.friendRequests.removeAll { $0.id == id }
+        return commit()
+    }
+
     func respond(to requestID: UUID, response: FriendRequestResponse) async throws -> AppSnapshot {
         try requireAuthentication()
-        guard let index = snapshot.friendRequests.firstIndex(where: { $0.id == requestID }) else {
+        guard let index = snapshot.friendRequests.firstIndex(where: { $0.id == requestID && $0.direction == .incoming }) else {
             throw RepositoryError.requestNotFound
         }
         let request = snapshot.friendRequests[index]

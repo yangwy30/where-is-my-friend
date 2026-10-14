@@ -49,7 +49,7 @@ for (const [locale, specs] of Object.entries(copy)) {
     const svgDir=path.join(out,'svg',locale);fs.mkdirSync(svgDir,{recursive:true});
     fs.writeFileSync(path.join(svgDir,`${s.id}.svg`),svg);
     const renderedBase=await sharp(Buffer.from(svg)).flatten({background:colors[0]}).png().toBuffer();
-    for(const [w,h] of [[1284,2778],[1320,2868]]){
+    for(const [w,h] of [[1284,2778],[1320,2868],[1206,2622]]){
       const dir=path.join(out,locale,`${w}x${h}`);fs.mkdirSync(dir,{recursive:true});
       await sharp(renderedBase).resize(w,h,{fit:'cover'}).removeAlpha().png({compressionLevel:9}).toFile(path.join(dir,`${s.id}.png`));
     }

@@ -122,11 +122,16 @@ final class AppStore: ObservableObject {
     var tripRepository: any AppRepository { repository }
     @Published var pendingTripInvitationID: UUID? = UserDefaults.standard.string(forKey: "pending-trip-invitation.v1").flatMap(UUID.init(uuidString:))
     @Published var pendingTripViewID: String?
+    @Published var pendingFriendViewID: UUID?
     @Published var pendingFriendRequestID: UUID? = UserDefaults.standard.string(forKey: "pending-friend-request.v1").flatMap(UUID.init(uuidString:))
     private var pendingCityUpdate: PendingCityUpdate?
     private var latestPushToken: String?
     private var celebratesNextPushRegistration = false
     private var activeOperationCount = 0
+    private var snapshotMutationCount = 0
+    private var snapshotMutationWaiters: [CheckedContinuation<Void, Never>] = []
+    private var snapshotMutationOwners: [UUID: Int] = [:]
+    private var snapshotReconciliationOwners: Set<UUID> = []
     private var visibleOperationCount = 0
     private var operationSequence = 0
     private var latestAppliedOperationSequence = 0
@@ -189,7 +194,16 @@ final class AppStore: ObservableObject {
     }
 
     func refresh(minimumInterval: TimeInterval = 0) async {
-        guard !isSavingProfile, !isDeletingAccount else { return }
+        guard !isDeletingAccount else { return }
+        let requestedOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
+        // A read started while a write is in flight can return the pre-write
+        // snapshot and otherwise supersede that write by operation sequence.
+        // Wait for writes instead; every waiting reader then shares one refresh.
+        while snapshotMutationCount > 0 {
+            await withCheckedContinuation { snapshotMutationWaiters.append($0) }
+            guard !Task.isCancelled, !isDeletingAccount,
+                  requestedOwner == (snapshot.isAuthenticated ? snapshot.currentUser.id : nil) else { return }
+        }
         if let refreshTask { await refreshTask.value; return }
         let owner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
         if owner == lastRefreshOwner, let stamp = lastRefreshAt, Date().timeIntervalSince(stamp) < minimumInterval {
@@ -293,13 +307,13 @@ final class AppStore: ObservableObject {
             WidgetCenter.shared.reloadAllTimelines()
         }
         if !deleted {
-            notice = AppNotice(title: "Couldn’t confirm account deletion",
-                message: notice?.message ?? "Please check your connection and try again. Your account deletion has not been confirmed.")
+            notice = AppNotice(title: String(localized: "Couldn’t confirm account deletion"),
+                message: notice?.message ?? String(localized: "Please check your connection and try again. Your account deletion has not been confirmed."))
         }
     }
 
     @discardableResult
-    func sendFriendRequest(username: String) async -> Bool {
+    func sendFriendRequest(username: String, onFailure: ((String) -> Void)? = nil) async -> Bool {
         guard !isSendingFriendRequest else { return false }
         isSendingFriendRequest = true
         defer { isSendingFriendRequest = false }
@@ -307,26 +321,36 @@ final class AppStore: ObservableObject {
             format: String(localized: "Request sent to @%@."),
             normalized(username)
         )
-        return await perform(successMessage: message) {
+        return await perform(successMessage: message, onFailure: onFailure) {
             try await self.repository.sendFriendRequest(username: username)
         }
     }
 
     @discardableResult
-    func respond(to requestID: UUID, response: FriendRequestResponse) async -> Bool {
+    func respond(to requestID: UUID, response: FriendRequestResponse, onFailure: ((String) -> Void)? = nil) async -> Bool {
         guard !respondingRequestIDs.contains(requestID) else { return false }
         respondingRequestIDs.insert(requestID)
         defer { respondingRequestIDs.remove(requestID) }
         let message = response == .accept
             ? String(localized: "Friend request accepted.")
             : String(localized: "Friend request declined.")
-        return await perform(successMessage: message) {
+        return await perform(successMessage: message, onFailure: onFailure) {
             try await self.repository.respond(to: requestID, response: response)
         }
     }
 
     func isResponding(to requestID: UUID) -> Bool {
         respondingRequestIDs.contains(requestID)
+    }
+
+    @discardableResult
+    func cancelFriendRequest(id: UUID, onFailure: ((String) -> Void)? = nil) async -> Bool {
+        guard !respondingRequestIDs.contains(id) else { return false }
+        respondingRequestIDs.insert(id)
+        defer { respondingRequestIDs.remove(id) }
+        return await perform(successMessage: String(localized: "Invitation withdrawn."), onFailure: onFailure) {
+            try await self.repository.cancelFriendRequest(id: id)
+        }
     }
 
     func removeFriend(id: UUID) async {
@@ -556,6 +580,20 @@ final class AppStore: ObservableObject {
 
     @discardableResult
     func handleIncomingURL(_ url: URL) -> Bool {
+        if let id = FriendDetailLink.parse(url) {
+            // An explicit Widget/friend destination replaces pending invitation
+            // presentations, including links restored before sign-in.
+            discardPendingInvite()
+            discardFriendRequestLink()
+            discardTripInvitationLink()
+            pendingTripViewID = nil
+            pendingSameCityEventID = nil
+            pendingUpcomingID = nil
+            dismissSameCityBanner()
+            dismissUpcomingBanner()
+            pendingFriendViewID = id
+            return true
+        }
         if let id = FriendRequestNotificationLink.parse(url) {
             discardTripInvitationLink()
             discardPendingInvite()
@@ -593,9 +631,9 @@ final class AppStore: ObservableObject {
         return true
     }
 
-    func acceptPendingInvite() async {
+    func acceptPendingInvite(onFailure: ((String) -> Void)? = nil) async {
         guard let invite = pendingInvite else { return }
-        if await sendFriendRequest(username: invite.username) {
+        if await sendFriendRequest(username: invite.username, onFailure: onFailure), pendingInvite == invite {
             discardPendingInvite()
         }
     }
@@ -629,6 +667,7 @@ final class AppStore: ObservableObject {
         waitsForPendingCityUpdate: Bool = true,
         allowsDuringAccountDeletion: Bool = false,
         preservingRefresh: UUID? = nil,
+        onFailure: ((String) -> Void)? = nil,
         operation: @escaping () async throws -> AppSnapshot
     ) async -> Bool {
         // A later refresh/profile result must not supersede a confirmed account deletion.
@@ -636,6 +675,17 @@ final class AppStore: ObservableObject {
         operationSequence += 1
         let currentOperationSequence = operationSequence
         activeOperationCount += 1
+        let isSnapshotMutation = preservingRefresh == nil
+        let operationOwner = snapshot.isAuthenticated ? snapshot.currentUser.id : nil
+        let mutationOwner = isSnapshotMutation ? operationOwner : nil
+        if isSnapshotMutation {
+            snapshotMutationCount += 1
+            if let mutationOwner {
+                let ownedCount = snapshotMutationOwners[mutationOwner, default: 0]
+                if ownedCount > 0 { snapshotReconciliationOwners.insert(mutationOwner) }
+                snapshotMutationOwners[mutationOwner] = ownedCount + 1
+            }
+        }
         if showsActivity {
             visibleOperationCount += 1
             isWorking = true
@@ -659,6 +709,7 @@ final class AppStore: ObservableObject {
                     else { invalidateRefresh() }
                 }
                 if !updated.isAuthenticated || (previousOwner != nil && previousOwner != updated.currentUser.id) {
+                    pendingFriendViewID = nil
                     friendPreferenceSaves.removeAll()
                     sharingSaveID = nil
                     isSavingSharingPreferences = false
@@ -688,12 +739,14 @@ final class AppStore: ObservableObject {
             }
             result = true
         } catch {
+            var expiredThisSession = false
             if error as? RepositoryError == .sessionExpired,
                currentOperationSequence >= latestAppliedOperationSequence {
                 // A stale request must not sign the user out after a newer request
                 // has already succeeded (for example, after a token refresh).
                 latestAppliedOperationSequence = currentOperationSequence
                 applySessionExpirationIfNeeded(error)
+                expiredThisSession = true
             }
             if repositoryMode == .remote,
                snapshot.isAuthenticated,
@@ -702,10 +755,23 @@ final class AppStore: ObservableObject {
                 SharedAppStateStore.save(snapshot, origin: repository.storageScope)
             }
             await refreshPendingOperationCount()
-            if presentsErrors && !(error is CancellationError) {
+            let explainsCurrentExpiration = expiredThisSession && !snapshot.isAuthenticated
+                && latestAppliedOperationSequence == currentOperationSequence
+            let sameSession = operationOwner == (snapshot.isAuthenticated ? snapshot.currentUser.id : nil)
+            let staleExpiration = error as? RepositoryError == .sessionExpired && !expiredThisSession
+            if explainsCurrentExpiration {
+                // The authenticated sheet is gone after cleanup. Keep its reason
+                // visible on the sign-in screen, including for a passive refresh.
+                notice = AppNotice(title: String(localized: "Couldn’t complete that"), message: error.localizedDescription)
+                if presentsErrors { onFailure?(error.localizedDescription) }
+            } else if presentsErrors && !(error is CancellationError) && sameSession && !staleExpiration {
                 let isUnauthenticated = (error as? RepositoryError) == .notAuthenticated
                 if isUnauthenticated && !snapshot.isAuthenticated {
                     // Intentionally signed out; suppress notice
+                } else if let onFailure {
+                    // Presented sheets own their error UI; an alert attached to
+                    // the root can remain hidden underneath that presentation.
+                    onFailure(error.localizedDescription)
                 } else {
                     notice = AppNotice(
                         title: String(localized: "Couldn’t complete that"),
@@ -717,6 +783,27 @@ final class AppStore: ObservableObject {
         }
 
         activeOperationCount = max(0, activeOperationCount - 1)
+        var reconciliationOwner: UUID?
+        if isSnapshotMutation {
+            snapshotMutationCount -= 1
+            if let mutationOwner {
+                let ownedCount = snapshotMutationOwners[mutationOwner, default: 1] - 1
+                snapshotMutationOwners[mutationOwner] = ownedCount > 0 ? ownedCount : nil
+            }
+            if snapshotMutationCount == 0 {
+                if snapshot.isAuthenticated, snapshotReconciliationOwners.contains(snapshot.currentUser.id) {
+                    reconciliationOwner = snapshot.currentUser.id
+                    // Multiple full-snapshot writes may commit in the opposite
+                    // order to their request sequence. Reconcile once after the
+                    // group settles, without reusing a read begun before them.
+                    invalidateRefresh()
+                }
+                snapshotReconciliationOwners.removeAll()
+                let waiters = snapshotMutationWaiters
+                snapshotMutationWaiters.removeAll()
+                for waiter in waiters { waiter.resume() }
+            }
+        }
         if showsActivity {
             visibleOperationCount = max(0, visibleOperationCount - 1)
             isWorking = visibleOperationCount > 0
@@ -725,6 +812,9 @@ final class AppStore: ObservableObject {
             await flushPendingCityUpdateIfNeeded()
         } else {
             Task { await self.flushPendingCityUpdateIfNeeded() }
+        }
+        if let reconciliationOwner, snapshot.isAuthenticated, snapshot.currentUser.id == reconciliationOwner {
+            await refresh()
         }
         return result
     }
@@ -753,6 +843,7 @@ final class AppStore: ObservableObject {
 
     private func applySessionExpirationIfNeeded(_ error: Error) {
         guard error as? RepositoryError == .sessionExpired else { return }
+        pendingFriendViewID = nil
         friendPreferenceSaves.removeAll()
         sharingSaveID = nil
         isSavingSharingPreferences = false

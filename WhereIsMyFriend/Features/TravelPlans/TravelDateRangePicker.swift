@@ -16,10 +16,13 @@ struct TravelDateRangeSelection: Equatable {
     }
 
     static func label(start: String, end: String) -> String {
-        let first = TripDay(value: start).label, last = TripDay(value: end).label
-        if start == end { return "\(first), \(start.prefix(4))" }
-        if start.prefix(4) == end.prefix(4) { return "\(first) – \(last), \(end.prefix(4))" }
-        return "\(first), \(start.prefix(4)) – \(last), \(end.prefix(4))"
+        guard let first = PersonalTravelPlan.parseDay(start), let last = PersonalTravelPlan.parseDay(end) else { return "" }
+        let formatter = DateIntervalFormatter()
+        formatter.locale = .current
+        formatter.timeZone = .gmt
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter.string(from: first, to: last)
     }
 }
 
@@ -98,7 +101,7 @@ struct TravelDateRangePicker: View {
                             Button { moveMonth(-1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44).contentShape(Rectangle()) }
                                 .accessibilityLabel("Previous month").accessibilityIdentifier("rangePreviousMonth")
                             Spacer(minLength: 0)
-                            Text(monthTitle).font(.headline).accessibilityIdentifier("rangeMonthTitle")
+                            Text(monthTitle).font(.headline).fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("rangeMonthTitle")
                             Spacer(minLength: 0)
                             Button { moveMonth(1) } label: { Image(systemName: "chevron.right").frame(width: 44, height: 44).contentShape(Rectangle()) }
                                 .accessibilityLabel("Next month").accessibilityIdentifier("rangeNextMonth")
@@ -155,6 +158,7 @@ struct TravelDateRangePicker: View {
         return Button { selection.select(day) } label: {
             Text(calendar.component(.day, from: date), format: .number)
                 .font(.body.weight(first || last ? .semibold : .regular))
+                .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
                 .lineLimit(1).minimumScaleFactor(0.7)
                 .foregroundStyle(first || last ? WIFTheme.canvas : WIFTheme.primaryText)
                 .frame(maxWidth: .infinity, minHeight: 44)

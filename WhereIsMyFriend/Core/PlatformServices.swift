@@ -482,6 +482,12 @@ final class LocalNotificationService: NSObject, ObservableObject {
     }
 
     func refreshAuthorizationStatus() async {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testNotificationsDenied") {
+            authorizationStatus = .denied
+            return
+        }
+        #endif
         authorizationStatus = await center.notificationSettings().authorizationStatus
     }
 

@@ -10,8 +10,20 @@ private enum ProfileRoute: Hashable {
     case events
 }
 
+private struct OpenSharedTripsKey: EnvironmentKey {
+    static let defaultValue: () -> Void = {}
+}
+
+extension EnvironmentValues {
+    var openSharedTrips: () -> Void {
+        get { self[OpenSharedTripsKey.self] }
+        set { self[OpenSharedTripsKey.self] = newValue }
+    }
+}
+
 struct AppShellView: View {
     @EnvironmentObject private var store: AppStore
+    @StateObject private var tripLibrary = TripLibrary()
     let onReplayOnboarding: () -> Void
     @State private var selection: AppTab = ProcessInfo.processInfo.arguments.contains("-previewTrips")
         ? .trips
@@ -47,7 +59,7 @@ struct AppShellView: View {
                 TripsView()
             }
             .tabItem {
-                Label("Trips", systemImage: "airplane")
+                Label("Shared trips", systemImage: "airplane")
                     .accessibilityIdentifier("tripsTab")
             }
             .tag(AppTab.trips)
@@ -69,7 +81,32 @@ struct AppShellView: View {
             }
             .tag(AppTab.profile)
         }
+        .environmentObject(tripLibrary)
+        .environment(\.openSharedTrips, {
+            tripsPath = NavigationPath()
+            selection = .trips
+        })
         .wifTabBarMinimizeOnScroll()
+        .onChange(of: store.pendingFriendViewID, initial: true) { _, id in
+            guard let id else { return }
+            let owner = store.snapshot.currentUser.id
+            selection = .friends
+            friendsPath = NavigationPath()
+            showsCitySharing = false
+            sameCityPresentationID = UUID()
+            Task {
+                await store.refresh()
+                guard store.snapshot.isAuthenticated, store.snapshot.currentUser.id == owner,
+                      store.pendingFriendViewID == id else { return }
+                store.pendingFriendViewID = nil
+                if let friend = store.friend(id: id), !store.snapshot.blockedUserIDs.contains(id) {
+                    friendsPath.append(friend)
+                } else {
+                    store.notice = AppNotice(title: String(localized: "Friend unavailable"),
+                        message: String(localized: "This friend is no longer available for this account. Refresh your friends and try again."))
+                }
+            }
+        }
         .onChange(of: store.pendingSameCityEventID, initial: true) { _, id in
             if let id {
                 selection = .friends
@@ -109,7 +146,7 @@ struct AppShellView: View {
 
     private func openDeepLink(_ url: URL) {
         // AppStore routes event links even on a cold launch or before sign-in.
-        if SameCityAlertLink.eventID(from: url) != nil || UpcomingTravelLink.parse(url) != nil { return }
+        if SameCityAlertLink.eventID(from: url) != nil || UpcomingTravelLink.parse(url) != nil || FriendDetailLink.parse(url) != nil { return }
         if url.scheme == SharedAppLink.urlScheme, url.host == "home" {
             selection = .friends
             friendsPath = NavigationPath()
@@ -130,17 +167,7 @@ struct AppShellView: View {
             return
         }
 
-        guard
-            url.scheme == SharedAppLink.urlScheme,
-            url.host == "friend",
-            let idText = url.pathComponents.dropFirst().first,
-            let id = UUID(uuidString: idText),
-            let friend = store.friend(id: id)
-        else { return }
 
-        selection = .friends
-        friendsPath = NavigationPath()
-        friendsPath.append(friend)
     }
 }
 

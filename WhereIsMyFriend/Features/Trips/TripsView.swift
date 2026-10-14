@@ -4,7 +4,7 @@ import SwiftUI
 struct TripsView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var library = TripLibrary()
+    @EnvironmentObject private var library: TripLibrary
     @State private var showsNewTrip = false
     @State private var showsPast = false
     @State private var now = Date()
@@ -17,23 +17,19 @@ struct TripsView: View {
     }
 
     private var scope: String {
-        var value = store.repositoryMode == .remote ? "\(store.tripRepository.storageScope)-\(owner.id)" : "\(store.repositoryMode.rawValue)-\(owner.id)"
-        #if DEBUG
-        if let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("-tripTestNamespace=") }) {
-            value += "-" + String(argument.dropFirst("-tripTestNamespace=".count))
-        }
-        #endif
-        return value
+        TripLibrary.storageScope(repository: store.tripRepository, ownerID: owner.id)
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                HStack {
+                HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("Trips").font(.system(size: 44, weight: .bold, design: .rounded)).tracking(-0.8)
-                        Text("More places. More time together.")
+                        Text("Shared trips").font(.system(.largeTitle, design: .rounded, weight: .bold)).tracking(-0.8)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Coordinate flights and arrivals with your group.")
                             .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     Spacer(minLength: 8)
                     Button { showsNewTrip = true } label: {
@@ -42,8 +38,13 @@ struct TripsView: View {
                     }
                     .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
                     .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.12), interactive: true, in: Circle())
-                    .accessibilityLabel("New trip").accessibilityIdentifier("newTripButton")
+                    .accessibilityLabel("New shared trip").accessibilityIdentifier("newTripButton")
                 }
+
+                NavigationLink { TravelPlansView() } label: {
+                    TravelPurposeLink(title: "Tell friends where I’ll be", subtitle: "Go to My travel plans", symbol: "calendar")
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("myTravelPlansFromTrips")
 
                 if manualRefreshFailed {
                     HStack(spacing: 12) {
@@ -121,7 +122,7 @@ struct TripsView: View {
             .padding(.top, 12).padding(.bottom, 36)
         }
         .wifAmbientBackground()
-        .navigationTitle("Trips")
+        .navigationTitle("Shared trips")
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(for: String.self) { tripID in
             TripDetailView(library: library, tripID: tripID)
@@ -187,9 +188,9 @@ struct TripsView: View {
             Text("Your next adventure\nstarts here.")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
-            Text("Plan a trip, bring your people,\nand see everyone's journey in one place.")
+            Text("Create a shared trip, invite your group, and see everyone’s flights in one place.")
                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
-            Button("Plan your first trip") { showsNewTrip = true }
+            Button("Create a shared trip") { showsNewTrip = true }
                 .font(.headline).foregroundStyle(WIFTheme.canvas)
                 .padding(.horizontal, 28).frame(minHeight: 52)
                 .background(WIFTheme.fresh, in: Capsule())
@@ -359,6 +360,7 @@ private struct TripDetailView: View {
                                                 direction: request.direction,
                                                 travelerID: person.id)
                         }
+                        flight.departureDay = TripDay(date).value
                         flight.revision = request.existing?.revision
                         return await library.saveFlight(flight, tripID: tripID, editing: request.existing != nil, candidateID: candidate?.id)
                     }
@@ -509,6 +511,9 @@ private struct FullTripArrivalBoard: View {
                     Text("Example itinerary")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+                if trip.phase() != .past {
+                    TripDatesToPersonalPlanButton(trip: trip)
                 }
             }
             .foregroundStyle(WIFTheme.primaryText)
@@ -776,7 +781,7 @@ private struct TripFlightCard: View {
                         Spacer()
                         VStack(alignment: .trailing, spacing: 4) {
                             Text(flight.terminal).font(.subheadline.weight(.semibold))
-                            Text(flight.date.formatted(.dateTime.month(.abbreviated).day()))
+                            Text(flight.calendarDay.label)
                                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                         }
                     }
@@ -801,7 +806,7 @@ private struct TripFlightCard: View {
         VStack(alignment: trailing ? .trailing : .leading, spacing: 4) {
             Text(LocalizedStringKey(caption)).font(.caption2).foregroundStyle(WIFTheme.secondaryText)
             Text("\(code)  \(time)").font(.system(.subheadline, design: .rounded, weight: .semibold)).monospacedDigit()
-            Text(AirportLocation.location(for: code)?.city ?? "Awaiting lookup")
+            Text(AirportLocation.location(for: code)?.city ?? String(localized: "Awaiting lookup"))
                 .font(.caption).foregroundStyle(WIFTheme.secondaryText)
         }
     }
@@ -1170,8 +1175,21 @@ private struct TripTravelerAvatar: View {
     }
 }
 
+struct FlightDraftState: Equatable {
+    let number: String
+    let day: TripDay
+    let candidateID: String?
+
+    init(number: String, day: TripDay, candidateID: String?) {
+        self.number = number.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().replacingOccurrences(of: " ", with: "")
+        self.day = day
+        self.candidateID = candidateID
+    }
+}
+
 private struct AddTripFlightSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var store: AppStore
     let trip: TripPlan
     let direction: TripDirection
@@ -1180,6 +1198,8 @@ private struct AddTripFlightSheet: View {
     let onAdd: (String, Date, FlightCandidate?) async -> Bool
     let saveError: () -> String?
     @State private var isSaving = false
+    @State private var confirmsDiscard = false
+    @State private var initialDraft: FlightDraftState
     @State private var searchGeneration = UUID()
     @State private var flightNumber = ""
     @State private var date: Date
@@ -1202,10 +1222,26 @@ private struct AddTripFlightSheet: View {
         self.person = person
         self.existing = existing
         _flightNumber = State(initialValue: existing?.flightNumber ?? "")
-        _date = State(initialValue: trip.initialFlightDate(existing: existing))
+        var initialDate = trip.initialFlightDate(existing: existing, direction: direction)
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-testFlightToday") { initialDate = Date() }
+        #endif
+        _date = State(initialValue: initialDate)
+        _initialDraft = State(initialValue: FlightDraftState(number: existing?.flightNumber ?? "", day: TripDay(initialDate), candidateID: nil))
     }
 
     private var travelerName: String { person.name }
+    private var hasUnsavedChanges: Bool {
+        FlightDraftState(number: flightNumber, day: TripDay(date), candidateID: selectedCandidate?.id) != initialDraft
+    }
+    private var keepsExistingFlight: Bool {
+        selectedCandidate == nil && existing?.matchesSelection(number: cleanedNumber, day: TripDay(date), direction: direction) == true
+    }
+    private var saveTitle: LocalizedStringKey {
+        if keepsExistingFlight { return "Done" }
+        if selectedCandidate == nil { return "Save flight number" }
+        return existing == nil ? "Add this flight" : "Save this flight"
+    }
 
     private var cleanedNumber: String { flightNumber.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() }
     private var isValid: Bool {
@@ -1222,10 +1258,10 @@ private struct AddTripFlightSheet: View {
         let calendar = Calendar.current
         let formatter = DateFormatter()
         if calendar.isDateInToday(date) {
-            formatter.dateFormat = "MMM d"
-            return "Today, \(formatter.string(from: date))"
+            formatter.setLocalizedDateFormatFromTemplate("MMM d")
+            return String(localized: "Today, \(formatter.string(from: date))")
         } else {
-            formatter.dateFormat = "EEE, MMM d"
+            formatter.setLocalizedDateFormatFromTemplate("EEE MMM d yyyy")
             return formatter.string(from: date)
         }
     }
@@ -1261,7 +1297,7 @@ private struct AddTripFlightSheet: View {
                     self.isSearching = false
                     self.candidates = results
                     if results.isEmpty {
-                        self.searchError = "No flight routes found for \(queryNumber) on \(queryDate)."
+                        self.searchError = String(localized: "No flight routes found for \(queryNumber) on \(queryDate).")
                     } else {
                         self.selectedDetent = .large
                         if let matched = results.first(where: { cand in
@@ -1300,8 +1336,10 @@ private struct AddTripFlightSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     // Compact trip context; the traveler is fixed to the signed-in account.
-                    HStack(spacing: 8) {
+                    let contextLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout(spacing: 8))
+                    contextLayout {
                         Text(direction == .outbound ? "Outbound" : "Inbound")
+                            .fixedSize(horizontal: false, vertical: true)
                             .font(.caption.weight(.semibold))
                             .padding(.horizontal, 9)
                             .padding(.vertical, 4)
@@ -1311,13 +1349,15 @@ private struct AddTripFlightSheet: View {
                         Text(trip.name)
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(WIFTheme.primaryText)
-                            .lineLimit(1)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         Spacer()
 
                         HStack(spacing: 6) {
                             TripTravelerAvatar(name: travelerName, color: TripFlight.color(for: travelerName), size: 22)
                             Text(travelerName)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .font(.caption.weight(.medium))
                                 .foregroundStyle(WIFTheme.secondaryText)
                         }
@@ -1327,22 +1367,29 @@ private struct AddTripFlightSheet: View {
                     Text(store.repositoryMode == .remote ? "Your flight" : "Your flight · demo")
                         .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier("tripFlightOwnershipCaption")
 
                     // Flight number card
                     VStack(alignment: .leading, spacing: 10) {
                         Text("FLIGHT NUMBER")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .font(.caption.weight(.bold))
+                            .fixedSize(horizontal: false, vertical: true)
                             .foregroundStyle(WIFTheme.secondaryText)
                             .tracking(0.5)
 
-                        HStack(spacing: 12) {
+                        let inputLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 12)) : AnyLayout(HStackLayout(spacing: 12))
+                        inputLayout {
+                            let numberLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout(spacing: 8))
+                            numberLayout {
+                            if !dynamicTypeSize.isAccessibilitySize {
                             Image(systemName: "airplane")
                                 .font(.body.weight(.semibold))
                                 .foregroundStyle(WIFTheme.fresh)
+                            }
 
                             TextField("e.g. CZ 328, UA 353", text: $flightNumber)
-                                .font(.title3.weight(.semibold))
+                                .font(.system(.title3, design: .monospaced, weight: .semibold))
                                 .textInputAutocapitalization(.characters)
                                 .autocorrectionDisabled()
                                 .keyboardType(.asciiCapable)
@@ -1357,7 +1404,7 @@ private struct AddTripFlightSheet: View {
                                     candidates = []
                                     searchError = nil
                                 }
-                                .accessibilityIdentifier("tripFlightNumberField")
+                                .accessibilityIdentifier("tripFlightNumberField").frame(minHeight: 44)
 
                             if !flightNumber.isEmpty {
                                 Button {
@@ -1366,13 +1413,21 @@ private struct AddTripFlightSheet: View {
                                     candidates = []
                                     searchError = nil
                                 } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.subheadline)
-                                        .foregroundStyle(WIFTheme.secondaryText.opacity(0.6))
+                                    if dynamicTypeSize.isAccessibilitySize {
+                                        Label("Clear", systemImage: "xmark.circle.fill")
+                                            .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                                            .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                                    } else {
+                                        Image(systemName: "xmark.circle.fill").font(.subheadline)
+                                            .frame(width: 44, height: 44).contentShape(Rectangle())
+                                            .foregroundStyle(WIFTheme.secondaryText.opacity(0.6))
+                                    }
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel("Clear flight number").accessibilityIdentifier("clearTripFlightNumber")
                             }
 
+                            }
                             Button {
                                 searchFlight()
                             } label: {
@@ -1387,7 +1442,7 @@ private struct AddTripFlightSheet: View {
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(isValid ? WIFTheme.canvas : WIFTheme.secondaryText)
                                 .padding(.horizontal, 16)
-                                .frame(height: 38)
+                                .frame(minHeight: 44).contentShape(Capsule())
                                 .background(isValid ? WIFTheme.fresh : WIFTheme.border.opacity(0.3), in: Capsule())
                             }
                             .buttonStyle(.plain)
@@ -1400,9 +1455,11 @@ private struct AddTripFlightSheet: View {
 
                     // Departure date selection: unified single row
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack {
+                        let dateHeaderLayout = dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8)) : AnyLayout(HStackLayout())
+                        dateHeaderLayout {
                             Text("DEPARTURE DATE")
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .font(.caption.weight(.bold))
+                            .fixedSize(horizontal: false, vertical: true)
                                 .foregroundStyle(WIFTheme.secondaryText)
                                 .tracking(0.5)
 
@@ -1465,7 +1522,7 @@ private struct AddTripFlightSheet: View {
                     if !candidates.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
-                                Text(store.repositoryMode == .remote ? "Verified Routes (\(candidates.count))" : "Example Routes (\(candidates.count))")
+                                Text(store.repositoryMode == .remote ? String(localized: "Verified Routes (\(candidates.count))") : String(localized: "Example Routes (\(candidates.count))"))
                                     .font(.caption.weight(.semibold))
                                     .foregroundStyle(WIFTheme.secondaryText)
                                 Spacer()
@@ -1551,6 +1608,12 @@ private struct AddTripFlightSheet: View {
                             }
                         }
                     }
+                    if isValid && selectedCandidate == nil && !keepsExistingFlight {
+                        Text("Only the flight number and date will be saved. Route and times are not verified yet.")
+                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("unverifiedFlightSaveExplanation")
+                    }
                 }
                 .padding(20)
                 .padding(.bottom, 24)
@@ -1569,8 +1632,10 @@ private struct AddTripFlightSheet: View {
                             isSaving = false
                         }
                     } label: {
-                        Text(existing == nil ? "Add my flight" : "Save my flight").font(.headline)
-                            .frame(maxWidth: .infinity)
+                        Text(saveTitle).font(.headline)
+                            .fixedSize(horizontal: false, vertical: true).multilineTextAlignment(.center)
+                            .padding(.horizontal, 16).padding(.vertical, 8)
+                            .frame(maxWidth: .infinity, minHeight: 44)
                             .wifPrimaryActionLabel(enabled: isValid)
                     }
                     .wifPrimaryActionStyle().disabled(!isValid || isSearching || isSaving)
@@ -1586,51 +1651,68 @@ private struct AddTripFlightSheet: View {
             }
             .navigationTitle(existing == nil ? "Add flight" : "Edit my flight").navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(isSaving) }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { if hasUnsavedChanges { confirmsDiscard = true } else { dismiss() } }
+                        .disabled(isSaving).accessibilityIdentifier("flightEditorCancel")
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { numberFocused = false }.accessibilityIdentifier("flightKeyboardDone")
+                }
             }
         }
-        .presentationDetents([.height(580), .large], selection: $selectedDetent)
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(580), .large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)
-        .interactiveDismissDisabled(isSaving)
+        .interactiveDismissDisabled(isSaving || hasUnsavedChanges)
+        .alert("Discard changes?", isPresented: $confirmsDiscard) {
+            Button("Discard changes", role: .destructive) { dismiss() }
+            Button("Keep editing", role: .cancel) {}
+        } message: { Text("Your unsaved changes will be lost.") }
         .onChange(of: flightNumber) { _, _ in invalidateSearch() }
         .onChange(of: date) { _, _ in invalidateSearch() }
         .onDisappear { searchGeneration = UUID() }
         .sheet(isPresented: $showsCustomCalendar) {
-            NavigationStack {
-                VStack(spacing: 16) {
-                    DatePicker(
-                        "Departure date",
-                        selection: $date,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .tint(WIFTheme.fresh)
-                    .padding(.horizontal)
-                    .onChange(of: date) { _, _ in
-                        selectedCandidate = nil
-                        candidates = []
-                        searchError = nil
-                    }
-
-                    Spacer()
-                }
-                .background(WIFTheme.canvas)
-                .navigationTitle("Select Departure Date")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") {
-                            showsCustomCalendar = false
-                        }
-                        .font(.headline)
-                        .foregroundStyle(WIFTheme.fresh)
-                    }
-                }
+            FlightDepartureDatePicker(date: date) { selectedDate in
+                if TripDay(selectedDate) != TripDay(date) { setDate(selectedDate) }
             }
-            .presentationDetents([.height(480)])
         }
     }
 }
+
+private struct FlightDepartureDatePicker: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var selection: Date
+    let onSelect: (Date) -> Void
+
+    init(date: Date, onSelect: @escaping (Date) -> Void) {
+        _selection = State(initialValue: date)
+        self.onSelect = onSelect
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                DatePicker("Departure date", selection: $selection, displayedComponents: .date)
+                    .datePickerStyle(.graphical).tint(WIFTheme.fresh).padding(.horizontal)
+                    .accessibilityIdentifier("flightDepartureCalendar")
+            }
+            .background(WIFTheme.canvas)
+            .navigationTitle("Select Departure Date").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }.accessibilityIdentifier("flightDateCancel")
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Use this date") { onSelect(selection); dismiss() }
+                        .accessibilityIdentifier("confirmFlightDate")
+                }
+            }
+        }
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(480), .large])
+    }
+}
+
 
 enum TripDirection: String, CaseIterable, Identifiable, Codable {
     case outbound
@@ -1695,6 +1777,28 @@ struct TripFlight: Identifiable, Codable {
     var trackingState: String? = nil
     var scheduledDeparture: Date? = nil
     var expectedArrival: Date? = nil
+    // Additive cache field. Old archives still decode; new data retains the departure
+    // airport's calendar date instead of reinterpreting an instant in the device zone.
+    var departureDay: String? = nil
+    var calendarDay: TripDay { resolvedDepartureDay() }
+
+    func resolvedDepartureDay(fallbackTimeZone: TimeZone = .current) -> TripDay {
+        if let departureDay, PersonalTravelPlan.parseDay(departureDay) != nil { return TripDay(value: departureDay) }
+        // Verified legacy cache rows can recover the day from their real schedule.
+        if let scheduledDeparture, let airport = AirportLocation.location(for: origin) {
+            return TripDay(scheduledDeparture, timeZone: airport.timeZone)
+        }
+        // Unverified legacy rows lack the original zone; preserve their existing interpretation.
+        return TripDay(date, timeZone: fallbackTimeZone)
+    }
+
+    func matchesSelection(number: String, day: TripDay, direction: TripDirection) -> Bool {
+        func normalized(_ value: String) -> String {
+            value.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().replacingOccurrences(of: " ", with: "")
+        }
+        return normalized(flightNumber) == normalized(number) && calendarDay == day && self.direction == direction
+    }
+
     var accent: Color { Self.color(for: traveler) }
 
     func isStatusStale(at now: Date = Date()) -> Bool {
@@ -1709,13 +1813,13 @@ struct TripFlight: Identifiable, Codable {
     }
 
     func freshnessLabel(at now: Date = Date()) -> String {
-        guard let verifiedAt else { return "Unverified" }
+        guard let verifiedAt else { return String(localized: "Unverified") }
         let stamp = verifiedAt.formatted(date: .abbreviated, time: .shortened)
-        if trackingState == "quota_limited" { return "Update limit reached · last checked \(stamp)" }
-        if trackingState == "unavailable" { return "Updates temporarily unavailable · last checked \(stamp)" }
-        if trackingState == "not_found" { return "Route not found in latest check · last verified \(stamp)" }
-        if isStatusStale(at: now) { return "Last known status · checked \(stamp)" }
-        return "Updated \(stamp)"
+        if trackingState == "quota_limited" { return String(localized: "Update limit reached · last checked \(stamp)") }
+        if trackingState == "unavailable" { return String(localized: "Updates temporarily unavailable · last checked \(stamp)") }
+        if trackingState == "not_found" { return String(localized: "Route not found in latest check · last verified \(stamp)") }
+        if isStatusStale(at: now) { return String(localized: "Last known status · checked \(stamp)") }
+        return String(localized: "Updated \(stamp)")
     }
 
     private var displayArrivalDate: Date? {
@@ -1745,7 +1849,9 @@ struct TripFlight: Identifiable, Codable {
         guard parts.count == 2 else { return .distantFuture }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = airport.timeZone
-        var components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        let dayParts = calendarDay.value.split(separator: "-").compactMap { Int($0) }
+        guard dayParts.count == 3 else { return .distantFuture }
+        var components = DateComponents(year: dayParts[0], month: dayParts[1], day: dayParts[2])
         components.hour = parts[0]
         components.minute = parts[1]
         guard let day = calendar.date(from: components),
@@ -1815,5 +1921,6 @@ struct TripFlight: Identifiable, Codable {
     NavigationStack {
         TripsView()
             .environmentObject(AppStore())
+            .environmentObject(TripLibrary())
     }
 }

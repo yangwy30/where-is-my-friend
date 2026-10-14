@@ -4,6 +4,7 @@ import UIKit
 
 struct CitySharingSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var locationService: CityLocationService
     @State private var pendingSharingEnabled: Bool?
@@ -14,26 +15,33 @@ struct CitySharingSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    cityHero
-
-                    VStack(spacing: 0) {
+                    VStack(alignment: .leading, spacing: 10) {
                         Toggle(isOn: citySharingBinding) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Share my city")
                                     .font(.body.weight(.semibold))
                                     .foregroundStyle(WIFTheme.primaryText)
-                                Text("Share with the friends you choose")
+                                Text(sharingStatusText)
                                     .font(.caption)
                                     .foregroundStyle(WIFTheme.secondaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .accessibilityIdentifier("citySharingEffectiveState")
                             }
                         }
                         .tint(WIFTheme.fresh)
                         .accessibilityIdentifier("citySharingToggle")
 
-                        Divider()
-                            .overlay(WIFTheme.border)
-                            .padding(.vertical, 14)
+                        Text("Share with the friends you choose")
+                            .font(.caption)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .wifSettingsGlassCard()
+                    .disabled(store.isSavingSharingPreferences)
 
+                    cityHero
+
+                    VStack(spacing: 0) {
                         Toggle(isOn: backgroundUpdatesBinding) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Background updates")
@@ -44,6 +52,7 @@ struct CitySharingSheet: View {
                                      : "Choose Always in Settings to update in the background.")
                                     .font(.caption)
                                     .foregroundStyle(WIFTheme.secondaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }
                         .tint(WIFTheme.fresh)
@@ -97,7 +106,7 @@ struct CitySharingSheet: View {
                 }
             }
         }
-        .presentationDetents([.fraction(0.68), .large])
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.fraction(0.68), .large])
         .presentationDragIndicator(.visible)
         .accessibilityIdentifier("citySharingSheet")
         .sheet(isPresented: $choosingManualCity) {
@@ -136,11 +145,6 @@ struct CitySharingSheet: View {
                             .foregroundStyle(WIFTheme.secondaryText)
                             .accessibilityIdentifier("currentCityRegion")
                     }
-
-                    Text(sharingStatusText)
-                        .font(.subheadline)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .lineLimit(2)
                 }
 
                 Spacer(minLength: 0)
@@ -196,6 +200,9 @@ struct CitySharingSheet: View {
     }
 
     private var sharingStatusText: String {
+        if store.snapshot.syncState == .offline && store.pendingOperationCount > 0 {
+            return String(localized: "Changes waiting to sync")
+        }
         guard sharingIsEnabled else { return String(localized: "Sharing is paused") }
         guard store.currentCity != nil else { return String(localized: "Detecting your city…") }
 

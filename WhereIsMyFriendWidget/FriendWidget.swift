@@ -134,10 +134,10 @@ struct FriendWidget: Widget {
             provider: FriendTimelineProvider()
         ) { entry in
             FriendWidgetEntryView(entry: entry)
-                .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                .wifAppearance(SharedAppearancePreference.appearance)
                 .containerBackground(for: .widget) {
                     FriendWidgetBackground(together: false)
-                        .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                        .wifAppearance(SharedAppearancePreference.appearance)
                 }
         }
         .configurationDisplayName("Friends, near and far")
@@ -161,10 +161,10 @@ struct SameCityWidget: Widget {
             provider: SameCityTimelineProvider()
         ) { entry in
             SameCityWidgetEntryView(entry: entry)
-                .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                .wifAppearance(SharedAppearancePreference.appearance)
                 .containerBackground(for: .widget) {
                     FriendWidgetBackground(together: true)
-                        .environment(\.colorScheme, SharedAppearancePreference.appearance.colorScheme)
+                        .wifAppearance(SharedAppearancePreference.appearance)
                 }
         }
         .configurationDisplayName("Here together")

@@ -101,10 +101,10 @@ struct FriendPresence: Identifiable, Codable, Hashable, Sendable {
         let seconds = max(0, referenceDate.timeIntervalSince(updatedAt))
         let minutes = Int(seconds / 60)
         if minutes < 1 { return String(localized: "Now") }
-        if minutes < 60 { return "\(minutes)m" }
+        if minutes < 60 { return String(localized: "\(minutes)m") }
         let hours = minutes / 60
-        if hours < 24 { return "\(hours)h" }
-        return "\(hours / 24)d"
+        if hours < 24 { return String(localized: "\(hours)h") }
+        return String(localized: "\(hours / 24)d")
     }
 
     func relativeUpdateLongText(at referenceDate: Date = Date()) -> String {

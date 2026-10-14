@@ -1,8 +1,173 @@
 import MapKit
 import CoreLocation
 import UIKit
+import SwiftUI
 import XCTest
+import AuthenticationServices
 @testable import WhereIsMyFriend
+
+@MainActor
+final class UIReviewWaveThreeTests: XCTestCase {
+    func testAppleCancellationDoesNotHideRealErrors() {
+        XCTAssertTrue(AppleSignInFailurePolicy.isUserCancellation(ASAuthorizationError(.canceled)))
+        XCTAssertFalse(AppleSignInFailurePolicy.isUserCancellation(ASAuthorizationError(.failed)))
+        XCTAssertFalse(AppleSignInFailurePolicy.isUserCancellation(NSError(domain: "network", code: ASAuthorizationError.canceled.rawValue)))
+    }
+
+    func testTokyoCompatibilityRequiresExactCityAndPreservesOtherLocalities() {
+        for name in ["Tokyo", "東京", "东京"] {
+            XCTAssertEqual(TravelCitySearchPolicy.resolve(name: name, locality: nil, region: "Tokyo", countryCode: "JP", timeZone: "Asia/Tokyo")?.name, "Tokyo")
+        }
+        XCTAssertNil(TravelCitySearchPolicy.resolve(name: "California", locality: nil, region: "CA", countryCode: "US", timeZone: "America/Los_Angeles"))
+        XCTAssertNil(TravelCitySearchPolicy.resolve(name: "Airport", locality: nil, region: "Tokyo", countryCode: "JP", timeZone: "Asia/Tokyo"))
+        XCTAssertNil(TravelCitySearchPolicy.resolve(name: "Tokyo", locality: nil, region: "Tokyo", countryCode: "US", timeZone: "Asia/Tokyo"))
+        XCTAssertNil(TravelCitySearchPolicy.resolve(name: "Paris", locality: "Paris", region: "IDF", countryCode: "FR", timeZone: "Invalid"))
+        XCTAssertEqual(TravelCitySearchPolicy.resolve(name: "Shinjuku", locality: "Shinjuku", region: "Tokyo", countryCode: "JP", timeZone: "Asia/Tokyo")?.name, "Shinjuku")
+        XCTAssertEqual(TravelCitySearchPolicy.resolve(name: "Narita", locality: "Narita", region: "Chiba", countryCode: "JP", timeZone: "Asia/Tokyo")?.name, "Narita")
+    }
+
+    func testWidgetDestinationsRespectPrivacyAndStrictURLParsing() throws {
+        let friend = MockFriendData.friends[0]
+        var content = HomeWidgetContent(date: Date(), friends: [friend], currentPresence: DemoData.initialSnapshot().currentPresence, privacyMode: .full)
+        let url = content.destination(for: friend)
+        XCTAssertEqual(FriendDetailLink.parse(url), friend.id)
+        for suffix in ["/extra", "?name=untrusted", "#fragment"] {
+            XCTAssertNil(FriendDetailLink.parse(try XCTUnwrap(URL(string: url.absoluteString + suffix))))
+        }
+        XCTAssertEqual(content.destination(for: MockFriendData.friends[1]).host, "home")
+        for mode in [WidgetPrivacyMode.hideNames, .hideAll] {
+            content.privacyMode = mode
+            XCTAssertEqual(content.destination(for: friend).host, "home")
+            XCTAssertFalse(content.destination(for: friend).absoluteString.contains(friend.id.uuidString))
+        }
+    }
+
+    func testFriendLinkSurvivesSignInAndClearsOnSignOut() async {
+        SharedAppStateStore.reset()
+        defer { SharedAppStateStore.reset() }
+        let store = AppStore(repository: LocalDemoRepository(persistsChanges: false))
+        await store.signOut()
+        let id = MockFriendData.friends[0].id
+        XCTAssertTrue(store.handleIncomingURL(SharedAppLink.make(host: "friend", path: id.uuidString)))
+        await store.signInDemo()
+        XCTAssertEqual(store.pendingFriendViewID, id)
+        await store.signOut()
+        XCTAssertNil(store.pendingFriendViewID)
+    }
+
+    func testLiveMapKitCityResultsAreSelectable() async throws {
+        for (query, expected) in [("Tokyo, Japan", "Tokyo"), ("东京 日本", "Tokyo"), ("Paris, France", "Paris"), ("Palm Springs, California", "Palm Springs")] {
+            let request = MKLocalSearch.Request()
+            request.naturalLanguageQuery = query
+            request.resultTypes = .address
+            let response = try await MKLocalSearch(request: request).start()
+            let cities = response.mapItems.compactMap { item in
+                TravelCitySearchPolicy.resolve(name: item.name, locality: item.placemark.locality, region: item.placemark.administrativeArea,
+                    countryCode: item.placemark.isoCountryCode, timeZone: (item.timeZone ?? item.placemark.timeZone)?.identifier)
+            }
+            XCTAssertTrue(cities.contains { $0.name == expected }, "Live query: \(query), cities: \(cities)")
+        }
+    }
+}
+
+final class ColocationHistoryPolicyTests: XCTestCase {
+    private let now = Date(timeIntervalSince1970: 1_790_500_000)
+    private let friend = UUID()
+    private let otherFriend = UUID()
+    private let city = "current-city"
+
+    private func session(_ secondsAgo: TimeInterval, friendID: UUID? = nil, cityKey: String? = nil,
+                         ended: Bool = false) -> ColocationSession {
+        ColocationSession(id: UUID(), friendID: friendID ?? friend, cityKey: cityKey ?? city,
+            enteredAt: now.addingTimeInterval(-secondsAgo), leftAt: ended ? now.addingTimeInterval(-60) : nil)
+    }
+
+    private func event(_ secondsAgo: TimeInterval, people: [UUID]? = nil, cityKey: String? = nil) -> ColocationEvent {
+        ColocationEvent(cityKey: cityKey ?? city, id: UUID(), deduplicationKey: UUID().uuidString,
+            city: "Example", friendIDs: people ?? [friend], friendNames: ["Example"],
+            createdAt: now.addingTimeInterval(-secondsAgo), wasNotified: true)
+    }
+
+    func testNewStayStartsAtCurrentSessionNotPriorVisit() {
+        let current = session(3600)
+        XCTAssertEqual(ColocationHistoryPolicy.currentStart(friendID: friend, cityKey: city,
+            sessions: [session(7 * 86400, ended: true), current], at: now), current.enteredAt)
+    }
+
+    func testNewestValidActiveSessionWins() {
+        let current = session(3600)
+        let sessions = [session(7200), current, session(-60), session(30, ended: true),
+                        session(60, friendID: otherFriend), session(60, cityKey: "elsewhere")]
+        XCTAssertEqual(ColocationHistoryPolicy.currentStart(friendID: friend, cityKey: city,
+            sessions: sessions, at: now), current.enteredAt)
+    }
+
+    func testMissingOrClosedSessionDoesNotInventStart() {
+        XCTAssertNil(ColocationHistoryPolicy.currentStart(friendID: friend, cityKey: city, sessions: [], at: now))
+        XCTAssertNil(ColocationHistoryPolicy.currentStart(friendID: friend, cityKey: city,
+            sessions: [session(86400, ended: true)], at: now))
+        XCTAssertNil(ColocationHistoryPolicy.currentStart(friendID: friend, cityKey: nil,
+            sessions: [session(60)], at: now))
+    }
+
+    func testPreviousVisitRemainsInHistoryAfterReturn() {
+        let old = event(7 * 86400), current = event(3600)
+        let history = ColocationHistoryPolicy.pastEvents([old, current], currentCityKey: city,
+            currentStarts: [friend: now.addingTimeInterval(-3600)], at: now)
+        XCTAssertEqual(history.map(\.id), [old.id])
+    }
+
+    func testGroupEventNeedsEveryParticipantInCurrentStay() {
+        let group = event(300, people: [friend, otherFriend])
+        let start = now.addingTimeInterval(-3600)
+        XCTAssertEqual(ColocationHistoryPolicy.pastEvents([group], currentCityKey: city,
+            currentStarts: [friend: start], at: now).count, 1)
+        XCTAssertEqual(ColocationHistoryPolicy.pastEvents([group], currentCityKey: city,
+            currentStarts: [friend: start, otherFriend: now.addingTimeInterval(-60)], at: now).count, 1)
+        XCTAssertTrue(ColocationHistoryPolicy.pastEvents([group], currentCityKey: city,
+            currentStarts: [friend: start, otherFriend: start], at: now).isEmpty)
+    }
+
+    func testDifferentVisitsOnSameDayAreNotMerged() {
+        let first = event(10 * 3600), second = event(4 * 3600)
+        let history = ColocationHistoryPolicy.pastEvents([first, second, first], currentCityKey: city,
+            currentStarts: [friend: now.addingTimeInterval(-3600)], at: now)
+        XCTAssertEqual(history.map(\.id), [second.id, first.id])
+    }
+
+    func testUnknownCityAndFutureEventsDoNotBecomeCurrentHistory() {
+        let old = event(3600)
+        XCTAssertEqual(ColocationHistoryPolicy.pastEvents([old, event(-60)], currentCityKey: nil,
+            currentStarts: [friend: now.addingTimeInterval(-7200)], at: now).map(\.id), [old.id])
+        XCTAssertEqual(ColocationHistoryPolicy.pastEvents([old], currentCityKey: "elsewhere",
+            currentStarts: [friend: now.addingTimeInterval(-7200)], at: now).map(\.id), [old.id])
+    }
+}
+
+@MainActor
+final class AppAccentContrastTests: XCTestCase {
+    func testAccentForegroundsMeetTextContrastInBothAppearances() {
+        for appearance in [UIUserInterfaceStyle.light, .dark] {
+            let traits = UITraitCollection(userInterfaceStyle: appearance)
+            for (text, fill) in [(WIFTheme.onFresh, WIFTheme.fresh), (WIFTheme.onDestructive, WIFTheme.destructive)] {
+                let textLuminance = luminance(UIColor(text).resolvedColor(with: traits))
+                let fillLuminance = luminance(UIColor(fill).resolvedColor(with: traits))
+                let contrast = (max(textLuminance, fillLuminance) + 0.05) / (min(textLuminance, fillLuminance) + 0.05)
+                XCTAssertGreaterThanOrEqual(contrast, 4.5, "Accent text contrast in \(appearance)")
+            }
+        }
+    }
+
+    private func luminance(_ color: UIColor) -> Double {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        XCTAssertTrue(color.getRed(&red, green: &green, blue: &blue, alpha: &alpha))
+        func linear(_ value: CGFloat) -> Double {
+            let value = Double(value)
+            return value <= 0.04045 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue)
+    }
+}
 
 final class HomeWidgetPresentationTests: XCTestCase {
     private let now = Date(timeIntervalSince1970: 1_790_500_000)
@@ -2846,6 +3011,95 @@ private final class StubURLProtocol: URLProtocol {
     }
 
     override func stopLoading() {}
+}
+
+@MainActor
+final class UIReviewWaveTwoTests: XCTestCase {
+    func testNewPlanAudienceIncludesEveryCurrentFriendExceptBlockedAndDuplicates() {
+        let first = UUID(), second = UUID(), blocked = UUID()
+        XCTAssertEqual(Set(TravelPlanAudiencePolicy.defaultAudience(friendIDs: [first, second, first, blocked], blockedIDs: [blocked])), [first, second])
+        XCTAssertTrue(TravelPlanAudiencePolicy.defaultAudience(friendIDs: [], blockedIDs: []).isEmpty)
+    }
+
+    func testSystemAppearanceIsDefaultAndExistingExplicitChoiceIsPreserved() {
+        let defaults = SharedAppearancePreference.defaults
+        let previous = defaults.object(forKey: SharedAppearancePreference.key)
+        defer {
+            if let previous { defaults.set(previous, forKey: SharedAppearancePreference.key) }
+            else { defaults.removeObject(forKey: SharedAppearancePreference.key) }
+        }
+        defaults.removeObject(forKey: SharedAppearancePreference.key)
+        XCTAssertEqual(SharedAppearancePreference.appearance, .system)
+        XCTAssertNil(WIFAppearance.system.colorScheme)
+        SharedAppearancePreference.appearance = .nightJade
+        XCTAssertEqual(SharedAppearancePreference.appearance.colorScheme, .dark)
+        SharedAppearancePreference.appearance = .solarJade
+        XCTAssertEqual(SharedAppearancePreference.appearance.colorScheme, .light)
+    }
+
+    func testDemoOutgoingInvitationCanBeWithdrawnAndSentAgain() async throws {
+        var initial = DemoData.initialSnapshot(); initial.isAuthenticated = true
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+        let sent = try await repository.sendFriendRequest(username: "leo")
+        let request = try XCTUnwrap(sent.outgoingRequests.first)
+        let cancelled = try await repository.cancelFriendRequest(id: request.id)
+        XCTAssertFalse(cancelled.friendRequests.contains { $0.id == request.id })
+        XCTAssertEqual(cancelled.friends, initial.friends)
+        _ = try await repository.cancelFriendRequest(id: request.id)
+        let resent = try await repository.sendFriendRequest(username: "leo")
+        XCTAssertEqual(resent.outgoingRequests.count, 1)
+        XCTAssertNotEqual(resent.outgoingRequests.first?.id, request.id)
+    }
+
+    func testDemoRecipientCannotWithdrawIncomingInvitation() async throws {
+        var initial = DemoData.initialSnapshot(); initial.isAuthenticated = true
+        let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
+        let request = try XCTUnwrap(initial.incomingRequests.first)
+        do {
+            _ = try await repository.cancelFriendRequest(id: request.id)
+            XCTFail("A recipient must not withdraw the sender’s invitation")
+        } catch { XCTAssertEqual(error as? RepositoryError, .requestNotFound) }
+        let accepted = try await repository.respond(to: request.id, response: .accept)
+        XCTAssertTrue(accepted.friends.contains { $0.id == request.userID })
+    }
+}
+
+final class TravelPlanCopyTests: XCTestCase {
+    func testSharedTripCopyUsesConfirmedCityAndLocalDatesWithoutMemberOrAlertConsent() throws {
+        let member = TripParticipant(id: UUID().uuidString, name: "Friend", userID: UUID().uuidString)
+        let trip = TripPlan(id: UUID().uuidString, name: "Tokyo together", destinationAirport: "NRT",
+            startDay: TripDay(value: "2090-01-02"), endDay: TripDay(value: "2090-01-09"),
+            participants: [member], flights: [], revision: 7, flightAlertsEnabled: true)
+        let city = TravelCity.examples[0]
+        let draft = PersonalPlanDraft.copying(trip, city: city)
+        XCTAssertEqual(draft.plan.destination, city)
+        XCTAssertEqual(draft.plan.startDay, "2090-01-02")
+        XCTAssertEqual(draft.plan.endDay, "2090-01-09")
+        XCTAssertTrue(draft.plan.audience.isEmpty)
+        XCTAssertFalse(draft.plan.alertsEnabled)
+        XCTAssertEqual(draft.plan.revision, 0)
+        XCTAssertNoThrow(try draft.plan.validated())
+        guard case .sharedTrip(let name) = draft.source else { return XCTFail("Expected a shared-trip source") }
+        XCTAssertEqual(name, trip.name)
+        let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(TravelPlanPayload(draft.plan))) as? [String: Any])
+        XCTAssertNil(payload["tripID"])
+        XCTAssertNil(payload["participants"])
+    }
+
+    func testCopiedPlanAndSharedTripRemainIndependent() {
+        var trip = TripPlan(id: UUID().uuidString, name: "Tokyo", destinationAirport: "NRT",
+            startDay: TripDay(value: "2090-01-02"), endDay: TripDay(value: "2090-01-09"), participants: [], flights: [])
+        var first = PersonalPlanDraft.copying(trip, city: TravelCity.examples[0])
+        let second = PersonalPlanDraft.copying(trip, city: TravelCity.examples[0])
+        XCTAssertNotEqual(first.id, second.id)
+        first.plan.startDay = "2090-01-04"
+        first.plan.audience = [UUID()]
+        XCTAssertEqual(trip.startDay.value, "2090-01-02")
+        XCTAssertTrue(second.plan.audience.isEmpty)
+        trip.endDay = TripDay(value: "2090-01-12")
+        XCTAssertEqual(first.plan.endDay, "2090-01-09")
+        XCTAssertEqual(second.plan.endDay, "2090-01-09")
+    }
 }
 
 final class FriendTravelPlanTests: XCTestCase {

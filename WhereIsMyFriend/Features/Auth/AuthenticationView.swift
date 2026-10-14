@@ -1,6 +1,13 @@
 import AuthenticationServices
 import SwiftUI
 
+enum AppleSignInFailurePolicy {
+    static func isUserCancellation(_ error: Error) -> Bool {
+        let error = error as NSError
+        return error.domain == ASAuthorizationError.errorDomain && error.code == ASAuthorizationError.canceled.rawValue
+    }
+}
+
 struct AuthenticationView: View {
     @EnvironmentObject private var store: AppStore
     @State private var isProcessingAppleSignIn = false
@@ -129,6 +136,7 @@ struct AuthenticationView: View {
                 )
             }
         case .failure(let error):
+            guard !AppleSignInFailurePolicy.isUserCancellation(error) else { return }
             store.notice = AppNotice(
                 title: String(localized: "Apple sign-in failed"),
                 message: error.localizedDescription

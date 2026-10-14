@@ -227,6 +227,32 @@ actor OfflineMutationQueue {
         mutations.filter { $0.ownerID == ownerID }.sorted { $0.createdAt < $1.createdAt }
     }
 
+    func hasPendingSharingPause(ownerID: UUID) -> Bool {
+        mutations.contains {
+            guard $0.ownerID == ownerID, case .sharingPreferences(let preferences) = $0.payload else { return false }
+            return !preferences.citySharingEnabled
+        }
+    }
+
+    func replayable(ownerID: UUID, force: Bool = false, at date: Date = Date()) -> [QueuedRemoteMutation] {
+        let owned = all(ownerID: ownerID)
+        let eligible = owned.filter { force || $0.nextAttemptAt <= date }
+        guard let pause = owned.first(where: {
+            if case .sharingPreferences(let preferences) = $0.payload { return !preferences.citySharingEnabled }
+            return false
+        }) else { return eligible }
+        if eligible.contains(where: { $0.id == pause.id }) {
+            // Confirm the privacy change before publishing any queued city.
+            return [pause] + eligible.filter { $0.id != pause.id }
+        }
+        // Respect the pause's retry backoff without sending a newer city while
+        // the server may still have sharing enabled. Push registration can retry.
+        return eligible.filter {
+            if case .presence = $0.payload { return false }
+            return true
+        }
+    }
+
     func remove(id: UUID) {
         mutations.removeAll { $0.id == id }
         persist()
@@ -238,6 +264,13 @@ actor OfflineMutationQueue {
         let exponent = min(mutations[index].attempts - 1, 8)
         let delay = min(15 * pow(2, Double(exponent)), 60 * 60)
         mutations[index].nextAttemptAt = now.addingTimeInterval(delay)
+        persist()
+    }
+
+    func suspendUntilExplicitRetry(id: UUID) {
+        guard let index = mutations.firstIndex(where: { $0.id == id }) else { return }
+        mutations[index].attempts += 1
+        mutations[index].nextAttemptAt = .distantFuture
         persist()
     }
 

@@ -28,8 +28,8 @@ struct SameCityWidgetEntryView: View {
     @Environment(\.widgetFamily) private var family
     var body: some View {
         switch family {
-        case .accessoryRectangular: LockScreenRectangularFriendWidget(entry: entry)
-        case .accessoryCircular: LockScreenCircularFriendWidget(entry: entry)
+        case .accessoryRectangular: LockScreenRectangularFriendWidget(entry: entry, sameCityOnly: true)
+        case .accessoryCircular: LockScreenCircularFriendWidget(entry: entry, sameCityOnly: true)
         default: TogetherHomeWidget(content: entry.homeContent, size: family == .systemSmall ? .small : (family == .systemLarge ? .large : .medium))
         }
     }
@@ -43,9 +43,10 @@ private enum WidgetCityPresentation {
 
 private struct LockScreenRectangularFriendWidget: View {
     let entry: FriendWidgetEntry
+    var sameCityOnly = false
 
     private var visibleFriends: [FriendPresence] {
-        Array(entry.friends.prefix(2))
+        entry.homeContent.lockScreenFriends(sameCityOnly: sameCityOnly)
     }
 
     var body: some View {
@@ -53,7 +54,11 @@ private struct LockScreenRectangularFriendWidget: View {
             if entry.privacyMode == .hideAll {
                 LockScreenPrivateState(layout: .rectangular)
             } else if visibleFriends.isEmpty {
-                LockScreenEmptyState(layout: .rectangular)
+                if sameCityOnly {
+                    LockScreenSameCityEmptyState(layout: .rectangular)
+                } else {
+                    LockScreenEmptyState(layout: .rectangular)
+                }
             } else {
                 HStack(spacing: 8) {
                     if let firstFriend = visibleFriends.first {
@@ -74,7 +79,7 @@ private struct LockScreenRectangularFriendWidget: View {
                 .accessibilityElement(children: .combine)
             }
         }
-        .widgetURL(SharedAppLink.make(host: "home"))
+        .widgetURL(entry.homeContent.lockScreenDestination(sameCityOnly: sameCityOnly))
     }
 }
 
@@ -113,6 +118,7 @@ private struct LockScreenFriendColumn: View {
 
 private struct LockScreenCircularFriendWidget: View {
     let entry: FriendWidgetEntry
+    var sameCityOnly = false
 
     private var sameCityFriends: [FriendPresence] {
         WidgetCityPresentation.sameCityFriends(in: entry)
@@ -140,6 +146,8 @@ private struct LockScreenCircularFriendWidget: View {
                             .font(.system(.title3, design: .rounded, weight: .bold))
                             .widgetAccentable()
                     }
+                } else if sameCityOnly {
+                    LockScreenSameCityEmptyState(layout: .circular)
                 } else {
                     VStack(spacing: 0) {
                         Text(LockScreenWidgetPresentation.compactCityCode(city))
@@ -153,6 +161,25 @@ private struct LockScreenCircularFriendWidget: View {
             }
         }
         .widgetURL(SharedAppLink.make(host: "home"))
+    }
+}
+
+private struct LockScreenSameCityEmptyState: View {
+    let layout: LockScreenStateLayout
+
+    var body: some View {
+        switch layout {
+        case .rectangular:
+            Label("Friends in your city will appear here.", systemImage: "person.2")
+                .font(.caption2)
+                .lineLimit(3)
+                .widgetAccentable()
+        case .circular:
+            Image(systemName: "person.2")
+                .font(.headline)
+                .widgetAccentable()
+                .accessibilityLabel("Friends in your city will appear here.")
+        }
     }
 }
 

@@ -147,11 +147,21 @@ struct ColocationEvent: Identifiable, Codable, Hashable, Sendable {
     let createdAt: Date
     var wasNotified: Bool
 
-    var title: String { "Together in \(city)" }
+    var title: String { String(localized: "Together in \(city)") }
 
     var message: String {
         let names = friendNames.joined(separator: ", ")
         return String(localized: "You and \(names) are now in the same city.")
+    }
+}
+
+enum FriendDetailLink {
+    static func parse(_ url: URL) -> UUID? {
+        guard url.scheme == SharedAppLink.urlScheme, url.host == "friend", url.user == nil, url.password == nil,
+              url.port == nil, url.query == nil, url.fragment == nil else { return nil }
+        let path = url.pathComponents.filter { $0 != "/" }
+        guard path.count == 1 else { return nil }
+        return UUID(uuidString: path[0])
     }
 }
 
@@ -174,6 +184,18 @@ enum SameCityAlertLink {
         let path = url.pathComponents.filter { $0 != "/" }
         guard path.count == 1 else { return nil }
         return UUID(uuidString: path[0])
+    }
+}
+
+/// The home summary describes shared cities even when notification delivery is muted.
+enum SameCityPresencePolicy {
+    static func currentFriends(in snapshot: AppSnapshot, at now: Date = Date()) -> [FriendPresence] {
+        guard snapshot.isAuthenticated, snapshot.sharingPreferences.citySharingEnabled else { return [] }
+        return snapshot.friends.filter {
+            !snapshot.blockedUserIDs.contains($0.id)
+                && snapshot.preference(for: $0.id).sharesMyCity
+                && PresenceMatchPolicy.matches(snapshot.currentPresence, $0, at: now)
+        }.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
     }
 }
 
@@ -229,6 +251,30 @@ struct ColocationSession: Identifiable, Codable, Hashable, Sendable {
     var leftAt: Date?
 
     var isActive: Bool { leftAt == nil }
+}
+
+enum ColocationHistoryPolicy {
+    static func currentStart(friendID: UUID, cityKey: String?, sessions: [ColocationSession], at now: Date) -> Date? {
+        guard let cityKey else { return nil }
+        return sessions.filter {
+            $0.friendID == friendID && $0.cityKey == cityKey && $0.isActive && $0.enteredAt <= now
+        }.map(\.enteredAt).max()
+    }
+
+    static func pastEvents(_ events: [ColocationEvent], currentCityKey: String?,
+                           currentStarts: [UUID: Date], at now: Date) -> [ColocationEvent] {
+        var seenIDs = Set<UUID>()
+        return events.sorted { $0.createdAt > $1.createdAt }.filter { event in
+            guard event.createdAt <= now, seenIDs.insert(event.id).inserted else { return false }
+            // A current event must fall within every participant's current stay.
+            let belongsToCurrentStay = currentCityKey != nil && event.cityKey == currentCityKey
+                && !event.friendIDs.isEmpty && event.friendIDs.allSatisfy { friendID in
+                    guard let start = currentStarts[friendID] else { return false }
+                    return event.createdAt >= start
+                }
+            return !belongsToCurrentStay
+        }
+    }
 }
 
 enum SyncState: String, Codable, Hashable, Sendable {

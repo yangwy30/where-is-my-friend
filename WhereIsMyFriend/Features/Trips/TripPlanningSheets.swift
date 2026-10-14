@@ -7,19 +7,16 @@ struct TripNotificationsSheet: View {
     @ObservedObject var library: TripLibrary
     let trip: TripPlan
     @State private var isChangingAlerts = false
+    @State private var preferenceError: String?
     private var currentTrip: TripPlan { library.trips.first { $0.id == trip.id } ?? trip }
 
     var body: some View {
         NavigationStack {
             Form {
+                Section { NotificationPermissionNotice(service: store.notificationService) }
                 Section {
                     Toggle("Friends' flight alerts", isOn: Binding(get: { currentTrip.flightAlertsEnabled ?? false }, set: { enabled in
-                        isChangingAlerts = true
-                        Task {
-                            let saved = await library.setFlightAlerts(enabled, tripID: trip.id)
-                            if saved && enabled && library.isCloud { await store.requestNotificationAuthorization() }
-                            isChangingAlerts = false
-                        }
+                        changePreference(enabled, flightAlerts: true)
                     }))
                     .disabled(library.isSaving || isChangingAlerts)
                     .tint(WIFTheme.fresh)
@@ -29,12 +26,7 @@ struct TripNotificationsSheet: View {
                 }
                 Section {
                     Toggle("Flight planning reminders", isOn: Binding(get: { currentTrip.planningRemindersEnabled ?? true }, set: { enabled in
-                        isChangingAlerts = true
-                        Task {
-                            let saved = await library.setPlanningReminders(enabled, tripID: trip.id)
-                            if saved && enabled && library.isCloud { await store.requestNotificationAuthorization() }
-                            isChangingAlerts = false
-                        }
+                        changePreference(enabled, flightAlerts: false)
                     }))
                     .disabled(library.isSaving || isChangingAlerts)
                     .tint(WIFTheme.fresh)
@@ -50,11 +42,38 @@ struct TripNotificationsSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
+                        .disabled(isChangingAlerts)
+                        .accessibilityIdentifier("tripNotificationsDone")
                 }
             }
         }
         .tint(WIFTheme.fresh)
         .presentationDetents([.medium, .large])
+        .interactiveDismissDisabled(isChangingAlerts)
+        .alert("Could not update notifications", isPresented: Binding(get: { preferenceError != nil }, set: { if !$0 { preferenceError = nil } })) {
+            Button("OK", role: .cancel) { preferenceError = nil }
+        } message: { Text(preferenceError ?? "") }
+    }
+
+    private func changePreference(_ enabled: Bool, flightAlerts: Bool) {
+        guard !isChangingAlerts, !library.isSaving else { return }
+        isChangingAlerts = true
+        preferenceError = nil
+        library.errorMessage = nil
+        Task {
+            let saved = flightAlerts
+                ? await library.setFlightAlerts(enabled, tripID: trip.id)
+                : await library.setPlanningReminders(enabled, tripID: trip.id)
+            if saved {
+                if enabled && library.isCloud { await store.requestNotificationAuthorization() }
+            } else {
+                // Present the failure on this sheet, including when opened from Profile.
+                // The toggle remains bound to the last acknowledged server preference.
+                preferenceError = String(localized: "Your notification change was not confirmed. Check your connection, reopen this trip, and try again.")
+            }
+            library.errorMessage = nil
+            isChangingAlerts = false
+        }
     }
 }
 
@@ -95,6 +114,13 @@ struct TripReminderButton: View {
     }
 }
 
+struct TripPlanningDraftState: Equatable {
+    let name: String
+    let destination: String
+    let start: TripDay
+    let end: TripDay
+}
+
 struct TripPlanningSheet: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.dismiss) private var dismiss
@@ -104,6 +130,8 @@ struct TripPlanningSheet: View {
     let isCloud: Bool
     let saveError: () -> String?
     @State private var isSaving = false
+    @State private var confirmsDiscard = false
+    @State private var initialDraft: TripPlanningDraftState
     @State private var name: String
     @State private var isCustomName: Bool
     @State private var destination: String
@@ -124,16 +152,23 @@ struct TripPlanningSheet: View {
         _isCustomName = State(initialValue: existing != nil)
         _destination = State(initialValue: existing?.destinationAirport ?? "")
         let nextWeek = Calendar.current.date(byAdding: .day, value: 7, to: Date()) ?? Date()
-        _start = State(initialValue: existing?.startDay.pickerDate ?? nextWeek)
-        _end = State(initialValue: existing?.endDay.pickerDate ?? (Calendar.current.date(byAdding: .day, value: 3, to: nextWeek) ?? nextWeek))
+        let initialStart = existing?.startDay.pickerDate ?? nextWeek
+        let initialEnd = existing?.endDay.pickerDate ?? (Calendar.current.date(byAdding: .day, value: 3, to: nextWeek) ?? nextWeek)
+        _start = State(initialValue: initialStart)
+        _end = State(initialValue: initialEnd)
+        _initialDraft = State(initialValue: TripPlanningDraftState(name: existing?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? "",
+            destination: existing?.destinationAirport ?? "", start: TripDay(initialStart), end: TripDay(initialEnd)))
     }
 
     private var cleanName: String { name.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var hasUnsavedChanges: Bool {
+        TripPlanningDraftState(name: effectiveName, destination: destination, start: TripDay(start), end: TripDay(end)) != initialDraft
+    }
 
     private var defaultGeneratedName: String {
         guard !destination.isEmpty else { return "" }
         let cityName = AirportLocation.location(for: destination)?.city ?? destination
-        return "\(cityName) trip"
+        return String(localized: "\(cityName) trip")
     }
 
     private var effectiveName: String {
@@ -312,10 +347,16 @@ struct TripPlanningSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 14) {
+                    if existing == nil {
+                        Text("Pick a destination, then invite your group. Everyone adds their own flights.")
+                            .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("sharedTripPurpose")
+                    }
                     destinationCard
                     datesCard
                     nameCard
-                    saveButton.padding(.top, 8)
                 }
                 .frame(maxWidth: 560)
                 .frame(maxWidth: .infinity)
@@ -326,22 +367,35 @@ struct TripPlanningSheet: View {
             .disabled(isSaving)
             .scrollDismissesKeyboard(.interactively)
             .wifAmbientBackground()
+            .safeAreaInset(edge: .bottom) {
+                saveButton
+                    .frame(maxWidth: 560).frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20).padding(.vertical, 12)
+                    .background(WIFTheme.canvas)
+            }
             .sheet(isPresented: $showsDatePicker) {
                 TravelDateRangePicker(startDay: TripDay(start).value, endDay: TripDay(end).value, futurePlansOnly: false) {
                     start = TripDay(value: $0).pickerDate; end = TripDay(value: $1).pickerDate
                 }
             }
-            .navigationTitle(existing == nil ? "New trip" : "Edit trip")
+            .navigationTitle(existing == nil ? "New shared trip" : "Edit shared trip")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(isSaving) }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { if hasUnsavedChanges { confirmsDiscard = true } else { dismiss() } }
+                        .disabled(isSaving).accessibilityIdentifier("tripEditorCancel")
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { nameFocused = false }.accessibilityIdentifier("tripKeyboardDone")
+                }
             }
             .onChange(of: start) { _, newStart in if end < newStart { end = newStart } }
             .onChange(of: destination) { _, newDest in
                 nameFocused = false
                 if !isCustomName || name.isEmpty {
                     if let city = AirportLocation.location(for: newDest)?.city {
-                        name = "\(city) trip"
+                        name = String(localized: "\(city) trip")
                     }
                 }
             }
@@ -358,7 +412,11 @@ struct TripPlanningSheet: View {
         .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.height(650), .large])
         .presentationDragIndicator(.visible)
         .presentationCornerRadius(32)
-        .interactiveDismissDisabled(isSaving)
+        .interactiveDismissDisabled(isSaving || hasUnsavedChanges)
+        .alert("Discard changes?", isPresented: $confirmsDiscard) {
+            Button("Discard changes", role: .destructive) { dismiss() }
+            Button("Keep editing", role: .cancel) {}
+        } message: { Text("Your unsaved changes will be lost.") }
     }
 }
 

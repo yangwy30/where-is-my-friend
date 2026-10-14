@@ -10,6 +10,7 @@ struct FriendsView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
+    @StateObject private var invitationDraft = FriendInvitationDraft()
     @State private var isScreenVisible = false
     @State private var referenceDate = Date()
     @Binding private var selectedSameCityEventID: UUID?
@@ -47,12 +48,6 @@ struct FriendsView: View {
         }
     }
 
-    private var sameCityFriends: [FriendPresence] {
-        guard store.currentCity != nil else { return [] }
-        return store.snapshot.sharingPreferences.citySharingEnabled
-            ? friends.filter { PresenceMatchPolicy.matches(store.snapshot.currentPresence, $0, at: referenceDate) } : []
-    }
-
     private var friendGridColumns: [GridItem] {
         if dynamicTypeSize.isAccessibilitySize {
             return [GridItem(.flexible())]
@@ -66,36 +61,50 @@ struct FriendsView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 header
-                Group {
-                    if showsLocationReminder { locationReminderCard }
-                    else { cityContextCard }
+                SameCityReunionCard(referenceDate: referenceDate, eventID: $selectedSameCityEventID)
+                    .id("sameCityReunion")
+                if store.snapshot.syncState == .offline || store.pendingOperationCount > 0 {
+                    synchronizationStatus.padding(.top, 12)
                 }
-                .padding(.top, 16)
-                if store.snapshot.friends.isEmpty || store.incomingRequestCount > 0 {
+                if showsLocationReminder {
+                    locationReminderCard
+                        .padding(.top, 16)
+                } else if sharingIsEnabled && (!hasCurrentCity || !isCurrentCityRecent) {
+                    cityRecoveryCard
+                        .padding(.top, 16)
+                }
+                if store.incomingRequestCount > 0 {
                     InvitationNotificationStatusView(service: store.notificationService)
                         .padding(.top, 12)
                 }
 
-                SameCityReunionCard(referenceDate: referenceDate, eventID: $selectedSameCityEventID)
-                    .id("sameCityReunion")
                 UpcomingTogetherCard(selectedID: $selectedUpcomingID)
                     .id("upcomingTogether")
 
-                worldSectionHeader
-                    .padding(.top, 22)
-                    .padding(.bottom, 9)
-                    .padding(.leading, 3)
+                if !friends.isEmpty {
+                    worldSectionHeader
+                        .padding(.top, 22)
+                        .padding(.bottom, 9)
+                        .padding(.leading, 3)
+                }
 
                 if friends.isEmpty {
                     ContentUnavailableView {
                         Label("No friends yet", systemImage: "person.2.slash")
                     } description: {
-                        Text(store.repositoryMode == .localDemo
-                             ? "Accept a request or invite a demo user by username."
-                             : "Share your username or invite someone by theirs.")
+                        Text("Invite someone you know to share cities and find time together.")
                     } actions: {
-                        Button("Add friends") { isAddingFriend = true }
-                            .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                        ShareLink(item: InviteURLFactory.make(username: store.snapshot.currentUser.username)) {
+                            Label("Invite your first friend", systemImage: "square.and.arrow.up")
+                                .font(.headline).frame(maxWidth: .infinity, minHeight: 54)
+                                .foregroundStyle(WIFTheme.onFresh)
+                                .background(WIFTheme.fresh, in: Capsule())
+                                .contentShape(Capsule())
+                        }
+                        .buttonStyle(.plain).accessibilityIdentifier("inviteFirstFriend")
+                        Button("Add by username") { invitationDraft.reset(); isAddingFriend = true }
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .accessibilityIdentifier("addFirstFriendByUsername")
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -133,7 +142,7 @@ struct FriendsView: View {
             FriendDetailView(friend: friend)
         }
         .sheet(isPresented: $isAddingFriend) {
-            AddFriendView()
+            AddFriendView(draft: invitationDraft)
         }
         .accessibilityIdentifier("friendsScreen")
         .onAppear {
@@ -304,7 +313,7 @@ struct FriendsView: View {
         let count = travelPlans.friendPlanCount(friendIDs: allowed, at: referenceDate)
         return NavigationLink { FriendTravelPlansView() } label: {
             HStack(spacing: 5) {
-                Text("Friend plans")
+                Text("Friends’ travel plans")
                 if count > 0 {
                     Text(count, format: .number)
                         .font(.caption2).padding(.horizontal, 5).padding(.vertical, 2)
@@ -323,7 +332,7 @@ struct FriendsView: View {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: 10) {
                     title
-                    friendCount
+                    cityStatus
                     addFriendButton
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
@@ -331,7 +340,7 @@ struct FriendsView: View {
                 HStack(alignment: .center) {
                     VStack(alignment: .leading, spacing: 3) {
                         title
-                        friendCount
+                        cityStatus
                     }
 
                     Spacer()
@@ -354,15 +363,54 @@ struct FriendsView: View {
             .foregroundStyle(WIFTheme.primaryText)
     }
 
-    private var friendCount: some View {
-        Text("\(friends.count) friends · \(uniqueCityCount) cities")
-            .font(.subheadline)
-            .foregroundStyle(WIFTheme.secondaryText)
+    private var cityStatus: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(cityStatusText)
+                .font(.subheadline)
+                .accessibilityIdentifier("homeCityStatus")
+            if !sharingIsEnabled {
+                Text(store.snapshot.syncState == .offline ? "City sharing is off on this device" : "City sharing is paused")
+                    .font(.caption)
+                    .accessibilityIdentifier("homeSharingPaused")
+            }
+        }
+        .foregroundStyle(WIFTheme.secondaryText)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var synchronizationStatus: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Label(store.pendingOperationCount > 0 ? "Changes waiting to sync" : "Couldn’t refresh cities", systemImage: "arrow.triangle.2.circlepath")
+                .font(.subheadline.weight(.medium))
+            Text(store.pendingOperationCount > 0
+                 ? "Your changes are saved on this device but haven’t been confirmed by the server."
+                 : "Showing the last saved cities. Check your connection and try again.")
+                .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+            if let synced = store.snapshot.lastSyncedAt {
+                Text("Last synced \(synced.formatted(date: .abbreviated, time: .shortened))")
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }
+            Button {
+                Task { await store.retryPendingOperations(); await store.refresh() }
+            } label: {
+                Text("Try again").font(.subheadline.weight(.medium))
+                    .frame(minHeight: 44).contentShape(Rectangle())
+            }
+            .disabled(store.isWorking)
+            .accessibilityIdentifier("retryHomeSync")
+        }
+        .foregroundStyle(WIFTheme.primaryText)
+        .padding(14)
+        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("homeSyncStatus")
     }
 
     private var addFriendButton: some View {
         WIFGlassEffectGroup(spacing: 10) {
             Button {
+                invitationDraft.reset()
                 isAddingFriend = true
             } label: {
                 ZStack(alignment: .topTrailing) {
@@ -374,7 +422,7 @@ struct FriendsView: View {
                     if store.incomingRequestCount > 0 {
                         Text("\(store.incomingRequestCount)")
                             .font(.caption2.bold())
-                            .foregroundStyle(.white)
+                            .foregroundStyle(WIFTheme.onDestructive)
                             .frame(minWidth: 18, minHeight: 18)
                             .background(WIFTheme.destructive, in: Circle())
                             .offset(x: 5, y: -5)
@@ -389,148 +437,46 @@ struct FriendsView: View {
         }
     }
 
-    private var cityContextCard: some View {
-        Button(action: onOpenCitySharing) {
-            Group {
-                if dynamicTypeSize.isAccessibilitySize {
-                    stackedCityContext
-                } else {
-                    ViewThatFits(in: .horizontal) {
-                        HStack(spacing: 0) {
-                            cityContextTitle.frame(maxWidth: .infinity, alignment: .leading)
-                            Rectangle().fill(WIFTheme.border.opacity(0.62))
-                                .frame(width: 1, height: 48).padding(.horizontal, 16)
-                            cityContextMetric
-                            cityContextChevron.padding(.leading, 12)
-                        }
-                        .frame(minWidth: 280)
-                        stackedCityContext
-                    }
-                }
-            }
-            .padding(.horizontal, 17)
-            .padding(.vertical, 15)
-            .frame(minHeight: 98)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .wifContentSurface(
-            tint: WIFTheme.fresh.opacity(0.11),
-            interactive: true,
-            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
-        )
-        .accessibilityLabel("Your city, \(currentCityLabel), \(cityContextText)")
-        .accessibilityIdentifier("myCitySharingCard")
-    }
-
-    private var cityContextTitle: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Your city").font(.caption2.weight(.semibold)).textCase(.uppercase)
-                .tracking(1.35).foregroundStyle(WIFTheme.fresh)
-            Text(currentCityLabel).font(.system(.title3, design: .rounded, weight: .semibold))
-                .foregroundStyle(WIFTheme.primaryText)
-                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1).minimumScaleFactor(0.82)
-        }
-    }
-
-    private var cityContextChevron: some View {
-        Image(systemName: "chevron.right").font(.caption.weight(.semibold))
-            .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
-            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-    }
-
-    private var stackedCityContext: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            cityContextTitle.frame(maxWidth: .infinity, alignment: .leading)
-            Divider().overlay(WIFTheme.border.opacity(0.4))
-            HStack {
-                cityContextMetric
-                Spacer(minLength: 12)
-                cityContextChevron
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var cityContextMetric: some View {
-        if sharingIsEnabled, store.currentCity != nil {
-            HStack(alignment: .center, spacing: 7) {
-                Text(verbatim: "\(sameCityFriends.count)")
-                    .font(.system(size: 39, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(WIFTheme.fresh)
-                    .contentTransition(.numericText())
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(sameCityFriendUnit)
-                    Text(sameCityLocationPhrase)
-                }
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(WIFTheme.secondaryText)
-                .lineLimit(1)
-            }
-        } else {
-            HStack(spacing: 7) {
-                Image(systemName: sharingIsEnabled ? "location" : "location.slash")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(WIFTheme.fresh)
-
-                Text(sharingMetricLabel)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
-            }
-            .frame(maxWidth: 118, alignment: .leading)
-        }
-    }
-
-    private var currentCityLabel: String {
-        store.snapshot.currentPresence.cityDisplay
-    }
-
-    private var sameCityFriendUnit: LocalizedStringKey {
-        sameCityFriends.count == 1 ? "friend" : "friends"
-    }
-
-    private var sameCityLocationPhrase: LocalizedStringKey {
-        sameCityFriends.isEmpty ? "in your city" : "here too"
-    }
-
-    private var sharingMetricLabel: LocalizedStringKey {
-        sharingIsEnabled ? "Choose a city to start sharing" : "Sharing paused"
-    }
-
     private var sharingIsEnabled: Bool {
         store.snapshot.sharingPreferences.citySharingEnabled
     }
 
-    private var cityContextText: String {
-        guard sharingIsEnabled else { return String(localized: "Friends cannot see your city") }
-        guard store.currentCity != nil else { return String(localized: "Choose a city to start sharing") }
-        if CityIdentity.presenceKey(city: store.currentCity, countryCode: store.snapshot.currentPresence.countryCode,
-                                    administrativeArea: store.snapshot.currentPresence.administrativeArea) == nil
-            || !PresenceMatchPolicy.isRecent(store.snapshot.currentPresence.updatedAt, at: referenceDate) {
-            return String(localized: "Refresh location to check who’s here")
-        }
+    private var hasCurrentCity: Bool {
+        CityIdentity.presenceKey(city: store.currentCity,
+                                countryCode: store.snapshot.currentPresence.countryCode,
+                                administrativeArea: store.snapshot.currentPresence.administrativeArea) != nil
+    }
 
-        if sameCityFriends.count == 1, let friend = sameCityFriends.first {
-            return String(
-                format: String(localized: "%@ is in your city"),
-                friend.displayName
-            )
-        }
+    private var isCurrentCityRecent: Bool {
+        PresenceMatchPolicy.isRecent(store.snapshot.currentPresence.updatedAt, at: referenceDate)
+    }
 
-        if sameCityFriends.count > 1 {
-            return String(
-                format: String(localized: "%lld friends are in your city"),
-                Int64(sameCityFriends.count)
-            )
-        }
+    private var cityStatusText: LocalizedStringKey {
+        guard hasCurrentCity else { return "Your city isn’t set yet" }
+        let city = store.snapshot.currentPresence.cityDisplay
+        return isCurrentCityRecent ? "You’re in \(city)" : "Last shared city: \(city)"
+    }
 
-        let update = store.snapshot.currentPresence.updatedAt?
-            .formatted(date: .omitted, time: .shortened) ?? "—"
-        return String(format: String(localized: "Updated %@"), update)
+    private var cityRecoveryCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(hasCurrentCity ? "Update your city to check who’s nearby." : "Choose a city to find same-city friends.")
+                .font(.subheadline)
+                .foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+            Button(action: onOpenCitySharing) {
+                Text(hasCurrentCity ? "Update your city" : "Set your city")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.fresh)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("homeCityRecoveryButton")
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .wifContentSurface(tint: WIFTheme.surface.opacity(0.08),
+                           in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
     }
 
     private func friendCard(_ friend: FriendPresence) -> some View {
@@ -548,14 +494,14 @@ struct FriendsView: View {
                 Text(friend.displayName)
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(WIFTheme.primaryText)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                    .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.82)
 
                 Text(friend.cityDisplay)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(WIFTheme.secondaryText)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.82)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                    .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.82)
 
                 HStack(spacing: 4) {
                     Circle()
@@ -574,7 +520,7 @@ struct FriendsView: View {
                         .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
                 .font(.caption2.weight(.medium))
-                .lineLimit(1)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                 .padding(.top, 3)
             }
             .padding(.horizontal, 8)
@@ -603,9 +549,6 @@ struct FriendsView: View {
         freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.42)
     }
 
-    private var uniqueCityCount: Int {
-        Set(friends.compactMap(\.city)).count
-    }
 }
 
 #Preview {

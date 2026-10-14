@@ -4,7 +4,7 @@ struct FriendTravelPlansView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.scenePhase) private var scenePhase
-    @State private var editing: PersonalTravelPlan?
+    @State private var editing: PersonalPlanDraft?
     @StateObject private var feed = FriendPlanFeed()
 
     private var plans: [FriendTravelPlan] {
@@ -16,28 +16,14 @@ struct FriendTravelPlansView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Where are friends going?").font(.largeTitle.bold())
-                    Text("See where your friends are headed.")
-                        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                }
-
                 Button {
-                    editing = PersonalTravelPlan(city: "", countryCode: "", region: "", timeZone: TimeZone.current.identifier,
-                        startDay: TripDay(Date()).value, endDay: TripDay(Date().addingTimeInterval(3 * 86400)).value)
+                    editing = PersonalPlanDraft(plan: PersonalTravelPlan(city: "", countryCode: "", region: "", timeZone: TimeZone.current.identifier,
+                        startDay: TripDay(Date()).value, endDay: TripDay(Date().addingTimeInterval(3 * 86400)).value))
                 } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "calendar.badge.plus").font(.title2)
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Add my plan").font(.subheadline.weight(.semibold))
-                            Text("Add a city and your dates.").font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        }
-                        Spacer(minLength: 0)
-                        Image(systemName: "chevron.right").font(.caption)
-                    }
-                    .padding(18).frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
-                    .background(WIFTheme.fresh.opacity(0.10), in: RoundedRectangle(cornerRadius: 22))
-                    .contentShape(Rectangle())
+                    Label("Add a travel plan", systemImage: "calendar.badge.plus")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh).accessibilityIdentifier("addMyFriendPlan")
 
@@ -64,7 +50,7 @@ struct FriendTravelPlansView: View {
                         Text("By start date").font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     ForEach(plans) { plan in
-                        FriendTravelPlanCard(plan: plan) { editing = plan.privateDraft() }
+                        FriendTravelPlanCard(plan: plan) { editing = PersonalPlanDraft(plan: plan.privateDraft(), source: .friend(plan.friendName)) }
                     }
                     if feed.nextCursor != nil {
                         Button { Task { await feed.loadMore() } } label: { Text(feed.errorMessage == nil ? String(localized: "Load more") : String(localized: "Try again")) }
@@ -77,14 +63,15 @@ struct FriendTravelPlansView: View {
             .foregroundStyle(WIFTheme.primaryText).padding(WIFTheme.screenInset).padding(.bottom, 20)
         }
         .wifAmbientBackground()
-        .navigationTitle("Friend plans").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Friends’ travel plans").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink("My plans") { TravelPlansView() }.accessibilityIdentifier("manageOwnTravelPlans")
+                NavigationLink { TravelPlansView() } label: { Image(systemName: "calendar") }
+                    .accessibilityLabel("My travel plans").accessibilityIdentifier("manageOwnTravelPlans")
             }
         }
-        .sheet(item: $editing) { PersonalPlanEditor(plan: $0) }
+        .sheet(item: $editing) { PersonalPlanEditor(plan: $0.plan, source: $0.source) }
         .refreshable { await feed.refresh() }
         .task(id: "\(library.accountScope ?? "")|\(library.accessRevision)") {
             feed.connect(library)
@@ -127,10 +114,12 @@ private struct FriendTravelPlanCard: View {
             }
             .buttonStyle(.plain).accessibilityIdentifier("friendPlan-\(plan.id)")
             Divider().overlay(WIFTheme.border)
-            HStack(spacing: 18) {
-                Button(action: onCopy) { Label("I’ll be there too", systemImage: "calendar.badge.plus") }
+            VStack(alignment: .leading, spacing: 4) {
+                Button(action: onCopy) { Label("Add to my travel plans", systemImage: "calendar.badge.plus").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }
                     .accessibilityIdentifier("copyFriendPlan-\(plan.id)")
-                ShareLink(item: greeting(for: plan)) { Label("Say hello", systemImage: "bubble.left") }
+                ShareLink(item: greeting(for: plan)) { Label("Share a meetup invite", systemImage: "square.and.arrow.up").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }
+                    .accessibilityHint("Choose an app to send your invitation.")
+                    .accessibilityIdentifier("shareFriendPlanInvite-\(plan.id)")
             }
             .font(.caption.weight(.medium)).buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
             .frame(minHeight: 44)
@@ -144,7 +133,7 @@ struct FriendTravelPlanDetailView: View {
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.scenePhase) private var scenePhase
     let planID: UUID
-    @State private var draft: PersonalTravelPlan?
+    @State private var draft: PersonalPlanDraft?
     @StateObject private var feed = FriendPlanFeed()
 
     private var plan: FriendTravelPlan? {
@@ -162,13 +151,14 @@ struct FriendTravelPlanDetailView: View {
                     Text(plan.city).font(.largeTitle.bold())
                     Text(plan.dateLabel).font(.title3).foregroundStyle(WIFTheme.fresh)
                     Text("Local dates in \(plan.city)").font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    Button { draft = plan.privateDraft() } label: {
-                        Label("I’ll be there too", systemImage: "calendar.badge.plus")
+                    Button { draft = PersonalPlanDraft(plan: plan.privateDraft(), source: .friend(plan.friendName)) } label: {
+                        Label("Add to my travel plans", systemImage: "calendar.badge.plus")
                     }
                     .buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("copyFriendPlanDetail")
-                    ShareLink(item: greeting(for: plan)) { Label("Say hello", systemImage: "bubble.left") }
-                        .font(.subheadline).frame(minHeight: 44)
-                    Text("Review your plan before saving.")
+                    ShareLink(item: greeting(for: plan)) { Label("Share a meetup invite", systemImage: "square.and.arrow.up") }
+                        .font(.subheadline).frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                        .accessibilityIdentifier("shareFriendPlanInvite")
+                    Text("Copy the city and dates, then choose who can see your own plan.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                 }
                 .padding(WIFTheme.screenInset).padding(.top, 20)
@@ -198,7 +188,7 @@ struct FriendTravelPlanDetailView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await feed.refresh(minimumInterval: 15) } }
         }
-        .sheet(item: $draft) { PersonalPlanEditor(plan: $0) }
+        .sheet(item: $draft) { PersonalPlanEditor(plan: $0.plan, source: $0.source) }
         .accessibilityIdentifier("friendPlanDetail")
     }
 }

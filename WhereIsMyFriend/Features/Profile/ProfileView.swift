@@ -11,7 +11,7 @@ struct ProfileView: View {
     let onOpenCitySharing: () -> Void
     @State private var showsDeleteConfirmation = false
     @State private var showsSignOutConfirmation = false
-    @State private var showsEditProfile = false
+    @State private var profileDraft: ProfileEditorDraft?
     @State private var showsAppearanceSettings = false
     @State private var isShowingOnboarding = false
 
@@ -59,7 +59,7 @@ struct ProfileView: View {
 
                     menuDivider
                     NavigationLink { TravelPlansView() } label: {
-                        profileMenuRow("Travel plans", subtitle: "Where you’ll be next",
+                        profileMenuRow("My travel plans", subtitle: "Tell friends where you’ll be, and when.",
                                        symbol: "calendar", color: WIFTheme.fresh)
                     }.buttonStyle(.plain).accessibilityIdentifier("travelPlansLink")
                 }
@@ -104,7 +104,7 @@ struct ProfileView: View {
                     } label: {
                         profileMenuRow(
                             "Appearance",
-                            subtitle: appearance == .solarJade ? "Solar Jade" : "Night Jade",
+                            subtitle: appearance.title,
                             symbol: "circle.lefthalf.filled",
                             color: WIFTheme.fresh
                         )
@@ -143,6 +143,7 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("privacyDataLink")
 
                     menuDivider
 
@@ -209,8 +210,8 @@ struct ProfileView: View {
                 isShowingOnboarding = false
             }
         }
-        .sheet(isPresented: $showsEditProfile) {
-            EditProfileView()
+        .sheet(item: $profileDraft) { draft in
+            EditProfileView(draft: draft, onClose: { profileDraft = nil })
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
@@ -232,7 +233,7 @@ struct ProfileView: View {
         } message: {
             Text(store.repositoryMode == .localDemo
                  ? "This removes the local demo account and cached Widget data."
-                 : "The server will delete your account, friendships, preferences, current city and notification devices. You can separately remove Across Us under Sign in with Apple in your Apple Account settings.")
+                 : "Your account, personal plans, friendships, city-sharing data and notification devices will be deleted. Shared trips may retain your participant name and flights for other members. Remove your flights first if you don’t want them retained. This can’t be undone.")
         }
     }
 
@@ -257,12 +258,15 @@ struct ProfileView: View {
                 Spacer(minLength: 8)
 
                 Button {
-                    showsEditProfile = true
+                    store.clearProfileSaveError()
+                    profileDraft = ProfileEditorDraft(displayName: store.snapshot.currentUser.displayName,
+                        username: store.snapshot.currentUser.username)
                 } label: {
                     Image(systemName: "pencil")
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(WIFTheme.fresh)
                         .frame(width: 46, height: 46)
+                        .contentShape(Circle())
                 }
                 .buttonStyle(.plain)
                 .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.14), interactive: true, in: Circle())
@@ -378,10 +382,13 @@ private struct AppearanceSettingsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 14) {
+            ScrollView {
+              VStack(alignment: .leading, spacing: 14) {
                 Text("Choose one look for the App, Home Screen widgets, and Lock Screen widgets.")
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
+
+                appearanceChoice(.system, title: "Follow system", subtitle: "Switch between light and dark with your device.", symbol: "circle.lefthalf.filled")
 
                 appearanceChoice(
                     .solarJade,
@@ -399,6 +406,7 @@ private struct AppearanceSettingsView: View {
 
                 Spacer(minLength: 0)
             }
+              }
             .padding(WIFTheme.screenInset)
             .wifAmbientBackground()
             .navigationTitle("Appearance")
@@ -454,7 +462,7 @@ private struct AppearanceSettingsView: View {
             )
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(appearance == .solarJade ? "solarJadeAppearance" : "nightJadeAppearance")
+        .accessibilityIdentifier("\(appearance.rawValue)Appearance")
         .accessibilityValue(currentAppearance == appearance ? "1" : "0")
     }
 
@@ -758,35 +766,153 @@ private struct WidgetPrivacyView: View {
     }
 }
 
+struct NotificationPermissionNotice: View {
+    @EnvironmentObject private var store: AppStore
+    @ObservedObject var service: LocalNotificationService
+    var body: some View {
+        if !service.allowsNotifications {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("iOS notifications are off", systemImage: "bell.slash").font(.headline)
+                Text("Your preferences are saved, but alerts cannot appear until notifications are allowed in iOS.")
+                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).fixedSize(horizontal: false, vertical: true)
+                Button {
+                    if service.authorizationStatus == .notDetermined { Task { await store.requestNotificationAuthorization() } }
+                    else if let url = URL(string: UIApplication.openNotificationSettingsURLString) { UIApplication.shared.open(url) }
+                } label: {
+                    Text(service.authorizationStatus == .notDetermined ? "Allow notifications" : "Open iOS Settings")
+                        .frame(minHeight: 44).contentShape(Rectangle())
+                }
+                .disabled(store.pushRegistrationState.isInProgress)
+                .accessibilityIdentifier("notificationPermissionRecovery")
+            }
+        }
+    }
+}
+
+private struct SameCityNotificationPreferencesView: View {
+    @EnvironmentObject private var store: AppStore
+    var body: some View {
+        List {
+            Section {
+                NotificationPermissionNotice(service: store.notificationService)
+                if !store.snapshot.sharingPreferences.citySharingEnabled {
+                    Text("City sharing is paused. Same-city alerts are paused too.")
+                }
+            }
+            Section {
+                ForEach(store.friends.filter { !store.snapshot.blockedUserIDs.contains($0.id) }) { friend in
+                    Toggle(isOn: Binding(get: { store.preference(for: friend.id).sameCityAlertEnabled }, set: { enabled in
+                        var preference = store.preference(for: friend.id)
+                        preference.sameCityAlertEnabled = enabled
+                        Task { _ = await store.setFriendPreference(preference) }
+                    })) {
+                        Text(friend.displayName).fixedSize(horizontal: false, vertical: true)
+                    }
+                    .disabled(store.isSavingFriendPreference(for: friend.id))
+                    .accessibilityIdentifier("notificationFriend-\(friend.username)")
+                }
+                if store.friends.isEmpty { Text("Add friends to configure same-city alerts.") }
+            } footer: {
+                Text("Alerts require both people to share recent cities. Turning off an alert does not stop city sharing.")
+            }
+        }
+        .scrollContentBackground(.hidden).background(WIFTheme.canvas).tint(WIFTheme.fresh)
+        .navigationTitle("Same-city alerts").navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("sameCityNotificationPreferences")
+    }
+}
+
+private struct TripNotificationDirectoryView: View {
+    @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var library: TripLibrary
+    @State private var selected: TripPlan?
+    @State private var loaded = false
+    private var scope: String { TripLibrary.storageScope(repository: store.tripRepository, ownerID: store.snapshot.currentUser.id.uuidString) }
+    private var activeTrips: [TripPlan] { library.trips.filter { $0.phase() != .past && $0.cancelledAt == nil } }
+    var body: some View {
+        List {
+            Section {
+                NotificationPermissionNotice(service: store.notificationService)
+                Text("Choose a shared trip to manage flight changes and flight planning reminders.")
+                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+            }
+            if !loaded { ProgressView() }
+            if library.syncFailed {
+                Section {
+                    Text("Couldn’t refresh shared trips. Saved trips are shown below.")
+                    Button("Try again") { Task { _ = await library.refresh() } }
+                }
+            }
+            ForEach(activeTrips) { trip in
+                Button { selected = trip } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(trip.name).font(.headline).foregroundStyle(WIFTheme.primaryText)
+                        Text(trip.flightAlertsEnabled == true ? "Flight alerts on" : "Flight alerts off")
+                        Text(trip.planningRemindersEnabled ?? true ? "Planning reminders on" : "Planning reminders off")
+                    }
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true).frame(minHeight: 60)
+                }
+                .accessibilityIdentifier("notificationTrip-\(trip.id)")
+            }
+            if loaded && activeTrips.isEmpty && !library.syncFailed { Text("No ongoing or upcoming trips.") }
+        }
+        .scrollContentBackground(.hidden).background(WIFTheme.canvas).tint(WIFTheme.fresh)
+        .navigationTitle("Shared trip alerts").navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("tripNotificationDirectory")
+        .sheet(item: $selected) { TripNotificationsSheet(library: library, trip: $0) }
+        .task(id: scope) {
+            loaded = false
+            let owner = store.snapshot.currentUser
+            library.connect(store.tripRepository)
+            library.load(scope: scope, userID: owner.id.uuidString)
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-seedTripExamples") {
+                library.addExamples(owner: TripParticipant(id: owner.id.uuidString, name: owner.displayName, userID: owner.id.uuidString))
+            }
+            #endif
+            _ = await library.refresh()
+            loaded = true
+        }
+        .refreshable { _ = await library.refresh() }
+    }
+}
+
 private struct NotificationSettingsView: View {
     @EnvironmentObject private var store: AppStore
     @ObservedObject var notificationService: LocalNotificationService
     @State private var pendingPreviewPreference: Bool?
+    @State private var showsFriendInvitations = false
+    @StateObject private var invitationDraft = FriendInvitationDraft()
+    @Environment(\.openSharedTrips) private var openSharedTrips
+    @EnvironmentObject private var plans: TravelPlanLibrary
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 18) {
-                VStack(spacing: 14) {
-                    Image(systemName: "bell.and.waves.left.and.right.fill")
-                        .font(.system(size: 38, weight: .semibold))
-                        .foregroundStyle(WIFTheme.fresh)
-                        .frame(width: 86, height: 86)
-                        .background(WIFTheme.fresh.opacity(0.12), in: Circle())
-                        .overlay {
-                            Circle().stroke(WIFTheme.fresh.opacity(0.22), lineWidth: 1)
-                        }
-                        .shadow(color: WIFTheme.fresh.opacity(0.26), radius: 28, y: 12)
-
-                    Text("Stay close, without checking")
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-
-                    Text("Friend and Trip invitations, plus the updates you choose.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.vertical, 16)
+                permissionStatusRow
+                Text("Choose the updates you receive")
+                    .font(.title2.bold()).frame(maxWidth: .infinity, alignment: .leading)
+                Text("The settings below are saved preferences. iOS notification access is required for delivery.")
+                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                Button { invitationDraft.reset(); showsFriendInvitations = true } label: {
+                    TravelPurposeLink(title: "Friend invitations", subtitle: "Review requests. Delivery follows iOS notification access.", symbol: "person.badge.plus")
+                }.buttonStyle(.plain).accessibilityIdentifier("notificationFriendInvitations")
+                Button(action: openSharedTrips) {
+                    TravelPurposeLink(title: "Trip invitations", subtitle: "Review invitations in Shared trips.", symbol: "envelope")
+                }.buttonStyle(.plain).accessibilityIdentifier("notificationTripInvitations")
+                NavigationLink { SameCityNotificationPreferencesView() } label: {
+                    TravelPurposeLink(title: "Same-city alerts", subtitle: store.snapshot.sharingPreferences.citySharingEnabled
+                        ? "Choose which friends can trigger an alert." : "Paused while city sharing is off.", symbol: "person.2")
+                }.buttonStyle(.plain).accessibilityIdentifier("notificationSameCitySettings")
+                NavigationLink { TravelPlansView() } label: {
+                    TravelPurposeLink(title: "Travel plan overlaps", subtitle: "Manage reminders on each of your travel plans.", symbol: "calendar")
+                }.buttonStyle(.plain).accessibilityIdentifier("notificationPlanSettings")
+                Text("Plans with reminders on: \(plans.plans.filter { $0.alertsEnabled && !$0.isPast() }.count)")
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                NavigationLink { TripNotificationDirectoryView() } label: {
+                    TravelPurposeLink(title: "Flights and planning reminders", subtitle: "Manage flight updates and reminders for each shared trip.", symbol: "airplane")
+                }.buttonStyle(.plain).accessibilityIdentifier("notificationSharedTripSettings")
 
                 Toggle(isOn: notificationPreviewsBinding) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -807,11 +933,12 @@ private struct NotificationSettingsView: View {
                 .accessibilityIdentifier("notificationPreviewsToggle")
 
                 Group {
-                    permissionStatusRow
 
                     if notificationService.authorizationStatus == .notDetermined {
-                        Button("Allow notifications") {
+                        Button {
                             Task { await store.requestNotificationAuthorization() }
+                        } label: {
+                            Text("Allow notifications").foregroundStyle(WIFTheme.onFresh)
                         }
                         .font(.headline)
                         .controlSize(.large)
@@ -849,7 +976,8 @@ private struct NotificationSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .accessibilityIdentifier("notificationSettingsScreen")
-        .task { await store.preparePushRegistrationIfAuthorized() }
+        .sheet(isPresented: $showsFriendInvitations) { AddFriendView(draft: invitationDraft) }
+        .task { await plans.refreshOwnPlans(); await store.preparePushRegistrationIfAuthorized() }
     }
 
     private var deviceRegistrationCard: some View {
@@ -1032,27 +1160,45 @@ private struct PrivacyDataView: View {
 
                 VStack(spacing: 0) {
                     privacyRow(
-                        "Stored",
-                        detail: "Identity, friendships, sharing choices, current city and update time",
-                        symbol: "externaldrive.fill"
+                        "Account and city sharing",
+                        detail: "Your profile, friends, sharing choices, latest city, update times and notification preferences.",
+                        symbol: "externaldrive.fill", identifier: "privacyAccountSummary"
                     )
                     Divider().overlay(WIFTheme.border).padding(.leading, 52)
                     privacyRow(
-                        "Never stored",
-                        detail: "Precise coordinates, routes, location history or your contact book",
-                        symbol: "location.slash.fill"
+                        "Plans and shared trips",
+                        detail: "Planned cities and dates, selected friends, trip members and invitations, and flights you add with their routes, times and status.",
+                        symbol: "airplane", identifier: "privacyTravelSummary"
+                    )
+                    Divider().overlay(WIFTheme.border).padding(.leading, 52)
+                    privacyRow(
+                        "Same-city moments",
+                        detail: "Same-city events and stay periods used for your history and alerts.",
+                        symbol: "clock.arrow.circlepath", identifier: "privacyMomentsSummary"
+                    )
+                    Divider().overlay(WIFTheme.border).padding(.leading, 52)
+                    privacyRow(
+                        "Device location",
+                        detail: "Precise device coordinates are not sent to our servers. We don’t keep a GPS movement trail or access your contact book. Flight routes come from the flights you add.",
+                        symbol: "location.slash.fill", identifier: "privacyDeviceLocationSummary"
                     )
                     Divider().overlay(WIFTheme.border).padding(.leading, 52)
                     privacyRow(
                         "On your Widget",
                         detail: "Your friends’ latest shared cities",
-                        symbol: "rectangle.3.group.fill"
+                        symbol: "rectangle.3.group.fill", identifier: "privacyWidgetSummary"
                     )
                     Divider().overlay(WIFTheme.border).padding(.leading, 52)
                     privacyRow(
                         "When you delete",
-                        detail: "Your account data is deleted and you’re signed out",
-                        symbol: "trash.fill"
+                        detail: "Your account, personal plans, friendships, city-sharing data and notification devices are deleted. You’re signed out and local cached data is cleared.",
+                        symbol: "trash.fill", identifier: "privacyDeletionSummary"
+                    )
+                    Divider().overlay(WIFTheme.border).padding(.leading, 52)
+                    privacyRow(
+                        "Shared trips after deletion",
+                        detail: "Your participant name and flights may remain in shared trips for other members. Remove your own flights before deleting your account if you don’t want them retained.",
+                        symbol: "person.2.fill", identifier: "privacySharedTripRetention"
                     )
                 }
                 .wifSettingsGlassCard()
@@ -1088,6 +1234,7 @@ private struct PrivacyDataView: View {
         .scrollIndicators(.hidden)
         .wifAmbientBackground()
         .navigationTitle("Privacy & data")
+        .accessibilityIdentifier("privacyDataScreen")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
     }
@@ -1095,7 +1242,8 @@ private struct PrivacyDataView: View {
     private func privacyRow(
         _ title: LocalizedStringKey,
         detail: LocalizedStringKey,
-        symbol: String
+        symbol: String,
+        identifier: String
     ) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: symbol)
@@ -1107,6 +1255,8 @@ private struct PrivacyDataView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.headline)
                 Text(detail).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier(identifier)
             }
 
             Spacer(minLength: 0)
@@ -1115,12 +1265,37 @@ private struct PrivacyDataView: View {
     }
 }
 
+/// Keep one draft for each explicit opening. Presentation/keyboard transitions
+/// may recreate the sheet's view, but must never reseed fields from the account.
+private final class ProfileEditorDraft: ObservableObject, Identifiable {
+    let id = UUID()
+    let initialDisplayName: String
+    let initialUsername: String
+    @Published var displayName: String
+    @Published var username: String
+    @Published var validationMessage: String?
+    @Published var saveInProgress = false
+    @Published var showsDiscardConfirmation = false
+
+    init(displayName: String, username: String) {
+        initialDisplayName = displayName
+        initialUsername = username
+        self.displayName = displayName
+        self.username = username
+    }
+
+    var hasUnsavedChanges: Bool {
+        displayName != initialDisplayName || username != initialUsername
+    }
+
+}
+
 private struct EditProfileView: View {
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
-    @State private var displayName = ""
-    @State private var username = ""
-    @State private var validationMessage: String?
+    @ObservedObject var draft: ProfileEditorDraft
+    let onClose: () -> Void
+
+    private var isSaving: Bool { draft.saveInProgress || store.isSavingProfile }
 
     var body: some View {
         NavigationStack {
@@ -1135,7 +1310,7 @@ private struct EditProfileView: View {
                     VStack(spacing: 0) {
                         profileField(
                             title: "Display name",
-                            text: $displayName,
+                            text: $draft.displayName,
                             contentType: .name,
                             identifier: "displayNameField"
                         )
@@ -1144,7 +1319,7 @@ private struct EditProfileView: View {
 
                         profileField(
                             title: "Username",
-                            text: $username,
+                            text: $draft.username,
                             contentType: .username,
                             identifier: "profileUsernameField",
                             usernameStyle: true
@@ -1157,16 +1332,17 @@ private struct EditProfileView: View {
                         .foregroundStyle(WIFTheme.secondaryText)
                         .padding(.horizontal, 4)
 
-                    if let validationMessage = validationMessage ?? store.profileSaveError {
+                    if let validationMessage = draft.validationMessage ?? store.profileSaveError {
                         Label(validationMessage, systemImage: "exclamationmark.triangle.fill")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(WIFTheme.destructive)
                             .wifSettingsGlassCard(tint: WIFTheme.destructive.opacity(0.08))
+                            .accessibilityIdentifier("profileValidationMessage")
                     }
 
                     Button(action: save) {
                         HStack {
-                            if store.isSavingProfile { ProgressView() }
+                            if isSaving { ProgressView() }
                             Text("Save changes")
                                 .frame(maxWidth: .infinity)
                         }
@@ -1175,7 +1351,7 @@ private struct EditProfileView: View {
                     }
                     .foregroundStyle(WIFTheme.primaryText)
                     .wifGlassButton(tint: WIFTheme.fresh.opacity(0.34), prominent: true)
-                    .disabled(store.isSavingProfile)
+                    .disabled(isSaving)
                     .accessibilityIdentifier("saveProfileButton")
                 }
                 .padding(WIFTheme.screenInset)
@@ -1187,15 +1363,24 @@ private struct EditProfileView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", action: close)
+                        .disabled(isSaving)
+                        .accessibilityIdentifier("closeProfileButton")
                 }
             }
-            .onAppear {
-                store.clearProfileSaveError()
-                displayName = store.snapshot.currentUser.displayName
-                username = store.snapshot.currentUser.username
-            }
         }
+        .alert(isPresented: $draft.showsDiscardConfirmation) {
+            Alert(
+                title: Text("Discard changes?"),
+                message: Text("Your unsaved changes will be lost."),
+                primaryButton: .destructive(Text("Discard changes")) {
+                    onClose()
+                },
+                secondaryButton: .cancel(Text("Keep editing"))
+            )
+        }
+        .interactiveDismissDisabled(draft.hasUnsavedChanges || isSaving)
+
     }
 
     private func profileField(
@@ -1216,28 +1401,38 @@ private struct EditProfileView: View {
                 .textContentType(contentType)
                 .textInputAutocapitalization(usernameStyle ? .never : .words)
                 .autocorrectionDisabled(usernameStyle)
-                .disabled(store.isSavingProfile)
+                .disabled(isSaving)
                 .accessibilityIdentifier(identifier)
         }
         .padding(.vertical, 7)
     }
 
     private func save() {
+        guard !isSaving else { return }
         let update = ProfileUpdate(
-            displayName: displayName,
-            username: username,
+            displayName: draft.displayName,
+            username: draft.username,
             avatarPalette: store.snapshot.currentUser.avatarPalette
         )
         do {
             let validated = try update.validated()
-            validationMessage = nil
+            draft.validationMessage = nil
+            draft.saveInProgress = true
             Task {
-                if await store.updateProfile(validated) { dismiss() }
+                defer { draft.saveInProgress = false }
+                if await store.updateProfile(validated) { onClose() }
             }
         } catch {
-            validationMessage = error.localizedDescription
+            draft.validationMessage = error.localizedDescription
         }
     }
+
+    private func close() {
+        guard !isSaving else { return }
+        if draft.hasUnsavedChanges { draft.showsDiscardConfirmation = true }
+        else { onClose() }
+    }
+
 }
 
 // MARK: - Developer Tools
@@ -1439,8 +1634,11 @@ struct HomeScreenWidgetMarketingView: View {
 }
 
 #Preview {
+    let store = AppStore()
     NavigationStack { ProfileView(onReplayOnboarding: {}) }
-        .environmentObject(AppStore())
+        .environmentObject(store)
+        .environmentObject(store.travelPlans)
+        .environmentObject(TripLibrary())
         .environmentObject(CityLocationService())
         .environmentObject(WIFAppearanceController())
 }

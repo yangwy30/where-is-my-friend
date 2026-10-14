@@ -4,18 +4,21 @@ import SwiftUI
 struct TravelPlansView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var library: TravelPlanLibrary
-    @State private var editing: PersonalTravelPlan?
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openSharedTrips) private var openSharedTrips
+    @State private var editing: PersonalPlanDraft?
     @State private var deleting: PersonalTravelPlan?
     @State private var showsPast = false
     @State private var importingTrip = false
-    @State private var importedPlan: PersonalTravelPlan?
 
     private var visiblePlans: [PersonalTravelPlan] { library.plans.filter { $0.isPast() == showsPast } }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Where to next?").font(.largeTitle.bold()).foregroundStyle(WIFTheme.primaryText)
+                Text("Tell friends where you’ll be, and when.")
+                    .font(.title2.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
                 Picker("Travel plan dates", selection: $showsPast) {
                     Text("Upcoming").tag(false); Text("Past").tag(true)
                 }.pickerStyle(.segmented)
@@ -32,7 +35,7 @@ struct TravelPlansView: View {
                         if !showsPast {
                             Text("Choose when you’ll be somewhere and who can see your plan.")
                                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                            Button("Add a plan") { editing = newPlan() }
+                            Button("Add a travel plan") { editing = newPlan() }
                                 .buttonStyle(TravelPrimaryButtonStyle())
                                 .accessibilityIdentifier("addTravelPlan")
                         }
@@ -42,7 +45,7 @@ struct TravelPlansView: View {
                 }
                 ForEach(visiblePlans) { plan in
                     VStack(alignment: .leading, spacing: 12) {
-                        Button { editing = plan } label: {
+                        Button { editing = PersonalPlanDraft(plan: plan) } label: {
                             HStack(spacing: 16) {
                                 CityEmblemView(city: plan.city, countryCode: plan.countryCode, administrativeArea: plan.region, size: 68)
                                 VStack(alignment: .leading, spacing: 5) {
@@ -69,25 +72,31 @@ struct TravelPlansView: View {
                     }
                     .padding(18).background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 25))
                 }
-                Button { importingTrip = true } label: { Label("Use dates from a Trip", systemImage: "airplane") }
+                Button { importingTrip = true } label: { Label("Use dates from a shared trip", systemImage: "airplane") }
                     .font(.subheadline).frame(maxWidth: .infinity, minHeight: 44)
+                    .accessibilityIdentifier("importSharedTripDates")
+                Button {
+                    dismiss()
+                    openSharedTrips()
+                } label: {
+                    TravelPurposeLink(title: "Coordinating flights with friends?", subtitle: "Go to Shared trips", symbol: "person.2")
+                }
+                .buttonStyle(.plain).accessibilityIdentifier("openSharedTrips")
                 Text("Plans don’t change your current city. Only the friends you choose can match with you.")
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
             }
             .padding(WIFTheme.screenInset)
         }
         .wifAmbientBackground()
-        .navigationTitle("Travel plans").navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("My travel plans").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .toolbar { ToolbarItem(placement: .topBarTrailing) {
             Button { editing = newPlan() } label: { Image(systemName: "plus") }.accessibilityLabel("Add travel plan")
         } }
         .refreshable { await library.refreshOwnPlans() }
         .task { await library.refreshOwnPlans() }
-        .sheet(item: $editing) { plan in PersonalPlanEditor(plan: plan) }
-        .sheet(isPresented: $importingTrip, onDismiss: {
-            if let importedPlan { editing = importedPlan; self.importedPlan = nil }
-        }) { TravelTripPicker { importedPlan = $0 } }
+        .sheet(item: $editing) { draft in PersonalPlanEditor(plan: draft.plan, source: draft.source) }
+        .sheet(isPresented: $importingTrip) { TravelTripPicker() }
         .confirmationDialog("Delete this plan?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
             Button("Delete plan", role: .destructive) {
                 guard let plan = deleting else { return }
@@ -97,9 +106,44 @@ struct TravelPlansView: View {
         .accessibilityIdentifier("travelPlansScreen")
     }
 
-    private func newPlan() -> PersonalTravelPlan {
-        PersonalTravelPlan(city: "", countryCode: "", region: "", timeZone: TimeZone.current.identifier,
-                           startDay: TripDay(Date()).value, endDay: TripDay(Date().addingTimeInterval(3 * 86400)).value)
+    private func newPlan() -> PersonalPlanDraft {
+        PersonalPlanDraft(plan: PersonalTravelPlan(city: "", countryCode: "", region: "", timeZone: TimeZone.current.identifier,
+                           startDay: TripDay(Date()).value, endDay: TripDay(Date().addingTimeInterval(3 * 86400)).value))
+    }
+}
+
+struct TravelPurposeLink: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    let title: LocalizedStringKey
+    let subtitle: LocalizedStringKey
+    let symbol: String
+
+    var body: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                text.frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(spacing: 14) {
+                    Image(systemName: symbol).font(.title3).accessibilityHidden(true)
+                    text
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right").font(.caption).accessibilityHidden(true)
+                }
+            }
+        }
+        .multilineTextAlignment(.leading)
+        .foregroundStyle(WIFTheme.fresh).padding(18)
+        .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+        .background(WIFTheme.fresh.opacity(0.08), in: RoundedRectangle(cornerRadius: 22))
+        .contentShape(Rectangle())
+    }
+
+    private var text: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(title).font(.subheadline.weight(.semibold))
+            Text(subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+        }
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -117,16 +161,47 @@ struct PersonalPlanEditor: View {
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.dismiss) private var dismiss
     @State var plan: PersonalTravelPlan
+    var source: PersonalPlanDraft.Source? = nil
     @State private var choosingCity = false
     @State private var choosingAudience = false
     @State private var choosingDates = false
     @State private var error: String?
+    @State private var initializedAudience = false
+    @State private var customizedAudience = false
+    @State private var initialPlan: PersonalTravelPlan?
+    @State private var confirmsDiscard = false
+
+    private var hasUnsavedChanges: Bool {
+        guard var baseline = initialPlan else { return false }
+        var current = plan
+        // Audience order is presentation detail, not a change to who can see the plan.
+        guard Set(baseline.audience) == Set(current.audience) else { return true }
+        baseline.audience = []
+        current.audience = []
+        return baseline != current
+    }
+
+    private var allFriendIDs: [UUID] {
+        TravelPlanAudiencePolicy.defaultAudience(friendIDs: store.friends.map(\.id), blockedIDs: store.snapshot.blockedUserIDs)
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("I’ll be in…").font(.largeTitle.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                    if let source {
+                        VStack(alignment: .leading, spacing: 6) {
+                            switch source {
+                            case .friend(let name): Text("City and dates copied from \(name)")
+                            case .sharedTrip(let name): Text("Using dates from “\(name)”")
+                            }
+                            Text("Review your dates and choose who can see this plan.")
+                                .foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        .accessibilityElement(children: .combine).accessibilityIdentifier("travelPlanCopySource")
+                    }
                     VStack(alignment: .leading, spacing: 8) {
                         fieldLabel("City")
                         Button { choosingCity = true } label: {
@@ -160,8 +235,10 @@ struct PersonalPlanEditor: View {
                     Button { choosingAudience = true } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Choose friends").font(.subheadline)
-                                Text(plan.audience.isEmpty ? "Only me · choose friends" : "\(plan.audience.count) selected friends")
+                                Text("Share with").font(.subheadline)
+                                Text(plan.audience.isEmpty ? String(localized: "Only me · choose friends")
+                                     : Set(plan.audience) == Set(allFriendIDs) ? String(localized: "All friends (\(plan.audience.count))")
+                                     : String(localized: "\(plan.audience.count) selected friends"))
                                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                             }
                             Spacer(); Image(systemName: "chevron.right").font(.caption)
@@ -169,7 +246,12 @@ struct PersonalPlanEditor: View {
                     }.buttonStyle(.plain)
                     .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
                     .accessibilityIdentifier("travelPlanAudience")
-                    Toggle("Show plan in their Friend plans", isOn: $plan.allowFriendBrowsing)
+                    if plan.revision == 0 {
+                        Text("All current friends are selected by default. Deselect anyone before saving.")
+                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Toggle("Show in friends’ travel plans", isOn: $plan.allowFriendBrowsing)
                         .font(.subheadline).accessibilityIdentifier("travelPlanBrowsing")
                     Text(plan.audience.isEmpty
                          ? "Choose friends to show them this plan."
@@ -181,7 +263,19 @@ struct PersonalPlanEditor: View {
                         .font(.subheadline).accessibilityIdentifier("travelPlanAlerts")
                     Text("Get a reminder up to 14 days before your plans overlap.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    Group {
+                        if case .sharedTrip = source {
+                            Text("This plan is saved separately. Update it yourself if the shared trip’s dates change.")
+                        } else {
+                            Text("This saves your own travel plan. It doesn’t join a shared trip.")
+                        }
+                    }
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("travelPlanBoundary")
                     if let error { Text(error).font(.caption).foregroundStyle(WIFTheme.destructive).accessibilityIdentifier("travelPlanError") }
+                    if plan.audience.count > 100 {
+                        Text("Choose up to 100 friends for this plan.").font(.caption).foregroundStyle(WIFTheme.destructive)
+                    }
                     Button {
                         Task {
                             if await library.save(plan) {
@@ -190,18 +284,22 @@ struct PersonalPlanEditor: View {
                             } else { error = library.errorMessage }
                         }
                     } label: {
-                        if library.isSaving { ProgressView() } else { Text("Save plan") }
+                        if library.isSaving { ProgressView() } else { Text("Save travel plan") }
                     }
                     .buttonStyle(TravelPrimaryButtonStyle())
-                    .disabled(plan.city.isEmpty || library.isSaving)
+                    .disabled(plan.city.isEmpty || plan.audience.count > 100 || library.isSaving)
                     .opacity(plan.city.isEmpty ? 0.5 : 1)
                     .accessibilityIdentifier("saveTravelPlan")
                 }
                 .padding(24)
             }
-            .wifAmbientBackground().navigationTitle(plan.revision == 0 ? "New plan" : "Edit plan").navigationBarTitleDisplayMode(.inline)
+            .wifAmbientBackground().navigationTitle(plan.revision == 0 ? "New travel plan" : "Edit travel plan").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {
-                if !choosingCity { Button("Cancel") { dismiss() }.disabled(library.isSaving) }
+                if !choosingCity {
+                    Button("Cancel") {
+                        if hasUnsavedChanges { confirmsDiscard = true } else { dismiss() }
+                    }.disabled(library.isSaving).accessibilityIdentifier("personalPlanCancel")
+                }
             } }
             .sheet(isPresented: $choosingDates) {
                 TravelDateRangePicker(startDay: plan.startDay, endDay: plan.endDay, timeZone: plan.timeZone) {
@@ -222,8 +320,15 @@ struct PersonalPlanEditor: View {
             .navigationDestination(isPresented: $choosingAudience) {
                 List {
                     Section {
+                        Button("Select all friends") { customizedAudience = true; plan.audience = allFriendIDs }
+                            .accessibilityIdentifier("selectAllTravelAudience")
+                        Button("Clear selection") { customizedAudience = true; plan.audience = [] }
+                            .accessibilityIdentifier("clearTravelAudience")
+                    }
+                    Section {
                         ForEach(store.friends.filter { !store.snapshot.blockedUserIDs.contains($0.id) }) { friend in
                             Toggle(isOn: Binding(get: { plan.audience.contains(friend.id) }, set: { value in
+                                customizedAudience = true
                                 plan.audience.removeAll { $0 == friend.id }
                                 if value { plan.audience.append(friend.id) }
                             })) {
@@ -240,7 +345,25 @@ struct PersonalPlanEditor: View {
                     Button("Done") { choosingAudience = false }.accessibilityIdentifier("travelAudienceDone")
                 } }
             }
-            .interactiveDismissDisabled(library.isSaving)
+            .onAppear {
+                guard !initializedAudience else { return }
+                initializedAudience = true
+                if plan.revision == 0 { plan.audience = allFriendIDs }
+                initialPlan = plan
+            }
+            .onChange(of: allFriendIDs) { _, ids in
+                // A cold launch may finish loading friends after the editor opens.
+                // Never refill a selection the user has already customized.
+                if initializedAudience, plan.revision == 0, !customizedAudience {
+                    plan.audience = ids
+                    initialPlan?.audience = ids
+                }
+            }
+            .alert("Discard changes?", isPresented: $confirmsDiscard) {
+                Button("Discard changes", role: .destructive) { dismiss() }
+                Button("Keep editing", role: .cancel) {}
+            } message: { Text("Your unsaved changes will be lost.") }
+            .interactiveDismissDisabled(library.isSaving || hasUnsavedChanges)
         }
     }
 
@@ -259,6 +382,7 @@ struct TravelCityPicker: View {
     @State private var error: String?
     let showsCancelButton: Bool
     let showsTripDestinations: Bool
+    let dismissOnSelect: Bool
     let onSelect: (TravelCity) -> Void
 
     private struct TripCityShortcut: Identifiable {
@@ -268,11 +392,12 @@ struct TravelCityPicker: View {
         let countryCode: String
     }
 
-    init(initialQuery: String = "", showsCancelButton: Bool = true, showsTripDestinations: Bool = false,
+    init(initialQuery: String = "", showsCancelButton: Bool = true, showsTripDestinations: Bool = false, dismissOnSelect: Bool = true,
          onSelect: @escaping (TravelCity) -> Void) {
         _query = State(initialValue: initialQuery)
         self.showsCancelButton = showsCancelButton
         self.showsTripDestinations = showsTripDestinations
+        self.dismissOnSelect = dismissOnSelect
         self.onSelect = onSelect
     }
 
@@ -335,9 +460,10 @@ struct TravelCityPicker: View {
                 guard !Task.isCancelled else { return }
                 var seen = Set<String>()
                 cities = result.mapItems.compactMap { item in
-                    guard let city = item.placemark.locality, let country = item.placemark.isoCountryCode,
-                          let zone = item.timeZone?.identifier else { return nil }
-                    let value = TravelCity(name: city, countryCode: country, region: item.placemark.administrativeArea ?? "", timeZone: zone)
+                    guard let value = TravelCitySearchPolicy.resolve(name: item.name,
+                        locality: item.placemark.locality, region: item.placemark.administrativeArea,
+                        countryCode: item.placemark.isoCountryCode,
+                        timeZone: (item.timeZone ?? item.placemark.timeZone)?.identifier) else { return nil }
                     return seen.insert(value.id).inserted ? value : nil
                 }
                 if cities.isEmpty { error = String(localized: "No city found. Try adding the country or region.") }
@@ -357,7 +483,7 @@ struct TravelCityPicker: View {
             cityRows(ownPlaces)
         }
         if showsTripDestinations && !visibleTripShortcuts.isEmpty {
-            sectionHeading(String(localized: "From your Trips"))
+            sectionHeading(String(localized: "From your shared trips"))
             tripShortcutRows
         }
         if library.isDemo && ownPlaces.isEmpty && visibleTripShortcuts.isEmpty {
@@ -476,7 +602,7 @@ struct TravelCityPicker: View {
                                        ownerID: store.snapshot.currentUser.id)
         }
         onSelect(city)
-        dismiss()
+        if dismissOnSelect { dismiss() }
     }
 }
 
@@ -516,19 +642,22 @@ private struct TravelTripPicker: View {
     @State private var selected: TripPlan?
     @State private var error: String?
     @State private var isLoading = true
-    let onSelect: (PersonalTravelPlan) -> Void
     var body: some View {
-        NavigationStack {
+        if let selected {
+            TripPersonalPlanSheet(trip: selected)
+        } else {
+          NavigationStack {
             List {
-                Text("Choose a trip, then confirm its city and who can see your personal dates.").font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                Text("Choose a shared trip, then confirm the city, your own dates and who can see your plan.").font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 if isLoading { ProgressView("Loading trips…") }
                 if let error { Text(error) }
                 ForEach(trips) { trip in
                     Button { selected = trip } label: { VStack(alignment: .leading) { Text(trip.name); Text(trip.dateLabel).font(.caption) } }
+                        .accessibilityIdentifier("importTrip-\(trip.id)")
                 }
                 if !isLoading && trips.isEmpty && error == nil { Text("No ongoing or upcoming trips.") }
             }
-            .navigationTitle("Use a Trip").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Use shared trip dates").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
             .task {
                 isLoading = true
@@ -537,8 +666,9 @@ private struct TravelTripPicker: View {
                 do {
                     let available: [TripPlan]
                     if store.repositoryMode == .localDemo {
-                        available = TripPlan.examples(owner: TripParticipant(id: ownerID.uuidString,
-                            name: store.snapshot.currentUser.displayName, userID: ownerID.uuidString))
+                        let local = TripLibrary()
+                        local.load(scope: TripLibrary.storageScope(repository: store.tripRepository, ownerID: ownerID.uuidString), userID: ownerID.uuidString)
+                        available = local.trips
                     } else {
                         available = try await store.tripRepository.fetchTrips().map { $0.plan(userID: ownerID.uuidString) }
                     }
@@ -549,17 +679,50 @@ private struct TravelTripPicker: View {
                     self.error = error.localizedDescription
                 }
             }
-            .sheet(item: $selected) { trip in
-                NavigationStack {
-                    TravelCityPicker(initialQuery: trip.destination.map { "\($0.city), \($0.country)" } ?? "") { city in
-                        let plan = PersonalTravelPlan(city: city.name, countryCode: city.countryCode, region: city.region, timeZone: city.timeZone,
-                            startDay: trip.startDay.value, endDay: trip.endDay.value)
-                        // The new editor requires explicit audience/alert consent again.
-                        selected = nil; dismiss(); onSelect(plan)
-                    }
-                }
+          }
+        }
+    }
+}
+
+/// A trip names an airport; resolve its city before using it for city-level matching.
+struct TripPlanCityPicker: View {
+    let trip: TripPlan
+    var dismissOnSelect = true
+    let onSelect: (PersonalPlanDraft) -> Void
+
+    var body: some View {
+        TravelCityPicker(initialQuery: trip.destination.map { "\($0.city), \($0.country)" } ?? "", dismissOnSelect: dismissOnSelect) { city in
+            onSelect(.copying(trip, city: city))
+        }
+    }
+}
+
+struct TripPersonalPlanSheet: View {
+    let trip: TripPlan
+    @State private var draft: PersonalPlanDraft?
+
+    var body: some View {
+        if let draft {
+            PersonalPlanEditor(plan: draft.plan, source: draft.source)
+        } else {
+            NavigationStack {
+                TripPlanCityPicker(trip: trip, dismissOnSelect: false) { draft = $0 }
             }
         }
+    }
+}
+
+struct TripDatesToPersonalPlanButton: View {
+    let trip: TripPlan
+    @State private var showsPlan = false
+
+    var body: some View {
+        Button { showsPlan = true } label: {
+            TravelPurposeLink(title: "Use these dates for my travel plan",
+                              subtitle: "Choose your own dates and who to share them with.", symbol: "calendar.badge.plus")
+        }
+        .buttonStyle(.plain).accessibilityIdentifier("tripDatesToPersonalPlan")
+        .sheet(isPresented: $showsPlan) { TripPersonalPlanSheet(trip: trip) }
     }
 }
 
@@ -613,8 +776,8 @@ struct UpcomingTogetherCard: View {
                         Text(selected.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.fresh)
                         Text("\(selected.daysTogether) days in common · local dates")
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        ShareLink(item: "We’ll both be in \(selected.city) on \(selected.dateLabel). Coffee?") {
-                            Label("Say hello", systemImage: "bubble.left")
+                        ShareLink(item: String(localized: "We’ll both be in \(selected.city) on \(selected.dateLabel). Coffee?")) {
+                            Label("Share a meetup invite", systemImage: "square.and.arrow.up")
                         }.buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("upcomingSayHello")
                     } else if selectedID != nil {
                         if isLoading { ProgressView() }
@@ -641,7 +804,7 @@ struct UpcomingTogetherCard: View {
                             }.buttonStyle(.plain).accessibilityIdentifier("upcomingOverlap-\(overlap.id)")
                         }
                     }
-                    Button("Manage my plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
+                    Button("My travel plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
                     Button("Back to Friends") {
                         expanded = false
                         selectedID = nil

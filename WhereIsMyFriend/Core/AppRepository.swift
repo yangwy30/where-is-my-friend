@@ -95,6 +95,7 @@ protocol AppRepository: Sendable {
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot
 
     func sendFriendRequest(username: String) async throws -> AppSnapshot
+    func cancelFriendRequest(id: UUID) async throws -> AppSnapshot
     func respond(to requestID: UUID, response: FriendRequestResponse) async throws -> AppSnapshot
     func removeFriend(id: UUID) async throws -> AppSnapshot
     func blockUser(id: UUID) async throws -> AppSnapshot
@@ -114,6 +115,7 @@ protocol AppRepository: Sendable {
 }
 
 extension AppRepository {
+    func cancelFriendRequest(id: UUID) async throws -> AppSnapshot { throw RepositoryError.unsupportedInCurrentMode }
     func updateCurrentCity(city: String, countryCode: String?, source: PresenceSource, observedAt: Date = Date()) async throws -> AppSnapshot {
         try await updateCurrentCity(city: city, countryCode: countryCode, source: source, observedAt: observedAt, administrativeArea: nil)
     }

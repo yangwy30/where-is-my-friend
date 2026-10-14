@@ -492,6 +492,10 @@ async function handle(request: Request): Promise<Response> {
             p_response: requiredString(body, "response"),
         }));
     }
+    if (request.method === "DELETE" && segments.length === 4 && segments[1] === "friends" && segments[2] === "requests") {
+        if (!isUUID(segments[3])) throw new APIError(400, "Invalid request ID.");
+        return json(await rpc("wif_cancel_friend_request", { p_user_id: userID, p_request_id: segments[3] }));
+    }
     if (request.method === "DELETE" && segments.length === 3 && segments[1] === "friends") {
         if (!isUUID(segments[2])) throw new APIError(400, "Invalid friend ID.");
         return json(await rpc("wif_remove_friend", { p_user_id: userID, p_friend_id: segments[2] }));

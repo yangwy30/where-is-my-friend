@@ -2,16 +2,34 @@ import SwiftUI
 import UIKit
 
 enum WIFAppearance: String, CaseIterable, Identifiable {
+    case system
     case solarJade
     case nightJade
 
     var id: String { rawValue }
 
-    var colorScheme: ColorScheme {
+    var colorScheme: ColorScheme? {
         switch self {
+        case .system: nil
         case .solarJade: .light
         case .nightJade: .dark
         }
+    }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .system: "Follow system"
+        case .solarJade: "Solar Jade"
+        case .nightJade: "Night Jade"
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func wifAppearance(_ appearance: WIFAppearance) -> some View {
+        if let scheme = appearance.colorScheme { environment(\.colorScheme, scheme) }
+        else { self }
     }
 }
 
@@ -26,7 +44,7 @@ enum SharedAppearancePreference {
         get {
             guard let rawValue = defaults.string(forKey: key),
                   let appearance = WIFAppearance(rawValue: rawValue) else {
-                return .solarJade
+                return .system
             }
             return appearance
         }
@@ -81,6 +99,13 @@ enum WIFTheme {
         light: UIColor(red: 0.016, green: 0.459, blue: 0.322, alpha: 1),
         dark: UIColor(red: 0.651, green: 0.902, blue: 0.467, alpha: 1)
     )
+
+    /// Foreground for opaque accent fills; the dark theme's accents are light.
+    static let onFresh = Color.adaptive(
+        light: .white,
+        dark: UIColor(red: 0.027, green: 0.067, blue: 0.043, alpha: 1)
+    )
+    static let onDestructive = onFresh
 
     static let freshSurface = Color.adaptive(
         light: UIColor(red: 0.855, green: 0.957, blue: 0.694, alpha: 1),

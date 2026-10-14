@@ -33,6 +33,20 @@ struct HomeWidgetContent {
     func initials(for friend: FriendPresence) -> String? {
         privacyMode == .full ? friend.initials : nil
     }
+    func destination(for friend: FriendPresence) -> URL {
+        guard privacyMode == .full, friends.contains(where: { $0.id == friend.id }) else { return SharedAppLink.make(host: "home") }
+        return SharedAppLink.make(host: "friend", path: friend.id.uuidString)
+    }
+    /// The dedicated same-city accessory must not fill spare columns with
+    /// friends elsewhere. Keep the generic directory's ordering unchanged.
+    func lockScreenFriends(sameCityOnly: Bool) -> [FriendPresence] {
+        guard privacyMode != .hideAll else { return [] }
+        return Array((sameCityOnly ? sameCityFriends : friends).prefix(2))
+    }
+    func lockScreenDestination(sameCityOnly: Bool) -> URL {
+        let visible = lockScreenFriends(sameCityOnly: sameCityOnly)
+        return visible.count == 1 ? destination(for: visible[0]) : SharedAppLink.make(host: "home")
+    }
     var togetherNames: String {
         let people = sameCityFriends
         if privacyMode == .full, people.count == 1, let friend = people.first {
@@ -82,14 +96,13 @@ struct FriendDirectoryWidget: View {
             if content.privacyMode == .hideAll {
                 HomeWidgetPlaceholder(hidden: true)
             } else if let first = content.friends.first {
-                Link(destination: SharedAppLink.make(host: "home")) {
-                    switch size {
-                    case .small: small(first)
-                    case .medium: medium
-                    case .large: large
-                    }
+                switch size {
+                case .small:
+                    Link(destination: content.destination(for: first)) { small(first) }
+                        .buttonStyle(.plain).widgetURL(content.destination(for: first))
+                case .medium: medium.widgetURL(SharedAppLink.make(host: "home"))
+                case .large: large.widgetURL(SharedAppLink.make(host: "home"))
                 }
-                .buttonStyle(.plain)
             } else {
                 HomeWidgetPlaceholder(hidden: false)
             }
@@ -123,7 +136,7 @@ struct FriendDirectoryWidget: View {
             HomeWidgetHeading(title: "ACROSS US", symbol: "person.2", isBrand: true)
             let people = Array(content.friends.prefix(4))
             LazyVGrid(columns: [GridItem(.flexible(), alignment: .leading), GridItem(.flexible(), alignment: .leading)], alignment: .leading, spacing: 12) {
-                ForEach(people) { friend in row(friend, compact: true) }
+                ForEach(people) { friend in friendLink(friend, compact: true) }
             }
             Spacer(minLength: 0)
         }
@@ -139,7 +152,7 @@ struct FriendDirectoryWidget: View {
             VStack(spacing: 0) {
                 ForEach(Array(visibleFriends.enumerated()), id: \.element.id) { index, friend in
                     if index > 0 { Rectangle().fill(HomeWidgetPalette.rule).frame(height: 0.5) }
-                    row(friend, compact: false).frame(maxHeight: .infinity)
+                    friendLink(friend, compact: false).frame(maxHeight: .infinity)
                 }
             }
             .frame(maxHeight: .infinity)
@@ -150,6 +163,11 @@ struct FriendDirectoryWidget: View {
             }
             .font(.caption2).foregroundStyle(HomeWidgetPalette.muted)
         }
+    }
+
+    private func friendLink(_ friend: FriendPresence, compact: Bool) -> some View {
+        Link(destination: content.destination(for: friend)) { row(friend, compact: compact).contentShape(Rectangle()) }
+            .buttonStyle(.plain).accessibilityIdentifier("widgetFriendLink-\(friend.id)")
     }
 
     private func row(_ friend: FriendPresence, compact: Bool) -> some View {

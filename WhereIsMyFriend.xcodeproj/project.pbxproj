@@ -72,6 +72,10 @@
 		A71100000000000000000003 /* TravelPlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71100000000000000000004; };
 		A71500000000000000000001 /* FriendTravelPlansView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71500000000000000000002; };
 		A71600000000000000000001 /* TravelDateRangePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71600000000000000000002; };
+		A01010100000000000000001 /* CoreAuditRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01010110000000000000001 /* CoreAuditRegressionTests.swift */; };
+		A01010100000000000000002 /* TravelAuditRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01010110000000000000002 /* TravelAuditRegressionTests.swift */; };
+		A01010100000000000000003 /* WidgetAuditRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01010110000000000000003 /* WidgetAuditRegressionTests.swift */; };
+		A01010100000000000000004 /* SameCityHeaderRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01010110000000000000004 /* SameCityHeaderRegressionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +181,10 @@
 		A71100000000000000000004 /* TravelPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/TravelPlansView.swift; sourceTree = SOURCE_ROOT; };
 		A71500000000000000000002 /* FriendTravelPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/FriendTravelPlansView.swift; sourceTree = SOURCE_ROOT; };
 		A71600000000000000000002 /* TravelDateRangePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhereIsMyFriend/Features/TravelPlans/TravelDateRangePicker.swift; sourceTree = SOURCE_ROOT; };
+		A01010110000000000000001 /* CoreAuditRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAuditRegressionTests.swift; sourceTree = "<group>"; };
+		A01010110000000000000002 /* TravelAuditRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelAuditRegressionTests.swift; sourceTree = "<group>"; };
+		A01010110000000000000003 /* WidgetAuditRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetAuditRegressionTests.swift; sourceTree = "<group>"; };
+		A01010110000000000000004 /* SameCityHeaderRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SameCityHeaderRegressionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,7 +301,7 @@
 			path = WhereIsMyFriendWidget;
 			sourceTree = "<group>";
 		};
-		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, 300000000000000000000054 /* TripFlightLookupTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
+		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, 300000000000000000000054 /* TripFlightLookupTests.swift */, A01010110000000000000001 /* CoreAuditRegressionTests.swift */, A01010110000000000000002 /* TravelAuditRegressionTests.swift */, A01010110000000000000003 /* WidgetAuditRegressionTests.swift */, A01010110000000000000004 /* SameCityHeaderRegressionTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
 		200000000000000000000019 /* WhereIsMyFriendUITests */ = {isa = PBXGroup; children = (300000000000000000000033 /* PrototypeUITests.swift */, ); path = WhereIsMyFriendUITests; sourceTree = "<group>"; };
 		200000000000000000000020 /* docs */ = {isa = PBXGroup; children = (300000000000000000000007 /* DESIGN_SPEC.md */, ); path = docs; sourceTree = "<group>"; };
 		200000000000000000000021 /* Auth */ = {isa = PBXGroup; children = (300000000000000000000041 /* AuthenticationView.swift */, ); path = Auth; sourceTree = "<group>"; };
@@ -455,7 +463,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		500000000000000000000005 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B92600000000000000000002, C91500000000000000000002, 400000000000000000000019, 400000000000000000000020, 400000000000000000000021, 400000000000000000000022, 400000000000000000000023, 400000000000000000000024, 400000000000000000000025, 400000000000000000000039, 400000000000000000000044, 400000000000000000000046, ); runOnlyForDeploymentPostprocessing = 0; };
-		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000027 /* FriendPresenceTests.swift in Sources */, 400000000000000000000053 /* TripFlightLookupTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000008 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A01010100000000000000004 /* SameCityHeaderRegressionTests.swift in Sources */, A01010100000000000000003 /* WidgetAuditRegressionTests.swift in Sources */, A01010100000000000000002 /* TravelAuditRegressionTests.swift in Sources */, A01010100000000000000001 /* CoreAuditRegressionTests.swift in Sources */, 400000000000000000000027 /* FriendPresenceTests.swift in Sources */, 400000000000000000000053 /* TripFlightLookupTests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000011 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (400000000000000000000028 /* PrototypeUITests.swift in Sources */, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
@@ -542,7 +550,7 @@
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriendTestFlight.entitlements;
 			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 25;
+			CURRENT_PROJECT_VERSION = 28;
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriend/App/Info.plist;
@@ -552,7 +560,7 @@
 			INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-			MARKETING_VERSION = 1.0.5;
+			MARKETING_VERSION = 1.0.6;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend;
 			PRODUCT_MODULE_NAME = WhereIsMyFriend;
 			PRODUCT_NAME = "Where Is My Friend";
@@ -599,13 +607,13 @@
 			APPLICATION_EXTENSION_API_ONLY = YES;
 			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriendWidget/WhereIsMyFriendWidget.entitlements;
 			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 25;
+			CURRENT_PROJECT_VERSION = 28;
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
 			GENERATE_INFOPLIST_FILE = NO;
 			INFOPLIST_FILE = WhereIsMyFriendWidget/Info.plist;
 			IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks", );
-			MARKETING_VERSION = 1.0.5;
+			MARKETING_VERSION = 1.0.6;
 			PRODUCT_BUNDLE_IDENTIFIER = com.yangwy30.whereismyfriend.widget;
 			PRODUCT_NAME = "Where Is My Friend Widget";
 			SKIP_INSTALL = YES;

@@ -10,6 +10,9 @@ struct FriendDetailView: View {
     @State private var showsBlockConfirmation = false
     @State private var referenceDate = Date()
     @StateObject private var planFeed = FriendPlanFeed()
+    #if DEBUG
+    @State private var simulatedRevocationOwner: UUID?
+    #endif
 
     private var sharedPlans: [FriendTravelPlan] {
         let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
@@ -17,8 +20,12 @@ struct FriendDetailView: View {
         return planFeed.items.filter { $0.friendID == friend.id && allowed.contains($0.friendID) && !$0.isPast(at: referenceDate) }
     }
 
-    private var currentFriend: FriendPresence {
-        store.friend(id: friend.id) ?? friend
+    private var currentFriend: FriendPresence? {
+        guard store.snapshot.isAuthenticated,
+              !store.snapshot.blockedUserIDs.contains(friend.id) else { return nil }
+        // Navigation values are snapshots, not continuing permission to display
+        // a friend's presence after a confirmed removal or block.
+        return store.friend(id: friend.id)
     }
 
     private var preference: FriendAccessPreference {
@@ -26,6 +33,70 @@ struct FriendDetailView: View {
     }
 
     var body: some View {
+        Group {
+            if let currentFriend {
+                details(for: currentFriend)
+            } else {
+                ContentUnavailableView {
+                    Label("Friend unavailable", systemImage: "person.crop.circle.badge.questionmark")
+                } description: {
+                    Text("This friend is no longer available for this account. Refresh your friends and try again.")
+                } actions: {
+                    Button("Try again") { Task { await store.refresh() } }
+                        .frame(minHeight: 44)
+                        .disabled(store.isWorking)
+                }
+                .accessibilityIdentifier("friendDetailUnavailable")
+                .navigationTitle("Friend unavailable")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+        .wifAmbientBackground()
+        .refreshable {
+            await store.refresh()
+            if currentFriend != nil { await planFeed.refresh() }
+            referenceDate = Date()
+        }
+        .task(id: "\(travelPlans.accountScope ?? "")|\(travelPlans.accessRevision)") {
+            planFeed.connect(travelPlans, friendID: friend.id)
+            guard currentFriend != nil else { return }
+            await store.preparePushRegistrationIfAuthorized()
+            while !Task.isCancelled, currentFriend != nil {
+                referenceDate = Date()
+                if scenePhase == .active { await planFeed.refresh(minimumInterval: 15) }
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, currentFriend != nil {
+                Task { referenceDate = Date(); await planFeed.refresh(minimumInterval: 15) }
+            }
+        }
+        .onChange(of: currentFriend == nil) { _, unavailable in
+            if unavailable {
+                showsRemoveConfirmation = false
+                showsBlockConfirmation = false
+            }
+        }
+        #if DEBUG
+        .task(id: store.snapshot.isAuthenticated ? store.snapshot.currentUser.id : nil) {
+            guard store.repositoryMode == .localDemo,
+                  ProcessInfo.processInfo.arguments.contains("-testFriendRevokedAfterOpen"),
+                  store.snapshot.isAuthenticated, currentFriend != nil else { return }
+            let owner = store.snapshot.currentUser.id
+            guard simulatedRevocationOwner != owner else { return }
+            do { try await Task.sleep(for: .seconds(2)) } catch { return }
+            guard !Task.isCancelled, store.snapshot.isAuthenticated,
+                  store.snapshot.currentUser.id == owner, currentFriend != nil else { return }
+            simulatedRevocationOwner = owner
+            // Simulate a remote removal reaching an already-open detail view.
+            // Deliberately bypass its local Remove action, which normally pops.
+            await store.removeFriend(id: friend.id)
+        }
+        #endif
+    }
+
+    private func details(for currentFriend: FriendPresence) -> some View {
         ScrollView {
             VStack(spacing: 0) {
                 Text(currentFriend.displayName)
@@ -39,14 +110,15 @@ struct FriendDetailView: View {
                     .padding(.top, 3)
 
                 if !sharedPlans.isEmpty || planFeed.isLoading || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
-                citySurface.padding(.top, 20)
+                citySurface(for: currentFriend).padding(.top, 20)
 
                 sectionLabel("Between you two").padding(.top, 24)
 
                 VStack(spacing: 0) {
                     Toggle(isOn: sharesMyCityBinding) {
-                        settingLabel("Share my city", note: "\(currentFriend.displayName) can see your latest city")
+                        settingLabel("Share my city", note: citySharingExplanation(for: currentFriend))
                     }
+                    .accessibilityIdentifier("friendCitySharingToggle")
                     .disabled(store.isSavingFriendPreference(for: friend.id))
                     .tint(WIFTheme.fresh)
                     .padding(15)
@@ -105,27 +177,14 @@ struct FriendDetailView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 28)
         }
-        .wifAmbientBackground()
         .navigationTitle(currentFriend.displayName.components(separatedBy: " ").first ?? currentFriend.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
-        .refreshable { await store.refresh(); await planFeed.refresh(); referenceDate = Date() }
-        .task(id: "\(travelPlans.accountScope ?? "")|\(travelPlans.accessRevision)") {
-            planFeed.connect(travelPlans, friendID: friend.id)
-            await store.preparePushRegistrationIfAuthorized()
-            while !Task.isCancelled {
-                referenceDate = Date()
-                if scenePhase == .active { await planFeed.refresh(minimumInterval: 15) }
-                do { try await Task.sleep(for: .seconds(60)) } catch { return }
-            }
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { referenceDate = Date(); await planFeed.refresh(minimumInterval: 15) } }
-        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     Task {
+                        guard self.currentFriend != nil else { return }
                         await store.setFavorite(
                             friendID: currentFriend.id,
                             isFavorite: !currentFriend.isFavorite
@@ -144,6 +203,7 @@ struct FriendDetailView: View {
         ) {
             Button("Remove friend", role: .destructive) {
                 Task {
+                    guard self.currentFriend != nil else { return }
                     await store.removeFriend(id: currentFriend.id)
                     if store.friend(id: currentFriend.id) == nil { dismiss() }
                 }
@@ -159,6 +219,7 @@ struct FriendDetailView: View {
         ) {
             Button("Block person", role: .destructive) {
                 Task {
+                    guard self.currentFriend != nil else { return }
                     await store.blockUser(id: currentFriend.id)
                     if store.friend(id: currentFriend.id) == nil { dismiss() }
                 }
@@ -171,9 +232,10 @@ struct FriendDetailView: View {
 
     private var sharesMyCityBinding: Binding<Bool> {
         Binding {
-            store.preference(for: currentFriend.id).sharesMyCity
+            store.preference(for: friend.id).sharesMyCity
         } set: { newValue in
-            var updated = store.preference(for: currentFriend.id)
+            guard currentFriend != nil else { return }
+            var updated = store.preference(for: friend.id)
             updated.sharesMyCity = newValue
             Task { await store.setFriendPreference(updated) }
         }
@@ -217,17 +279,31 @@ struct FriendDetailView: View {
         }
     }
 
+    private func citySharingExplanation(for currentFriend: FriendPresence) -> LocalizedStringKey {
+        if !preference.sharesMyCity {
+            return "\(currentFriend.displayName) can’t see your city"
+        }
+        if !store.snapshot.sharingPreferences.citySharingEnabled {
+            return "City sharing is paused. Resume it to share with \(currentFriend.displayName)."
+        }
+        guard let city = store.currentCity, !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return "Set your city to start sharing with \(currentFriend.displayName)."
+        }
+        return "\(currentFriend.displayName) can see your latest city"
+    }
+
     private var sameCityAlertBinding: Binding<Bool> {
         Binding {
-            store.preference(for: currentFriend.id).sameCityAlertEnabled
+            store.preference(for: friend.id).sameCityAlertEnabled
         } set: { newValue in
-            var updated = store.preference(for: currentFriend.id)
+            guard currentFriend != nil else { return }
+            var updated = store.preference(for: friend.id)
             updated.sameCityAlertEnabled = newValue
             Task { await store.setFriendPreference(updated) }
         }
     }
 
-    private var citySurface: some View {
+    private func citySurface(for currentFriend: FriendPresence) -> some View {
         VStack(spacing: 12) {
             CityEmblemView(friend: currentFriend, size: 84)
 

@@ -16,6 +16,25 @@ struct TravelCity: Codable, Hashable, Identifiable {
     ]
 }
 
+enum TravelCitySearchPolicy {
+    static func resolve(name: String?, locality: String?, region: String?, countryCode: String?, timeZone: String?) -> TravelCity? {
+        func clean(_ value: String?) -> String { value?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "" }
+        let country = clean(countryCode).uppercased(), area = clean(region), zone = clean(timeZone)
+        guard country.range(of: "^[A-Z]{2}$", options: .regularExpression) != nil,
+              !area.isEmpty, TimeZone(identifier: zone) != nil else { return nil }
+        let city = clean(locality)
+        let tokyoNames: Set<String> = ["tokyo", "東京", "東京都", "东京", "东京都"]
+        // Apple returns Tokyo as an administrative city record without locality.
+        // Limit this compatibility case to the exact Tokyo record, never any county/state or airport name.
+        if country == "JP", tokyoNames.contains(area.lowercased()), zone == "Asia/Tokyo",
+           (tokyoNames.contains(city.lowercased()) || (city.isEmpty && tokyoNames.contains(clean(name).lowercased()))) {
+            return TravelCity(name: "Tokyo", countryCode: country, region: "Tokyo", timeZone: zone)
+        }
+        guard !city.isEmpty else { return nil }
+        return TravelCity(name: city, countryCode: country, region: area, timeZone: zone)
+    }
+}
+
 enum TravelCityHistory {
     static let limit = 4
 
@@ -72,6 +91,30 @@ struct PersonalTravelPlan: Identifiable, Codable, Equatable {
         formatter.isLenient = false
         guard let date = formatter.date(from: value), formatter.string(from: date) == value else { return nil }
         return date
+    }
+}
+
+/// Copy context belongs to the unsaved editor, not to the saved plan or its sharing permissions.
+struct PersonalPlanDraft: Identifiable {
+    enum Source {
+        case friend(String)
+        case sharedTrip(String)
+    }
+    var plan: PersonalTravelPlan
+    var source: Source? = nil
+    var id: UUID { plan.id }
+
+    static func copying(_ trip: TripPlan, city: TravelCity) -> Self {
+        Self(plan: PersonalTravelPlan(city: city.name, countryCode: city.countryCode,
+            region: city.region, timeZone: city.timeZone,
+            startDay: trip.startDay.value, endDay: trip.endDay.value), source: .sharedTrip(trip.name))
+    }
+}
+
+enum TravelPlanAudiencePolicy {
+    static func defaultAudience(friendIDs: [UUID], blockedIDs: [UUID]) -> [UUID] {
+        let blocked = Set(blockedIDs)
+        return Array(Set(friendIDs).subtracting(blocked)).sorted { $0.uuidString < $1.uuidString }
     }
 }
 
