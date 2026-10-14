@@ -158,6 +158,17 @@ final class AppAccentContrastTests: XCTestCase {
         }
     }
 
+    func testFlightStatusColoursStayReadableAsCaptionText() {
+        for appearance in [UIUserInterfaceStyle.light, .dark] {
+            let traits = UITraitCollection(userInterfaceStyle: appearance)
+            let surface = UIColor(WIFTheme.surface).resolvedColor(with: traits)
+            for status in [TripFlightStatus.delayed, .cancelled, .onTime, .scheduled] {
+                XCTAssertGreaterThanOrEqual(contrast(UIColor(status.accent).resolvedColor(with: traits), surface), 4.5,
+                                            "\(status) status text in \(appearance)")
+            }
+        }
+    }
+
     func testPersonPaletteIsStableAcrossLaunchesAndSpellings() {
         // Pinned so a change to the hash can't silently recolour everyone's friends.
         XCTAssertEqual(WIFPersonPalette.index(for: "Mia Chen"), 3)

@@ -242,8 +242,7 @@ struct ProfileView: View {
             HStack(alignment: .top, spacing: 18) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(store.snapshot.currentUser.displayName)
-                        .font(.largeTitle.bold())
-                        .fontWidth(.expanded)
+                        .font(.system(.largeTitle, design: .rounded, weight: .bold))
                         .foregroundStyle(WIFTheme.primaryText)
                         .lineLimit(2)
                         .minimumScaleFactor(0.72)
@@ -274,9 +273,18 @@ struct ProfileView: View {
                 .accessibilityIdentifier("editProfileButton")
             }
 
-            Text(profilePresenceText)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(WIFTheme.secondaryText)
+            HStack(spacing: 4) {
+                // Your own city gets the same emblem friends see on their cards.
+                if let city = store.currentCity {
+                    let presence = store.snapshot.currentPresence
+                    CityEmblemView(city: city, countryCode: presence.countryCode,
+                                   administrativeArea: presence.administrativeArea, size: 56)
+                        .accessibilityHidden(true)
+                }
+                Text(profilePresenceText)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText)
+            }
         }
     }
 

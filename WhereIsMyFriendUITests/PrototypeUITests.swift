@@ -624,6 +624,9 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["目的地"].exists)
         capture("W2-F22-generated-name-zh")
         app.navigationBars.buttons["取消"].tap()
+        // Picking a destination makes the form dirty, so Cancel now asks first (F02).
+        let discard = app.alerts.buttons["放弃修改"]
+        if discard.waitForExistence(timeout: 3) { discard.tap() }
         let card = app.buttons["tripCard-example-west"]
         for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
         card.tap(); app.buttons["addBoardFlightButton"].tap()

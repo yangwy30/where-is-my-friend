@@ -182,9 +182,13 @@ struct TripsView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "suitcase.rolling")
-                .font(.system(size: 40, weight: .light)).foregroundStyle(WIFTheme.fresh)
-                .frame(width: 92, height: 92).background(WIFTheme.freshSurface.opacity(0.6), in: Circle())
+            // Different cities converging, the same idea the onboarding opens with.
+            HStack(alignment: .bottom, spacing: -14) {
+                CityEmblemView(city: "New York", countryCode: "US", size: 76).offset(y: -6)
+                CityEmblemView(city: "Paris", countryCode: "FR", size: 104).zIndex(1)
+                CityEmblemView(city: "Tokyo", countryCode: "JP", size: 76).offset(y: -6)
+            }
+            .accessibilityHidden(true)
             Text("Your next adventure\nstarts here.")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
@@ -228,13 +232,22 @@ struct TripsView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(trip.name).font(.system(.title3, design: .rounded, weight: .bold))
-                        Text("\(trip.destinationName) · \(trip.dateLabel)")
+                        Text("\(trip.destinationName) · \(trip.destinationAirport) · \(trip.dateLabel)")
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                        if trip.isExample {
+                            Text("EXAMPLE").font(.system(size: 9, weight: .semibold)).tracking(1.0)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                                .padding(.horizontal, 7).padding(.vertical, 3)
+                                .background(WIFTheme.secondaryText.opacity(0.10), in: Capsule())
+                                .padding(.top, 2)
+                        }
                     }
                     Spacer(minLength: 8)
-                    Text(trip.destinationAirport)
-                        .font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
-                        .padding(9).background(WIFTheme.freshSurface.opacity(0.6), in: RoundedRectangle(cornerRadius: 10))
+                    // The destination's emblem, as on friend cards, in place of a bare airport code.
+                    CityEmblemView(city: trip.destinationName,
+                                   countryCode: AirportLocation.location(for: trip.destinationAirport)?.countryCode,
+                                   size: 64)
+                        .padding(.top, -6)
                 }
                 HStack(spacing: 5) {
                     ForEach(trip.participants.prefix(4)) { person in
@@ -252,10 +265,6 @@ struct TripsView: View {
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(WIFTheme.secondaryText)
-                }
-                if trip.isExample {
-                    Text("EXAMPLE").font(.system(size: 8, weight: .semibold)).tracking(1.0)
                         .foregroundStyle(WIFTheme.secondaryText)
                 }
             }
@@ -525,7 +534,7 @@ private struct FullTripArrivalBoard: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.top, 8).padding(.bottom, 32)
         }
-        .background(WIFTheme.canvas.ignoresSafeArea())
+        .wifAmbientBackground()
         .navigationTitle("").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .wifNavigationSurface()
@@ -1777,10 +1786,11 @@ enum TripFlightStatus: String, Codable {
 
     var accent: Color {
         switch self {
-        case .landed, .onTime, .airborne: WIFTheme.fresh
-        case .boarding: WIFTripTheme.sky
+        // Green: on track. Amber: worth a look. Red: only when the flight is off.
+        case .landed, .onTime, .airborne, .boarding: WIFTheme.fresh
         case .scheduled, .unverified, .unknown: WIFTheme.secondaryText
-        case .delayed, .cancelled, .diverted: WIFTheme.destructive
+        case .delayed, .diverted: WIFTheme.caution
+        case .cancelled: WIFTheme.destructive
         }
     }
 }

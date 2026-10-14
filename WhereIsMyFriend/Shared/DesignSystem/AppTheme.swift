@@ -128,6 +128,12 @@ enum WIFTheme {
         dark: UIColor(red: 0.176, green: 0.302, blue: 0.224, alpha: 0.76)
     )
 
+    /// Needs attention but isn't a failure, such as a delayed flight.
+    static let caution = Color.adaptive(
+        light: UIColor(red: 0.604, green: 0.392, blue: 0.063, alpha: 1),
+        dark: UIColor(red: 0.910, green: 0.706, blue: 0.353, alpha: 1)
+    )
+
     static let destructive = Color.adaptive(
         light: UIColor(red: 0.710, green: 0.286, blue: 0.286, alpha: 1),
         dark: UIColor(red: 0.941, green: 0.537, blue: 0.537, alpha: 1)
@@ -166,15 +172,6 @@ enum WIFTheme {
             endPoint: .bottomTrailing
         )
     }
-}
-
-/// Small travel accents that carry a little of TripFlights' energy without
-/// replacing Across Us' adaptive jade surfaces and typography.
-enum WIFTripTheme {
-    static let sky = Color.adaptive(
-        light: UIColor(red: 0.176, green: 0.502, blue: 0.710, alpha: 1),
-        dark: UIColor(red: 0.357, green: 0.741, blue: 0.922, alpha: 1)
-    )
 }
 
 /// One hue per person, shared by every avatar so a friend looks the same on
