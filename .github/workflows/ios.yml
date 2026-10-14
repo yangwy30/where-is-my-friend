@@ -102,8 +102,8 @@ jobs:
   ios-ui:
     name: ios UI tests (${{ matrix.shard }}/3)
     runs-on: xcode-27
-    # The 97 UI tests averaged about 40 seconds each, so they run as three ~20 minute shards.
-    timeout-minutes: 45
+    # Each shard spent ~9 minutes building and ~26 running its 32-33 tests; the rest is retry headroom.
+    timeout-minutes: 55
     strategy:
       fail-fast: false
       matrix:

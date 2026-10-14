@@ -49,19 +49,42 @@ if [[ -n "${LIST_ONLY:-}" ]]; then
     exit 0
 fi
 
+# UI tests are written and audited on iPhone 18 Pro, and some layouts only fit that screen,
+# so prefer it on the newest iOS runtime instead of whichever iPhone is listed first.
 DEVICE_ID=$(xcrun simctl list devices available -j | ruby -rjson -e '
-    devices = JSON.parse(STDIN.read)["devices"].values.flatten
-    device = devices.find { |item| item["name"].start_with?("iPhone") && item["isAvailable"] }
-    abort "No available iPhone simulator" unless device
+    preferred = "iPhone 18 Pro"
+    iphones = JSON.parse(STDIN.read)["devices"].flat_map do |runtime, devices|
+        version = runtime[/iOS-(\d+(?:-\d+)*)/, 1]
+        next [] unless version
+        devices.select { |item| item["isAvailable"] && item["name"].start_with?("iPhone") }
+               .map { |item| item.merge("version" => Gem::Version.new(version.tr("-", "."))) }
+    end
+    abort "No available iPhone simulator" if iphones.empty?
+    device = iphones.select { |item| item["name"] == preferred }.max_by { |item| item["version"] } ||
+             iphones.max_by { |item| item["version"] }
+    STDERR.puts "Simulator: #{device["name"]} (iOS #{device["version"]})"
     puts device["udid"]
 ')
 
+# Booting first avoids the test runner crashing while a cold simulator is still starting up.
+xcrun simctl boot "$DEVICE_ID" 2>/dev/null || true
+xcrun simctl bootstatus "$DEVICE_ID" -b
+
+# Retry once so a single simulator launch hiccup does not fail a shard; a test that fails twice still fails.
+retry=()
+if [[ "$1" == ui ]]; then
+    retry=(-retry-tests-on-failure -test-iterations 2)
+fi
+
+# Diagnostics collection after the run hung for its full 600-second timeout on hosted runners.
 xcodebuild \
     -project WhereIsMyFriend.xcodeproj \
     -scheme WhereIsMyFriend \
     -configuration Debug \
     -destination "id=$DEVICE_ID" \
     -parallel-testing-enabled NO \
+    -collect-test-diagnostics never \
     CODE_SIGNING_ALLOWED=NO \
     "${selection[@]}" \
+    ${retry[@]+"${retry[@]}"} \
     test
