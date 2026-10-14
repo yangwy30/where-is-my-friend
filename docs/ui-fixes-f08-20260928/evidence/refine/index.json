@@ -1,0 +1,37 @@
+[
+  {
+    "file": "F08-import-saved-trip.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-trip-independent-dates.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-trip-private-draft.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-trip-confirm-city.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-trip-copy-entry.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-accessibility-personal-plans.png",
+    "test": "PrototypeUITests/testTravelPurposeLinksAtAccessibilitySize()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "F08-accessibility-shared-trips.png",
+    "test": "PrototypeUITests/testTravelPurposeLinksAtAccessibilitySize()",
+    "device": "Across Us Onboarding QA — SE"
+  }
+]

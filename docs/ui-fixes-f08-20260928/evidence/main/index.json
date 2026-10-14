@@ -1,0 +1,52 @@
+[
+  {
+    "file": "F08-copy-boundary-zh-Hans.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-copy-friend-draft-zh-Hans.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-friend-travel-plans-zh-Hans.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-my-travel-plans-zh-Hans.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-shared-trips-zh-Hans.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-copy-boundary-en.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-copy-friend-draft-en.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-friend-travel-plans-en.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-my-travel-plans-en.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-shared-trips-en.png",
+    "test": "PrototypeUITests/testTravelPurposesAndNavigationInBothLanguages()",
+    "device": "Across Us iOS 27 UI QA"
+  }
+]

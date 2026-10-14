@@ -1,0 +1,11 @@
+{
+  "verifiedAt": "2026-09-30T03:40:46.149189+00:00",
+  "version": "1.0.6",
+  "build": "27",
+  "uploadStatus": "Xcode App upload complete",
+  "processingStatus": "Complete",
+  "method": "Xcode Organizer, automatic signing with Cloud Managed Apple Distribution",
+  "sourceManifestUnchanged": true,
+  "appleUploadedAt": "Sep 29, 2026 8:39 PM",
+  "appleBuildID": "86a1b3d1-648c-4d4a-8001-669d53eab63b"
+}

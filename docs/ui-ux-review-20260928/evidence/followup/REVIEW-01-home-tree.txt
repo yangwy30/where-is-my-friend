@@ -1,0 +1,164 @@
+
+
+Attributes: Application, 0x112b8ea80, pid: 48184, label: 'Across Us'
+Element subtree:
+ →Application, 0x112b8ea80, pid: 48184, label: 'Across Us'
+    Window (Main), 0x112b8ee40, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x112b8e6c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x112b8e300, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x112b8dcc0, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x112b8e580, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x112b8e1c0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x112b8d400, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x112b8db80, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x112b8e080, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x112b8f840, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x112b8d900, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x112b8e440, {{0.0, 0.0}, {375.0, 667.0}}
+                            Other, 0x112b8f200, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x112b8df40, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x112b8fe80, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x112b8d7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x112b8f5c0, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'friendsScreen'
+                                    ScrollView, 0x112b8d2c0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                                      Other, 0x112b8ef80, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x112b8d540, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x112b8fd40, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x112b8fac0, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x112b8f480, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x112b8f0c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x112b8e800, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x112b8fc00, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x112b8d180, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x112b8ebc0, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x112b8de00, {{0.0, 20.0}, {375.0, 1468.0}}
+                                        Other, 0x112b8f340, {{20.0, 32.0}, {340.0, 1237.5}}
+                                          StaticText, 0x112b8da40, {{20.0, 32.0}, {146.5, 53.0}}, label: 'Friends'
+                                          StaticText, 0x112b8d680, {{20.0, 88.0}, {135.5, 18.0}}, label: '12 friends · 12 cities'
+                                          Button, 0x112b8f700, {{325.5, 42.0}, {34.5, 37.0}}, identifier: 'addFriendButton', label: 'Add a friend'
+                                            Image, 0x112b8f980, {{325.5, 59.5}, {20.0, 19.5}}, identifier: 'person.badge.plus', label: 'person.badge.plus'
+                                            StaticText, 0x112ba4000, {{347.5, 44.2}, {7.0, 13.5}}, label: '2'
+                                          Button, 0x112ba4140, {{20.0, 122.0}, {335.0, 98.0}}, identifier: 'myCitySharingCard', label: 'Your city, New York, NY, Mia Chen is in your city'
+                                            StaticText, 0x112ba4280, {{37.0, 149.8}, {73.5, 13.5}}, label: 'YOUR CITY'
+                                            StaticText, 0x112ba43c0, {{37.0, 168.2}, {123.5, 24.0}}, label: 'New York, NY'
+                                            StaticText, 0x112ba4500, {{235.0, 147.5}, {25.5, 47.0}}, label: '1'
+                                            StaticText, 0x112ba4640, {{267.5, 156.0}, {35.5, 14.5}}, label: 'friend'
+                                            StaticText, 0x112ba4780, {{267.5, 171.5}, {49.0, 14.5}}, label: 'here too'
+                                            Image, 0x112ba48c0, {{331.0, 165.5}, {6.5, 11.0}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x112ba4a00, {{20.0, 234.0}, {335.0, 72.0}}, identifier: 'sameCityReunionToggle', label: 'Here together, Mia Chen', value: Collapsed
+                                            Image, 0x112ba4b40, {{44.0, 261.5}, {25.0, 17.0}}, identifier: 'person.2', label: 'person.2'
+                                            StaticText, 0x112ba4c80, {{88.0, 251.8}, {100.0, 18.0}}, label: 'Here together'
+                                            StaticText, 0x112ba4dc0, {{88.0, 273.8}, {53.0, 14.5}}, label: 'Mia Chen'
+                                            Image, 0x112ba4f00, {{326.5, 267.0}, {11.0, 6.5}}, identifier: 'chevron.down', label: 'Go Down'
+                                          StaticText, 0x112ba5040, {{23.0, 342.8}, {146.5, 14.5}}, label: 'AROUND THE WORLD'
+                                          Button, 0x112ba5180, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                                            StaticText, 0x112ba52c0, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+                                            StaticText, 0x112ba5400, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+                                            Image, 0x112ba5540, {{349.0, 345.5}, {5.5, 9.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Other, 0x112ba5680, {{43.2, 390.0}, {303.2, 879.5}}
+                                            Button, 0x112ba57c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                                              Other, 0x112ba5900, {{57.0, 390.0}, {88.0, 88.0}}, label: 'New York'
+                                                Image, 0x112ba5a40, {{57.0, 390.0}, {88.0, 88.0}}
+                                              StaticText, 0x112ba5b80, {{63.5, 484.0}, {74.5, 20.5}}, label: 'Mia Chen'
+                                              StaticText, 0x112ba5cc0, {{61.2, 506.5}, {79.0, 14.5}}, label: 'New York, NY'
+                                              StaticText, 0x112ba5e00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+                                              StaticText, 0x112ba5f40, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+                                              StaticText, 0x112ba6080, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+                                            Button, 0x112ba61c0, {{230.5, 390.0}, {113.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000002', label: 'Lin Zhao, Tokyo, Updated 18 minutes ago, Has shared travel plans'
+                                              Other, 0x112ba6300, {{230.5, 390.0}, {88.0, 88.0}}, label: 'Tokyo'
+                                                Image, 0x112ba6440, {{230.5, 390.0}, {88.0, 88.0}}
+                                              StaticText, 0x112ba6580, {{240.2, 484.0}, {68.0, 20.5}}, label: 'Lin Zhao'
+                                              StaticText, 0x112ba66c0, {{257.0, 506.5}, {34.5, 14.5}}, label: 'Tokyo'
+                                              StaticText, 0x112ba6800, {{267.2, 526.0}, {23.0, 13.5}}, label: '18m'
+                                              Image, 0x112ba6940, {{316.0, 392.0}, {28.0, 28.0}}, identifier: 'calendar', label: 'Calendar'
+                                            Button, 0x112ba6a80, {{43.2, 572.5}, {127.2, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000003', label: 'Chloe Martin, Paris, Île-de-France, Updated 25 minutes ago, Has shared travel plans'
+                                              Other, 0x112ba6bc0, {{57.0, 572.5}, {88.0, 88.0}}, label: 'Paris'
+                                                Image, 0x112ba6d00, {{57.0, 572.5}, {88.0, 88.0}}
+                                              StaticText, 0x112ba6e40, {{50.5, 666.5}, {100.5, 20.5}}, label: 'Chloe Martin'
+                                              StaticText, 0x112ba6f80, {{43.2, 689.0}, {115.0, 14.5}}, label: 'Paris, Île-de-France'
+                                              StaticText, 0x112ba70c0, {{93.2, 708.5}, {24.0, 13.5}}, label: '25m'
+                                              Image, 0x112ba7200, {{142.5, 574.5}, {28.0, 28.0}}, identifier: 'calendar', label: 'Calendar'
+                                            Button, 0x112ba7340, {{221.8, 572.5}, {105.0, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000004', label: 'David Kim, San Francisco, CA, Updated 45 minutes ago'
+                                              Other, 0x112ba7480, {{230.5, 572.5}, {88.0, 88.0}}, label: 'San Francisco'
+                                                Image, 0x112ba75c0, {{230.5, 572.5}, {88.0, 88.0}}
+                                              StaticText, 0x112ba7700, {{234.5, 666.5}, {79.5, 20.5}}, label: 'David Kim'
+                                              StaticText, 0x112ba7840, {{221.8, 689.0}, {105.0, 14.5}}, label: 'San Francisco, CA'
+                                              StaticText, 0x112ba7980, {{266.5, 708.5}, {24.5, 13.5}}, label: '45m'
+                                            Button, 0x112ba7ac0, {{52.2, 755.0}, {97.0, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000005', label: 'Alex Rivera, London, England, Updated 52 minutes ago'
+                                              Other, 0x112ba7c00, {{57.0, 755.0}, {88.0, 88.0}}, label: 'London'
+                                                Image, 0x112ba7d40, {{57.0, 755.0}, {88.0, 88.0}}
+                                              StaticText, 0x112ba7e80, {{57.0, 849.0}, {87.5, 20.5}}, label: 'Alex Rivera'
+                                              StaticText, 0x11486c000, {{52.2, 871.5}, {97.0, 14.5}}, label: 'London, England'
+                                              StaticText, 0x11486c140, {{93.2, 891.0}, {24.0, 13.5}}, label: '52m'
+                                            Button, 0x11486c280, {{229.2, 755.0}, {90.0, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000006', label: 'Hana Wang, Beijing, Updated 1 hour ago'
+                                              Other, 0x11486c3c0, {{230.5, 755.0}, {88.0, 88.0}}, label: 'Beijing'
+                                                Image, 0x11486c500, {{230.5, 755.0}, {88.0, 88.0}}
+                                              StaticText, 0x11486c640, {{229.2, 849.0}, {90.0, 20.5}}, label: 'Hana Wang'
+                                              StaticText, 0x11486c780, {{254.5, 871.5}, {39.5, 14.5}}, label: 'Beijing'
+                                              StaticText, 0x11486c8c0, {{272.5, 891.0}, {12.5, 13.5}}, label: '1h'
+                                            Button, 0x11486ca00, {{57.0, 937.5}, {88.0, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000007', label: 'Liam Miller, Los Angeles, Updated 2 hours ago'
+                                              Other, 0x11486cb40, {{57.0, 937.5}, {88.0, 88.0}}, label: 'Los Angeles'
+                                                Image, 0x11486cc80, {{57.0, 937.5}, {88.0, 88.0}}
+                                              StaticText, 0x11486cdc0, {{58.2, 1031.5}, {85.0, 20.5}}, label: 'Liam Miller'
+                                              StaticText, 0x11486cf00, {{65.5, 1054.0}, {70.5, 14.5}}, label: 'Los Angeles'
+                                              StaticText, 0x11486d040, {{98.2, 1073.5}, {14.0, 13.5}}, label: '2h'
+                                            Button, 0x11486d180, {{226.0, 937.5}, {96.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000008', label: 'Emma Davis, Chicago, Updated 3 hours ago'
+                                              Other, 0x11486d2c0, {{230.5, 937.5}, {88.0, 88.0}}, label: 'Chicago'
+                                                Image, 0x11486d400, {{230.5, 937.5}, {88.0, 88.0}}
+                                              StaticText, 0x11486d540, {{226.0, 1031.5}, {96.5, 20.5}}, label: 'Emma Davis'
+                                              StaticText, 0x11486d680, {{250.5, 1054.0}, {47.5, 14.5}}, label: 'Chicago'
+                                              StaticText, 0x11486d7c0, {{271.8, 1073.5}, {14.0, 13.5}}, label: '3h'
+                                            Button, 0x11486d900, {{54.0, 1120.0}, {93.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000009', label: 'Lucas Rossi, Rome, Updated 4 hours ago'
+                                              Other, 0x11486da40, {{57.0, 1120.0}, {88.0, 88.0}}, label: 'Rome'
+                                                Image, 0x11486db80, {{57.0, 1120.0}, {88.0, 88.0}}
+                                              StaticText, 0x11486dcc0, {{54.0, 1214.0}, {93.5, 20.5}}, label: 'Lucas Rossi'
+                                              StaticText, 0x11486de00, {{84.2, 1236.5}, {33.0, 14.5}}, label: 'Rome'
+                                              StaticText, 0x11486df40, {{98.0, 1256.0}, {14.5, 13.5}}, label: '4h'
+                                            Button, 0x11486e080, {{202.0, 1120.5}, {144.5, 149.0}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000010', label: 'Oliver Smith, Sydney, New South Wales, Updated 5 hours ago'
+                                              Other, 0x11486e1c0, {{230.5, 1120.5}, {88.0, 88.0}}, label: 'Sydney'
+                                                Image, 0x11486e300, {{230.5, 1120.5}, {88.0, 88.0}}
+                                              StaticText, 0x11486e440, {{226.2, 1214.5}, {96.0, 20.5}}, label: 'Oliver Smith'
+                                              StaticText, 0x11486e580, {{202.0, 1237.0}, {144.5, 14.0}}, label: 'Sydney, New South Wales'
+                                              StaticText, 0x11486e6c0, {{271.8, 1256.0}, {14.0, 13.5}}, label: '5h'
+                                      Other, 0x11486e800, {{342.0, 20.0}, {30.0, 564.0}}, label: 'Vertical scroll bar, 3 pages', value: 0%
+                                        Other, 0x11486e940, {{369.0, 23.0}, {3.0, 237.0}}
+                                      Other, 0x11486ea80, {{342.0, 20.0}, {30.0, 564.0}}, label: 'Vertical scroll bar, 3 pages', value: 0%
+                                        Other, 0x11486ebc0, {{369.0, 23.0}, {3.0, 237.0}}
+                            Other, 0x11486ed00, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x11486ee40, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x11486ef80, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x11486f0c0, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x11486f200, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x11486f340, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x11486f480, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x11486f5c0, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x11486f700, {{55.0, 588.0}, {94.0, 54.0}}, label: 'Friends', Selected
+                            Image, 0x11486f840, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x11486f980, {{141.0, 588.0}, {94.0, 54.0}}, label: 'Trips'
+                            Image, 0x11486fac0, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x11486fc00, {{227.0, 588.0}, {94.0, 54.0}}, label: 'You'
+                            Image, 0x11486fd40, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x11486fe80, {{55.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x112b88000, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x112b88140, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x112b88280, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x112b883c0, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x112b88500, {{55.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x112b88640, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x112b88780, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x112b888c0, {{55.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x112b88a00, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x112b88b40, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x112b88c80, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b88dc0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b88f00, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x112b89040, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b89180, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b892c0, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x112b8ea80, pid: 48184, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x112b89400, pid: 48184, label: 'Across Us'
+  }

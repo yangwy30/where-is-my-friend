@@ -1,0 +1,90 @@
+
+
+Attributes: Application, 0x12131a800, pid: 46890, label: 'Across Us'
+Element subtree:
+ →Application, 0x12131a800, pid: 46890, label: 'Across Us'
+    Window (Main), 0x121319b80, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x121319cc0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x12131a1c0, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x12131be80, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x12131bd40, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x12131bc00, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x12131b480, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x12131b980, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x12131b840, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x12131b700, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x12131b5c0, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x12131ae40, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x12131b340, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Notifications'
+                              Button, 0x12131b200, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x12131b0c0, {{136.5, 31.5}, {101.5, 21.0}}, label: 'Notifications'
+                            Other, 0x12131af80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x12131ad00, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x12131abc0, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x12131aa80, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x12131a940, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'notificationSettingsScreen'
+                                    ScrollView, 0x12131a440, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'notificationSettingsScreen'
+                                      Other, 0x12131a300, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x121319f40, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x12131a080, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x121319e00, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x121319900, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x121319a40, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x121319680, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f24000, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x113f24140, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f24280, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f243c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x113f24500, {{0.0, 74.0}, {375.0, 707.0}}
+                                        Other, 0x113f24640, {{20.0, 125.0}, {335.0, 616.0}}
+                                          Image, 0x113f24780, {{153.0, 125.0}, {69.5, 40.0}}, identifier: 'bell.and.waves.left.and.right.fill', label: 'bell.and.waves.left.and.right.fill'
+                                          StaticText, 0x113f248c0, {{40.8, 202.0}, {293.5, 26.5}}, label: 'Stay close, without checking'
+                                          StaticText, 0x113f24a00, {{36.0, 242.5}, {303.0, 38.0}}, label: 'Friend and Trip invitations, plus the updates you choose.'
+                                          Switch, 0x113f24b40, {{38.0, 332.5}, {299.0, 62.5}}, identifier: 'notificationPreviewsToggle', label: 'Show notification previews, Show names and invitation details', value: 1
+                                            StaticText, 0x113f24c80, {{38.0, 332.5}, {213.5, 20.5}}, label: 'Show notification previews'
+                                            StaticText, 0x113f24dc0, {{38.0, 357.0}, {120.5, 38.0}}, label: 'Show names and invitation details'
+                                            Switch, 0x113f24f00, {{276.0, 350.0}, {63.0, 28.0}}, value: 1
+                                          Image, 0x113f25040, {{52.0, 513.0}, {16.0, 17.5}}, identifier: 'notificationPermissionCard', label: 'Notifications'
+                                          StaticText, 0x113f25180, {{94.0, 449.0}, {94.0, 64.5}}, identifier: 'notificationPermissionCard', label: 'iOS notification access'
+                                          StaticText, 0x113f252c0, {{94.0, 516.5}, {111.5, 78.0}}, identifier: 'notificationPermissionCard', label: 'Allow notifications for friend and Trip invitations.'
+                                          StaticText, 0x113f25400, {{238.5, 512.8}, {98.5, 18.0}}, identifier: 'notificationPermissionCard', label: 'Not requested'
+                                          Button, 0x113f25540, {{94.5, 630.5}, {186.5, 50.5}}, identifier: 'allowNotificationsButton', label: 'Allow notifications'
+                                          StaticText, 0x113f25680, {{20.0, 707.0}, {335.0, 34.0}}, label: 'Invitations don’t depend on location sharing. Same-city and flight alerts follow your friend and Trip settings.'
+                            Other, 0x113f257c0, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f25900, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f25a40, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x113f25b80, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x113f25cc0, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x113f25e00, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x113f25f40, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x113f26080, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x113f261c0, {{55.0, 588.0}, {94.0, 54.0}}, label: 'Friends'
+                            Image, 0x113f26300, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x113f26440, {{141.0, 588.0}, {94.0, 54.0}}, label: 'Trips'
+                            Image, 0x113f26580, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x113f266c0, {{227.0, 588.0}, {94.0, 54.0}}, label: 'You', Selected
+                            Image, 0x113f26800, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x113f26940, {{227.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x113f26a80, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f26bc0, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f26d00, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f26e40, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f26f80, {{227.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x113f270c0, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f27200, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f27340, {{227.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x113f27480, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x113f275c0, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x113f27700, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113f27840, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113f27980, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x113f27ac0, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113f27c00, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113f27d40, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x12131a800, pid: 46890, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f27e80, pid: 46890, label: 'Across Us'
+  }

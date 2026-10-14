@@ -1,0 +1,176 @@
+Dismissed without confirmation: true. Reopened name: Name your trip
+
+Attributes: Application, 0x12131cf00, pid: 47061, label: 'Across Us'
+Element subtree:
+ →Application, 0x12131cf00, pid: 47061, label: 'Across Us'
+    Window (Main), 0x12131d040, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x12131d2c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x12131e800, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x12131c000, {{-375.0, -667.0}, {1125.0, 2001.0}}
+          Other, 0x12131c140, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x12131c280, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x12131c3c0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x12131c500, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x12131c640, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x12131c780, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x12131c8c0, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x12131ca00, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x12131cb40, {{0.0, 0.0}, {375.0, 667.0}}
+                            Other, 0x12131cc80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x12131cdc0, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x1213bc000, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x1213bc140, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x1213bc280, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'tripsScreen'
+                                    ScrollView, 0x1213bc3c0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                                      Other, 0x1213bc500, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x1213bc640, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x1213bc780, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x1213bc8c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x1213bca00, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x1213bcb40, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1213bcc80, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x1213bcdc0, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1213bcf00, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1213bd040, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x1213bd180, {{0.0, 20.0}, {375.0, 752.5}}
+                                        StaticText, 0x1213bd2c0, {{20.0, 32.0}, {97.0, 53.0}}, label: 'Trips'
+                                        Button, 0x1213bd400, {{311.0, 47.0}, {44.0, 44.0}}, identifier: 'newTripButton', label: 'New trip'
+                                        StaticText, 0x1213bd540, {{20.0, 88.0}, {227.0, 18.0}}, label: 'More places. More time together.'
+                                        StaticText, 0x1213bd680, {{34.0, 130.0}, {78.5, 24.0}}, label: 'Ongoing'
+                                        StaticText, 0x1213bd7c0, {{120.5, 134.8}, {7.5, 14.5}}, label: '2'
+                                        Button, 0x1213bd900, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                                          StaticText, 0x1213bda40, {{38.0, 184.0}, {179.5, 24.0}}, label: 'New York catch-up'
+                                          StaticText, 0x1213bdb80, {{38.0, 213.0}, {193.5, 14.5}}, label: 'New York · Sep 27 – Sep 30, 2026'
+                                          StaticText, 0x1213bdcc0, {{305.5, 193.0}, {22.5, 14.5}}, label: 'JFK'
+                                          StaticText, 0x1213bde00, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+                                          StaticText, 0x1213bdf40, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+                                          StaticText, 0x1213be080, {{246.5, 247.2}, {77.5, 14.5}}, label: 'Ready to plan'
+                                          Image, 0x1213be1c0, {{331.0, 250.0}, {5.5, 9.0}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x1213be300, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+                                        Button, 0x1213be440, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                                          StaticText, 0x1213be580, {{38.0, 339.5}, {198.0, 24.0}}, label: 'West Coast weekend'
+                                          StaticText, 0x1213be6c0, {{38.0, 368.5}, {198.0, 14.5}}, label: 'Los Angeles · Sep 27 – Oct 1, 2026'
+                                          StaticText, 0x1213be800, {{303.5, 348.5}, {24.5, 14.5}}, label: 'LAX'
+                                          StaticText, 0x1213be940, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+                                          StaticText, 0x1213bea80, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+                                          StaticText, 0x1213bebc0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+                                          StaticText, 0x1213bed00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+                                          StaticText, 0x1213bee40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+                                          StaticText, 0x1213bef80, {{213.0, 402.8}, {111.0, 14.5}}, label: '4 of 5 flights added'
+                                          Image, 0x1213bf0c0, {{331.0, 405.5}, {5.5, 9.0}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x1213bf200, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+                                        StaticText, 0x1213bf340, {{20.0, 489.0}, {94.5, 24.0}}, label: 'Upcoming'
+                                        StaticText, 0x1213bf480, {{122.5, 493.8}, {6.0, 14.5}}, label: '1'
+                                        Button, 0x1213bf5c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                                          StaticText, 0x1213bf700, {{38.0, 543.0}, {153.5, 24.0}}, label: 'Tokyo in autumn'
+                                          StaticText, 0x1213bf840, {{38.0, 572.0}, {169.5, 14.5}}, label: 'Tokyo · Oct 19 – Oct 26, 2026'
+                                          StaticText, 0x1213bf980, {{302.5, 552.0}, {25.5, 14.5}}, label: 'NRT'
+                                          StaticText, 0x1213bfac0, {{38.0, 600.5}, {26.0, 26.0}}, label: 'WY'
+                                          StaticText, 0x1213bfc00, {{69.0, 600.5}, {26.0, 26.0}}, label: 'LZ'
+                                          StaticText, 0x1213bfd40, {{100.0, 600.5}, {26.0, 26.0}}, label: 'AR'
+                                          StaticText, 0x1213bfe80, {{246.5, 606.2}, {77.5, 14.5}}, label: 'Ready to plan'
+                                          Image, 0x1213c0000, {{331.0, 609.0}, {5.5, 9.0}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x1213c0140, {{38.0, 640.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+                                        Button, 0x1213c0280, {{20.0, 692.5}, {335.0, 44.0}}, identifier: 'pastTripsToggle', label: 'Past, 1', value: Collapsed
+                                          StaticText, 0x1213c03c0, {{20.0, 702.5}, {40.5, 24.0}}, label: 'Past'
+                                          StaticText, 0x1213c0500, {{68.5, 707.2}, {6.0, 14.5}}, label: '1'
+                                          Image, 0x1213c0640, {{342.5, 711.5}, {11.0, 6.5}}, identifier: 'chevron.down', label: 'Go Down'
+                                      Other, 0x1213c0780, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x1213c08c0, {{369.0, 77.0}, {3.0, 393.0}}
+                                      Other, 0x1213c0a00, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x1213c0b40, {{369.0, 77.0}, {3.0, 393.0}}
+                            Other, 0x1213c0c80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x1213c0dc0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x1213c0f00, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x1213c1040, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x1213c1180, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x1213c12c0, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x1213c1400, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x1213c1540, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x1213c1680, {{55.0, 588.0}, {94.0, 54.0}}, identifier: 'friendsTab', label: 'Friends'
+                            Image, 0x1213c17c0, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x1213c1900, {{141.0, 588.0}, {94.0, 54.0}}, identifier: 'tripsTab', label: 'Trips', Selected
+                            Image, 0x1213c1a40, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x1213c1b80, {{227.0, 588.0}, {94.0, 54.0}}, identifier: 'profileTab', label: 'You'
+                            Image, 0x1213c1cc0, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x1213c1e00, {{141.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x1213c1f40, {{141.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x1213c2080, {{141.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x1213c21c0, {{141.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x1213c2300, {{141.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x1213c2440, {{141.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x1213c2580, {{141.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x1213c26c0, {{141.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x1213c2800, {{141.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x1213c2940, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x1213c2a80, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x1213c2bc0, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x1213c2d00, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x1213c2e40, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x1213c2f80, {{0.0, 584.0}, {375.0, 83.0}}
+      Other, 0x1213c30c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x1213c3200, {{-375.0, -667.0}, {1125.0, 2001.0}}
+        Other, 0x1213c3340, {{8.0, 49.2}, {359.0, 609.8}}
+          Button, 0x1213c3480, {{151.1, 44.4}, {72.8, 23.9}}, label: 'Sheet Grabber', value: Expanded
+          Other, 0x1213c35c0, {{8.0, 49.2}, {359.0, 609.8}}
+            Other, 0x1213c3700, {{8.0, 49.2}, {359.0, 609.8}}
+              Other, 0x1213c3840, {{8.0, 49.2}, {359.0, 609.8}}
+                Other, 0x1213c3980, {{8.0, 49.2}, {359.0, 609.8}}
+                  Other, 0x1213c3ac0, {{8.0, 49.2}, {359.0, 609.8}}
+                    NavigationBar, 0x1213c3c00, {{8.0, 64.5}, {359.0, 51.7}}, identifier: 'New trip'
+                      Other, 0x1213c3d40, {{27.1, 68.3}, {73.2, 34.5}}, label: 'Cancel'
+                        Other, 0x1213c3e80, {{27.1, 68.3}, {73.2, 34.5}}
+                          Button, 0x1213c4000, {{27.1, 68.3}, {73.2, 34.5}}, label: 'Cancel'
+                      StaticText, 0x1213c4140, {{155.0, 75.5}, {64.6, 20.1}}, label: 'New trip'
+                    Other, 0x1213c4280, {{8.0, 49.2}, {359.0, 609.8}}
+                      Other, 0x1213c43c0, {{8.0, 49.2}, {359.0, 609.8}}
+                        Other, 0x1213c4500, {{8.0, 49.2}, {359.0, 609.8}}
+                          Other, 0x1213c4640, {{8.0, 49.2}, {359.0, 609.8}}
+                            Other, 0x1213c4780, {{-109.3, -62.4}, {612.7, 904.7}}
+                            ScrollView, 0x1213c48c0, {{8.0, 49.2}, {359.0, 609.8}}
+                              Other, 0x1213c4a00, {{8.0, 49.2}, {359.0, 609.8}}
+                                Other, 0x1213c4b40, {{8.0, 49.2}, {359.0, 119.5}}
+                              Other, 0x1213c4c80, {{8.0, 49.2}, {359.0, 609.8}}
+                              Other, 0x1213c4dc0, {{8.0, 116.2}, {359.0, 465.7}}
+                                Button, 0x1213c4f00, {{27.1, 133.4}, {320.7, 126.4}}, identifier: 'tripDestinationPicker', label: 'Destination, Where to?, Choose a city or airport'
+                                  StaticText, 0x1213c5040, {{46.3, 160.7}, {63.7, 13.9}}, label: 'Destination'
+                                  StaticText, 0x1213c5180, {{46.3, 182.2}, {98.6, 25.4}}, label: 'Where to?'
+                                  StaticText, 0x1213c52c0, {{46.3, 215.3}, {154.1, 17.2}}, label: 'Choose a city or airport'
+                                  Image, 0x1213c5400, {{208.1, 219.1}, {5.7, 9.6}}, identifier: 'chevron.right', label: 'Forward'
+                                  Image, 0x1213c5540, {{255.9, 160.2}, {72.8, 72.8}}, identifier: 'globe.americas.fill', label: 'globe.americas.fill'
+                                Button, 0x1213c5680, {{27.1, 273.2}, {320.7, 113.0}}, identifier: 'tripDatesPicker', label: 'Dates', value: Oct 5 – Oct 8, 2026
+                                  Image, 0x1213c57c0, {{48.2, 294.3}, {14.4, 13.4}}, identifier: 'calendar', label: 'Calendar'
+                                  StaticText, 0x1213c5900, {{48.2, 292.3}, {63.2, 17.2}}, label: 'Dates'
+                                  Image, 0x1213c5a40, {{322.0, 295.7}, {6.2, 10.5}}, identifier: 'chevron.right', label: 'Forward'
+                                  StaticText, 0x1213c5b80, {{46.3, 326.8}, {27.8, 13.9}}, label: 'From'
+                                  StaticText, 0x1213c5cc0, {{46.3, 347.4}, {90.0, 19.6}}, label: 'Oct 5, 2026'
+                                  StaticText, 0x1213c5e00, {{207.1, 326.8}, {25.4, 13.9}}, label: 'Until'
+                                  StaticText, 0x1213c5f40, {{207.1, 347.4}, {90.0, 19.6}}, label: 'Oct 8, 2026'
+                                StaticText, 0x1213c6080, {{46.3, 418.7}, {55.0, 13.9}}, label: 'Trip name'
+                                StaticText, 0x1213c61c0, {{282.8, 418.7}, {46.0, 13.9}}, label: 'Optional'
+                                TextField, 0x1213c6300, {{46.3, 444.1}, {282.4, 23.0}}, identifier: 'tripNameField', label: 'Trip name', placeholderValue: 'Name your trip'
+                                Button, 0x1213c6440, {{27.1, 507.3}, {320.7, 51.7}}, identifier: 'saveTripButton', label: 'Create trip', Disabled
+                              Other, 0x1213c6580, {{335.4, 116.2}, {28.7, 542.8}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                                Other, 0x1213c66c0, {{361.3, 196.1}, {2.9, 429.4}}
+                              Other, 0x1213c6800, {{335.4, 116.2}, {28.7, 542.8}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                                Other, 0x1213c6940, {{361.3, 196.1}, {2.9, 429.4}}
+                    Other, 0x1213c6a80, {{8.0, 49.2}, {359.0, 609.8}}
+                      Other, 0x1213c6bc0, {{8.0, 49.2}, {359.0, 609.8}}
+          Other, 0x1213c6d00, {{8.0, 49.2}, {359.0, 609.8}}
+            Other, 0x1213c6e40, {{8.0, 49.2}, {359.0, 609.8}}
+              Other, 0x1213c6f80, {{8.0, 49.2}, {359.0, 609.8}}
+                Other, 0x1213c70c0, {{8.0, 49.2}, {359.0, 609.8}}
+                  Other, 0x1213c7200, {{8.0, 49.2}, {359.0, 609.8}}
+                    Other, 0x1213c7340, {{8.0, 49.2}, {359.0, 609.8}}
+                Other, 0x1213c7480, {{8.0, 49.2}, {359.0, 609.8}}
+                  Other, 0x1213c75c0, {{8.0, 49.2}, {359.0, 609.8}}
+    Window, 0x1213c7700, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x1213c7840, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x1213c7980, {{0.0, 0.0}, {375.0, 667.0}}
+Path to element:
+ →Application, 0x12131cf00, pid: 47061, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x1213c7ac0, pid: 47061, label: 'Across Us'
+  }

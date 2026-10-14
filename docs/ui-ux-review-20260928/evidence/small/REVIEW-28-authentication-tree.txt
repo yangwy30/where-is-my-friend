@@ -1,0 +1,29 @@
+
+
+Attributes: Application, 0x113f4b0c0, pid: 46996, label: 'Across Us'
+Element subtree:
+ →Application, 0x113f4b0c0, pid: 46996, label: 'Across Us'
+    Window (Main), 0x113f4bc00, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f49f40, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f4b980, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113f4b480, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113f4b340, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x113f4b840, {{-122.5, -101.5}, {640.0, 945.0}}
+              Image, 0x113f4bac0, {{148.0, 166.0}, {79.5, 79.5}}, identifier: 'person.2.circle.fill', label: 'person.2.circle.fill'
+              StaticText, 0x113f4bd40, {{56.8, 274.2}, {261.5, 41.0}}, label: 'Find your people'
+              StaticText, 0x113f4af80, {{51.0, 325.2}, {273.0, 20.5}}, label: 'Sign in to connect with your friends.'
+              Button, 0x113f4be80, {{20.0, 484.5}, {335.0, 52.0}}, identifier: 'appleSignInButton', label: 'Continue with Apple'
+              Button, 0x113f4b700, {{20.0, 548.5}, {335.0, 66.0}}, identifier: 'demoSignInButton', label: 'Continue with local demo'
+                Image, 0x113f4b5c0, {{77.5, 572.0}, {12.0, 19.0}}, identifier: 'iphone.gen3', label: 'iphone.gen3'
+                StaticText, 0x113f4b200, {{20.0, 548.5}, {335.0, 66.0}}, label: 'Continue with local demo'
+              StaticText, 0x113f26080, {{113.8, 628.5}, {147.5, 14.5}}, label: 'Demo mode · sample data'
+    Window, 0x113f24280, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f24640, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f24500, {{0.0, 0.0}, {375.0, 667.0}}
+Path to element:
+ →Application, 0x113f4b0c0, pid: 46996, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f24f00, pid: 46996, label: 'Across Us'
+  }

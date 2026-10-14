@@ -1,0 +1,10 @@
+Failed to tap "Cancel" Button: No matches found for Elements matching predicate '"Cancel" IN identifiers' from input {(
+    Button, identifier: 'friendsTab', label: 'Friends', Selected,
+    Button, identifier: 'tripsTab', label: 'Trips',
+    Button, identifier: 'profileTab', label: 'You',
+    Button, label: 'Remove friend',
+    Button, identifier: 'BackButton', label: 'Back',
+    Button, identifier: 'star.fill', label: 'Remove favorite',
+    Button, identifier: 'removeFriendButton', label: 'Remove friend, Stops sharing both ways',
+    Button, identifier: 'blockFriendButton', label: 'Block person, Also removes the friendship and pending requests'
+)}

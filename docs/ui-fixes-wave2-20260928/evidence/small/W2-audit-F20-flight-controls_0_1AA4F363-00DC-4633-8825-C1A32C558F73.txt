@@ -1,0 +1,257 @@
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: Button, 0x116a13980, {{20.0, 587.5}, {335.0, 63.5}}, identifier: 'confirmAddTripFlightButton', label: 'Add my flight'
+Element subtree:
+ →Button, 0x116a13980, {{20.0, 587.5}, {335.0, 63.5}}, identifier: 'confirmAddTripFlightButton', label: 'Add my flight'
+Path to element:
+ →Application, 0x1169fcf00, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x1169fcc80, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10280, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10500, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a108c0, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11400, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a11540, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳Button, 0x116a13980, {{20.0, 587.5}, {335.0, 63.5}}, identifier: 'confirmAddTripFlightButton', label: 'Add my flight'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375336192.227
+    Output: {
+      Button, 0x11775c280, {{20.0, 587.5}, {335.0, 63.5}}, identifier: 'confirmAddTripFlightButton', label: 'Add my flight'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x116a126c0, {{36.0, 479.5}, {99.5, 13.5}}, label: 'FLIGHT NUMBER'
+Element subtree:
+ →StaticText, 0x116a126c0, {{36.0, 479.5}, {99.5, 13.5}}, label: 'FLIGHT NUMBER'
+Path to element:
+ →Application, 0x10abe35c0, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x10abe3d40, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳StaticText, 0x116a126c0, {{36.0, 479.5}, {99.5, 13.5}}, label: 'FLIGHT NUMBER'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375132160.237
+    Output: {
+      StaticText, 0x117752d00, {{36.0, 479.5}, {99.5, 13.5}}, label: 'FLIGHT NUMBER'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x116a12580, {{20.0, 397.5}, {295.5, 48.0}}, identifier: 'tripFlightOwnershipCaption', label: 'Your flight · demo'
+Element subtree:
+ →StaticText, 0x116a12580, {{20.0, 397.5}, {295.5, 48.0}}, identifier: 'tripFlightOwnershipCaption', label: 'Your flight · demo'
+Path to element:
+ →Application, 0x107667700, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x107667d40, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳StaticText, 0x116a12580, {{20.0, 397.5}, {295.5, 48.0}}, identifier: 'tripFlightOwnershipCaption', label: 'Your flight · demo'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375297344.236
+    Output: {
+      StaticText, 0x117752bc0, {{20.0, 397.5}, {295.5, 48.0}}, identifier: 'tripFlightOwnershipCaption', label: 'Your flight · demo'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x116a121c0, {{31.0, 124.0}, {195.5, 51.5}}, label: 'Outbound'
+Element subtree:
+ →StaticText, 0x116a121c0, {{31.0, 124.0}, {195.5, 51.5}}, label: 'Outbound'
+Path to element:
+ →Application, 0x10abe2bc0, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x10abe2940, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳StaticText, 0x116a121c0, {{31.0, 124.0}, {195.5, 51.5}}, label: 'Outbound'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375295552.233
+    Output: {
+      StaticText, 0x117752800, {{31.0, 124.0}, {195.5, 51.5}}, label: 'Outbound'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: Button, 0x116a11040, {{20.0, 50.0}, {87.5, 36.0}}, label: 'Cancel'
+Element subtree:
+ →Button, 0x116a11040, {{20.0, 50.0}, {87.5, 36.0}}, label: 'Cancel'
+Path to element:
+ →Application, 0x1169fcf00, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x1169fd400, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10140, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a103c0, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10640, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a108c0, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳NavigationBar, 0x116a10c80, {{0.0, 46.0}, {375.0, 54.0}}, identifier: 'Add flight'
+           ↳Other, 0x116a10dc0, {{20.0, 50.0}, {87.5, 36.0}}, label: 'Cancel'
+            ↳Other, 0x116a10f00, {{20.0, 50.0}, {87.5, 36.0}}
+             ↳Button, 0x116a11040, {{20.0, 50.0}, {87.5, 36.0}}, label: 'Cancel'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375179968.224
+    Output: {
+      Button, 0x117751a40, {{20.0, 50.0}, {87.5, 36.0}}, label: 'Cancel'
+    }
+
+
+Text clipped
+Text of this UITextField may be clipped at larger Dynamic Type sizes.
+Attributes: TextField, 0x116a12940, {{112.5, 503.0}, {174.5, 67.5}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: ZZ9999
+Element subtree:
+ →TextField, 0x116a12940, {{112.5, 503.0}, {174.5, 67.5}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: ZZ9999
+Path to element:
+ →Application, 0x1169fd040, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x1169febc0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳TextField, 0x116a12940, {{112.5, 503.0}, {174.5, 67.5}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: ZZ9999
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4747304448.239
+    Output: {
+      TextField, 0x117752f80, {{112.5, 503.0}, {174.5, 67.5}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: ZZ9999
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x116a12300, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Element subtree:
+ →StaticText, 0x116a12300, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Path to element:
+ →Application, 0x10abe2f80, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x10abe3ac0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳StaticText, 0x116a12300, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375296000.234
+    Output: {
+      StaticText, 0x117752940, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x116a12440, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Element subtree:
+ →StaticText, 0x116a12440, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Path to element:
+ →Application, 0x107667e80, pid: 73100, label: 'Across Us'
+  ↳Window (Main), 0x107667c00, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x116a10500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x116a10780, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x116a10a00, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x116a10b40, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x116a10c80, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x116a10dc0, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x116a10f00, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x116a11680, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x116a117c0, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x116a11900, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x116a11a40, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x116a11b80, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x116a12080, {{0.0, 100.0}, {375.0, 973.5}}
+                ↳StaticText, 0x116a12440, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11775ca00, pid: 73100, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 73100, elementOrHash.elementID: 4375296896.235
+    Output: {
+      StaticText, 0x117752a80, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+    }

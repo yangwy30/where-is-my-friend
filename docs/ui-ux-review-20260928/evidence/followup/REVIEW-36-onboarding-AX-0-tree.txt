@@ -1,0 +1,43 @@
+
+
+Attributes: Application, 0x112937e80, pid: 47895, label: 'Across Us'
+Element subtree:
+ →Application, 0x112937e80, pid: 47895, label: 'Across Us'
+    Window (Main), 0x112934500, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x112934000, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x112935680, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x112934dc0, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x112936580, {{0.0, 0.0}, {375.0, 667.0}}
+              Button, 0x112935400, {{24.0, 33.5}, {44.0, 44.0}}, identifier: 'onboardingBackButton', label: 'Back', Disabled
+              StaticText, 0x112934b40, {{135.8, 48.5}, {56.0, 13.5}}, label: 'Across Us'
+              Button, 0x1129352c0, {{259.5, 26.0}, {91.5, 58.5}}, identifier: 'onboardingSkipButton', label: 'Skip'
+              ScrollView, 0x1129361c0, {{0.0, 84.5}, {375.0, 449.0}}, identifier: 'onboardingContent'
+                Other, 0x1129343c0, {{0.0, -221.5}, {375.0, 755.0}}
+                  Other, 0x112935e00, {{0.0, -221.5}, {375.0, 180.0}}, label: 'Preview: friends in New York, Paris and Tokyo'
+                    Image, 0x112935f40, {{100.3, -190.0}, {59.6, 59.6}}, label: 'OnboardingNewYorkFreestanding'
+                    Image, 0x112936300, {{219.0, -179.9}, {58.5, 58.5}}, label: 'OnboardingTokyoFreestanding'
+                    Image, 0x112935cc0, {{154.6, -140.2}, {65.8, 65.8}}, label: 'OnboardingParisFreestanding'
+                    StaticText, 0x1129366c0, {{115.9, -211.0}, {4.8, 8.2}}, label: 'Y'
+                    StaticText, 0x1129375c0, {{113.1, -196.2}, {10.4, 6.8}}, label: 'You'
+                    StaticText, 0x112937840, {{204.1, -142.9}, {6.2, 8.2}}, label: 'M'
+                    StaticText, 0x112936f80, {{202.3, -128.1}, {9.8, 6.8}}, label: 'Mia'
+                    StaticText, 0x112937ac0, {{255.4, -203.1}, {4.8, 8.2}}, label: 'K'
+                    StaticText, 0x112937980, {{253.5, -188.3}, {8.7, 6.8}}, label: 'Kai'
+                    StaticText, 0x112937700, {{122.8, -128.3}, {13.5, 8.2}}, label: '纽约'
+                    StaticText, 0x112935040, {{241.5, -118.1}, {13.5, 8.2}}, label: '东京'
+                    StaticText, 0x112936080, {{180.8, -68.1}, {13.5, 8.2}}, label: '巴黎'
+                  StaticText, 0x112937340, {{30.0, 48.5}, {273.0, 96.0}}, label: 'A WORLD OF FRIENDS'
+                  StaticText, 0x112937200, {{30.0, 160.5}, {271.5, 137.5}}, identifier: 'onboardingTitle', label: '各在一城。
+依然亲近。'
+                  StaticText, 0x1129370c0, {{30.0, 314.0}, {302.0, 195.5}}, label: '无论身在何处，看看好友所在的城市。'
+              Other, 0x112936e40, {{156.0, 543.5}, {63.0, 6.0}}, label: 'Page 1 of 4'
+              Button, 0x112936bc0, {{30.0, 567.5}, {315.0, 79.5}}, identifier: 'onboardingContinueButton', label: '继续'
+                StaticText, 0x112936a80, {{101.2, 575.5}, {100.5, 63.5}}, label: '继续'
+                Image, 0x112936940, {{218.5, 587.0}, {49.0, 40.5}}, identifier: 'arrow.right', label: '向右'
+Path to element:
+ →Application, 0x112937e80, pid: 47895, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x112935b80, pid: 47895, label: 'Across Us'
+  }

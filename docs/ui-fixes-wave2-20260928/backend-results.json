@@ -1,0 +1,79 @@
+[
+  {
+    "stage": "backend",
+    "tests": 15,
+    "pass": 14,
+    "fail": 1,
+    "cases": [
+      "profile name and username save atomically; duplicate handles leave the original profile intact",
+      "migration supports the complete two-user same-city vertical slice",
+      "Supabase Auth bootstrap creates one stable app profile",
+      "deleting a Supabase Auth user cascades account data without breaking an in-flight deletion request",
+      "push registration is idempotent per installation and transfers ownership safely",
+      "notification deliveries are claimed once and completed per device",
+      "friend request persists without a device, delivers once after registration, and respects preview privacy",
+      "accepted, declined, replaced, expired and blocked requests cannot generate a stale push",
+      "leases are bounded and an old delivery cannot disable a new device owner",
+      "installing friend notification support does not backfill old pending requests",
+      "invitation wake-up is post-commit background work, private and non-blocking on failure",
+      "same-city wake-up is bounded across a burst and still leaves a scheduled fallback on failure",
+      "sender withdrawal clears both inboxes and queued push deliveries; retry is harmless",
+      "recipient and unrelated caller cannot withdraw a pending invitation",
+      "accepting before withdrawal preserves the friendship and its sharing preferences"
+    ]
+  },
+  {
+    "stage": "backend-retest",
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cases": [
+      "profile name and username save atomically; duplicate handles leave the original profile intact",
+      "migration supports the complete two-user same-city vertical slice",
+      "Supabase Auth bootstrap creates one stable app profile",
+      "deleting a Supabase Auth user cascades account data without breaking an in-flight deletion request",
+      "push registration is idempotent per installation and transfers ownership safely",
+      "notification deliveries are claimed once and completed per device",
+      "friend request persists without a device, delivers once after registration, and respects preview privacy",
+      "accepted, declined, replaced, expired and blocked requests cannot generate a stale push",
+      "leases are bounded and an old delivery cannot disable a new device owner",
+      "installing friend notification support does not backfill old pending requests",
+      "invitation wake-up is post-commit background work, private and non-blocking on failure",
+      "same-city wake-up is bounded across a burst and still leaves a scheduled fallback on failure",
+      "sender withdrawal clears both inboxes and queued push deliveries; retry is harmless",
+      "recipient and unrelated caller cannot withdraw a pending invitation",
+      "accepting before withdrawal preserves the friendship and its sharing preferences"
+    ]
+  },
+  {
+    "stage": "contracts",
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "cases": [
+      "hosted API requires Supabase user JWTs and contains no debug login",
+      "migration keeps legacy matching grants private; explicit browsing works without reciprocal plans or announcement pushes",
+      "default migration opens existing plans to their selected friends and preserves later opt-outs",
+      "audience, opt-out, deletion, blocks, friendship removal and re-addition revoke friend browsing",
+      "legacy writes preserve browsing choice and v2 revision/owner checks cannot be bypassed",
+      "friend feed is date-sorted, excludes ended plans and deleted owners, and is service-role only",
+      "API input accepts an explicit visibility choice and preserves the legacy RPC shape",
+      "APNs key formatting accepts pasted PEM, escaped newlines, quoted and base64 values without inventing a key",
+      "travel plans: own-only CRUD, reciprocal audiences, exact date intersection, private without an audience and optimistic revision",
+      "overlaps do not conflate regions; blocks and friendship removal revoke immediately; dates and timezones validated",
+      "upcoming push: opt-in, bounded lease, revalidation, privacy, per-device dedup, no stale owner delivery",
+      "travel input rejects owner injection and malformed dates; worker never sends a revoked prepared item"
+    ]
+  },
+  {
+    "stage": "withdrawal-final",
+    "tests": 3,
+    "pass": 3,
+    "fail": 0,
+    "cases": [
+      "sender withdrawal clears both inboxes and queued push deliveries; retry is harmless",
+      "recipient and unrelated caller cannot withdraw a pending invitation",
+      "accepting before withdrawal preserves the friendship and its sharing preferences"
+    ]
+  }
+]

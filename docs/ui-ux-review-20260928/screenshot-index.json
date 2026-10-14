@@ -1,0 +1,2132 @@
+[
+  {
+    "label": "Add flight.png",
+    "path": "evidence/main/Add-flight.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "8385A2F6-5669-4C39-AC1A-F27D03D16BBE.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Always location weekly reminder.png",
+    "path": "evidence/main/Always-location-weekly-reminder.png",
+    "test": "PrototypeUITests/testWhileUsingReminderExplainsAlwaysAndSnoozesAfterOpeningSettings()",
+    "failure": false,
+    "source": "B2FA66FE-CF68-433F-A80F-E38A42B687B2.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Awaiting friend flight compact status.png",
+    "path": "evidence/main/Awaiting-friend-flight-compact-status.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "5C458DC6-5AAF-446A-8D89-32339000FEF4.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "City artwork paused and unavailable.png",
+    "path": "evidence/main/City-artwork-paused-and-unavailable.png",
+    "test": "PrototypeUITests/testCityArtworkHandlesPausedAndUnavailableLocations()",
+    "failure": false,
+    "source": "5C6EE288-5317-4C89-B426-C12965B31B2F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "City fallback comparison Night Jade.png",
+    "path": "evidence/main/City-fallback-comparison-Night-Jade.png",
+    "test": "PrototypeUITests/testCityEmblemFallbackSideBySideVisual()",
+    "failure": false,
+    "source": "61251B4E-9202-4CCF-8C08-2C81C70F9D49.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "City fallback visual side-by-side comparison.png",
+    "path": "evidence/main/City-fallback-visual-side-by-side-comparison.png",
+    "test": "PrototypeUITests/testCityEmblemFallbackSideBySideVisual()",
+    "failure": false,
+    "source": "B00B50D5-CF7B-4777-A8F3-E11E408D04E7.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/main/Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "F1E26CCE-8C74-4819-B239-DAAF5A85C328.png",
+    "stage": "main",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "Compact trip accessibility destination.png",
+    "path": "evidence/main/Compact-trip-accessibility-destination.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "0D0C4BEA-2A61-4744-9769-040F782461D1.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip accessibility fields.png",
+    "path": "evidence/main/Compact-trip-accessibility-fields.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "1E83819D-1646-4E44-BA6D-4179411D3E86.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip destination - nightJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-destination---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "43B13944-56CE-4FA2-BE8D-D098EB8D1391.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip destination - solarJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-destination---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "DF203962-6945-448F-91F8-80726978616D.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip empty - nightJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-empty---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "11C1AF25-1BDE-4226-B251-4D6115D1586F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip empty - solarJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-empty---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "3CF3E46C-7DBC-4F3B-9D20-97CB5CD61520.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Demo lookup unavailable without invented routes.png",
+    "path": "evidence/main/Demo-lookup-unavailable-without-invented-routes.png",
+    "test": "PrototypeUITests/testTripDemoUnknownFlightDoesNotInventProviderResults()",
+    "failure": false,
+    "source": "59393582-A9A3-42C8-A84E-CD54AD04BD77.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/main/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "AD41F185-5E93-4B50-B10A-2F3DD0983D29.png",
+    "stage": "main",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "First trip empty state.png",
+    "path": "evidence/main/First-trip-empty-state.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "5840B9BC-2972-4834-801F-04DA7B3E4254.png",
+    "stage": "main",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "Flight candidate lookup results.png",
+    "path": "evidence/main/Flight-candidate-lookup-results.png",
+    "test": "PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection()",
+    "failure": false,
+    "source": "1B384637-C1D3-4D46-8296-23CCF8A9656B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/main/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "7F2A3794-6793-4454-8BDD-BBE2FDE130EB.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/main/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "03764219-4060-41DC-BD3C-C3177B898798.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Immersive all routes.png",
+    "path": "evidence/main/Immersive-all-routes.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "DDAFFC27-DF06-45FB-8EE1-1B5C38D6E263.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Immersive selected route.png",
+    "path": "evidence/main/Immersive-selected-route.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "AB4DB48C-4858-4811-B308-565F5AED9E8C.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Location reminder after denied permission.png",
+    "path": "evidence/main/Location-reminder-after-denied-permission.png",
+    "test": "PrototypeUITests/testDeniedLocationReminderOpensSettingsWithoutAnotherSystemPrompt()",
+    "failure": false,
+    "source": "1F85CCC7-CCF8-432E-BA07-9C2655DFCCDF.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Missing flight action card.png",
+    "path": "evidence/main/Missing-flight-action-card.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "762A4345-C6E4-494B-9A9A-A3F5B3980A85.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Multi-trip library.png",
+    "path": "evidence/main/Multi-trip-library.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "9F146AA0-89C4-4604-88DF-E96A4DCFD8A0.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Native flight form action.png",
+    "path": "evidence/main/Native-flight-form-action.png",
+    "test": "PrototypeUITests/testTripPrimaryActionRemainsReachableAfterScrolling()",
+    "failure": false,
+    "source": "AFD68C39-3126-43FB-BD99-7A7CF87FD32F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Night Jade immersive map.png",
+    "path": "evidence/main/Night-Jade-immersive-map.png",
+    "test": "PrototypeUITests/testTripsNightAppearance()",
+    "failure": false,
+    "source": "6A1F228B-124E-4AFE-84F2-B139416BFB3D.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Night Jade routes.png",
+    "path": "evidence/main/Night-Jade-routes.png",
+    "test": "PrototypeUITests/testTripsNightAppearance()",
+    "failure": false,
+    "source": "E8995CF2-194C-49C5-80A2-8E23BC0D43C1.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Other travelers unchanged.png",
+    "path": "evidence/main/Other-travelers-unchanged.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "B1063CDC-7E1A-43BC-A08D-4568DB466E85.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Own flight actions.png",
+    "path": "evidence/main/Own-flight-actions.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "9FA77AD6-25BC-4500-B13B-2DEA1615ED6E.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Return routes.png",
+    "path": "evidence/main/Return-routes.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "D4A82BBD-C9D0-4DD2-B41E-1725904A6808.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Selected flight details.png",
+    "path": "evidence/main/Selected-flight-details.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "2B304749-185E-438C-B1D2-22B3EDD632AF.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Self-service flight form.png",
+    "path": "evidence/main/Self-service-flight-form.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "2FB87DC8-F09D-484B-AD27-9F68FA3F344D.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Trip board with verified flight.png",
+    "path": "evidence/main/Trip-board-with-verified-flight.png",
+    "test": "PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection()",
+    "failure": false,
+    "source": "35A9616F-835D-4B58-BEF3-46D82A33CE5E.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Trip board.png",
+    "path": "evidence/main/Trip-board.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "ACB6791F-7CCB-4126-AA8C-5F75406D1D3F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Trip flight details expanded.png",
+    "path": "evidence/main/Trip-flight-details-expanded.png",
+    "test": "PrototypeUITests/testTripFlightCardDetailsExpansion()",
+    "failure": false,
+    "source": "4648FDD2-F99C-48EF-8017-8CCF868436EB.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Trip navigation after scrolling.png",
+    "path": "evidence/main/Trip-navigation-after-scrolling.png",
+    "test": "PrototypeUITests/testTripPrimaryActionRemainsReachableAfterScrolling()",
+    "failure": false,
+    "source": "9F665C74-93FF-4F30-944F-C892BF6E10CC.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Weekly location reminder Chinese.png",
+    "path": "evidence/main/Weekly-location-reminder-Chinese.png",
+    "test": "PrototypeUITests/testLocationReminderChineseCopyAndDismissal()",
+    "failure": false,
+    "source": "9D93F3C3-92EE-468A-A9EE-78E90910A27A.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Weekly location reminder.png",
+    "path": "evidence/main/Weekly-location-reminder.png",
+    "test": "PrototypeUITests/testLocationReminderSnoozesAcrossNavigationAndRelaunch()",
+    "failure": false,
+    "source": "0982BB12-FB73-4F6C-AD61-7A07E7FC03A8.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "city-region-friends-real-cities.png",
+    "path": "evidence/main/city-region-friends-real-cities.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "2AB5574F-4499-43FB-9967-C2085B1E912B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "city-region-milpitas-details.png",
+    "path": "evidence/main/city-region-milpitas-details.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "58C3082C-D2D3-4A8D-8F8B-151E5F52B0D2.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-01-friends.png",
+    "path": "evidence/main/en-01-friends.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "50D325C7-9CE9-4836-B14F-708A0325AC9F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-02-friend-plans.png",
+    "path": "evidence/main/en-02-friend-plans.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "4C6207AE-A176-4430-BB96-E6B7A1914443.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-03-together-soon.png",
+    "path": "evidence/main/en-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureMarketingOverlapDetails()",
+    "failure": false,
+    "source": "71936F82-6700-4509-B753-D99BC9479C57.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-03-together-soon.png",
+    "path": "evidence/main/A317CE83-en-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "A317CE83-A811-4576-8EC0-4BB529C71EF2.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-04-here-together.png",
+    "path": "evidence/main/en-04-here-together.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "55708055-8D05-4F42-9E85-4D355D3EE20A.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-05-shared-trips.png",
+    "path": "evidence/main/en-05-shared-trips.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "9C131236-8668-49BA-99B3-BD847EEDBEB0.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-06-arrivals.png",
+    "path": "evidence/main/en-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightMaps()",
+    "failure": false,
+    "source": "0B012795-9F52-4286-BFDE-737519B21CFA.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-06-arrivals.png",
+    "path": "evidence/main/993CFB3F-en-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "993CFB3F-FCC0-4F6D-9BE8-34B5A07C0DF9.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-07-flight-details.png",
+    "path": "evidence/main/en-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightDetails()",
+    "failure": false,
+    "source": "E3EB47F9-2BF4-4A42-AB4C-28C2677FB4AC.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "en-07-flight-details.png",
+    "path": "evidence/main/E25722F7-en-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "E25722F7-111E-4DFA-AD0E-B5A99D4A5B37.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "first-use-location-setup.png",
+    "path": "evidence/main/first-use-location-setup.png",
+    "test": "PrototypeUITests/testFirstUseLocationAllowMovesToFriends()",
+    "failure": false,
+    "source": "F3307409-A8E4-4FA3-BD96-B4F0662F9440.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plan-badge.png",
+    "path": "evidence/main/friend-plan-badge.png",
+    "test": "PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities()",
+    "failure": false,
+    "source": "69542BB6-4169-4BF9-B1B5-694A4714CF0E.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plan-details.png",
+    "path": "evidence/main/friend-plan-details.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "9A7E0168-0207-4E2E-8DD3-818D362072FC.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plan-opt-out-chinese.png",
+    "path": "evidence/main/friend-plan-opt-out-chinese.png",
+    "test": "PrototypeUITests/testFriendPlansChineseOptOutPersists()",
+    "failure": false,
+    "source": "FE227425-0D5A-4EC5-95E8-2F03B3D29F85.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plans-chinese.png",
+    "path": "evidence/main/friend-plans-chinese.png",
+    "test": "PrototypeUITests/testFriendPlansChineseOptOutPersists()",
+    "failure": false,
+    "source": "005534C5-F903-44F4-BAAF-4D26C4619616.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plans-home-compact.png",
+    "path": "evidence/main/friend-plans-home-compact.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "336B7C71-C6F8-4652-9A6D-E230A28A36EA.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plans-list.png",
+    "path": "evidence/main/friend-plans-list.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "79DCA7DF-8B46-4B85-BC92-AC621B41BA49.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-plans-second-page.png",
+    "path": "evidence/main/friend-plans-second-page.png",
+    "test": "PrototypeUITests/testFriendPlanSecondPageOpensDetails()",
+    "failure": false,
+    "source": "D1960467-30C3-41CA-9111-378FAE8772C9.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friend-shared-plans.png",
+    "path": "evidence/main/friend-shared-plans.png",
+    "test": "PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities()",
+    "failure": false,
+    "source": "3C749448-D356-4F7C-A59A-B0FBCA3764DA.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "friends-without-matches.png",
+    "path": "evidence/main/friends-without-matches.png",
+    "test": "PrototypeUITests/testNoMatchCardsDisappearWhenCitySharingStops()",
+    "failure": false,
+    "source": "F585B483-A9B9-49E1-BF65-6C49EAC04037.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "home-summary-all-five-overlaps.png",
+    "path": "evidence/main/home-summary-all-five-overlaps.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "264B1B93-6277-435E-A50E-9E1EAE8CEB5D.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "home-summary-fifth-overlap-cold-link.png",
+    "path": "evidence/main/home-summary-fifth-overlap-cold-link.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "79B02EEB-068B-4B11-93E4-40F07D95996F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "notification-setup-with-private-previews.png",
+    "path": "evidence/main/notification-setup-with-private-previews.png",
+    "test": "PrototypeUITests/testNotificationSettingsKeepsPushRegistrationAutomatic()",
+    "failure": false,
+    "source": "07E21F90-DD8D-4770-B551-680B156CFE19.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-notification.png",
+    "path": "evidence/main/onboarding-notification.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "E69781A2-E234-4511-BBF6-8E74596E9872.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-privacy.png",
+    "path": "evidence/main/onboarding-privacy.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "4E07700D-EE06-40FB-8C15-1C1CF421C5F9.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-reduced-motion-trip.png",
+    "path": "evidence/main/onboarding-reduced-motion-trip.png",
+    "test": "PrototypeUITests/testOnboardingReducedMotionShowsCompleteExamples()",
+    "failure": false,
+    "source": "C98C92BD-CC75-4A84-AF75-789B802766EF.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-trip.png",
+    "path": "evidence/main/onboarding-trip.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "24A0ECA6-64E5-4A7C-B729-E6C94DAC2714.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-world.png",
+    "path": "evidence/main/onboarding-world.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "5EBFCE09-D87E-473A-9EFE-EB6D6985E9EB.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "plan-city-picker-top-search.png",
+    "path": "evidence/main/plan-city-picker-top-search.png",
+    "test": "PrototypeUITests/testPlanCityPickerShowsSearchAtTopAndOwnTripDestinations()",
+    "failure": false,
+    "source": "1F1FF4CD-2F56-4CA8-944C-0105D40E2243.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "privacy-after-interrupted-motion.png",
+    "path": "evidence/main/privacy-after-interrupted-motion.png",
+    "test": "PrototypeUITests/testOnboardingMotionCanBeInterrupted()",
+    "failure": false,
+    "source": "F5C139DF-D6B4-4B0F-878E-0425740B490B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "same-city-expanded.png",
+    "path": "evidence/main/same-city-expanded.png",
+    "test": "PrototypeUITests/testSameCityCardExpandsAndSharesWithoutSendingAutomatically()",
+    "failure": false,
+    "source": "16E79C8C-2703-4CDC-ADC9-A936748E1FA5.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "same-city-unavailable-link.png",
+    "path": "evidence/main/same-city-unavailable-link.png",
+    "test": "PrototypeUITests/testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch()",
+    "failure": false,
+    "source": "C5394C61-E08B-4CF9-879D-A83F8DD44962.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "single-calendar-cross-month-range.png",
+    "path": "evidence/main/single-calendar-cross-month-range.png",
+    "test": "PrototypeUITests/testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates()",
+    "failure": false,
+    "source": "42447F79-1F3C-4EA7-805E-B5A5DFE354F9.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "travel-plan-palm-springs.png",
+    "path": "evidence/main/travel-plan-palm-springs.png",
+    "test": "PrototypeUITests/testTravelCitySearchFindsPalmSpringsFromProfile()",
+    "failure": false,
+    "source": "976CE569-1013-4C23-B838-1ECFA6C2A2EA.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "travel-plan-private-editor.png",
+    "path": "evidence/main/travel-plan-private-editor.png",
+    "test": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+    "failure": false,
+    "source": "C8308462-FDCD-45A4-A498-1B2F4A8F6DF1.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-delete-confirmation.png",
+    "path": "evidence/main/trip-delete-confirmation.png",
+    "test": "PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+    "failure": false,
+    "source": "6AFB3F43-5536-4FCC-973B-20DC3E8C5E84.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-flight-planning-reminders-before-toggle.png",
+    "path": "evidence/main/trip-flight-planning-reminders-before-toggle.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "8787956C-AE2B-46E4-B296-9A79C848D1AC.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-flight-planning-reminders-settings.png",
+    "path": "evidence/main/trip-flight-planning-reminders-settings.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "B765A775-6731-488B-99CD-8892BF877A92.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-flight-reminder-sent.png",
+    "path": "evidence/main/trip-flight-reminder-sent.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "42D7BB28-5CF4-40E4-98E3-641830F8C62F.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-leave-confirmation.png",
+    "path": "evidence/main/trip-leave-confirmation.png",
+    "test": "PrototypeUITests/testTripMemberCanLeaveButCannotManageOthers()",
+    "failure": false,
+    "source": "EE3601BD-2BFE-46BB-BC0B-914A5890F71B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-people-reminders.png",
+    "path": "evidence/main/trip-people-reminders.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "DCAC4A26-51E4-444A-9148-ECB5519351FD.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "trip-remove-member-confirmation.png",
+    "path": "evidence/main/trip-remove-member-confirmation.png",
+    "test": "PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+    "failure": false,
+    "source": "8067CD8D-5874-4952-9C69-221CD27EC554.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "upcoming-together-expanded.png",
+    "path": "evidence/main/upcoming-together-expanded.png",
+    "test": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+    "failure": false,
+    "source": "57791BAB-FA5D-41A0-8E7E-439B32655A9C.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Large-Dark.png",
+    "path": "evidence/main/widget-Friends-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "3E109DA6-A43F-48A2-B93D-71A4985445E2.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Large-Light.png",
+    "path": "evidence/main/widget-Friends-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "5DB1E9C4-D039-4931-88E8-C233EEAD91B0.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-Friends-Medium-Dark.png",
+    "path": "evidence/main/widget-Friends-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "9CB4F44B-ACCF-4E9C-9A7C-8782DBE70C06.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Medium-Light.png",
+    "path": "evidence/main/widget-Friends-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "CEB4C648-4ABD-42C9-8C44-EF44FA80B66A.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-Friends-Small-Dark.png",
+    "path": "evidence/main/widget-Friends-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "65BDCF0A-3068-4F74-82B6-362E9A1A5F54.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Small-Light.png",
+    "path": "evidence/main/widget-Friends-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "AC081118-8034-4DF7-B1BC-5912242960EF.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-Here together-Large-Dark.png",
+    "path": "evidence/main/widget-Here-together-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "FFE760E3-C52A-468D-9B22-EB5618482D23.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Large-Light.png",
+    "path": "evidence/main/widget-Here-together-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "A3E58DA5-A563-4372-A18C-810917570F85.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-Here together-Medium-Dark.png",
+    "path": "evidence/main/widget-Here-together-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "0E8591FF-F2CF-434C-AFAD-44C35518A542.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Medium-Light.png",
+    "path": "evidence/main/widget-Here-together-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "0A4391C6-5516-4954-90D8-49370EABA3C3.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-Here together-Small-Dark.png",
+    "path": "evidence/main/widget-Here-together-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "45F1DEC5-CA89-422E-A579-14CD8A6B3512.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Small-Light.png",
+    "path": "evidence/main/widget-Here-together-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "F36751C6-EFFD-4106-95C6-5EA193E467AB.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": "原测试标签写 Light，画面实际为深色；正确对照在 widget-themes。"
+  },
+  {
+    "label": "widget-zh-0-0.png",
+    "path": "evidence/main/widget-zh-0-0.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "C0455A65-D541-431A-83D1-C49A58F04C22.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-zh-0-1.png",
+    "path": "evidence/main/widget-zh-0-1.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "20E25F12-E26D-4476-BBFA-0B808D20F2BD.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-zh-0-2.png",
+    "path": "evidence/main/widget-zh-0-2.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "6A4A4F66-D381-4ECF-948C-029B98C34459.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-zh-1-0.png",
+    "path": "evidence/main/widget-zh-1-0.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "92A62F1D-121C-42E3-A5A6-16BEF8744478.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-zh-1-1.png",
+    "path": "evidence/main/widget-zh-1-1.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "9826A478-0DAA-467D-8BCD-A1F114C86FE3.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-zh-1-2.png",
+    "path": "evidence/main/widget-zh-1-2.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "124C54FD-9609-401D-BE52-FA5575B8F41E.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-01-friends.png",
+    "path": "evidence/main/zh-Hans-01-friends.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "9C7C9032-C227-4918-8C3C-BCEC559B0201.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-02-friend-plans.png",
+    "path": "evidence/main/zh-Hans-02-friend-plans.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "591DFD9A-0705-43A2-B788-F16DE431085A.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-03-together-soon.png",
+    "path": "evidence/main/zh-Hans-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureMarketingOverlapDetails()",
+    "failure": false,
+    "source": "3657405D-CBA6-458B-B761-B5CB8204D232.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-03-together-soon.png",
+    "path": "evidence/main/BC0AA8D3-zh-Hans-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "BC0AA8D3-6D0B-489F-8FA8-CDE5ABA7E01B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-04-here-together.png",
+    "path": "evidence/main/zh-Hans-04-here-together.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "9A1D7992-5309-4777-A7AA-D0024C49EB17.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-05-shared-trips.png",
+    "path": "evidence/main/zh-Hans-05-shared-trips.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "C820B575-CF69-48D5-BDAF-0262D82EB3B5.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-06-arrivals.png",
+    "path": "evidence/main/zh-Hans-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightMaps()",
+    "failure": false,
+    "source": "DFC96FA1-226A-4F36-BF3E-4FD512137525.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-06-arrivals.png",
+    "path": "evidence/main/96857FB7-zh-Hans-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "96857FB7-29E0-4FBB-AE9B-27175131CEC6.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-07-flight-details.png",
+    "path": "evidence/main/zh-Hans-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightDetails()",
+    "failure": false,
+    "source": "F4B30943-4BFC-4A1C-84B0-208782E6755B.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "zh-Hans-07-flight-details.png",
+    "path": "evidence/main/FC8EDE97-zh-Hans-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "FC8EDE97-22A8-4A87-8DCB-C4BFF464F072.png",
+    "stage": "main",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip accessibility destination.png",
+    "path": "evidence/small/Compact-trip-accessibility-destination.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "6766C1E9-FA87-4504-806D-7D09C4CE39EB.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip accessibility fields.png",
+    "path": "evidence/small/Compact-trip-accessibility-fields.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "89219748-887E-4F3E-B921-AC0EAAB80F86.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/small/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "289418F9-2FAF-4F41-A367-CDF9E9C78A04.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/small/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "8BD06D29-D506-489E-981F-30F0B5282137.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-01-home.png",
+    "path": "evidence/small/REVIEW-01-home.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "97FBE942-F66C-43C4-8A46-0C1E386D5161.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-08-profile.png",
+    "path": "evidence/small/REVIEW-08-profile.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "C24F5E6B-26B0-4E8F-BDCA-DF669D95D658.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-09-notifications.png",
+    "path": "evidence/small/REVIEW-09-notifications.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "15406F6A-B79E-4EA1-B956-87A243B67F2B.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-10-widget-privacy.png",
+    "path": "evidence/small/REVIEW-10-widget-privacy.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "7D098EF6-574A-4FE7-8885-CA30C1B754C9.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-11-same-city-history.png",
+    "path": "evidence/small/REVIEW-11-same-city-history.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "609B117A-8A0B-49AC-A8E7-24F9CB6C148A.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-12-privacy-data.png",
+    "path": "evidence/small/REVIEW-12-privacy-data.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "59794552-FD3D-43EF-8A4D-F6C961996748.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-13-blocked-empty.png",
+    "path": "evidence/small/REVIEW-13-blocked-empty.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "41E81607-B8D2-4D87-A67F-B52FD5CA7FD2.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-16-plan-feed.png",
+    "path": "evidence/small/REVIEW-16-plan-feed.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "C9343D2A-A22C-4794-9C9A-E13AAACFB3C2.png",
+    "stage": "small",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-19-trip-draft-filled.png",
+    "path": "evidence/small/REVIEW-19-trip-draft-filled.png",
+    "test": "PrototypeUITests/testReviewTripDraftLoss()",
+    "failure": false,
+    "source": "AA6F6F1F-E786-4C6A-B460-80E16272CB97.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-20-trip-after-cancel.png",
+    "path": "evidence/small/REVIEW-20-trip-after-cancel.png",
+    "test": "PrototypeUITests/testReviewTripDraftLoss()",
+    "failure": false,
+    "source": "DB1C65DE-2801-41FF-9768-DD54EB773C7C.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-21-flight-keyboard-small.png",
+    "path": "evidence/small/REVIEW-21-flight-keyboard-small.png",
+    "test": "PrototypeUITests/testReviewChineseFlightFailureAndTouchFrames()",
+    "failure": false,
+    "source": "AA15A371-290E-443A-A435-FA2B20DE3073.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-22-flight-no-result-chinese.png",
+    "path": "evidence/small/REVIEW-22-flight-no-result-chinese.png",
+    "test": "PrototypeUITests/testReviewChineseFlightFailureAndTouchFrames()",
+    "failure": false,
+    "source": "AEE93BA8-CB53-420E-94BF-745679B95691.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-23-flight-calendar.png",
+    "path": "evidence/small/REVIEW-23-flight-calendar.png",
+    "test": "PrototypeUITests/testReviewChineseFlightFailureAndTouchFrames()",
+    "failure": false,
+    "source": "E7089001-EB7A-48F4-B8FD-977A491C470F.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-24-location-setup-dark.png",
+    "path": "evidence/small/REVIEW-24-location-setup-dark.png",
+    "test": "PrototypeUITests/testReviewDarkLocationSetup()",
+    "failure": false,
+    "source": "EC6F5E9F-72CE-4E45-8884-7B2806299E15.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-25-profile-draft.png",
+    "path": "evidence/small/REVIEW-25-profile-draft.png",
+    "test": "PrototypeUITests/testReviewProfileDraftAndSignedOut()",
+    "failure": false,
+    "source": "206FD69F-0EAE-44CD-AA03-86C8EBB9CAE1.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-26-profile-after-close.png",
+    "path": "evidence/small/REVIEW-26-profile-after-close.png",
+    "test": "PrototypeUITests/testReviewProfileDraftAndSignedOut()",
+    "failure": false,
+    "source": "CC92066E-8BE1-4C4C-9FA9-DF5ABCBEF40C.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-27-signout-confirmation.png",
+    "path": "evidence/small/REVIEW-27-signout-confirmation.png",
+    "test": "PrototypeUITests/testReviewProfileDraftAndSignedOut()",
+    "failure": false,
+    "source": "442C642B-69A4-46E5-868A-112EE23EDE5E.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-28-authentication.png",
+    "path": "evidence/small/REVIEW-28-authentication.png",
+    "test": "PrototypeUITests/testReviewProfileDraftAndSignedOut()",
+    "failure": false,
+    "source": "0ADD073A-B1D2-4B62-80D7-678A7E5A301F.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-29-a11y-friend-plans.png",
+    "path": "evidence/small/REVIEW-29-a11y-friend-plans.png",
+    "test": "PrototypeUITests/testReviewAccessibilityDiagnostics()",
+    "failure": false,
+    "source": "1E03ACC9-BA71-4218-9BBF-237FC84FA540.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-29-a11y-home.png",
+    "path": "evidence/small/REVIEW-29-a11y-home.png",
+    "test": "PrototypeUITests/testReviewAccessibilityDiagnostics()",
+    "failure": false,
+    "source": "A4CB5B5E-912C-4EFB-B7A5-772B7614BB56.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-29-a11y-trips.png",
+    "path": "evidence/small/REVIEW-29-a11y-trips.png",
+    "test": "PrototypeUITests/testReviewAccessibilityDiagnostics()",
+    "failure": false,
+    "source": "E95BAE98-9D14-462F-A23C-799407F20713.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-notification.png",
+    "path": "evidence/small/onboarding-notification.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "0D080140-F451-4A52-BACB-B5DEACF54609.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-privacy.png",
+    "path": "evidence/small/onboarding-privacy.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "13541777-8C64-416D-826A-68A39A7F2A70.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-reduced-motion-trip.png",
+    "path": "evidence/small/onboarding-reduced-motion-trip.png",
+    "test": "PrototypeUITests/testOnboardingReducedMotionShowsCompleteExamples()",
+    "failure": false,
+    "source": "90C4AECD-4623-4230-B251-D99DBA74DE89.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-trip.png",
+    "path": "evidence/small/onboarding-trip.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "3949F27C-FADE-4703-8922-18793CB314E0.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "onboarding-world.png",
+    "path": "evidence/small/onboarding-world.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "660C54D3-2A15-499E-9AC7-DFFC5F86CAEE.png",
+    "stage": "small",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip destination - nightJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-destination---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "F19CC6C4-3272-47FF-869F-3050D5D5AD76.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip destination - solarJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-destination---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "B564D75F-D86A-454D-90B4-64B5830FD16C.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip empty - nightJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-empty---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "6C769759-5B19-4EE6-A268-CEF9CDD84F93.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact trip empty - solarJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-empty---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "4D53D16D-828F-4ECE-B108-6E16FCC0AB90.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-01-home.png",
+    "path": "evidence/followup/REVIEW-01-home.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "4DF3288D-7F00-466B-B86C-8321812B836F.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination.png",
+    "path": "evidence/followup/REVIEW-02-city-sharing-destination.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "172D4586-F1A5-40D6-9C8F-E5AC29D8452E.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused.png",
+    "path": "evidence/followup/REVIEW-03-global-sharing-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "B2E9F6B8-1867-46F0-8CE3-C35A2AAA9FBA.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused.png",
+    "path": "evidence/followup/REVIEW-04-friend-global-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "2F14016C-A2EB-40E2-A31B-8034D6C19D2A.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off.png",
+    "path": "evidence/followup/REVIEW-05-friend-sharing-off.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "5F64F6ED-7C53-414B-9F36-FE64CBCDB56D.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation.png",
+    "path": "evidence/followup/REVIEW-06-remove-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "04ED07C6-7F03-48C2-947D-2C4302D92928.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-08-profile.png",
+    "path": "evidence/followup/REVIEW-08-profile.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "B0FECDF0-1627-41C9-8900-440C4CC36041.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-09-notifications.png",
+    "path": "evidence/followup/REVIEW-09-notifications.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "1081E5F9-2D13-419E-9732-9FC2022FC04A.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-10-widget-privacy.png",
+    "path": "evidence/followup/REVIEW-10-widget-privacy.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "0D85C82A-41FC-4BDC-99B8-18D38757D8E4.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-11-same-city-history.png",
+    "path": "evidence/followup/REVIEW-11-same-city-history.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "5DE2FAB1-737E-491E-BA73-42C714D00415.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-12-privacy-data.png",
+    "path": "evidence/followup/REVIEW-12-privacy-data.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "CE336684-72D6-4549-A276-58FF28C2F749.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-13-blocked-empty.png",
+    "path": "evidence/followup/REVIEW-13-blocked-empty.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "966954A1-CA9F-42F5-9C81-C7600DEC928B.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-14-home-dark.png",
+    "path": "evidence/followup/REVIEW-14-home-dark.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "3394C9E5-0F8C-4A4C-A621-DB4FEA9D6E50.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-15-sharing-dark.png",
+    "path": "evidence/followup/REVIEW-15-sharing-dark.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "BD05E7B1-AB8A-494F-BB76-E27ADCB8D350.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-16-plan-feed.png",
+    "path": "evidence/followup/REVIEW-16-plan-feed.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "BAA4093C-FD81-4690-A461-00EFE19E2867.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": false,
+    "annotation": "此测试当轮未完成；截图记录失败前实际状态，标签是测试预期，不代表已到达该页面。"
+  },
+  {
+    "label": "REVIEW-30-empty-friends.png",
+    "path": "evidence/followup/REVIEW-30-empty-friends.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "6ABC0895-C09B-4AA6-B9BB-F9AF33896081.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-31-first-friend-invitation.png",
+    "path": "evidence/followup/REVIEW-31-first-friend-invitation.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "3146C8A4-4856-47B0-8AC8-317167DAA1CC.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-32-offline-state.png",
+    "path": "evidence/followup/REVIEW-32-offline-state.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "D892344E-E015-4481-BC9B-05AFF1088251.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-33-repeat-stay-duration.png",
+    "path": "evidence/followup/REVIEW-33-repeat-stay-duration.png",
+    "test": "PrototypeUITests/testReviewRepeatedStayDuration()",
+    "failure": false,
+    "source": "FD67FF23-A1B4-45FC-AF19-A7BBB57D26A3.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-34-long-name-largest-text.png",
+    "path": "evidence/followup/REVIEW-34-long-name-largest-text.png",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "9DD47EC4-EB07-48E0-AB0D-07E078CED6DB.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-35-friend-detail-largest-text.png",
+    "path": "evidence/followup/REVIEW-35-friend-detail-largest-text.png",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "12DD0F1B-2CCE-4398-9F43-04EB73834651.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-0.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-0.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "2D857781-9B98-4645-A9C2-A54E664AADAA.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-1.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-1.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "82F63864-4AE6-42C5-AF50-903ED0EF03CE.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-2.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-2.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "8815EA36-9916-47B6-8EA8-05C980F719F8.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-3.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-3.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "08837CAC-0D2A-448B-B555-29E02F499CDA.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-37-request-deep-link.png",
+    "path": "evidence/followup/REVIEW-37-request-deep-link.png",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "70DD2B10-4D25-4AB3-ADF7-772D6663D2A9.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-38-request-cold-restore.png",
+    "path": "evidence/followup/REVIEW-38-request-cold-restore.png",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "5E3030EF-BF9B-4AA4-A976-FE435139D7A5.png",
+    "stage": "followup",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-01-home.png",
+    "path": "evidence/final/REVIEW-01-home.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "FAEB2A73-2B0C-4EC2-BEA1-13B593E91967.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination.png",
+    "path": "evidence/final/REVIEW-02-city-sharing-destination.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "436F855A-CB40-43D8-8556-9D2A6DB269D4.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused.png",
+    "path": "evidence/final/REVIEW-03-global-sharing-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "61F9AACC-7B8A-43AD-8335-419486101A36.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused.png",
+    "path": "evidence/final/REVIEW-04-friend-global-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "8D4941C8-0CA9-4D04-9D01-D73AB8BC7E50.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off.png",
+    "path": "evidence/final/REVIEW-05-friend-sharing-off.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "6E6D1E2E-5C01-4A33-B571-2A3AF378BF24.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation.png",
+    "path": "evidence/final/REVIEW-06-remove-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "539E105C-57CA-4126-B20F-929ADD45DDBD.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-07-block-confirmation.png",
+    "path": "evidence/final/REVIEW-07-block-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "84ACB0D0-F63E-489F-B9A4-271C1BE9494B.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-16-plan-feed.png",
+    "path": "evidence/final/REVIEW-16-plan-feed.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "1465FB9C-5035-4869-9769-B7AE0CC05E47.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-17-plan-match-only.png",
+    "path": "evidence/final/REVIEW-17-plan-match-only.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "F9EC301E-4008-4414-BA5B-02433BD95E03.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "REVIEW-18-plan-after-cancel.png",
+    "path": "evidence/final/REVIEW-18-plan-after-cancel.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "9058ED4E-B916-4AA3-970A-A044E3E8A699.png",
+    "stage": "final",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Account-only members.png",
+    "path": "evidence/keyboard/Account-only-members.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "FDB2D910-E280-4CFE-819F-B3BA6727C31C.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/keyboard/Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "B2712B2F-BBDB-44B8-A8E4-FC93B8802548.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/keyboard/A6099ED8-Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "A6099ED8-5771-4D8C-B8AC-FCB85BA9D07A.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Completed trip in Past.png",
+    "path": "evidence/keyboard/Completed-trip-in-Past.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "C76F4DF8-1547-4994-A5BE-3758B8E37D7D.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/keyboard/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "36FD9F0F-81C0-4712-8993-D900DEB9BD0B.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/keyboard/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "F4274954-5E92-4A0A-806B-A0C09C3C30A8.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "First trip empty state.png",
+    "path": "evidence/keyboard/First-trip-empty-state.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "BF8C2346-5FBE-4623-A5FC-84252CFEFF5F.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "New trip form.png",
+    "path": "evidence/keyboard/New-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "9363F4FB-D983-4945-8550-B75D6307A9E1.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "New trip form.png",
+    "path": "evidence/keyboard/3EEC0F76-New-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "3EEC0F76-FD99-4270-889F-40826AB4E661.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "New trip with signed-in creator.png",
+    "path": "evidence/keyboard/New-trip-with-signed-in-creator.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "93D2A959-D5EF-45BF-A90B-CB140218D94C.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "Two upcoming trips.png",
+    "path": "evidence/keyboard/Two-upcoming-trips.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "7CD0BE46-D40D-497C-885F-9C67734691EA.png",
+    "stage": "keyboard",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Empty.png",
+    "path": "evidence/widget/widget-Friends-Empty.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "2A0279F7-A45E-46D1-AD50-8C45CACE1B78.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-HideAll.png",
+    "path": "evidence/widget/widget-Friends-HideAll.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "D66C0E4F-E136-4F2E-926D-A484E76B7C24.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-HideNames.png",
+    "path": "evidence/widget/widget-Friends-HideNames.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "C9B77345-ED90-4F00-B38E-AA20681B8DAE.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-LongCity.png",
+    "path": "evidence/widget/widget-Friends-LongCity.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "4FAB29CF-D3C7-4138-AA8C-0AA2D37B2354.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Empty.png",
+    "path": "evidence/widget/widget-Here-together-Empty.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "71EEE22A-43CC-4AD9-82E5-BC6B05D261BD.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-HideAll.png",
+    "path": "evidence/widget/widget-Here-together-HideAll.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "53598438-51DB-4548-A9AC-B70D325F1C29.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-HideNames.png",
+    "path": "evidence/widget/widget-Here-together-HideNames.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "BE4340A3-261F-4BE4-8336-7146AEDD3EBA.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-LongCity.png",
+    "path": "evidence/widget/widget-Here-together-LongCity.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "E593590D-F52E-4DF5-8B8F-3EA015043BC5.png",
+    "stage": "widget",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Large-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1A9F9123-50BC-4B6B-B095-CA1BED9F577E.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Large-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "D64A65BD-D0D5-4501-813F-412D5015439C.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Medium-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "A403F52D-CBE6-49DE-9B4F-D3D7C31482DC.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Medium-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "5818B1BA-9160-4F35-81BB-AAFF0FEC7D62.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Small-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "19A66E3E-75CE-4013-8AE4-294F9B798663.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Friends-Small-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "B5AAFA71-7AF9-48C2-A374-3EC4A58F6B83.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Large-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "ADA7F749-5B27-4160-B46B-E76FF524E8FE.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Large-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "DA4C99C0-78CD-4A41-892C-AF87B78BDA7A.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Medium-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "85F999D2-EEDA-42C3-89BA-7C3FA6CF421D.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Medium-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1A1BC9BC-F6CF-45BE-97A9-4D6C1E5B0300.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Small-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "78E9C1D2-0305-4AA4-8F6A-45B499265783.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  },
+  {
+    "label": "widget-Here together-Small-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1DCF1ADD-E4F3-4340-B271-704CA4C0D36D.png",
+    "stage": "widget-themes",
+    "testCompletedSuccessfully": true,
+    "annotation": ""
+  }
+]

@@ -1,0 +1,154 @@
+
+
+Attributes: Application, 0x115a0bc00, pid: 49326, label: 'Across Us'
+Element subtree:
+ →Application, 0x115a0bc00, pid: 49326, label: 'Across Us'
+    Window (Main), 0x115a0b5c0, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x115a0be80, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x115a09f40, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x115a0b700, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x115a0a580, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x115a092c0, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x115a0a800, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x115a09180, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x115a0bd40, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x115a0b840, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x115a0abc0, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x115a0b980, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x115a0b200, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x115a0ad00, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Mia'
+                              Button, 0x115a0bac0, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x115a0a300, {{173.0, 31.5}, {28.5, 21.0}}, label: 'Mia'
+                              Other, 0x115a0a440, {{319.0, 24.0}, {36.0, 36.0}}, identifier: 'star.fill', label: 'Remove favorite'
+                                Other, 0x115a0b480, {{319.0, 24.0}, {36.0, 36.0}}
+                                  Button, 0x115a09e00, {{321.0, 24.0}, {32.5, 36.0}}, identifier: 'star.fill', label: 'Remove favorite'
+                            Other, 0x1087fc780, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x1087fc000, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x1087fd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x1087fca00, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x1087fcc80, {{-122.5, -101.5}, {640.0, 945.0}}
+                                    ScrollView, 0x1087fd040, {{0.0, 0.0}, {375.0, 667.0}}
+                                      Other, 0x1087fd180, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x1087fcf00, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x1087fde00, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x1087fdf40, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x1087fe080, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x1087fed00, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x1087ff200, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1087ff0c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x1087fd680, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1087fc280, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x1087fd900, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x114517980, {{0.0, 74.0}, {375.0, 668.5}}
+                                        StaticText, 0x114517c00, {{113.2, 92.0}, {148.5, 41.0}}, label: 'Mia Chen'
+                                        StaticText, 0x114517480, {{168.5, 136.0}, {38.0, 18.0}}, label: '@mia'
+                                        Other, 0x114517ac0, {{145.5, 204.0}, {84.0, 84.0}}, label: 'New York'
+                                          Image, 0x114517e80, {{145.5, 204.0}, {84.0, 84.0}}
+                                        StaticText, 0x114517700, {{63.8, 300.0}, {247.5, 26.5}}, label: 'New York, United States'
+                                        StaticText, 0x114517200, {{107.2, 330.5}, {160.5, 18.0}}, label: 'Updated 8 minutes ago'
+                                        StaticText, 0x114517d40, {{23.0, 402.5}, {137.0, 14.5}}, label: 'BETWEEN YOU TWO'
+                                        Switch, 0x114517340, {{35.0, 440.0}, {305.0, 38.0}}, label: 'Share my city, Mia Chen can see your latest city', value: 0
+                                          StaticText, 0x1145175c0, {{35.0, 440.0}, {108.0, 20.5}}, label: 'Share my city'
+                                          StaticText, 0x114517840, {{35.0, 463.5}, {187.5, 14.5}}, label: 'Mia Chen can see your latest city'
+                                          Switch, 0x114023340, {{279.0, 445.0}, {63.0, 28.0}}, value: 0
+                                        Switch, 0x114023840, {{35.0, 508.5}, {305.0, 38.0}}, label: 'Same-city alert, Notify me when your cities overlap', value: 1
+                                          StaticText, 0x114023980, {{35.0, 508.5}, {122.5, 20.5}}, label: 'Same-city alert'
+                                          StaticText, 0x114023480, {{35.0, 532.0}, {195.5, 14.5}}, label: 'Notify me when your cities overlap'
+                                          Switch, 0x114023700, {{279.0, 513.5}, {63.0, 28.0}}, value: 1
+                                        Button, 0x114020140, {{35.0, 577.0}, {305.0, 38.0}}, identifier: 'removeFriendButton', label: 'Remove friend, Stops sharing both ways'
+                                          StaticText, 0x1140203c0, {{35.0, 577.0}, {115.0, 20.5}}, label: 'Remove friend'
+                                          StaticText, 0x114020280, {{35.0, 600.5}, {139.0, 14.5}}, label: 'Stops sharing both ways'
+                                          Image, 0x114022800, {{333.0, 590.5}, {6.5, 11.0}}, identifier: 'chevron.right', label: 'Forward'
+                                        Button, 0x1140208c0, {{35.0, 645.5}, {305.0, 54.0}}, identifier: 'blockFriendButton', label: 'Block person, Also removes the friendship and pending requests'
+                                          StaticText, 0x114020000, {{35.0, 645.5}, {103.5, 20.5}}, label: 'Block person'
+                                          StaticText, 0x114020640, {{35.0, 669.0}, {185.5, 30.5}}, label: 'Also removes the friendship and pending requests'
+                                          Image, 0x114020780, {{325.0, 665.5}, {14.0, 14.5}}, identifier: 'hand.raised.slash.fill', label: 'Unblock'
+                                      Other, 0x114020dc0, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x114020500, {{369.0, 77.0}, {3.0, 407.0}}
+                                      Other, 0x114020b40, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x114020c80, {{369.0, 77.0}, {3.0, 407.0}}
+                            Other, 0x1140212c0, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x114020a00, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x114021040, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x114020f00, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x114021b80, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x114021180, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x114021540, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x114021400, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x114021f40, {{55.0, 588.0}, {94.0, 54.0}}, identifier: 'friendsTab', label: 'Friends', Selected
+                            Image, 0x114021e00, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x1140221c0, {{141.0, 588.0}, {94.0, 54.0}}, identifier: 'tripsTab', label: 'Trips'
+                            Image, 0x114022440, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x114022080, {{227.0, 588.0}, {94.0, 54.0}}, identifier: 'profileTab', label: 'You'
+                            Image, 0x114022300, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x114021cc0, {{55.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x114022580, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x1140226c0, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x114022e40, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x114022d00, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x114022bc0, {{55.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x114022f80, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x114022a80, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x114022940, {{55.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x1140217c0, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x114021a40, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x114021900, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x1140235c0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x114021680, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x1140230c0, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x114023200, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x115852bc0, {{0.0, 584.0}, {375.0, 83.0}}
+      Other, 0x115852d00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x115852e40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'PopoverDismissRegion', label: 'dismiss popup'
+        Popover, 0x115852f80, {{67.0, 432.0}, {240.0, 225.0}}
+          Image, 0x1158530c0, {{-83.0, 295.0}, {540.0, 512.0}}
+          Other, 0x115853200, {{67.0, 432.0}, {240.0, 225.0}}
+            Other, 0x115853340, {{67.0, 432.0}, {240.0, 225.0}}
+              Other, 0x115853480, {{67.0, 432.0}, {240.0, 225.0}}
+                Other, 0x1158535c0, {{67.0, 432.0}, {240.0, 225.0}}
+                  Other, 0x115853700, {{67.0, 432.0}, {240.0, 225.0}}
+                    Other, 0x115853840, {{67.0, 432.0}, {0.0, 0.0}}
+                      Other, 0x115853980, {{67.0, 432.0}, {240.0, 225.0}}
+                        Other, 0x115853ac0, {{67.0, 432.0}, {240.0, 225.0}}
+                          Other, 0x115853c00, {{67.0, 432.0}, {240.0, 225.0}}
+                            Other, 0x115853e80, {{67.0, 432.0}, {240.0, 225.0}}
+          Other, 0x115853d40, {{67.0, 445.0}, {240.0, 212.0}}
+            Sheet, 0x114644000, {{67.0, 445.0}, {240.0, 212.0}}, label: 'Remove Mia Chen?'
+              Other, 0x114644140, {{67.0, 445.0}, {240.0, 212.0}}
+                Other, 0x114644280, {{67.0, 445.0}, {240.0, 212.0}}
+                  Other, 0x1146443c0, {{67.0, 445.0}, {240.0, 212.0}}
+                  Other, 0x114644500, {{67.0, 445.0}, {240.0, 212.0}}
+                    ScrollView, 0x114644640, {{67.0, 445.0}, {240.0, 132.0}}
+                      Other, 0x114644780, {{67.0, 445.0}, {240.0, 132.0}}
+                        StaticText, 0x1146448c0, {{97.0, 467.5}, {180.0, 20.5}}, label: 'Remove Mia Chen?'
+                        StaticText, 0x114644a00, {{97.0, 494.5}, {180.0, 78.0}}, label: 'The friendship and per-friend sharing preferences will be removed.'
+                      Other, 0x114644b40, {{274.0, 466.0}, {30.0, 111.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other, 0x114644c80, {{301.0, 406.0}, {3.0, 36.0}}
+                      Other, 0x114644dc0, {{67.0, 544.0}, {240.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                        Other, 0x114644f00, {{28.0, 571.0}, {36.0, 3.0}}
+                      Other, 0x114645040, {{274.0, 466.0}, {30.0, 111.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other, 0x114645180, {{301.0, 406.0}, {3.0, 36.0}}
+                      Other, 0x1146452c0, {{67.0, 544.0}, {240.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                        Other, 0x114645400, {{28.0, 571.0}, {36.0, 3.0}}
+                    ScrollView, 0x114645540, {{67.0, 577.0}, {240.0, 80.0}}
+                      Other, 0x114645680, {{67.0, 577.0}, {240.0, 80.0}}
+                        Other, 0x1146457c0, {{83.0, 593.0}, {208.0, 48.0}}
+                          Button, 0x114645900, {{83.0, 593.0}, {208.0, 48.0}}, label: 'Remove friend'
+                      Other, 0x114645a40, {{274.0, 577.0}, {30.0, 46.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other, 0x114645b80, {{301.0, 667.0}, {3.0, 7.0}}
+                      Other, 0x114645cc0, {{101.0, 624.0}, {172.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                        Other, 0x114645e00, {{157.0, 651.0}, {7.0, 3.0}}
+                      Other, 0x114645f40, {{274.0, 577.0}, {30.0, 46.0}}, label: 'Vertical scroll bar, 1 page', value: 0%
+                        Other, 0x114646080, {{301.0, 667.0}, {3.0, 7.0}}
+                      Other, 0x1146461c0, {{101.0, 624.0}, {172.0, 30.0}}, label: 'Horizontal scroll bar, 1 page', value: 0%
+                        Other, 0x114646300, {{157.0, 651.0}, {7.0, 3.0}}
+    Window, 0x114646440, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x114646580, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x1146466c0, {{0.0, 0.0}, {375.0, 667.0}}
+Path to element:
+ →Application, 0x115a0bc00, pid: 49326, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x114646800, pid: 49326, label: 'Across Us'
+  }

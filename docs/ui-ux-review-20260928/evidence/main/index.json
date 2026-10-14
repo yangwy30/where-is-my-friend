@@ -1,0 +1,793 @@
+[
+  {
+    "label": "Add flight.png",
+    "path": "evidence/main/Add-flight.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "8385A2F6-5669-4C39-AC1A-F27D03D16BBE.png"
+  },
+  {
+    "label": "Always location weekly reminder.png",
+    "path": "evidence/main/Always-location-weekly-reminder.png",
+    "test": "PrototypeUITests/testWhileUsingReminderExplainsAlwaysAndSnoozesAfterOpeningSettings()",
+    "failure": false,
+    "source": "B2FA66FE-CF68-433F-A80F-E38A42B687B2.png"
+  },
+  {
+    "label": "App UI hierarchy for com.yangwy30.whereismyfriend",
+    "path": "evidence/main/App-UI-hierarchy-for-com.yangwy30.whereismyfriend.txt",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": true,
+    "source": "81933E3F-0846-4058-BA2F-38FD052C3C09.txt"
+  },
+  {
+    "label": "Awaiting friend flight compact status.png",
+    "path": "evidence/main/Awaiting-friend-flight-compact-status.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "5C458DC6-5AAF-446A-8D89-32339000FEF4.png"
+  },
+  {
+    "label": "City artwork paused and unavailable.png",
+    "path": "evidence/main/City-artwork-paused-and-unavailable.png",
+    "test": "PrototypeUITests/testCityArtworkHandlesPausedAndUnavailableLocations()",
+    "failure": false,
+    "source": "5C6EE288-5317-4C89-B426-C12965B31B2F.png"
+  },
+  {
+    "label": "City fallback comparison Night Jade.png",
+    "path": "evidence/main/City-fallback-comparison-Night-Jade.png",
+    "test": "PrototypeUITests/testCityEmblemFallbackSideBySideVisual()",
+    "failure": false,
+    "source": "61251B4E-9202-4CCF-8C08-2C81C70F9D49.png"
+  },
+  {
+    "label": "City fallback visual side-by-side comparison.png",
+    "path": "evidence/main/City-fallback-visual-side-by-side-comparison.png",
+    "test": "PrototypeUITests/testCityEmblemFallbackSideBySideVisual()",
+    "failure": false,
+    "source": "B00B50D5-CF7B-4777-A8F3-E11E408D04E7.png"
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/main/Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "F1E26CCE-8C74-4819-B239-DAAF5A85C328.png"
+  },
+  {
+    "label": "Compact trip accessibility destination.png",
+    "path": "evidence/main/Compact-trip-accessibility-destination.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "0D0C4BEA-2A61-4744-9769-040F782461D1.png"
+  },
+  {
+    "label": "Compact trip accessibility fields.png",
+    "path": "evidence/main/Compact-trip-accessibility-fields.png",
+    "test": "PrototypeUITests/testCompactTripFormAtAccessibilityTextSize()",
+    "failure": false,
+    "source": "1E83819D-1646-4E44-BA6D-4179411D3E86.png"
+  },
+  {
+    "label": "Compact trip destination - nightJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-destination---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "43B13944-56CE-4FA2-BE8D-D098EB8D1391.png"
+  },
+  {
+    "label": "Compact trip destination - solarJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-destination---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "DF203962-6945-448F-91F8-80726978616D.png"
+  },
+  {
+    "label": "Compact trip empty - nightJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-empty---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "11C1AF25-1BDE-4226-B251-4D6115D1586F.png"
+  },
+  {
+    "label": "Compact trip empty - solarJadeAppearance.png",
+    "path": "evidence/main/Compact-trip-empty---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "3CF3E46C-7DBC-4F3B-9D20-97CB5CD61520.png"
+  },
+  {
+    "label": "Complete Issue Description.txt",
+    "path": "evidence/main/Complete-Issue-Description.txt",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": true,
+    "source": "60CA7815-18AE-4DAD-9AE2-1DF37E5A2B6B.txt"
+  },
+  {
+    "label": "Demo lookup unavailable without invented routes.png",
+    "path": "evidence/main/Demo-lookup-unavailable-without-invented-routes.png",
+    "test": "PrototypeUITests/testTripDemoUnknownFlightDoesNotInventProviderResults()",
+    "failure": false,
+    "source": "59393582-A9A3-42C8-A84E-CD54AD04BD77.png"
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/main/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "AD41F185-5E93-4B50-B10A-2F3DD0983D29.png"
+  },
+  {
+    "label": "First trip empty state.png",
+    "path": "evidence/main/First-trip-empty-state.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "5840B9BC-2972-4834-801F-04DA7B3E4254.png"
+  },
+  {
+    "label": "Flight candidate lookup results.png",
+    "path": "evidence/main/Flight-candidate-lookup-results.png",
+    "test": "PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection()",
+    "failure": false,
+    "source": "1B384637-C1D3-4D46-8296-23CCF8A9656B.png"
+  },
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/main/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "7F2A3794-6793-4454-8BDD-BBE2FDE130EB.png"
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/main/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "03764219-4060-41DC-BD3C-C3177B898798.png"
+  },
+  {
+    "label": "Immersive all routes.png",
+    "path": "evidence/main/Immersive-all-routes.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "DDAFFC27-DF06-45FB-8EE1-1B5C38D6E263.png"
+  },
+  {
+    "label": "Immersive selected route.png",
+    "path": "evidence/main/Immersive-selected-route.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "AB4DB48C-4858-4811-B308-565F5AED9E8C.png"
+  },
+  {
+    "label": "Location reminder after denied permission.png",
+    "path": "evidence/main/Location-reminder-after-denied-permission.png",
+    "test": "PrototypeUITests/testDeniedLocationReminderOpensSettingsWithoutAnotherSystemPrompt()",
+    "failure": false,
+    "source": "1F85CCC7-CCF8-432E-BA07-9C2655DFCCDF.png"
+  },
+  {
+    "label": "Missing flight action card.png",
+    "path": "evidence/main/Missing-flight-action-card.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "762A4345-C6E4-494B-9A9A-A3F5B3980A85.png"
+  },
+  {
+    "label": "Multi-trip library.png",
+    "path": "evidence/main/Multi-trip-library.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "9F146AA0-89C4-4604-88DF-E96A4DCFD8A0.png"
+  },
+  {
+    "label": "Native flight form action.png",
+    "path": "evidence/main/Native-flight-form-action.png",
+    "test": "PrototypeUITests/testTripPrimaryActionRemainsReachableAfterScrolling()",
+    "failure": false,
+    "source": "AFD68C39-3126-43FB-BD99-7A7CF87FD32F.png"
+  },
+  {
+    "label": "Night Jade immersive map.png",
+    "path": "evidence/main/Night-Jade-immersive-map.png",
+    "test": "PrototypeUITests/testTripsNightAppearance()",
+    "failure": false,
+    "source": "6A1F228B-124E-4AFE-84F2-B139416BFB3D.png"
+  },
+  {
+    "label": "Night Jade routes.png",
+    "path": "evidence/main/Night-Jade-routes.png",
+    "test": "PrototypeUITests/testTripsNightAppearance()",
+    "failure": false,
+    "source": "E8995CF2-194C-49C5-80A2-8E23BC0D43C1.png"
+  },
+  {
+    "label": "Other travelers unchanged.png",
+    "path": "evidence/main/Other-travelers-unchanged.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "B1063CDC-7E1A-43BC-A08D-4568DB466E85.png"
+  },
+  {
+    "label": "Own flight actions.png",
+    "path": "evidence/main/Own-flight-actions.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "9FA77AD6-25BC-4500-B13B-2DEA1615ED6E.png"
+  },
+  {
+    "label": "Return routes.png",
+    "path": "evidence/main/Return-routes.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "D4A82BBD-C9D0-4DD2-B41E-1725904A6808.png"
+  },
+  {
+    "label": "Selected flight details.png",
+    "path": "evidence/main/Selected-flight-details.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "2B304749-185E-438C-B1D2-22B3EDD632AF.png"
+  },
+  {
+    "label": "Self-service flight form.png",
+    "path": "evidence/main/Self-service-flight-form.png",
+    "test": "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+    "failure": false,
+    "source": "2FB87DC8-F09D-484B-AD27-9F68FA3F344D.png"
+  },
+  {
+    "label": "Trip board with verified flight.png",
+    "path": "evidence/main/Trip-board-with-verified-flight.png",
+    "test": "PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection()",
+    "failure": false,
+    "source": "35A9616F-835D-4B58-BEF3-46D82A33CE5E.png"
+  },
+  {
+    "label": "Trip board.png",
+    "path": "evidence/main/Trip-board.png",
+    "test": "PrototypeUITests/testTripsTabDisplaysCalmTripOverview()",
+    "failure": false,
+    "source": "ACB6791F-7CCB-4126-AA8C-5F75406D1D3F.png"
+  },
+  {
+    "label": "Trip flight details expanded.png",
+    "path": "evidence/main/Trip-flight-details-expanded.png",
+    "test": "PrototypeUITests/testTripFlightCardDetailsExpansion()",
+    "failure": false,
+    "source": "4648FDD2-F99C-48EF-8017-8CCF868436EB.png"
+  },
+  {
+    "label": "Trip navigation after scrolling.png",
+    "path": "evidence/main/Trip-navigation-after-scrolling.png",
+    "test": "PrototypeUITests/testTripPrimaryActionRemainsReachableAfterScrolling()",
+    "failure": false,
+    "source": "9F665C74-93FF-4F30-944F-C892BF6E10CC.png"
+  },
+  {
+    "label": "Weekly location reminder Chinese.png",
+    "path": "evidence/main/Weekly-location-reminder-Chinese.png",
+    "test": "PrototypeUITests/testLocationReminderChineseCopyAndDismissal()",
+    "failure": false,
+    "source": "9D93F3C3-92EE-468A-A9EE-78E90910A27A.png"
+  },
+  {
+    "label": "Weekly location reminder.png",
+    "path": "evidence/main/Weekly-location-reminder.png",
+    "test": "PrototypeUITests/testLocationReminderSnoozesAcrossNavigationAndRelaunch()",
+    "failure": false,
+    "source": "0982BB12-FB73-4F6C-AD61-7A07E7FC03A8.png"
+  },
+  {
+    "label": "city-region-friends-real-cities.png",
+    "path": "evidence/main/city-region-friends-real-cities.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "2AB5574F-4499-43FB-9967-C2085B1E912B.png"
+  },
+  {
+    "label": "city-region-milpitas-details.png",
+    "path": "evidence/main/city-region-milpitas-details.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "58C3082C-D2D3-4A8D-8F8B-151E5F52B0D2.png"
+  },
+  {
+    "label": "en-01-friends.png",
+    "path": "evidence/main/en-01-friends.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "50D325C7-9CE9-4836-B14F-708A0325AC9F.png"
+  },
+  {
+    "label": "en-02-friend-plans.png",
+    "path": "evidence/main/en-02-friend-plans.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "4C6207AE-A176-4430-BB96-E6B7A1914443.png"
+  },
+  {
+    "label": "en-03-together-soon.png",
+    "path": "evidence/main/en-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureMarketingOverlapDetails()",
+    "failure": false,
+    "source": "71936F82-6700-4509-B753-D99BC9479C57.png"
+  },
+  {
+    "label": "en-03-together-soon.png",
+    "path": "evidence/main/A317CE83-en-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "A317CE83-A811-4576-8EC0-4BB529C71EF2.png"
+  },
+  {
+    "label": "en-04-here-together.png",
+    "path": "evidence/main/en-04-here-together.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "55708055-8D05-4F42-9E85-4D355D3EE20A.png"
+  },
+  {
+    "label": "en-05-shared-trips.png",
+    "path": "evidence/main/en-05-shared-trips.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "9C131236-8668-49BA-99B3-BD847EEDBEB0.png"
+  },
+  {
+    "label": "en-06-arrivals.png",
+    "path": "evidence/main/en-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightMaps()",
+    "failure": false,
+    "source": "0B012795-9F52-4286-BFDE-737519B21CFA.png"
+  },
+  {
+    "label": "en-06-arrivals.png",
+    "path": "evidence/main/993CFB3F-en-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "993CFB3F-FCC0-4F6D-9BE8-34B5A07C0DF9.png"
+  },
+  {
+    "label": "en-07-flight-details.png",
+    "path": "evidence/main/en-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightDetails()",
+    "failure": false,
+    "source": "E3EB47F9-2BF4-4A42-AB4C-28C2677FB4AC.png"
+  },
+  {
+    "label": "en-07-flight-details.png",
+    "path": "evidence/main/E25722F7-en-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingEnglish()",
+    "failure": false,
+    "source": "E25722F7-111E-4DFA-AD0E-B5A99D4A5B37.png"
+  },
+  {
+    "label": "first-use-location-setup.png",
+    "path": "evidence/main/first-use-location-setup.png",
+    "test": "PrototypeUITests/testFirstUseLocationAllowMovesToFriends()",
+    "failure": false,
+    "source": "F3307409-A8E4-4FA3-BD96-B4F0662F9440.png"
+  },
+  {
+    "label": "friend-plan-badge.png",
+    "path": "evidence/main/friend-plan-badge.png",
+    "test": "PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities()",
+    "failure": false,
+    "source": "69542BB6-4169-4BF9-B1B5-694A4714CF0E.png"
+  },
+  {
+    "label": "friend-plan-details.png",
+    "path": "evidence/main/friend-plan-details.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "9A7E0168-0207-4E2E-8DD3-818D362072FC.png"
+  },
+  {
+    "label": "friend-plan-opt-out-chinese.png",
+    "path": "evidence/main/friend-plan-opt-out-chinese.png",
+    "test": "PrototypeUITests/testFriendPlansChineseOptOutPersists()",
+    "failure": false,
+    "source": "FE227425-0D5A-4EC5-95E8-2F03B3D29F85.png"
+  },
+  {
+    "label": "friend-plans-chinese.png",
+    "path": "evidence/main/friend-plans-chinese.png",
+    "test": "PrototypeUITests/testFriendPlansChineseOptOutPersists()",
+    "failure": false,
+    "source": "005534C5-F903-44F4-BAAF-4D26C4619616.png"
+  },
+  {
+    "label": "friend-plans-home-compact.png",
+    "path": "evidence/main/friend-plans-home-compact.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "336B7C71-C6F8-4652-9A6D-E230A28A36EA.png"
+  },
+  {
+    "label": "friend-plans-list.png",
+    "path": "evidence/main/friend-plans-list.png",
+    "test": "PrototypeUITests/testFriendPlansKeepsHomeCompactAndCopiesAPrivateDraft()",
+    "failure": false,
+    "source": "79DCA7DF-8B46-4B85-BC92-AC621B41BA49.png"
+  },
+  {
+    "label": "friend-plans-second-page.png",
+    "path": "evidence/main/friend-plans-second-page.png",
+    "test": "PrototypeUITests/testFriendPlanSecondPageOpensDetails()",
+    "failure": false,
+    "source": "D1960467-30C3-41CA-9111-378FAE8772C9.png"
+  },
+  {
+    "label": "friend-shared-plans.png",
+    "path": "evidence/main/friend-shared-plans.png",
+    "test": "PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities()",
+    "failure": false,
+    "source": "3C749448-D356-4F7C-A59A-B0FBCA3764DA.png"
+  },
+  {
+    "label": "friends-without-matches.png",
+    "path": "evidence/main/friends-without-matches.png",
+    "test": "PrototypeUITests/testNoMatchCardsDisappearWhenCitySharingStops()",
+    "failure": false,
+    "source": "F585B483-A9B9-49E1-BF65-6C49EAC04037.png"
+  },
+  {
+    "label": "home-summary-all-five-overlaps.png",
+    "path": "evidence/main/home-summary-all-five-overlaps.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "264B1B93-6277-435E-A50E-9E1EAE8CEB5D.png"
+  },
+  {
+    "label": "home-summary-fifth-overlap-cold-link.png",
+    "path": "evidence/main/home-summary-fifth-overlap-cold-link.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "79B02EEB-068B-4B11-93E4-40F07D95996F.png"
+  },
+  {
+    "label": "notification-setup-with-private-previews.png",
+    "path": "evidence/main/notification-setup-with-private-previews.png",
+    "test": "PrototypeUITests/testNotificationSettingsKeepsPushRegistrationAutomatic()",
+    "failure": false,
+    "source": "07E21F90-DD8D-4770-B551-680B156CFE19.png"
+  },
+  {
+    "label": "onboarding-notification.png",
+    "path": "evidence/main/onboarding-notification.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "E69781A2-E234-4511-BBF6-8E74596E9872.png"
+  },
+  {
+    "label": "onboarding-privacy.png",
+    "path": "evidence/main/onboarding-privacy.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "4E07700D-EE06-40FB-8C15-1C1CF421C5F9.png"
+  },
+  {
+    "label": "onboarding-reduced-motion-trip.png",
+    "path": "evidence/main/onboarding-reduced-motion-trip.png",
+    "test": "PrototypeUITests/testOnboardingReducedMotionShowsCompleteExamples()",
+    "failure": false,
+    "source": "C98C92BD-CC75-4A84-AF75-789B802766EF.png"
+  },
+  {
+    "label": "onboarding-trip.png",
+    "path": "evidence/main/onboarding-trip.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "24A0ECA6-64E5-4A7C-B729-E6C94DAC2714.png"
+  },
+  {
+    "label": "onboarding-world.png",
+    "path": "evidence/main/onboarding-world.png",
+    "test": "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+    "failure": false,
+    "source": "5EBFCE09-D87E-473A-9EFE-EB6D6985E9EB.png"
+  },
+  {
+    "label": "plan-city-picker-top-search.png",
+    "path": "evidence/main/plan-city-picker-top-search.png",
+    "test": "PrototypeUITests/testPlanCityPickerShowsSearchAtTopAndOwnTripDestinations()",
+    "failure": false,
+    "source": "1F1FF4CD-2F56-4CA8-944C-0105D40E2243.png"
+  },
+  {
+    "label": "privacy-after-interrupted-motion.png",
+    "path": "evidence/main/privacy-after-interrupted-motion.png",
+    "test": "PrototypeUITests/testOnboardingMotionCanBeInterrupted()",
+    "failure": false,
+    "source": "F5C139DF-D6B4-4B0F-878E-0425740B490B.png"
+  },
+  {
+    "label": "same-city-expanded.png",
+    "path": "evidence/main/same-city-expanded.png",
+    "test": "PrototypeUITests/testSameCityCardExpandsAndSharesWithoutSendingAutomatically()",
+    "failure": false,
+    "source": "16E79C8C-2703-4CDC-ADC9-A936748E1FA5.png"
+  },
+  {
+    "label": "same-city-unavailable-link.png",
+    "path": "evidence/main/same-city-unavailable-link.png",
+    "test": "PrototypeUITests/testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch()",
+    "failure": false,
+    "source": "C5394C61-E08B-4CF9-879D-A83F8DD44962.png"
+  },
+  {
+    "label": "single-calendar-cross-month-range.png",
+    "path": "evidence/main/single-calendar-cross-month-range.png",
+    "test": "PrototypeUITests/testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates()",
+    "failure": false,
+    "source": "42447F79-1F3C-4EA7-805E-B5A5DFE354F9.png"
+  },
+  {
+    "label": "travel-plan-palm-springs.png",
+    "path": "evidence/main/travel-plan-palm-springs.png",
+    "test": "PrototypeUITests/testTravelCitySearchFindsPalmSpringsFromProfile()",
+    "failure": false,
+    "source": "976CE569-1013-4C23-B838-1ECFA6C2A2EA.png"
+  },
+  {
+    "label": "travel-plan-private-editor.png",
+    "path": "evidence/main/travel-plan-private-editor.png",
+    "test": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+    "failure": false,
+    "source": "C8308462-FDCD-45A4-A498-1B2F4A8F6DF1.png"
+  },
+  {
+    "label": "trip-delete-confirmation.png",
+    "path": "evidence/main/trip-delete-confirmation.png",
+    "test": "PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+    "failure": false,
+    "source": "6AFB3F43-5536-4FCC-973B-20DC3E8C5E84.png"
+  },
+  {
+    "label": "trip-flight-planning-reminders-before-toggle.png",
+    "path": "evidence/main/trip-flight-planning-reminders-before-toggle.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "8787956C-AE2B-46E4-B296-9A79C848D1AC.png"
+  },
+  {
+    "label": "trip-flight-planning-reminders-settings.png",
+    "path": "evidence/main/trip-flight-planning-reminders-settings.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "B765A775-6731-488B-99CD-8892BF877A92.png"
+  },
+  {
+    "label": "trip-flight-reminder-sent.png",
+    "path": "evidence/main/trip-flight-reminder-sent.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "42D7BB28-5CF4-40E4-98E3-641830F8C62F.png"
+  },
+  {
+    "label": "trip-leave-confirmation.png",
+    "path": "evidence/main/trip-leave-confirmation.png",
+    "test": "PrototypeUITests/testTripMemberCanLeaveButCannotManageOthers()",
+    "failure": false,
+    "source": "EE3601BD-2BFE-46BB-BC0B-914A5890F71B.png"
+  },
+  {
+    "label": "trip-people-reminders.png",
+    "path": "evidence/main/trip-people-reminders.png",
+    "test": "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+    "failure": false,
+    "source": "DCAC4A26-51E4-444A-9148-ECB5519351FD.png"
+  },
+  {
+    "label": "trip-remove-member-confirmation.png",
+    "path": "evidence/main/trip-remove-member-confirmation.png",
+    "test": "PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+    "failure": false,
+    "source": "8067CD8D-5874-4952-9C69-221CD27EC554.png"
+  },
+  {
+    "label": "upcoming-together-expanded.png",
+    "path": "evidence/main/upcoming-together-expanded.png",
+    "test": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+    "failure": false,
+    "source": "57791BAB-FA5D-41A0-8E7E-439B32655A9C.png"
+  },
+  {
+    "label": "widget-Friends-Large-Dark.png",
+    "path": "evidence/main/widget-Friends-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "3E109DA6-A43F-48A2-B93D-71A4985445E2.png"
+  },
+  {
+    "label": "widget-Friends-Large-Light.png",
+    "path": "evidence/main/widget-Friends-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "5DB1E9C4-D039-4931-88E8-C233EEAD91B0.png"
+  },
+  {
+    "label": "widget-Friends-Medium-Dark.png",
+    "path": "evidence/main/widget-Friends-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "9CB4F44B-ACCF-4E9C-9A7C-8782DBE70C06.png"
+  },
+  {
+    "label": "widget-Friends-Medium-Light.png",
+    "path": "evidence/main/widget-Friends-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "CEB4C648-4ABD-42C9-8C44-EF44FA80B66A.png"
+  },
+  {
+    "label": "widget-Friends-Small-Dark.png",
+    "path": "evidence/main/widget-Friends-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "65BDCF0A-3068-4F74-82B6-362E9A1A5F54.png"
+  },
+  {
+    "label": "widget-Friends-Small-Light.png",
+    "path": "evidence/main/widget-Friends-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "AC081118-8034-4DF7-B1BC-5912242960EF.png"
+  },
+  {
+    "label": "widget-Here together-Large-Dark.png",
+    "path": "evidence/main/widget-Here-together-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "FFE760E3-C52A-468D-9B22-EB5618482D23.png"
+  },
+  {
+    "label": "widget-Here together-Large-Light.png",
+    "path": "evidence/main/widget-Here-together-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "A3E58DA5-A563-4372-A18C-810917570F85.png"
+  },
+  {
+    "label": "widget-Here together-Medium-Dark.png",
+    "path": "evidence/main/widget-Here-together-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "0E8591FF-F2CF-434C-AFAD-44C35518A542.png"
+  },
+  {
+    "label": "widget-Here together-Medium-Light.png",
+    "path": "evidence/main/widget-Here-together-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "0A4391C6-5516-4954-90D8-49370EABA3C3.png"
+  },
+  {
+    "label": "widget-Here together-Small-Dark.png",
+    "path": "evidence/main/widget-Here-together-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "45F1DEC5-CA89-422E-A579-14CD8A6B3512.png"
+  },
+  {
+    "label": "widget-Here together-Small-Light.png",
+    "path": "evidence/main/widget-Here-together-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "F36751C6-EFFD-4106-95C6-5EA193E467AB.png"
+  },
+  {
+    "label": "widget-zh-0-0.png",
+    "path": "evidence/main/widget-zh-0-0.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "C0455A65-D541-431A-83D1-C49A58F04C22.png"
+  },
+  {
+    "label": "widget-zh-0-1.png",
+    "path": "evidence/main/widget-zh-0-1.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "20E25F12-E26D-4476-BBFA-0B808D20F2BD.png"
+  },
+  {
+    "label": "widget-zh-0-2.png",
+    "path": "evidence/main/widget-zh-0-2.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "6A4A4F66-D381-4ECF-948C-029B98C34459.png"
+  },
+  {
+    "label": "widget-zh-1-0.png",
+    "path": "evidence/main/widget-zh-1-0.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "92A62F1D-121C-42E3-A5A6-16BEF8744478.png"
+  },
+  {
+    "label": "widget-zh-1-1.png",
+    "path": "evidence/main/widget-zh-1-1.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "9826A478-0DAA-467D-8BCD-A1F114C86FE3.png"
+  },
+  {
+    "label": "widget-zh-1-2.png",
+    "path": "evidence/main/widget-zh-1-2.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetsChinese()",
+    "failure": false,
+    "source": "124C54FD-9609-401D-BE52-FA5575B8F41E.png"
+  },
+  {
+    "label": "zh-Hans-01-friends.png",
+    "path": "evidence/main/zh-Hans-01-friends.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "9C7C9032-C227-4918-8C3C-BCEC559B0201.png"
+  },
+  {
+    "label": "zh-Hans-02-friend-plans.png",
+    "path": "evidence/main/zh-Hans-02-friend-plans.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "591DFD9A-0705-43A2-B788-F16DE431085A.png"
+  },
+  {
+    "label": "zh-Hans-03-together-soon.png",
+    "path": "evidence/main/zh-Hans-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureMarketingOverlapDetails()",
+    "failure": false,
+    "source": "3657405D-CBA6-458B-B761-B5CB8204D232.png"
+  },
+  {
+    "label": "zh-Hans-03-together-soon.png",
+    "path": "evidence/main/BC0AA8D3-zh-Hans-03-together-soon.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "BC0AA8D3-6D0B-489F-8FA8-CDE5ABA7E01B.png"
+  },
+  {
+    "label": "zh-Hans-04-here-together.png",
+    "path": "evidence/main/zh-Hans-04-here-together.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "9A1D7992-5309-4777-A7AA-D0024C49EB17.png"
+  },
+  {
+    "label": "zh-Hans-05-shared-trips.png",
+    "path": "evidence/main/zh-Hans-05-shared-trips.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "C820B575-CF69-48D5-BDAF-0262D82EB3B5.png"
+  },
+  {
+    "label": "zh-Hans-06-arrivals.png",
+    "path": "evidence/main/zh-Hans-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightMaps()",
+    "failure": false,
+    "source": "DFC96FA1-226A-4F36-BF3E-4FD512137525.png"
+  },
+  {
+    "label": "zh-Hans-06-arrivals.png",
+    "path": "evidence/main/96857FB7-zh-Hans-06-arrivals.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "96857FB7-29E0-4FBB-AE9B-27175131CEC6.png"
+  },
+  {
+    "label": "zh-Hans-07-flight-details.png",
+    "path": "evidence/main/zh-Hans-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureMarketingFlightDetails()",
+    "failure": false,
+    "source": "F4B30943-4BFC-4A1C-84B0-208782E6755B.png"
+  },
+  {
+    "label": "zh-Hans-07-flight-details.png",
+    "path": "evidence/main/FC8EDE97-zh-Hans-07-flight-details.png",
+    "test": "PrototypeUITests/testCaptureUpdatedMarketingChinese()",
+    "failure": false,
+    "source": "FC8EDE97-22A8-4A87-8DCB-C4BFF464F072.png"
+  }
+]

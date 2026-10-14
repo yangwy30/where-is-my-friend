@@ -1,0 +1,64 @@
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x11503c000, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Element subtree:
+ →StaticText, 0x11503c000, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Path to element:
+ →Application, 0x113ae4140, pid: 74595, label: 'Across Us'
+  ↳Window (Main), 0x113ae66c0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x11502e1c0, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x11502e440, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x11502e6c0, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x11502e800, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x11502e940, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x11502ea80, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x11502ebc0, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x11502f340, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x11502f480, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x11502f5c0, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x11502f700, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x11502f840, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x11502fd40, {{0.0, 100.0}, {375.0, 1207.5}}
+                ↳StaticText, 0x11503c000, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x1151fa940, pid: 74595, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 74595, elementOrHash.elementID: 4388147584.234
+    Output: {
+      StaticText, 0x1151f8780, {{22.0, 187.5}, {258.0, 116.5}}, label: 'West Coast weekend'
+    }
+
+
+Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Attributes: StaticText, 0x11503c140, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Element subtree:
+ →StaticText, 0x11503c140, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Path to element:
+ →Application, 0x113ae66c0, pid: 74595, label: 'Across Us'
+  ↳Window (Main), 0x113ae4000, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x11502e1c0, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x11502e440, {{0.0, 30.0}, {375.0, 637.0}}
+     ↳Other, 0x11502e6c0, {{0.0, 30.0}, {375.0, 637.0}}
+      ↳Other, 0x11502e800, {{0.0, 30.0}, {375.0, 637.0}}
+       ↳Other, 0x11502e940, {{0.0, 30.0}, {375.0, 637.0}}
+        ↳Other, 0x11502ea80, {{0.0, 30.0}, {375.0, 637.0}}
+         ↳Other, 0x11502ebc0, {{0.0, 30.0}, {375.0, 637.0}}
+          ↳Other, 0x11502f340, {{0.0, 30.0}, {375.0, 637.0}}
+           ↳Other, 0x11502f480, {{0.0, 30.0}, {375.0, 637.0}}
+            ↳Other, 0x11502f5c0, {{0.0, 30.0}, {375.0, 637.0}}
+             ↳Other, 0x11502f700, {{0.0, 30.0}, {375.0, 637.0}}
+              ↳ScrollView, 0x11502f840, {{0.0, 30.0}, {375.0, 637.0}}
+               ↳Other, 0x11502fd40, {{0.0, 100.0}, {375.0, 1207.5}}
+                ↳StaticText, 0x11503c140, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x1151fa940, pid: 74595, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 74595, elementOrHash.elementID: 4388148480.235
+    Output: {
+      StaticText, 0x1151f88c0, {{22.0, 328.0}, {240.5, 51.5}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+    }

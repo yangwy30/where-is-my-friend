@@ -1,0 +1,26 @@
+[
+  {
+    "file": "AUDIT-profile-after-discard.png",
+    "source": "/private/tmp/across-deep-review-20261010/profile-stable-attachments/F3396AB1-2842-46A4-BAAB-D81E9679E329.png",
+    "test": "PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+    "device": "Across Us Onboarding QA \u2014 SE",
+    "timestamp": 1791660078.476,
+    "status_note": "Profile subflow passed through discard and reopen; containing test failed later at personal-plan city fixture assumption."
+  },
+  {
+    "file": "AUDIT-profile-discard-dialog.png",
+    "source": "/private/tmp/across-deep-review-20261010/profile-stable-attachments/AAF41DB7-C90B-4191-A1E0-81DE91352E69.png",
+    "test": "PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+    "device": "Across Us Onboarding QA \u2014 SE",
+    "timestamp": 1791660071.488,
+    "status_note": "Profile subflow passed through discard and reopen; containing test failed later at personal-plan city fixture assumption."
+  },
+  {
+    "file": "AUDIT-profile-draft-before-close.png",
+    "source": "/private/tmp/across-deep-review-20261010/profile-stable-attachments/A554F70C-1ADF-488A-8F39-9FCC1AB44D49.png",
+    "test": "PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+    "device": "Across Us Onboarding QA \u2014 SE",
+    "timestamp": 1791660068.657,
+    "status_note": "Profile subflow passed through discard and reopen; containing test failed later at personal-plan city fixture assumption."
+  }
+]

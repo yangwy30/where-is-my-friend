@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-29T06:19:29.730Z",
+  "project": "cdhpaujazbuppbxyhjxq",
+  "migration": "20260929010000",
+  "apiVersion": 29,
+  "apiSHA256": "e772600d88740f4f1ab86e4fbf1b9d3314199bf94644c4df062c67d0a97cf967",
+  "migrationSHA256": "6b0bcce26ef97a86f15b079ef12b00f5c68b495119d8f34d21410e3b167a16ba",
+  "originalFunctionsUnchanged": true,
+  "workersUnchanged": true,
+  "sharedModules": 11,
+  "serviceOnly": true,
+  "healthStatus": 200,
+  "healthy": true
+}

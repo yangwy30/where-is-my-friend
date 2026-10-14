@@ -1,0 +1,61 @@
+
+
+Attributes: Application, 0x11399e6c0, pid: 48007, label: 'Across Us'
+Element subtree:
+ →Application, 0x11399e6c0, pid: 48007, label: 'Across Us'
+    Window (Main), 0x11399d040, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x11399c000, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x11399e800, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x11399f840, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x11399fd40, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x11399fac0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x11399fe80, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x11399f980, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x11399f480, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x11399f5c0, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x11399f340, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x11399e440, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x11399e580, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Blocked people'
+                              Button, 0x11399cb40, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x11399ed00, {{126.5, 31.5}, {122.0, 21.0}}, label: 'Blocked people'
+                            Other, 0x11399ea80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x11399c280, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x11399c500, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x11399c3c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x11399d180, {{-122.5, -101.5}, {640.0, 945.0}}
+                                    ScrollView, 0x11399e940, {{0.0, 0.0}, {375.0, 667.0}}
+                                      Other, 0x11399ebc0, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x11399d900, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x11399dcc0, {{0.0, 526.2}, {375.0, 140.8}}
+                                      Other, 0x11399d540, {{0.0, 0.0}, {375.0, 667.0}}
+                                      Other, 0x112b88780, {{0.0, 74.0}, {375.0, 378.5}}
+                                        Image, 0x112b888c0, {{36.0, 109.0}, {32.5, 32.5}}, identifier: 'person.slash.fill', label: 'person.slash.fill'
+                                        StaticText, 0x112b88a00, {{20.0, 168.0}, {165.5, 26.5}}, label: 'You’re in control'
+                                        StaticText, 0x112b892c0, {{20.0, 206.5}, {310.5, 38.0}}, label: 'Blocked people cannot invite you or see your shared city.'
+                                        Image, 0x112b8b480, {{173.5, 285.5}, {28.0, 33.5}}, identifier: 'checkmark.shield.fill', label: 'checkmark.shield.fill', Selected
+                                        StaticText, 0x112b88f00, {{113.5, 334.0}, {148.0, 20.5}}, label: 'No blocked people'
+                                        StaticText, 0x112b89040, {{51.2, 366.5}, {272.5, 18.0}}, label: 'Anyone you block later will appear here.'
+                            Other, 0x112b89180, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x112b8b200, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x112b8b340, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x112b88000, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x112b88640, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x112b88140, {{28.0, 591.0}, {48.0, 48.0}}
+                        Other, 0x112b89540, {{28.0, 591.0}, {48.0, 48.0}}
+                          Button, 0x112b8b0c0, {{28.0, 591.0}, {48.0, 48.0}}, label: 'You', value: Collapsed, Selected
+                            Image, 0x112b89400, {{39.5, 603.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                  Other, 0x112b8b840, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x112b8be80, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x112b8ad00, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b8abc0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b8bd40, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x112b8af80, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b8a300, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b8bac0, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x11399e6c0, pid: 48007, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x112b8a940, pid: 48007, label: 'Across Us'
+  }

@@ -1,0 +1,386 @@
+[
+  {
+    "stage": "main",
+    "label": "主流程 · iPhone 18 Pro",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 4,
+          "passedTests": 57,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 4,
+      "finishTime": 1790647137.02,
+      "passedTests": 57,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790645604.709,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 23,
+          "testIdentifierString": "PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted",
+          "testName": "testFriendRequestNotificationRestoresAndCanBeAccepted()"
+        },
+        {
+          "failureText": "Failed to tap \"Tokyo (NRT)\" Button: No matches found for Elements matching predicate '\"Tokyo (NRT)\" IN identifiers' from input {(\n    Button, label: 'Sheet Grabber', value: Expanded,\n    Button, label: 'Emoji',\n    Button, identifier: 'dictation', label: 'Dictate',\n    Button, identifier: 'shift', label: 'shift',\n    Button, identifier: 'Done', label: 'done',\n    Button, label: 'Cancel',\n    Button, label: '“friends”',\n    Button, label: 'friendship',\n    Button, label: 'friendships',\n    Button, identifier: 'friendsTab', label: 'Friends',\n    Button, identifier: 'tripsTab', label: 'Trips', Selected,\n    Button, identifier: 'profileTab', label: 'You',\n    Button, identifier: 'tripDestinationPicker', label: 'Destination, Where to?, Choose a city or airport',\n    Button, identifier: 'tripDatesPicker', label: 'Dates', value: Oct 5 – Oct 8, 2026,\n    Button, identifier: 'saveTripButton', label: 'Create trip', Disabled,\n    Button, identifier: 'newTripButton', label: 'New trip',\n    Button, identifier: 'createFirstTripButton', label: 'Plan your first trip',\n    Button, identifier: 'loadExampleTripsButton', label: 'Explore example trips'\n)}\nPossibly caused by runtime issues:\nAutomation type mismatch: computed Button from legacy attributes vs Key from modern attribute. Input attributes and values: {\n    \"XC_kAXXCAttributeAutomationType\" = 20;\n    \"XC_kAXXCAttributeElementBaseType\" = UIAccessibilityElement;\n    \"XC_kAXXCAttributeElementType\" = UIAccessibilityElementKBKey;\n    \"XC_kAXXCAttributeTraits\" = 8589934641;\n}\nSee test report attachments for more detail.",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 46,
+          "testIdentifierString": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripCreationPersistencePeopleAndCompletion",
+          "testName": "testTripCreationPersistencePeopleAndCompletion()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 48,
+          "testIdentifierString": "PrototypeUITests/testTripEditPreservesOtherTrips()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripEditPreservesOtherTrips",
+          "testName": "testTripEditPreservesOtherTrips()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 61,
+          "testIdentifierString": "PrototypeUITests/testWidgetPrivacyAndEdgeStates()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testWidgetPrivacyAndEdgeStates",
+          "testName": "testWidgetPrivacyAndEdgeStates()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [
+        {
+          "category": "Longest Test Runs",
+          "impact": "4% of duration",
+          "text": "1 longest test run with outlier durations exceeding 60.18s (three standard deviations)"
+        }
+      ],
+      "totalTestCount": 61
+    }
+  },
+  {
+    "stage": "small",
+    "label": "小屏与补充初测 · SE",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 4,
+          "passedTests": 9,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 4,
+      "finishTime": 1790646344.496,
+      "passedTests": 9,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790645869.021,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "Failed to tap Button (Element at index 1): No matches found for Element at index 1 from input {(\n    Button, Selected\n)}",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 2,
+          "testIdentifierString": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testCompactTripFormThemesAndSingleCalendar",
+          "testName": "testCompactTripFormThemesAndSingleCalendar()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 9,
+          "testIdentifierString": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testReviewPlanDraftAndSharingModes",
+          "testName": "testReviewPlanDraftAndSharingModes()"
+        },
+        {
+          "failureText": "Failed to tap Button (Element at index 2): No matches found for Element at index 2 from input {(\n    Button, Selected\n)}",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 10,
+          "testIdentifierString": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testReviewProfileAndPrivacyPages",
+          "testName": "testReviewProfileAndPrivacyPages()"
+        },
+        {
+          "failureText": "Failed to tap \"myCitySharingCard\" Button: No matches found for Elements matching predicate '\"myCitySharingCard\" IN identifiers' from input {(\n    Button, label: 'Friends',\n    Button, label: 'Trips',\n    Button, label: 'You', Selected,\n    Button, identifier: 'editProfileButton', label: 'Edit profile',\n    Button, identifier: 'profileCitySharingButton', label: 'City sharing, New York',\n    Button, identifier: 'sameCityMomentsLink', label: 'Same-city moments, 3 moments recorded',\n    Button, identifier: 'travelPlansLink', label: 'Travel plans, Where you’ll be next',\n    Button, identifier: 'notificationSettingsLink', label: 'Notifications, Same-city alerts and sound',\n    Button, identifier: 'widgetPrivacySettingsLink', label: 'Widget & Lock Screen, Choose what appears at a glance',\n    Button, identifier: 'appearanceSettingsButton', label: 'Appearance, Solar Jade',\n    Button, label: 'Blocked people, No blocked people',\n    Button, label: 'Privacy & data, What you share and save',\n    Button, label: 'Sign out',\n    Button, label: 'Delete account',\n    Button, label: 'Developer Lab & Tools, Demo Lab, Emblem Gallery, Widget Studio'\n)}",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 12,
+          "testIdentifierString": "PrototypeUITests/testReviewSharingAndFriendStates()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testReviewSharingAndFriendStates",
+          "testName": "testReviewSharingAndFriendStates()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 13
+    }
+  },
+  {
+    "stage": "followup",
+    "label": "受控状态与复测 · SE",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 3,
+          "passedTests": 7,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 3,
+      "finishTime": 1790646909.082,
+      "passedTests": 7,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790646487.462,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 2,
+          "testIdentifierString": "PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted",
+          "testName": "testFriendRequestNotificationRestoresAndCanBeAccepted()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 7,
+          "testIdentifierString": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testReviewPlanDraftAndSharingModes",
+          "testName": "testReviewPlanDraftAndSharingModes()"
+        },
+        {
+          "failureText": "Failed to tap \"Cancel\" Button: No matches found for Elements matching predicate '\"Cancel\" IN identifiers' from input {(\n    Button, identifier: 'friendsTab', label: 'Friends', Selected,\n    Button, identifier: 'tripsTab', label: 'Trips',\n    Button, identifier: 'profileTab', label: 'You',\n    Button, label: 'Remove friend',\n    Button, identifier: 'BackButton', label: 'Back',\n    Button, identifier: 'star.fill', label: 'Remove favorite',\n    Button, identifier: 'removeFriendButton', label: 'Remove friend, Stops sharing both ways',\n    Button, identifier: 'blockFriendButton', label: 'Block person, Also removes the friendship and pending requests'\n)}",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 10,
+          "testIdentifierString": "PrototypeUITests/testReviewSharingAndFriendStates()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testReviewSharingAndFriendStates",
+          "testName": "testReviewSharingAndFriendStates()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 10
+    }
+  },
+  {
+    "stage": "final",
+    "label": "计划/好友确认补验 · SE",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 2,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790647191.165,
+      "passedTests": 2,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790647061.546,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 2
+    }
+  },
+  {
+    "stage": "keyboard",
+    "label": "键盘操作对照 · iPhone 18 Pro",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 2,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790647275.993,
+      "passedTests": 2,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790647180.887,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 2
+    }
+  },
+  {
+    "stage": "widget",
+    "label": "Widget 隐私边界 · SE",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 1,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790647455.069,
+      "passedTests": 1,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790647352.73,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  },
+  {
+    "stage": "widget-themes",
+    "label": "Widget 真实浅深色 · SE",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 1,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790647579.867,
+      "passedTests": 1,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790647497.109,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  }
+]

@@ -1,0 +1,50 @@
+
+
+Attributes: Application, 0x113b6cf00, pid: 47895, label: 'Across Us'
+Element subtree:
+ →Application, 0x113b6cf00, pid: 47895, label: 'Across Us'
+    Window (Main), 0x113b6c140, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113b6c3c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113b6c500, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113b6fc00, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113b6fac0, {{0.0, 0.0}, {375.0, 667.0}}
+              Button, 0x113b6c8c0, {{24.0, 33.5}, {44.0, 44.0}}, identifier: 'onboardingBackButton', label: 'Back'
+              StaticText, 0x113b6e800, {{135.8, 48.5}, {56.0, 13.5}}, label: 'Across Us'
+              Button, 0x113b6d900, {{259.5, 26.0}, {91.5, 58.5}}, identifier: 'onboardingSkipButton', label: 'Skip'
+              ScrollView, 0x113b6d680, {{0.0, 84.5}, {375.0, 449.0}}, identifier: 'onboardingContent'
+                Other, 0x113b6d2c0, {{0.0, -840.0}, {375.0, 1373.5}}
+                  Other, 0x113b6fd40, {{0.0, -840.0}, {375.0, 145.0}}, label: 'Example: you and Mia meet in Paris'
+                    Image, 0x113b6f480, {{128.3, -797.8}, {31.2, 31.2}}, label: 'OnboardingNewYorkFreestanding'
+                    Image, 0x113b6f5c0, {{217.5, -803.4}, {30.6, 30.6}}, label: 'OnboardingTokyoFreestanding'
+                    Image, 0x113b6f700, {{150.5, -812.6}, {73.9, 74.0}}, label: 'OnboardingParisFreestanding'
+                    StaticText, 0x113b6c640, {{171.5, -825.2}, {3.9, 6.6}}, label: 'Y'
+                    StaticText, 0x113b6cc80, {{169.3, -813.3}, {8.4, 5.4}}, label: 'You'
+                    StaticText, 0x113b6d180, {{199.5, -825.2}, {5.0, 6.6}}, label: 'M'
+                    StaticText, 0x113b6d040, {{198.0, -813.3}, {7.9, 5.4}}, label: 'Mia'
+                    StaticText, 0x113b6dcc0, {{253.5, -822.0}, {3.9, 6.6}}, label: 'K'
+                    StaticText, 0x113b6e080, {{252.0, -810.1}, {7.0, 5.4}}, label: 'Kai'
+                    StaticText, 0x113b6cb40, {{135.4, -764.9}, {10.9, 6.6}}, label: '纽约'
+                    StaticText, 0x113b6c000, {{231.0, -756.7}, {10.9, 6.6}}, label: '东京'
+                    StaticText, 0x113b6df40, {{182.1, -735.9}, {10.9, 6.6}}, label: '巴黎'
+                  StaticText, 0x113b6e1c0, {{24.0, -691.0}, {327.0, 503.5}}, identifier: 'onboardingExampleNotification', label: 'Across Us、now、Mia is in Paris too、You’re in the same city. Time to catch up?'
+                    Image, 0x113b6de00, {{42.0, -634.5}, {26.0, 26.0}}, label: 'OnboardingAppIcon'
+                    StaticText, 0x113b6ed00, {{77.0, -673.0}, {143.0, 102.5}}, label: 'Across Us'
+                    StaticText, 0x113b6d400, {{260.5, -645.8}, {72.5, 48.0}}, label: 'now'
+                    StaticText, 0x113b6e940, {{42.0, -558.5}, {189.5, 116.5}}, label: 'Mia is in Paris too'
+                    StaticText, 0x113b6ee40, {{42.0, -438.0}, {291.0, 232.5}}, label: 'You’re in the same city. Time to catch up?'
+                  StaticText, 0x113b6ebc0, {{92.2, -177.5}, {190.5, 96.0}}, label: 'Example notification'
+                  StaticText, 0x113b6da40, {{30.0, -65.5}, {297.5, 144.0}}, label: 'SAME-CITY NOTIFICATIONS'
+                  StaticText, 0x113b6f0c0, {{30.0, 94.5}, {271.5, 137.5}}, identifier: 'onboardingTitle', label: '一个提醒。
+一次相聚。'
+                  StaticText, 0x113b6ea80, {{30.0, 248.0}, {302.0, 261.5}}, label: '和好友来到同一座城市时，收到提醒，找时间见一面。'
+              Other, 0x113b6ef80, {{156.0, 543.5}, {63.0, 6.0}}, label: 'Page 2 of 4'
+              Button, 0x113b6e6c0, {{30.0, 567.5}, {315.0, 79.5}}, identifier: 'onboardingContinueButton', label: '继续'
+                StaticText, 0x113b6e440, {{101.2, 575.5}, {100.5, 63.5}}, label: '继续'
+                Image, 0x113b6c780, {{218.5, 587.0}, {49.0, 40.5}}, identifier: 'arrow.right', label: '向右'
+Path to element:
+ →Application, 0x113b6cf00, pid: 47895, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113b6e580, pid: 47895, label: 'Across Us'
+  }

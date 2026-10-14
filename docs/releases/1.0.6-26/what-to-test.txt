@@ -1,0 +1,29 @@
+UI 与交互评审修复 — 1.0.6（26）
+
+请重点体验：
+• 朋友首页：城市状态更清楚、首个邀请更突出，共享说明会反映当前开关状态。
+• 我的出行计划与共同旅行：名称和入口更清楚，复制的日期独立保存。
+• 新计划默认选中当前全部好友。保存前可逐个取消选择，重新打开后应保留选择；已有计划保留原分享范围。
+• 撤回尚未接受的好友邀请；接收方刷新后，应无法再接受已撤回的请求。
+• “分享见面邀约”打开系统分享面板，取消后返回 App，不应显示已发送消息。
+• 跟随系统外观、大字号、航班号输入、日历，以及键盘打开时保存旅行。
+• 同城历史：本次停留与过去到访分开，停留页面时长会更新。
+• 更新后的隐私摘要和中英文文案。
+
+反馈时请附 iPhone 型号、iOS 版本、操作步骤和截图，请勿包含验证码或其他敏感信息。
+
+English
+
+UI and interaction review fixes — build 26.
+
+Please check:
+• Friends home: clear city status, a prominent first-friend invitation, and sharing descriptions that match the current settings.
+• My travel plans and Shared trips: clearer names and navigation; copied dates are saved independently.
+• New travel plans select all current friends by default. Deselect anyone before saving, then reopen the plan to confirm your choices are preserved. Existing plans keep their saved audience.
+• Withdraw a pending friend invitation. After the recipient refreshes, the withdrawn request must no longer be accepted.
+• Share a meetup invite opens the iOS share sheet. Cancelling must return to the app without a sent-message claim.
+• Follow system appearance, larger text, flight-number entry, calendars, and saving a trip while the keyboard is open.
+• Same-city history: the current visit is separate from previous visits; durations update while the screen stays open.
+• Updated privacy summary and English/Chinese text.
+
+Please report the iPhone model, iOS version, reproduction steps and screenshots. Do not include authentication codes or sensitive personal information.

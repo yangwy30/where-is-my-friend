@@ -1,0 +1,57 @@
+[
+  {
+    "file": "W3-F10-invite-after-response.png",
+    "test": "PrototypeUITests/testW3IncomingRequestsAppearFirstAndDisappearAfterResponse()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F10-request-first.png",
+    "test": "PrototypeUITests/testW3IncomingRequestsAppearFirstAndDisappearAfterResponse()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-trip-settings-zh-Hans.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-same-city-zh-Hans.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-overview-zh-Hans.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-trip-settings-en.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-same-city-en.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-overview-en.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-unavailable.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-cold-Mia.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-warm-Lin.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  }
+]

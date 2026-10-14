@@ -1,0 +1,72 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+        "deviceName" : "Across Us Onboarding QA — SE",
+        "modelName" : "iPhone SE (3rd generation)",
+        "osBuildNumber" : "23E254a",
+        "osVersion" : "26.4.1",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 3,
+      "passedTests" : 18,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "WhereIsMyFriend · Built with macOS 27.0.1",
+  "expectedFailures" : 0,
+  "failedTests" : 3,
+  "finishTime" : 1791657925.365,
+  "passedTests" : 18,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1791657449.145,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "WhereIsMyFriendUITests",
+      "testIdentifier" : 10,
+      "testIdentifierString" : "PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+      "testIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges",
+      "testName" : "testAuditPersonalPlanAndProfileProtectUnsavedChanges()"
+    },
+    {
+      "failureText" : "Failed to tap \"Keep editing\" Button: Find single matching element. Multiple matching elements found for <XCUIElementQuery: 0x10593f9d0>.\nSparse tree of matches:\n→Application, pid: 37332, label: 'Across Us'\n  ↳Window (Main)\n    ↳Other\n      ↳Alert, label: 'Discard changes?'\n        ↳Other\n          ↳Other\n            ↳Other\n              ↳ScrollView\n                ↳Other\n                  ↳Other\n                    ↳Button, identifier: 'keepEditingTrip', label: 'Keep editing'\n                      ↳Button, identifier: 'keepEditingTrip', label: 'Keep editing'",
+      "targetName" : "WhereIsMyFriendUITests",
+      "testIdentifier" : 12,
+      "testIdentifierString" : "PrototypeUITests/testAuditTripAndFlightProtectUnsavedChangesAndDateCancel()",
+      "testIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testAuditTripAndFlightProtectUnsavedChangesAndDateCancel",
+      "testName" : "testAuditTripAndFlightProtectUnsavedChangesAndDateCancel()"
+    },
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "WhereIsMyFriendUITests",
+      "testIdentifier" : 16,
+      "testIdentifierString" : "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+      "testIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets",
+      "testName" : "testFlightControlsAtLargestTextHaveReachableTargets()"
+    }
+  ],
+  "title" : "Test - WhereIsMyFriend",
+  "topInsights" : [
+    {
+      "category" : "Longest Test Runs",
+      "impact" : "30% of duration",
+      "text" : "1 longest test run with outlier durations exceeding 101.63s (three standard deviations)"
+    }
+  ],
+  "totalTestCount" : 21
+}

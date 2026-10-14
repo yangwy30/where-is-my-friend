@@ -1,0 +1,58 @@
+[
+  {
+    "label": "F01-home-en.png",
+    "path": "evidence/refine/F01-home-en.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "B11E52E9-3930-4581-89BC-58F769133F06.png"
+  },
+  {
+    "label": "F01-home-zh-Hans.png",
+    "path": "evidence/refine/F01-home-zh-Hans.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "966DDDBE-B98E-4A0D-BA99-10F099D4E31F.png"
+  },
+  {
+    "label": "F01-same-city-expanded-en.png",
+    "path": "evidence/refine/F01-same-city-expanded-en.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "ADFE8F29-D005-4F05-A505-767BB6B88F00.png"
+  },
+  {
+    "label": "F01-same-city-expanded-zh-Hans.png",
+    "path": "evidence/refine/F01-same-city-expanded-zh-Hans.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "EDBC41F9-450D-499B-812D-1604C9B906F7.png"
+  },
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/refine/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "9CCC37D6-0694-461C-B555-80E79021EB83.png"
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/refine/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "B2335EB9-D9F5-40E6-AF87-32205027DE95.png"
+  },
+  {
+    "label": "city-region-friends-real-cities.png",
+    "path": "evidence/refine/city-region-friends-real-cities.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "F47E1895-D5B0-4D60-9B8F-5B68A384953C.png"
+  },
+  {
+    "label": "city-region-milpitas-details.png",
+    "path": "evidence/refine/city-region-milpitas-details.png",
+    "test": "PrototypeUITests/testCityRegionArtworkKeepsRealCityAndDoesNotCreateSameCityMatch()",
+    "failure": false,
+    "source": "D5F6CB48-1AC5-4662-8EA9-15B839F3E0F2.png"
+  }
+]

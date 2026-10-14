@@ -1,0 +1,163 @@
+[
+  {
+    "label": "F01-city-not-set.png",
+    "path": "evidence/main/F01-city-not-set.png",
+    "test": "PrototypeUITests/testMissingCityHasContextualRecoveryAndNoFalseSharingClaim()",
+    "failure": false,
+    "source": "C65A34BC-7039-49C0-9DF4-F358A81D54F6.png"
+  },
+  {
+    "label": "F01-home-en.png",
+    "path": "evidence/main/F01-home-en.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "73D20661-F53C-4559-8292-752D300D3E5D.png"
+  },
+  {
+    "label": "F01-home-sharing-paused-en.png",
+    "path": "evidence/main/F01-home-sharing-paused-en.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+    "failure": false,
+    "source": "0A5DA982-B5F3-4A98-8A83-70192BFE74BE.png"
+  },
+  {
+    "label": "F01-home-sharing-paused-zh-Hans.png",
+    "path": "evidence/main/F01-home-sharing-paused-zh-Hans.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+    "failure": false,
+    "source": "E7C73B5E-4523-423D-9A4F-E8324B901D37.png"
+  },
+  {
+    "label": "F01-home-zh-Hans.png",
+    "path": "evidence/main/F01-home-zh-Hans.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "021AA7D4-78F3-4AAE-AED1-AB66542DEE62.png"
+  },
+  {
+    "label": "F01-same-city-expanded-en.png",
+    "path": "evidence/main/F01-same-city-expanded-en.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "A0F3191F-4EAE-4CA2-9257-E4864B4518AA.png"
+  },
+  {
+    "label": "F01-same-city-expanded-zh-Hans.png",
+    "path": "evidence/main/F01-same-city-expanded-zh-Hans.png",
+    "test": "PrototypeUITests/testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands()",
+    "failure": false,
+    "source": "C8E119E1-1218-4731-9760-A6BEED589351.png"
+  },
+  {
+    "label": "F03-both-sharing-off-en.png",
+    "path": "evidence/main/F03-both-sharing-off-en.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+    "failure": false,
+    "source": "E28CC409-AE15-49B8-9377-D676F2F809CC.png"
+  },
+  {
+    "label": "F03-both-sharing-off-zh-Hans.png",
+    "path": "evidence/main/F03-both-sharing-off-zh-Hans.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+    "failure": false,
+    "source": "AC9DE82B-851A-49C0-9BBD-B6D76A346656.png"
+  },
+  {
+    "label": "F03-friend-sharing-off-en.png",
+    "path": "evidence/main/F03-friend-sharing-off-en.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+    "failure": false,
+    "source": "AD76D292-E808-47CF-9732-5BCE9304813D.png"
+  },
+  {
+    "label": "F03-friend-sharing-off-zh-Hans.png",
+    "path": "evidence/main/F03-friend-sharing-off-zh-Hans.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+    "failure": false,
+    "source": "E7A2F008-9D38-4E80-B3A5-CF0E7C7133EA.png"
+  },
+  {
+    "label": "F03-global-sharing-paused-en.png",
+    "path": "evidence/main/F03-global-sharing-paused-en.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+    "failure": false,
+    "source": "ED54635A-1250-4B08-BDF8-6FBA2C16E432.png"
+  },
+  {
+    "label": "F03-global-sharing-paused-zh-Hans.png",
+    "path": "evidence/main/F03-global-sharing-paused-zh-Hans.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+    "failure": false,
+    "source": "F899D370-3B05-4555-8BF4-F743C93361B7.png"
+  },
+  {
+    "label": "F03-sharing-active-en.png",
+    "path": "evidence/main/F03-sharing-active-en.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+    "failure": false,
+    "source": "97D49458-444B-4E4A-9C46-4904658F5F09.png"
+  },
+  {
+    "label": "F03-sharing-active-zh-Hans.png",
+    "path": "evidence/main/F03-sharing-active-zh-Hans.png",
+    "test": "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+    "failure": false,
+    "source": "EA09325E-639B-4498-B343-29AA0A8A7792.png"
+  },
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/main/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "511585CC-482F-4C9F-B79C-A4C9112500D8.png"
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/main/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "8B3BEAC6-9A59-4F86-B02F-E91A2FFA3E45.png"
+  },
+  {
+    "label": "Weekly location reminder Chinese.png",
+    "path": "evidence/main/Weekly-location-reminder-Chinese.png",
+    "test": "PrototypeUITests/testLocationReminderChineseCopyAndDismissal()",
+    "failure": false,
+    "source": "8F7440C0-A09C-470E-92FC-B9F3E4970B85.png"
+  },
+  {
+    "label": "friends-without-matches.png",
+    "path": "evidence/main/friends-without-matches.png",
+    "test": "PrototypeUITests/testNoMatchCardsDisappearWhenCitySharingStops()",
+    "failure": false,
+    "source": "A080841D-73F3-4514-A3B3-67DE52F69E92.png"
+  },
+  {
+    "label": "home-summary-all-five-overlaps.png",
+    "path": "evidence/main/home-summary-all-five-overlaps.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "A8228B7C-9A35-4582-9D8C-C39B98260C9C.png"
+  },
+  {
+    "label": "home-summary-fifth-overlap-cold-link.png",
+    "path": "evidence/main/home-summary-fifth-overlap-cold-link.png",
+    "test": "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+    "failure": false,
+    "source": "584631C1-EDBF-4D9D-BA66-79CF313E6249.png"
+  },
+  {
+    "label": "same-city-expanded.png",
+    "path": "evidence/main/same-city-expanded.png",
+    "test": "PrototypeUITests/testSameCityCardExpandsAndSharesWithoutSendingAutomatically()",
+    "failure": false,
+    "source": "611E15B9-3F99-43BF-BC24-9679930E9730.png"
+  },
+  {
+    "label": "same-city-unavailable-link.png",
+    "path": "evidence/main/same-city-unavailable-link.png",
+    "test": "PrototypeUITests/testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch()",
+    "failure": false,
+    "source": "666E6433-F8A5-435D-9A89-39D131EE1B09.png"
+  }
+]

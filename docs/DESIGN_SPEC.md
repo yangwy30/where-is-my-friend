@@ -22,10 +22,14 @@ The interface follows five principles:
 The primary tab bar contains only three destinations:
 
 - **Friends:** current friend presence, same-city moments, friend details, invites, and requests.
-- **Sharing:** current city-sharing status, location permission education, and sharing controls.
-- **You:** profile, notifications, privacy, blocked people, onboarding replay, and account deletion.
+- **Shared trips / 共同旅行:** invite travel companions and coordinate their flights and arrivals.
+- **You:** profile, city sharing, notifications, privacy, blocked people, and account deletion.
 
 Supporting flows:
+
+**My travel plans / 我的出行计划** tells selected friends where you will be and when; **Friends’ travel plans / 好友出行计划** is the friend-facing view of that same information. Keep these separate from shared-trip membership. Shared trips links to My travel plans; My travel plans links back to the existing Shared trips tab.
+
+Copy actions say **Add to my travel plans** or **Use these dates for my travel plan**. Confirm the city before copying an airport-based trip, then review dates and the audience in an unsaved personal-plan editor. New editors select all current, unblocked friends by default; users can deselect people or clear the selection before saving. Editing an existing plan preserves its audience, including prior exclusions. Show the copy source and explain that copied dates are saved independently. Copying never joins a trip, sends invitations, carries over trip participants as its audience, or enables overlap alerts. The default audience comes from the owner’s current friend list, not the copied plan or trip. Cancelling creates no plan. Both languages must communicate these boundaries.
 
 ```text
 Onboarding
@@ -43,7 +47,9 @@ Friends
       → Remove friend
 
 You
-  → Location access
+  → City sharing
+      → Current city and location access
+      → Global sharing and background updates
   → Notification preferences
   → Privacy & data
   → Blocked people
@@ -60,7 +66,15 @@ The home screen answers three questions in order:
 2. Where are my friends?
 3. How current is each answer?
 
-The same-city moment uses green-tinted Liquid Glass and stacked avatars. It appears only when at least one fresh same-city match exists. The rest of the screen is a simple people list rather than a map.
+The header shows a noninteractive city status, such as “You’re in New York, NY.” An older observation is labeled as the last shared city; an unset city is explicit. Paused global sharing adds a quiet status line. Routine sharing controls live under **You → City sharing**. The home screen offers a contextual recovery action only when a city is missing or outdated, or an existing permission reminder is due.
+
+**Selected design, 2026-10-10 — integrated header:** the same-city summary sits directly beneath the user's city status, without a separate large card, decorative city illustration, or duplicate headline. A small avatar group and a short line such as “Mia is here too” introduce the people; an understated freshness line follows. The freshness label uses the oldest observation participating in the match, including the user's own city observation. A thin divider separates this area from the remaining Friends content.
+
+The summary starts collapsed and expands only when the user taps it. Refreshing data, returning to the foreground, changing tabs, or opening/replaying a same-city event link must not expand it. Expansion reveals compact friend rows that open the corresponding friend detail; the summary never opens sharing settings. Count and rows use the same eligible people, independently of whether alerts for those people are muted. With no eligible matches, the current summary is hidden. Historical or unavailable notification links retain their safe fallback. A retained event selection must never reopen a summary the user collapsed.
+
+At accessibility text sizes, omit decorative avatars and allow names and freshness text to wrap. The summary has a minimum 48pt target, friend rows 56pt, and the explicit Collapse action 44pt. Reduced Motion uses the existing reduced-motion behavior.
+
+Historical note: the September 2026 implementation used an independent expandable same-city card. The user rejected its size/visual form and selected the “integrated header” mock on 2026-10-10. The earlier manual-expansion decision remains in force; only its presentation and expanded detail hierarchy changed. Implementation and regression status are recorded in [the October audit](ui-deep-review-20261010/README.md).
 
 Each friend row contains:
 
@@ -74,13 +88,23 @@ Each friend row contains:
 
 The friend detail page uses a compact identity header and a large city surface. It never displays a precise map. Relationship-specific controls are grouped under “Between you two.”
 
+“Share my city” describes the effective saved state: a disabled per-friend preference says the friend cannot see the city; an enabled preference with global sharing paused explains the pause; an enabled preference without a city asks for a city to be set. Only enabled global and individual sharing with a known city says the friend can see the latest city. Resuming global sharing preserves individual choices.
+
 ### 3.3 Sharing
 
 The sharing page explains why the app requests background location, what it stores, and how users can pause it. The permission education screen should precede the iOS system prompt and use a single clear continuation action.
 
+The global “Share my city” switch and its effective sharing state appear before the decorative city display. Refresh/manual-city actions and background-update settings follow. Accessibility text sizes open the full-height sheet, so the primary privacy control does not depend on scrolling past city artwork.
+
 ### 3.4 Settings
 
 The profile screen reports the user’s own city and update time, then groups settings into Sharing and Privacy. Account deletion is visible and destructive-colored without being visually dominant.
+
+The privacy summary covers personal plans, shared trips and flights, and same-city history as well as account and city data. It distinguishes flight routes supplied by users from device movement trails. Both the summary and account-deletion confirmation explain that participant names and flights may remain in shared trips for other members after account deletion.
+
+### 3.5 Same-city history
+
+An active stay starts at the latest valid active session for that friend and city. Earlier visit events never extend the current duration. Without an active session, show a recent city match and its observation time instead of inventing a duration. Previous visits remain in history, and separate visits on the same day are not collapsed. A group event is part of the current stay only when every participant's current session covers its timestamp. Visible durations refresh every minute and when the app returns to the foreground.
 
 ## 4. Design tokens
 
@@ -109,6 +133,8 @@ SwiftUI uses semantic, adaptive colors rather than fixed light-only values. On i
 | Destructive | muted red | soft coral | Remove and delete actions |
 
 Color must not be the only carrier of meaning. Freshness and sharing state always include text.
+
+Opaque accent fills use `onFresh` for their text: white on the light theme's dark green, and dark ink on the dark theme's pale green. Destructive count badges use the corresponding `onDestructive` foreground. Avoid a fixed white foreground on either pale accent.
 
 ### 4.3 Typography
 
@@ -143,6 +169,8 @@ Every friend must resolve to one of these UI states:
 | Permission unavailable | System permission prevents updates | Explain remediation to the owner only | No |
 
 ## 6. Widget specification
+
+Friend-directory widgets open the displayed friend: the small widget has one destination, and medium/large widgets have a link per friend row. Hidden identities use a generic destination. The app validates links against the current account after refreshing; unavailable friends receive a clear recovery message. Aggregate same-city widgets retain their overview destination.
 
 The Widget shares the same hierarchy as the App: city, friend, freshness.
 
@@ -240,3 +268,21 @@ The client baseline intentionally defers:
 - analytics and crash-reporting vendors.
 
 These decisions should be made only after the client is reviewed on a real iPhone and in the Widget Gallery.
+
+
+### Review follow-up: invitations, appearance and form accessibility
+
+Use “Share a meetup invite” for the system share action. Cancelling the system sheet must leave the plan unchanged and must not claim an invitation was sent. Pending outgoing friend invitations offer withdrawal; the server verifies the sender and pending state under a row lock. Accepted friendships survive withdrawal attempts.
+
+The empty Friends screen leads with “Invite your first friend”, followed by adding someone by username. The friend-plan feed uses its navigation title once, a compact add action, and then content.
+
+“Follow system” is the default appearance when no explicit choice is stored. Preserve saved Solar Jade and Night Jade choices. Widgets follow the same preference without overriding their system color scheme in automatic mode.
+
+Form actions remain above the keyboard and provide a Done action. Interactive labels have at least 44pt touch targets. Auxiliary text sizes use vertical input layouts and wrapping names/cities; decorative images must not squeeze long text into narrow columns. Same-city history updates every minute while active and refreshes on foreground entry.
+
+## UI review follow-up — 2026-09-29
+
+- Incoming friend requests precede username and invitation actions; refresh on entry, and remove resolved requests from the priority section.
+- Cancelling Apple authorization returns quietly to sign-in. Only the authorization cancellation error is suppressed; genuine failures retain feedback.
+- Notifications has five category entry points: friend invitations, trip invitations, same-city alerts, personal-plan overlaps, and shared-trip flight/planning alerts. Keep per-friend and per-trip preferences. Distinguish saved preferences from delivery permission; when iOS notifications are off, offer authorization/settings recovery. Shared-trip controls use the same library state as the Trips tab.
+- City search requires a country, region, valid time zone and locality, with a bounded compatibility case for Apple's exact Tokyo administrative-city record. Never broaden this into arbitrary province/state fallback.

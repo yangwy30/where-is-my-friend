@@ -1,0 +1,13 @@
+{
+  "verifiedAt": "2026-09-30T03:44:37.529741+00:00",
+  "version": "1.0.6",
+  "build": "27",
+  "appleBuildID": "86a1b3d1-648c-4d4a-8001-669d53eab63b",
+  "url": "https://appstoreconnect.apple.com/teams/9b0eb9fa-54ee-4f56-83ae-1e79e3cf4125/apps/6807634842/testflight/ios/86a1b3d1-648c-4d4a-8001-669d53eab63b",
+  "uploadStatus": "Complete",
+  "group": "Testers",
+  "groupType": "Internal",
+  "testers": 1,
+  "bilingualTestNotesSaved": true,
+  "method": "Xcode Organizer, automatic signing with Cloud Managed Apple Distribution"
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "label": "Account-only members.png",
+    "path": "evidence/keyboard/Account-only-members.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "FDB2D910-E280-4CFE-819F-B3BA6727C31C.png"
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/keyboard/Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "B2712B2F-BBDB-44B8-A8E4-FC93B8802548.png"
+  },
+  {
+    "label": "Compact new trip form.png",
+    "path": "evidence/keyboard/A6099ED8-Compact-new-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "A6099ED8-5771-4D8C-B8AC-FCB85BA9D07A.png"
+  },
+  {
+    "label": "Completed trip in Past.png",
+    "path": "evidence/keyboard/Completed-trip-in-Past.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "C76F4DF8-1547-4994-A5BE-3758B8E37D7D.png"
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/keyboard/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "36FD9F0F-81C0-4712-8993-D900DEB9BD0B.png"
+  },
+  {
+    "label": "Destination search sheet.png",
+    "path": "evidence/keyboard/Destination-search-sheet.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "F4274954-5E92-4A0A-806B-A0C09C3C30A8.png"
+  },
+  {
+    "label": "First trip empty state.png",
+    "path": "evidence/keyboard/First-trip-empty-state.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "BF8C2346-5FBE-4623-A5FC-84252CFEFF5F.png"
+  },
+  {
+    "label": "New trip form.png",
+    "path": "evidence/keyboard/New-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "9363F4FB-D983-4945-8550-B75D6307A9E1.png"
+  },
+  {
+    "label": "New trip form.png",
+    "path": "evidence/keyboard/3EEC0F76-New-trip-form.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "3EEC0F76-FD99-4270-889F-40826AB4E661.png"
+  },
+  {
+    "label": "New trip with signed-in creator.png",
+    "path": "evidence/keyboard/New-trip-with-signed-in-creator.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "93D2A959-D5EF-45BF-A90B-CB140218D94C.png"
+  },
+  {
+    "label": "Two upcoming trips.png",
+    "path": "evidence/keyboard/Two-upcoming-trips.png",
+    "test": "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+    "failure": false,
+    "source": "7CD0BE46-D40D-497C-885F-9C67734691EA.png"
+  }
+]

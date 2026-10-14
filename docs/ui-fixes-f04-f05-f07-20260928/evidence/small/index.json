@@ -1,0 +1,100 @@
+[
+  {
+    "label": "F04-privacyDeviceLocationSummary-en.png",
+    "path": "evidence/small/F04-privacyDeviceLocationSummary-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "B6017E95-FBE9-41BC-85A8-5191430000B5.png"
+  },
+  {
+    "label": "F04-privacyDeviceLocationSummary-zh-Hans.png",
+    "path": "evidence/small/F04-privacyDeviceLocationSummary-zh-Hans.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "42BE62C2-9F24-4B73-8A83-1346139E6331.png"
+  },
+  {
+    "label": "F04-privacyMomentsSummary-en.png",
+    "path": "evidence/small/F04-privacyMomentsSummary-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "501B0EC0-AAFD-4BB8-91C5-93371ACC9CC7.png"
+  },
+  {
+    "label": "F04-privacyMomentsSummary-zh-Hans.png",
+    "path": "evidence/small/F04-privacyMomentsSummary-zh-Hans.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "35379E29-7144-47AA-B9BF-77B6E645029B.png"
+  },
+  {
+    "label": "F04-privacySharedTripRetention-en.png",
+    "path": "evidence/small/F04-privacySharedTripRetention-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "3086B4DF-6A57-4657-929B-277394154D4B.png"
+  },
+  {
+    "label": "F04-privacySharedTripRetention-zh-Hans.png",
+    "path": "evidence/small/F04-privacySharedTripRetention-zh-Hans.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "4A4E6198-8292-4FB4-885D-4A00C998DAA3.png"
+  },
+  {
+    "label": "F05-home-badge-nightJadeAppearance.png",
+    "path": "evidence/small/F05-home-badge-nightJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "AB407143-89E9-434E-824B-C8B31B3FEB54.png"
+  },
+  {
+    "label": "F05-home-badge-solarJadeAppearance.png",
+    "path": "evidence/small/F05-home-badge-solarJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "59549434-F284-4FDE-95D4-EBB8DCF7EFB1.png"
+  },
+  {
+    "label": "F05-location-nightJadeAppearance.png",
+    "path": "evidence/small/F05-location-nightJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "DDE8FBDD-907C-4FF9-8405-4BEF3AB0AC83.png"
+  },
+  {
+    "label": "F05-location-solarJadeAppearance.png",
+    "path": "evidence/small/F05-location-solarJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "8B35D642-999A-464A-BDD7-967B60DABBD6.png"
+  },
+  {
+    "label": "F05-notifications-nightJadeAppearance.png",
+    "path": "evidence/small/F05-notifications-nightJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "58D1984C-BF4D-4776-9B4D-C496F34D1D6A.png"
+  },
+  {
+    "label": "F05-notifications-solarJadeAppearance.png",
+    "path": "evidence/small/F05-notifications-solarJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "571F858A-BF95-4C3B-8B89-5600153AA2C0.png"
+  },
+  {
+    "label": "F05-request-button-nightJadeAppearance.png",
+    "path": "evidence/small/F05-request-button-nightJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "48961D64-4304-42F5-855A-9C3B38B5409A.png"
+  },
+  {
+    "label": "F05-request-button-solarJadeAppearance.png",
+    "path": "evidence/small/F05-request-button-solarJadeAppearance.png",
+    "test": "PrototypeUITests/testLocationSetupAndSolidAccentButtonsInBothThemes()",
+    "failure": false,
+    "source": "558D1F99-8094-4381-8119-1D0DC2E4A9A7.png"
+  }
+]

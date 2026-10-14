@@ -1,0 +1,56 @@
+
+
+Attributes: Application, 0x112937e80, pid: 47895, label: 'Across Us'
+Element subtree:
+ →Application, 0x112937e80, pid: 47895, label: 'Across Us'
+    Window (Main), 0x112935400, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x112934c80, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x112934640, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x112934b40, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x112934dc0, {{0.0, 0.0}, {375.0, 667.0}}
+              Button, 0x112936580, {{24.0, 33.5}, {44.0, 44.0}}, identifier: 'onboardingBackButton', label: 'Back'
+              StaticText, 0x112937840, {{135.8, 48.5}, {56.0, 13.5}}, label: 'Across Us'
+              Button, 0x112936f80, {{259.5, 26.0}, {91.5, 58.5}}, identifier: 'onboardingSkipButton', label: 'Skip'
+              ScrollView, 0x112937ac0, {{0.0, 84.5}, {375.0, 449.0}}, identifier: 'onboardingContent'
+                Other, 0x112936bc0, {{0.0, -890.0}, {375.0, 1423.5}}
+                  Other, 0x112937700, {{0.0, -890.0}, {375.0, 110.0}}, label: 'Example: friends travel to Paris from different cities'
+                    Image, 0x112935040, {{184.4, -819.0}, {6.7, 6.0}}, identifier: 'airplane', label: '飞行模式'
+                    Image, 0x112936080, {{183.5, -819.5}, {7.6, 7.0}}, identifier: 'airplane', label: '飞行模式'
+                    Image, 0x112935e00, {{134.2, -870.8}, {36.4, 36.4}}, label: 'OnboardingNewYorkFreestanding'
+                    Image, 0x112937340, {{206.8, -864.6}, {35.8, 35.8}}, label: 'OnboardingTokyoFreestanding'
+                    Image, 0x112937200, {{167.4, -840.3}, {40.2, 40.2}}, label: 'OnboardingParisFreestanding'
+                    StaticText, 0x1129370c0, {{143.8, -883.6}, {2.9, 5.0}}, label: 'Y'
+                    StaticText, 0x1129343c0, {{142.0, -874.5}, {6.4, 4.1}}, label: 'You'
+                    StaticText, 0x1129361c0, {{197.6, -842.0}, {3.8, 5.0}}, label: 'M'
+                    StaticText, 0x112936e40, {{196.5, -832.9}, {6.0, 4.1}}, label: 'Mia'
+                    StaticText, 0x112936a80, {{229.0, -878.7}, {2.9, 5.0}}, label: 'K'
+                    StaticText, 0x112936940, {{227.8, -869.7}, {5.3, 4.1}}, label: 'Kai'
+                    StaticText, 0x112935680, {{148.0, -833.0}, {8.2, 5.0}}, label: '纽约'
+                    StaticText, 0x112934000, {{220.5, -826.8}, {8.2, 5.0}}, label: '东京'
+                    StaticText, 0x112934500, {{183.4, -796.2}, {8.2, 5.0}}, label: '巴黎'
+                  StaticText, 0x112935180, {{24.0, -776.0}, {327.0, 684.5}}, identifier: 'onboardingExampleTrip', label: 'Paris weekend、Sep 17–20 · 3 friends、You、New York → Paris、Arrives 08:40、Kai、Tokyo → Paris、Arrives 10:15'
+                    StaticText, 0x112934a00, {{42.0, -758.0}, {215.0, 125.5}}, label: 'Paris weekend'
+                    StaticText, 0x112934780, {{42.0, -628.5}, {208.5, 102.5}}, label: 'Sep 17–20 · 3 friends'
+                    Image, 0x112934f00, {{283.0, -754.0}, {43.0, 72.0}}, identifier: 'suitcase.rolling', label: 'suitcase.rolling'
+                    StaticText, 0x1129348c0, {{42.0, -497.5}, {72.5, 51.5}}, label: 'You'
+                    StaticText, 0x112935b80, {{42.0, -443.0}, {231.5, 102.5}}, label: 'New York → Paris'
+                    StaticText, 0x112935900, {{42.0, -336.5}, {251.5, 51.5}}, label: 'Arrives 08:40'
+                    StaticText, 0x112934140, {{42.0, -271.0}, {60.5, 51.5}}, label: 'Kai'
+                    StaticText, 0x112937d40, {{42.0, -216.5}, {254.0, 51.5}}, label: 'Tokyo → Paris'
+                    StaticText, 0x112937c00, {{42.0, -161.0}, {237.0, 51.5}}, label: 'Arrives 10:15'
+                  StaticText, 0x112936d00, {{82.0, -81.5}, {211.0, 48.0}}, label: 'Example trip'
+                  StaticText, 0x112935a40, {{30.0, -17.5}, {254.0, 96.0}}, label: 'A SHARED ADVENTURE'
+                  StaticText, 0x1129357c0, {{30.0, 94.5}, {315.0, 137.5}}, identifier: 'onboardingTitle', label: '下一次旅行，
+一起出发。'
+                  StaticText, 0x112934280, {{30.0, 248.0}, {302.0, 261.5}}, label: '创建行程、邀请好友，一起查看大家的航班。'
+              Other, 0x113b6fe80, {{156.0, 543.5}, {63.0, 6.0}}, label: 'Page 3 of 4'
+              Button, 0x113b6f840, {{30.0, 567.5}, {315.0, 79.5}}, identifier: 'onboardingContinueButton', label: '继续'
+                StaticText, 0x113b6cdc0, {{101.2, 575.5}, {100.5, 63.5}}, label: '继续'
+                Image, 0x113b6f980, {{218.5, 587.0}, {49.0, 40.5}}, identifier: 'arrow.right', label: '向右'
+Path to element:
+ →Application, 0x112937e80, pid: 47895, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113b6cf00, pid: 47895, label: 'Across Us'
+  }

@@ -1,0 +1,82 @@
+
+
+Attributes: Application, 0x113f43480, pid: 46890, label: 'Across Us'
+Element subtree:
+ →Application, 0x113f43480, pid: 46890, label: 'Across Us'
+    Window (Main), 0x113f43200, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f40000, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f40500, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113f40dc0, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113f42940, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x113f42300, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f41540, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x113f26e40, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x113f25cc0, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x113f27480, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Privacy & data'
+                              Button, 0x113f25a40, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x113f26bc0, {{130.0, 31.5}, {114.5, 21.0}}, label: 'Privacy & data'
+                            Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f26940, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x113f26a80, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x113f26d00, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x113f26f80, {{-122.5, -101.5}, {640.0, 945.0}}
+                                    ScrollView, 0x113f270c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                      Other, 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x121310140, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x121310280, {{0.0, 526.2}, {375.0, 140.8}}
+                                      Other, 0x121310000, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x121312800, {{0.0, 526.2}, {375.0, 140.8}}
+                                          Image, 0x121312580, {{-120.0, 531.0}, {615.0, 272.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x121311f40, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x1213121c0, {{0.0, 526.2}, {375.0, 140.8}}
+                                          Other, 0x121312080, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x121311cc0, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x121311400, {{0.0, 526.2}, {375.0, 140.8}}
+                                      Other, 0x121311680, {{0.0, 74.0}, {375.0, 726.0}}
+                                        Image, 0x121311540, {{40.5, 110.0}, {23.0, 30.5}}, identifier: 'hand.raised.fill', label: 'Block'
+                                        StaticText, 0x121317c00, {{20.0, 168.0}, {202.5, 26.5}}, label: 'City-level by design'
+                                        StaticText, 0x121317d40, {{20.0, 206.5}, {304.0, 18.0}}, label: 'See what you share and what the app saves.'
+                                        Image, 0x121317ac0, {{48.5, 286.0}, {17.5, 13.0}}, identifier: 'externaldrive.fill', label: 'externaldrive.fill'
+                                        StaticText, 0x121317980, {{88.0, 273.5}, {53.5, 20.5}}, label: 'Stored'
+                                        StaticText, 0x121317e80, {{88.0, 298.0}, {225.0, 58.0}}, label: 'Identity, friendships, sharing choices, current city and update time'
+                                        Image, 0x113b6ef80, {{49.0, 389.5}, {16.5, 16.5}}, identifier: 'location.slash.fill', label: 'Location Services Off'
+                                        StaticText, 0x113b6fc00, {{88.0, 378.5}, {102.5, 20.5}}, label: 'Never stored'
+                                        StaticText, 0x113b6f5c0, {{88.0, 403.0}, {217.5, 58.0}}, label: 'Precise coordinates, routes, location history or your contact book'
+                                        Image, 0x113b6fac0, {{46.5, 495.5}, {21.0, 14.5}}, identifier: 'rectangle.3.group.fill', label: 'rectangle.3.group.fill'
+                                        StaticText, 0x113b6fd40, {{88.0, 483.5}, {124.0, 20.5}}, label: 'On your Widget'
+                                        StaticText, 0x113b6e800, {{88.0, 508.0}, {220.0, 18.0}}, label: 'Your friends’ latest shared cities'
+                                        Image, 0x113b6e6c0, {{49.5, 559.0}, {15.0, 17.0}}, identifier: 'trash.fill', label: 'Trash'
+                                        StaticText, 0x113b6ee40, {{88.0, 548.5}, {133.0, 20.5}}, label: 'When you delete'
+                                        StaticText, 0x113b6f980, {{88.0, 573.0}, {229.0, 38.0}}, label: 'Your account data is deleted and you’re signed out'
+                                        Button, 0x113b6e440, {{38.0, 678.0}, {297.5, 54.0}}, identifier: 'privacyPolicyLink', label: 'View Privacy Policy, Collection, service providers, retention and your choices'
+                                          Image, 0x113b6fe80, {{52.5, 694.5}, {17.5, 21.0}}, identifier: 'doc.text.magnifyingglass', label: 'Search Document'
+                                          StaticText, 0x113b6f480, {{96.0, 678.0}, {153.5, 20.5}}, label: 'View Privacy Policy'
+                                          StaticText, 0x113b6f840, {{96.0, 701.5}, {168.0, 30.5}}, label: 'Collection, service providers, retention and your choices'
+                                          Image, 0x113b6e580, {{326.0, 700.5}, {9.5, 9.5}}, identifier: 'arrow.up.right', label: 'arrow.up.right'
+                            Other, 0x113b6e940, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x121318000, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x121318140, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x121318280, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x1213183c0, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x121318500, {{28.0, 591.0}, {48.0, 48.0}}
+                        Other, 0x121318640, {{28.0, 591.0}, {48.0, 48.0}}
+                          Button, 0x121318780, {{28.0, 591.0}, {48.0, 48.0}}, label: 'You', value: Collapsed, Selected
+                            Image, 0x1213188c0, {{39.5, 603.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                  Other, 0x121318a00, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x121318b40, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x121318c80, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x121318dc0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x121318f00, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x121319040, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x121319180, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x1213192c0, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x113f43480, pid: 46890, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x121319400, pid: 46890, label: 'Across Us'
+  }

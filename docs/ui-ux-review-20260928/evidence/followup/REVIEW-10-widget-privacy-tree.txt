@@ -1,0 +1,79 @@
+
+
+Attributes: Application, 0x112b8d680, pid: 48007, label: 'Across Us'
+Element subtree:
+ →Application, 0x112b8d680, pid: 48007, label: 'Across Us'
+    Window (Main), 0x112b8e440, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x112b8d7c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x112b8d900, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x112b8d540, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x112b8ee40, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x112b8f5c0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x112b8f700, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x112b8f980, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x112b8f200, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x112b8f340, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x112b8fd40, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x112b8e300, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x112b8df40, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Widget & Lock Screen'
+                              Button, 0x112b8e1c0, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x112b8e580, {{99.5, 31.5}, {175.5, 21.0}}, label: 'Widget & Lock Screen'
+                            Other, 0x112b89e00, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x112b89f40, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x112b8a080, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x112b8a1c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x112b8a300, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'widgetPrivacyScreen'
+                                    ScrollView, 0x112b8a440, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'widgetPrivacyScreen'
+                                      Other, 0x112b8a580, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x112b8a6c0, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x112b8a800, {{0.0, 526.2}, {375.0, 140.8}}
+                                      Other, 0x112b8a940, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x112b8aa80, {{0.0, 526.2}, {375.0, 140.8}}
+                                          Image, 0x112b89680, {{-120.0, 531.0}, {615.0, 272.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x112b8abc0, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x112b8ad00, {{0.0, 526.2}, {375.0, 140.8}}
+                                          Other, 0x112b8ae40, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x112b8af80, {{0.0, 526.2}, {375.0, 140.8}}
+                                            Other, 0x112b89cc0, {{0.0, 526.2}, {375.0, 140.8}}
+                                      Other, 0x112b897c0, {{0.0, 74.0}, {375.0, 540.5}}
+                                        Image, 0x112b89900, {{31.5, 112.0}, {39.0, 26.5}}, identifier: 'rectangle.3.group.fill', label: 'rectangle.3.group.fill'
+                                        StaticText, 0x112b89a40, {{20.0, 168.0}, {208.0, 26.5}}, label: 'Beautiful at a glance'
+                                        StaticText, 0x112b89b80, {{20.0, 206.5}, {266.5, 18.0}}, label: 'Choose what appears on your widgets.'
+                                        Button, 0x112930500, {{38.0, 262.5}, {299.0, 54.0}}, identifier: 'widgetPrivacyFull', label: 'Show names and cities, Recommended · Everything you need at a glance.', value: 1, Selected
+                                          Image, 0x112930640, {{51.5, 278.5}, {17.5, 22.0}}, identifier: 'text.below.photo.fill', label: 'text.below.photo.fill'
+                                          StaticText, 0x112930280, {{96.0, 262.5}, {181.5, 20.5}}, label: 'Show names and cities'
+                                          StaticText, 0x112930780, {{96.0, 286.0}, {182.5, 30.5}}, label: 'Recommended · Everything you need at a glance.'
+                                          Image, 0x1129308c0, {{318.5, 281.0}, {17.0, 17.0}}, identifier: 'checkmark.circle.fill', label: 'Selected', Selected
+                                        Button, 0x112931e00, {{38.0, 364.5}, {299.0, 54.0}}, identifier: 'widgetPrivacyHideNames', label: 'Hide names, Keep the city stages, without friend names.', value: 0
+                                          Image, 0x112930000, {{48.5, 382.5}, {23.0, 18.5}}, identifier: 'eye.slash.fill', label: 'Hide'
+                                          StaticText, 0x112930b40, {{96.0, 364.5}, {94.0, 20.5}}, label: 'Hide names'
+                                          StaticText, 0x112930a00, {{96.0, 388.0}, {168.0, 30.5}}, label: 'Keep the city stages, without friend names.'
+                                        Button, 0x1129303c0, {{38.0, 466.5}, {299.0, 44.0}}, identifier: 'widgetPrivacyHideAll', label: 'Hide everything, Hide names and cities.', value: 0
+                                          Image, 0x112930f00, {{54.0, 480.0}, {12.0, 17.0}}, identifier: 'lock.fill', label: 'Lock'
+                                          StaticText, 0x112931400, {{96.0, 469.5}, {126.0, 20.5}}, label: 'Hide everything'
+                                          StaticText, 0x1129312c0, {{96.0, 493.0}, {128.5, 14.5}}, label: 'Hide names and cities.'
+                                        StaticText, 0x112931040, {{24.0, 548.5}, {305.0, 16.0}}, label: 'Applies to Home Screen and Lock Screen widgets.'
+                            Other, 0x112931540, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x112931180, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x112931680, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x112930dc0, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x112930c80, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x112930140, {{28.0, 591.0}, {48.0, 48.0}}
+                        Other, 0x1129317c0, {{28.0, 591.0}, {48.0, 48.0}}
+                          Button, 0x112932080, {{28.0, 591.0}, {48.0, 48.0}}, label: 'You', value: Collapsed, Selected
+                            Image, 0x112931cc0, {{39.5, 603.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                  Other, 0x112931b80, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x112931a40, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x112931f40, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112931900, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x11399df40, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x11399e080, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x11399e1c0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x11399e300, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x112b8d680, pid: 48007, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x11399d540, pid: 48007, label: 'Across Us'
+  }

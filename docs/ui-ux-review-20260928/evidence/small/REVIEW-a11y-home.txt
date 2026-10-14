@@ -1,0 +1,838 @@
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: none
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: none
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: none
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Element subtree:
+ →StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113edc140, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                      ↳StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450645120.87
+    Output: {
+      StaticText, 0x113b6ef80, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Element subtree:
+ →StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113edc140, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                      ↳StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450645568.88
+    Output: {
+      StaticText, 0x113b6f980, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edcdc0, {{61.2, 506.5}, {79.0, 14.5}}, label: 'New York, NY'
+Element subtree:
+ →StaticText, 0x113edcdc0, {{61.2, 506.5}, {79.0, 14.5}}, label: 'New York, NY'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 387.8}, {305.0, 881.7}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edcdc0, {{61.2, 506.5}, {79.0, 14.5}}, label: 'New York, NY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450648064.102
+    Output: {
+      StaticText, 0x113b6e6c0, {{61.2, 506.5}, {79.0, 14.5}}, label: 'New York, NY'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Element subtree:
+ →StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 383.9}, {308.8, 885.6}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450648960.103
+    Output: {
+      StaticText, 0x113b6e440, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Element subtree:
+ →StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450649408.104
+    Output: {
+      StaticText, 0x113b6fd40, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Element subtree:
+ →StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450649856.105
+    Output: {
+      StaticText, 0x113b6e800, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eddf40, {{50.5, 666.5}, {100.5, 20.5}}, label: 'Chloe Martin'
+Element subtree:
+ →StaticText, 0x113eddf40, {{50.5, 666.5}, {100.5, 20.5}}, label: 'Chloe Martin'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113eddb80, {{43.2, 572.5}, {127.2, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000003', label: 'Chloe Martin, Paris, Île-de-France, Updated 25 minutes ago, Has shared travel plans'
+                       ↳StaticText, 0x113eddf40, {{50.5, 666.5}, {100.5, 20.5}}, label: 'Chloe Martin'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450656128.112
+    Output: {
+      StaticText, 0x113f24280, {{50.5, 666.5}, {100.5, 20.5}}, label: 'Chloe Martin'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ede800, {{234.5, 666.5}, {79.5, 20.5}}, label: 'David Kim'
+Element subtree:
+ →StaticText, 0x113ede800, {{234.5, 666.5}, {79.5, 20.5}}, label: 'David Kim'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113ede440, {{221.8, 572.5}, {105.0, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000004', label: 'David Kim, San Francisco, CA, Updated 45 minutes ago'
+                       ↳StaticText, 0x113ede800, {{234.5, 666.5}, {79.5, 20.5}}, label: 'David Kim'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450659712.117
+    Output: {
+      StaticText, 0x113f24b40, {{234.5, 666.5}, {79.5, 20.5}}, label: 'David Kim'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecea80, {{20.0, 88.0}, {135.5, 18.0}}, label: '12 friends · 12 cities'
+Element subtree:
+ →StaticText, 0x113ecea80, {{20.0, 88.0}, {135.5, 18.0}}, label: '12 friends · 12 cities'
+Path to element:
+ →Application, 0x113ecc280, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc3c0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece6c0, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece800, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳StaticText, 0x113ecea80, {{20.0, 88.0}, {135.5, 18.0}}, label: '12 friends · 12 cities'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450637504.65
+    Output: {
+      StaticText, 0x113f0aa80, {{20.0, 88.0}, {135.5, 18.0}}, label: '12 friends · 12 cities'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Element subtree:
+ →StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edd180, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450649856.105
+    Output: {
+      StaticText, 0x113b6f480, {{129.0, 526.0}, {17.5, 13.5}}, label: '8m'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Element subtree:
+ →StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edcf00, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450648960.103
+    Output: {
+      StaticText, 0x113b6f340, {{64.0, 526.0}, {53.0, 13.5}}, label: 'Same city'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ece940, {{20.0, 32.0}, {146.5, 53.0}}, label: 'Friends'
+Element subtree:
+ →StaticText, 0x113ece940, {{20.0, 32.0}, {146.5, 53.0}}, label: 'Friends'
+Path to element:
+ →Application, 0x113ecc280, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc3c0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece6c0, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece800, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳StaticText, 0x113ece940, {{20.0, 32.0}, {146.5, 53.0}}, label: 'Friends'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450637056.64
+    Output: {
+      StaticText, 0x113f0a940, {{20.0, 32.0}, {146.5, 53.0}}, label: 'Friends'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Element subtree:
+ →StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113edc140, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                      ↳StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450645120.87
+    Output: {
+      StaticText, 0x113b6fac0, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecfe80, {{23.0, 342.8}, {146.5, 14.5}}, label: 'AROUND THE WORLD'
+Element subtree:
+ →StaticText, 0x113ecfe80, {{23.0, 342.8}, {146.5, 14.5}}, label: 'AROUND THE WORLD'
+Path to element:
+ →Application, 0x113ecc280, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc3c0, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece6c0, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece800, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳StaticText, 0x113ecfe80, {{23.0, 342.8}, {146.5, 14.5}}, label: 'AROUND THE WORLD'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450644672.69
+    Output: {
+      StaticText, 0x113f0be80, {{23.0, 342.8}, {146.5, 14.5}}, label: 'AROUND THE WORLD'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd680, {{240.2, 484.0}, {68.0, 20.5}}, label: 'Lin Zhao'
+Element subtree:
+ →StaticText, 0x113edd680, {{240.2, 484.0}, {68.0, 20.5}}, label: 'Lin Zhao'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edd2c0, {{230.5, 390.0}, {113.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000002', label: 'Lin Zhao, Tokyo, Updated 18 minutes ago, Has shared travel plans'
+                       ↳StaticText, 0x113edd680, {{240.2, 484.0}, {68.0, 20.5}}, label: 'Lin Zhao'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450652544.107
+    Output: {
+      StaticText, 0x113b6e800, {{240.2, 484.0}, {68.0, 20.5}}, label: 'Lin Zhao'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecef80, {{347.5, 44.2}, {7.0, 13.5}}, label: '2'
+Element subtree:
+ →StaticText, 0x113ecef80, {{347.5, 44.2}, {7.0, 13.5}}, label: '2'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113eced00, {{325.5, 42.0}, {34.5, 37.0}}, identifier: 'addFriendButton', label: 'Add a friend'
+                      ↳StaticText, 0x113ecef80, {{347.5, 44.2}, {7.0, 13.5}}, label: '2'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450638400.76
+    Output: {
+      StaticText, 0x113f0af80, {{347.5, 44.2}, {7.0, 13.5}}, label: '2'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Element subtree:
+ →StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edc8c0, {{55.0, 390.0}, {91.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000001', label: 'Mia Chen, New York, NY, Same city, Updated 8 minutes ago'
+                       ↳StaticText, 0x113edd040, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450649408.104
+    Output: {
+      StaticText, 0x113b6f340, {{121.0, 526.0}, {4.0, 13.5}}, label: '·'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd7c0, {{257.0, 506.5}, {34.5, 14.5}}, label: 'Tokyo'
+Element subtree:
+ →StaticText, 0x113edd7c0, {{257.0, 506.5}, {34.5, 14.5}}, label: 'Tokyo'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edd2c0, {{230.5, 390.0}, {113.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000002', label: 'Lin Zhao, Tokyo, Updated 18 minutes ago, Has shared travel plans'
+                       ↳StaticText, 0x113edd7c0, {{257.0, 506.5}, {34.5, 14.5}}, label: 'Tokyo'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450652992.108
+    Output: {
+      StaticText, 0x113ecc3c0, {{257.0, 506.5}, {34.5, 14.5}}, label: 'Tokyo'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edd900, {{267.2, 526.0}, {23.0, 13.5}}, label: '18m'
+Element subtree:
+ →StaticText, 0x113edd900, {{267.2, 526.0}, {23.0, 13.5}}, label: '18m'
+Path to element:
+ →Application, 0x113ecc500, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd900, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecdb80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece940, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ecea80, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Other, 0x113edc780, {{43.2, 390.0}, {303.2, 879.5}}
+                      ↳Button, 0x113edd2c0, {{230.5, 390.0}, {113.5, 149.5}}, identifier: 'friendCard-10000000-0000-0000-0000-000000000002', label: 'Lin Zhao, Tokyo, Updated 18 minutes ago, Has shared travel plans'
+                       ↳StaticText, 0x113edd900, {{267.2, 526.0}, {23.0, 13.5}}, label: '18m'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450653440.109
+    Output: {
+      StaticText, 0x113ecc000, {{267.2, 526.0}, {23.0, 13.5}}, label: '18m'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Element subtree:
+ →StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113edc140, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                      ↳StaticText, 0x113edc3c0, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450645568.88
+    Output: {
+      StaticText, 0x113b6ee40, {{330.0, 343.2}, {7.0, 13.5}}, label: '2'
+    }
+
+
+Type 131072: Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Element: Attributes: StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Element subtree:
+ →StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Path to element:
+ →Application, 0x113ecc3c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113ecc500, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113ecc640, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113ecc780, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113ecc8c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113ecca00, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113eccb40, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113eccc80, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113eccdc0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113eccf00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113ecd040, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113ecd180, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113ecd2c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113ecd400, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113ecd540, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113ecd680, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113ecd7c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113ecda40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendsScreen'
+                   ↳Other, 0x113ece800, {{0.0, 20.0}, {375.0, 1468.0}}
+                    ↳Other, 0x113ece940, {{20.0, 32.0}, {340.0, 1237.5}}
+                     ↳Button, 0x113edc140, {{248.5, 328.0}, {106.5, 44.0}}, identifier: 'friendPlansLink', label: 'Friend plans, 2'
+                      ↳StaticText, 0x113edc280, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2e800, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450645120.87
+    Output: {
+      StaticText, 0x113b6fe80, {{248.5, 342.8}, {71.5, 14.5}}, label: 'Friend plans'
+    }

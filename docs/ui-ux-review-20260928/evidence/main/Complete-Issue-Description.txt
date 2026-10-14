@@ -1,0 +1,28 @@
+Failed to tap "Tokyo (NRT)" Button: No matches found for Elements matching predicate '"Tokyo (NRT)" IN identifiers' from input {(
+    Button, label: 'Sheet Grabber', value: Expanded,
+    Button, label: 'Emoji',
+    Button, identifier: 'dictation', label: 'Dictate',
+    Button, identifier: 'shift', label: 'shift',
+    Button, identifier: 'Done', label: 'done',
+    Button, label: 'Cancel',
+    Button, label: '“friends”',
+    Button, label: 'friendship',
+    Button, label: 'friendships',
+    Button, identifier: 'friendsTab', label: 'Friends',
+    Button, identifier: 'tripsTab', label: 'Trips', Selected,
+    Button, identifier: 'profileTab', label: 'You',
+    Button, identifier: 'tripDestinationPicker', label: 'Destination, Where to?, Choose a city or airport',
+    Button, identifier: 'tripDatesPicker', label: 'Dates', value: Oct 5 – Oct 8, 2026,
+    Button, identifier: 'saveTripButton', label: 'Create trip', Disabled,
+    Button, identifier: 'newTripButton', label: 'New trip',
+    Button, identifier: 'createFirstTripButton', label: 'Plan your first trip',
+    Button, identifier: 'loadExampleTripsButton', label: 'Explore example trips'
+)}
+Possibly caused by runtime issues:
+Automation type mismatch: computed Button from legacy attributes vs Key from modern attribute. Input attributes and values: {
+    "XC_kAXXCAttributeAutomationType" = 20;
+    "XC_kAXXCAttributeElementBaseType" = UIAccessibilityElement;
+    "XC_kAXXCAttributeElementType" = UIAccessibilityElementKBKey;
+    "XC_kAXXCAttributeTraits" = 8589934641;
+}
+See test report attachments for more detail.

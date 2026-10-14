@@ -1,0 +1,100 @@
+
+
+Attributes: Application, 0x112933980, pid: 48007, label: 'Across Us'
+Element subtree:
+ →Application, 0x112933980, pid: 48007, label: 'Across Us'
+    Window (Main), 0x112933700, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x112933ac0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x112933d40, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x112933c00, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x112933840, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x112932e40, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x112932d00, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x112933340, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x1129321c0, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x112933200, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x1129330c0, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x112932300, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x112932940, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Same-city moments'
+                              Button, 0x112932800, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x112b8d180, {{107.0, 31.5}, {160.5, 21.0}}, label: 'Same-city moments'
+                            Other, 0x112b8fe80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x112b8ed00, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x112b8f840, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x112b8e080, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x112b8da40, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'notificationHistoryScreen'
+                                    ScrollView, 0x112b8db80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'notificationHistoryScreen'
+                                      Other, 0x112b8ef80, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x112b8ebc0, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x11399d540, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x11399d680, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x11399d7c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x11399dcc0, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x11399de00, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x11399d900, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x11399da40, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x11399db80, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x11399ca00, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x11399cb40, {{0.0, 74.0}, {375.0, 549.5}}
+                                        StaticText, 0x11399cdc0, {{38.0, 94.0}, {91.0, 14.5}}, label: 'ACTIVE NOW'
+                                        Other, 0x11399d400, {{38.0, 152.0}, {58.0, 58.0}}, label: 'New York'
+                                          Image, 0x11399cf00, {{38.0, 152.0}, {58.0, 58.0}}
+                                        StaticText, 0x11399cc80, {{110.0, 142.5}, {169.5, 20.5}}, label: 'Together in New York'
+                                        StaticText, 0x11399c140, {{110.0, 167.0}, {123.5, 18.0}}, label: 'You and Mia Chen'
+                                        StaticText, 0x11399c780, {{110.0, 197.0}, {95.0, 14.5}}, label: 'Together for 8m'
+                                        StaticText, 0x11399c8c0, {{211.0, 194.0}, {5.0, 20.5}}, label: '·'
+                                        StaticText, 0x11399c640, {{222.0, 189.0}, {60.0, 30.5}}, label: 'Since Sep 28, 2026'
+                                        StaticText, 0x11399ee40, {{24.0, 273.5}, {114.0, 14.5}}, label: 'PAST MOMENTS'
+                                        Other, 0x11399f0c0, {{38.0, 325.5}, {44.0, 44.0}}, label: 'New York'
+                                          Image, 0x11399fc00, {{38.0, 325.5}, {44.0, 44.0}}
+                                        StaticText, 0x11399f200, {{96.0, 320.0}, {169.5, 20.5}}, label: 'Together in New York'
+                                        StaticText, 0x11399ef80, {{96.0, 343.5}, {102.0, 14.5}}, label: 'You and Mia Chen'
+                                        StaticText, 0x11399f840, {{96.0, 361.0}, {115.5, 13.5}}, label: 'Sep 14, 2026 at 18:52'
+                                        Other, 0x11399f700, {{38.0, 430.0}, {44.0, 44.0}}, label: 'Tokyo'
+                                          Image, 0x11399fd40, {{38.0, 430.0}, {44.0, 44.0}}
+                                        StaticText, 0x11399fac0, {{96.0, 424.5}, {141.5, 20.5}}, label: 'Together in Tokyo'
+                                        StaticText, 0x11399fe80, {{96.0, 448.0}, {98.0, 14.5}}, label: 'You and Lin Zhao'
+                                        StaticText, 0x11399f980, {{96.0, 465.5}, {115.5, 13.5}}, label: 'Aug 14, 2026 at 18:52'
+                                        Other, 0x11399f5c0, {{38.0, 534.5}, {44.0, 44.0}}, label: 'Paris'
+                                          Image, 0x11399f480, {{38.0, 534.5}, {44.0, 44.0}}
+                                        StaticText, 0x11399f340, {{96.0, 529.0}, {133.5, 20.5}}, label: 'Together in Paris'
+                                        StaticText, 0x11399e440, {{96.0, 552.5}, {121.0, 14.5}}, label: 'You and Chloe Martin'
+                                        StaticText, 0x11399e580, {{96.0, 570.0}, {115.5, 13.5}}, label: 'Jun 30, 2026 at 18:52'
+                            Other, 0x11399ea80, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x11399ed00, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x11399ebc0, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x11399e800, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x11399e940, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x11399e6c0, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x11399c280, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x11399c000, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x11399c3c0, {{55.0, 588.0}, {94.0, 54.0}}, label: 'Friends'
+                            Image, 0x11399c500, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x11399d2c0, {{141.0, 588.0}, {94.0, 54.0}}, label: 'Trips'
+                            Image, 0x11399d180, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x11399d040, {{227.0, 588.0}, {94.0, 54.0}}, label: 'You', Selected
+                            Image, 0x112b8b0c0, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x112b8b200, {{227.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x112b8b340, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x112b89540, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x112b88000, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x112b88140, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x112b88280, {{227.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x112b883c0, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x112b88500, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x112b88640, {{227.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x112b88780, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x112b888c0, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x112b88a00, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b88f00, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b89040, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x112b89180, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x112b892c0, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x112b8b480, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x112933980, pid: 48007, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x112b89e00, pid: 48007, label: 'Across Us'
+  }

@@ -1,0 +1,27 @@
+[
+  {
+    "file": "W3-F10-invite-after-response.png",
+    "test": "PrototypeUITests/testW3IncomingRequestsAppearFirstAndDisappearAfterResponse()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W3-F10-request-first.png",
+    "test": "PrototypeUITests/testW3IncomingRequestsAppearFirstAndDisappearAfterResponse()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W3-F16-large-friends-zh.png",
+    "test": "PrototypeUITests/testW3NotificationSettingsAtLargestText()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W3-F16-large-permission-zh.png",
+    "test": "PrototypeUITests/testW3NotificationSettingsAtLargestText()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W3-F16-large-overview-zh.png",
+    "test": "PrototypeUITests/testW3NotificationSettingsAtLargestText()",
+    "device": "Across Us Onboarding QA — SE"
+  }
+]

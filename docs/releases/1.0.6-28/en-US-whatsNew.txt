@@ -1,0 +1,5 @@
+• A cleaner Friends header puts same-city friends beside your city. Expand it when you choose; refreshes and sharing changes no longer open it automatically.
+• New personal travel plans select current friends by default, with individual opt-outs before saving.
+• Clearer sharing, notification controls, friend invitations and Widget links.
+• Better protection for unsaved edits, clearer retry messages, and more reliable offline sharing preferences.
+• Improved flight dates and editing, city search, Chinese text, larger text sizes, and light, dark and system appearance.

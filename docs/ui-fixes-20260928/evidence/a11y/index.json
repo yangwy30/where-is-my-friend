@@ -1,0 +1,16 @@
+[
+  {
+    "label": "Friends accessibility card layout.png",
+    "path": "evidence/a11y/Friends-accessibility-card-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "1D14B1C5-DEE4-4152-A681-7A157388FEA3.png"
+  },
+  {
+    "label": "Friends accessibility city layout.png",
+    "path": "evidence/a11y/Friends-accessibility-city-layout.png",
+    "test": "PrototypeUITests/testFriendsAccessibilityLayoutKeepsCityAndFriendReachable()",
+    "failure": false,
+    "source": "96A1D4BF-F799-4166-8419-32E785B51D37.png"
+  }
+]

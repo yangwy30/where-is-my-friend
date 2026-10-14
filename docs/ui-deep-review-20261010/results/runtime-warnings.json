@@ -1,0 +1,47 @@
+{
+  "resultBundle": "/private/tmp/across-deep-review-20261010/journeys.xcresult",
+  "warningCount": 5,
+  "warnings": [
+    {
+      "test": "PrototypeUITests.testTripCreationPersistencePeopleAndCompletion()",
+      "message": "Invalid frame dimension (negative or non-finite).",
+      "documentURL": "",
+      "observedStep": "First tap on tripNameField, while waiting for keyboard transition to idle",
+      "testOutcome": "passed",
+      "attributableSourceOrStack": null
+    },
+    {
+      "test": "PrototypeUITests.testTripDemoUnknownFlightDoesNotInventProviderResults()",
+      "message": "Invalid frame dimension (negative or non-finite).",
+      "documentURL": "",
+      "observedStep": "First tap on tripFlightNumberField, while waiting for keyboard transition to idle",
+      "testOutcome": "passed",
+      "attributableSourceOrStack": null
+    },
+    {
+      "test": "PrototypeUITests.testTripEditPreservesOtherTrips()",
+      "message": "Invalid frame dimension (negative or non-finite).",
+      "documentURL": "",
+      "observedStep": "First tap on tripNameField, while waiting for keyboard transition to idle",
+      "testOutcome": "passed",
+      "attributableSourceOrStack": null
+    },
+    {
+      "test": "PrototypeUITests.testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+      "message": "Invalid frame dimension (negative or non-finite).",
+      "documentURL": "",
+      "observedStep": "First tap on tripFlightNumberField, while waiting for keyboard transition to idle",
+      "testOutcome": "passed",
+      "attributableSourceOrStack": null
+    },
+    {
+      "test": "PrototypeUITests.testTripVerifiedFlightLookupAndCandidateSelection()",
+      "message": "Invalid frame dimension (negative or non-finite).",
+      "documentURL": "",
+      "observedStep": "First tap on tripFlightNumberField, while waiting for keyboard transition to idle",
+      "testOutcome": "passed",
+      "attributableSourceOrStack": null
+    }
+  ],
+  "inspection": "Legacy issue records identify tests but carry empty document URLs. Sample activity trees for trip creation and verified flight lookup contain the warning and timing only, with no stack or source attachment. Common keyboard transition does not establish whether the origin is app or framework code."
+}

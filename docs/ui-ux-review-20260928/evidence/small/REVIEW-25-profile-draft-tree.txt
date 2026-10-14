@@ -1,0 +1,224 @@
+
+
+Attributes: Application, 0x113f25b80, pid: 46996, label: 'Across Us'
+Element subtree:
+ →Application, 0x113f25b80, pid: 46996, label: 'Across Us'
+    Window (Main), 0x113f25cc0, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f25e00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f25f40, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113f24c80, {{-375.0, -667.0}, {1125.0, 2001.0}}
+          Other, 0x113f24dc0, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113f24f00, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x113f25040, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f25180, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x113f252c0, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x113f25400, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x113f25540, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x113f25680, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x113f257c0, {{0.0, 0.0}, {375.0, 667.0}}
+                            Other, 0x113f25900, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f25a40, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x113f26800, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x113f26bc0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x113f26d00, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'profileSettingsScreen', value: solarJade
+                                    ScrollView, 0x113f26e40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'profileSettingsScreen', value: solarJade
+                                      Other, 0x113f26f80, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f270c0, {{0.0, 471.8}, {375.0, 47.4}}
+                                      Other, 0x113f27200, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f27340, {{0.0, 471.8}, {375.0, 47.4}}
+                                          Image, 0x113f27480, {{-120.0, 394.4}, {615.0, 249.6}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x113f275c0, {{0.0, 471.8}, {375.0, 47.4}}
+                                            Other, 0x113f27700, {{0.0, 471.8}, {375.0, 47.4}}
+                                          Other, 0x113f27840, {{0.0, 471.8}, {375.0, 47.4}}
+                                            Other, 0x113f27980, {{0.0, 471.8}, {375.0, 47.4}}
+                                            Other, 0x113f27ac0, {{0.0, 471.8}, {375.0, 47.4}}
+                                      Other, 0x113f27c00, {{0.0, 20.0}, {375.0, 1588.0}}
+                                        Other, 0x113f27d40, {{20.0, 40.0}, {335.0, 1175.5}}
+                                          StaticText, 0x113f27e80, {{20.0, 40.0}, {224.5, 41.0}}, label: 'Wang Yang'
+                                          StaticText, 0x113f40f00, {{20.0, 87.0}, {97.0, 20.5}}, label: '@wangyang'
+                                          Button, 0x113f40c80, {{325.0, 56.0}, {14.5, 14.5}}, identifier: 'editProfileButton', label: 'Edit profile'
+                                          StaticText, 0x113f42080, {{20.0, 125.5}, {97.5, 18.0}}, label: 'New York, NY'
+                                          StaticText, 0x113f40140, {{20.0, 185.5}, {146.5, 26.5}}, label: 'Sharing & City'
+                                          Button, 0x113f40640, {{20.0, 226.0}, {335.0, 76.0}}, identifier: 'profileCitySharingButton', label: 'City sharing, New York'
+                                            Image, 0x113f412c0, {{35.0, 255.5}, {17.5, 17.5}}, identifier: 'location.fill', label: 'Location Services'
+                                            StaticText, 0x113f04000, {{84.0, 243.2}, {95.5, 20.5}}, label: 'City sharing'
+                                            StaticText, 0x113f04140, {{84.0, 266.8}, {65.0, 18.0}}, label: 'New York'
+                                            Image, 0x113f04280, {{346.0, 257.5}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f043c0, {{20.0, 302.5}, {335.0, 76.0}}, identifier: 'sameCityMomentsLink', label: 'Same-city moments, 3 moments recorded'
+                                            Image, 0x113f04500, {{33.5, 332.0}, {19.5, 17.5}}, identifier: 'clock.arrow.circlepath', label: 'clock.arrow.circlepath'
+                                            StaticText, 0x113f04640, {{84.0, 319.8}, {160.5, 20.5}}, label: 'Same-city moments'
+                                            StaticText, 0x113f04780, {{84.0, 343.2}, {143.0, 18.0}}, label: '3 moments recorded'
+                                            Image, 0x113f048c0, {{346.0, 334.0}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f04a00, {{20.0, 379.0}, {335.0, 76.0}}, identifier: 'travelPlansLink', label: 'Travel plans, Where you’ll be next'
+                                            Image, 0x113f04b40, {{35.5, 409.0}, {17.5, 16.0}}, identifier: 'calendar', label: 'Calendar'
+                                            StaticText, 0x113f04c80, {{84.0, 396.2}, {95.0, 20.5}}, label: 'Travel plans'
+                                            StaticText, 0x113f04dc0, {{84.0, 419.8}, {140.0, 18.0}}, label: 'Where you’ll be next'
+                                            Image, 0x113f04f00, {{346.0, 410.5}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x113f05040, {{20.0, 527.5}, {124.5, 26.5}}, label: 'Preferences'
+                                          Button, 0x113f05180, {{20.0, 568.0}, {335.0, 76.0}}, identifier: 'notificationSettingsLink', label: 'Notifications, Same-city alerts and sound'
+                                            Image, 0x113f052c0, {{36.0, 597.0}, {16.5, 18.0}}, identifier: 'bell.fill', label: 'Notifications'
+                                            StaticText, 0x113f05400, {{84.0, 585.2}, {101.5, 20.5}}, label: 'Notifications'
+                                            StaticText, 0x113f05540, {{84.0, 608.8}, {188.5, 18.0}}, label: 'Same-city alerts and sound'
+                                            Image, 0x113f05680, {{346.0, 599.5}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f057c0, {{20.0, 644.5}, {335.0, 76.0}}, identifier: 'widgetPrivacySettingsLink', label: 'Widget & Lock Screen, Choose what appears at a glance'
+                                            Image, 0x113f05900, {{32.0, 674.5}, {24.0, 16.0}}, identifier: 'rectangle.3.group.fill', label: 'rectangle.3.group.fill'
+                                            StaticText, 0x113f05a40, {{84.0, 651.8}, {175.5, 20.5}}, label: 'Widget & Lock Screen'
+                                            StaticText, 0x113f05b80, {{84.0, 675.2}, {170.0, 38.0}}, label: 'Choose what appears at a glance'
+                                            Image, 0x113f05cc0, {{346.0, 676.0}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f05e00, {{20.0, 721.0}, {335.0, 76.0}}, identifier: 'appearanceSettingsButton', label: 'Appearance, Solar Jade'
+                                            Image, 0x113f05f40, {{35.5, 750.5}, {17.5, 17.5}}, identifier: 'circle.lefthalf.filled', label: 'circle.lefthalf.filled'
+                                            StaticText, 0x113f06080, {{84.0, 738.2}, {96.5, 20.5}}, label: 'Appearance'
+                                            StaticText, 0x113f061c0, {{84.0, 761.8}, {72.5, 18.0}}, label: 'Solar Jade'
+                                            Image, 0x113f06300, {{346.0, 752.5}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x113f06440, {{20.0, 869.5}, {187.5, 26.5}}, label: 'Privacy & Account'
+                                          Button, 0x113f06580, {{20.0, 910.0}, {335.0, 76.0}}, label: 'Blocked people, No blocked people'
+                                            Image, 0x113f066c0, {{35.0, 938.5}, {19.5, 19.5}}, identifier: 'person.slash.fill', label: 'person.slash.fill'
+                                            StaticText, 0x113f06800, {{84.0, 927.2}, {122.0, 20.5}}, label: 'Blocked people'
+                                            StaticText, 0x113f06940, {{84.0, 950.8}, {128.5, 18.0}}, label: 'No blocked people'
+                                            Image, 0x113f06a80, {{346.0, 941.5}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f06bc0, {{20.0, 986.5}, {335.0, 76.0}}, label: 'Privacy & data, What you share and save'
+                                            Image, 0x113f06d00, {{38.0, 1015.5}, {14.0, 18.5}}, identifier: 'hand.raised.fill', label: 'Block'
+                                            StaticText, 0x113f06e40, {{84.0, 1003.8}, {114.5, 20.5}}, label: 'Privacy & data'
+                                            StaticText, 0x113f06f80, {{84.0, 1027.2}, {172.0, 18.0}}, label: 'What you share and save'
+                                            Image, 0x113f070c0, {{346.0, 1018.0}, {8.0, 13.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          Button, 0x113f07200, {{20.0, 1063.0}, {335.0, 76.0}}, label: 'Sign out'
+                                            Image, 0x113f07340, {{34.0, 1092.0}, {21.5, 18.5}}, identifier: 'rectangle.portrait.and.arrow.right', label: 'rectangle.portrait.and.arrow.right'
+                                            StaticText, 0x113f07480, {{84.0, 1090.8}, {66.0, 20.5}}, label: 'Sign out'
+                                          Button, 0x113f075c0, {{20.0, 1139.5}, {335.0, 76.0}}, label: 'Delete account'
+                                            Image, 0x113f07700, {{35.5, 1168.0}, {17.0, 19.0}}, identifier: 'trash.fill', label: 'Trash'
+                                            StaticText, 0x113f07840, {{84.0, 1167.2}, {120.0, 20.5}}, label: 'Delete account'
+                            Other, 0x113f07980, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f07ac0, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f07c00, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x113f07d40, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x113f07e80, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x113ecc000, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x113ecc140, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x113ecc280, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x113ecc3c0, {{55.0, 588.0}, {94.0, 54.0}}, identifier: 'friendsTab', label: 'Friends'
+                            Image, 0x113ecc500, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x113ecc640, {{141.0, 588.0}, {94.0, 54.0}}, identifier: 'tripsTab', label: 'Trips'
+                            Image, 0x113ecc780, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x113ecc8c0, {{227.0, 588.0}, {94.0, 54.0}}, identifier: 'profileTab', label: 'You', Selected
+                            Image, 0x113ecca00, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x113eccb40, {{227.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x113eccc80, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113eccdc0, {{227.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113eccf00, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113ecd040, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113ecd180, {{227.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x113ecd2c0, {{227.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113ecd400, {{227.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113ecd540, {{227.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x113ecd680, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x113ecd7c0, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x113ecd900, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113ecda40, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113ecdb80, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x113ecdcc0, {{0.0, 584.0}, {375.0, 83.0}}
+      Other, 0x113ecde00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113ecdf40, {{-375.0, -667.0}, {1125.0, 2001.0}}
+        Other, 0x113ece080, {{0.0, 30.0}, {375.0, 637.0}}
+          Button, 0x113ece1c0, {{149.5, 25.0}, {76.0, 25.0}}, label: 'Sheet Grabber', value: Expanded
+          Other, 0x113ece300, {{0.0, 30.0}, {375.0, 637.0}}
+            Other, 0x113ece440, {{0.0, 30.0}, {375.0, 637.0}}
+              Other, 0x113ece580, {{0.0, 30.0}, {375.0, 637.0}}
+                Other, 0x113ece6c0, {{0.0, 30.0}, {375.0, 637.0}}
+                  Other, 0x113ece800, {{0.0, 30.0}, {375.0, 637.0}}
+                    NavigationBar, 0x113ece940, {{0.0, 46.0}, {375.0, 54.0}}, identifier: 'Edit profile'
+                      Button, 0x113ecea80, {{20.0, 50.0}, {36.0, 36.0}}, label: 'Close'
+                      StaticText, 0x113ecebc0, {{144.5, 57.5}, {86.0, 21.0}}, label: 'Edit profile'
+                    Other, 0x113eced00, {{0.0, 30.0}, {375.0, 637.0}}
+                      Other, 0x113ecee40, {{0.0, 30.0}, {375.0, 637.0}}
+                        Other, 0x113ecef80, {{0.0, 30.0}, {375.0, 637.0}}
+                          Other, 0x113ecf0c0, {{0.0, 30.0}, {375.0, 637.0}}
+                            Other, 0x113ecf200, {{-122.5, -88.0}, {640.0, 945.0}}
+                            ScrollView, 0x113ecf340, {{0.0, 30.0}, {375.0, 637.0}}
+                              Other, 0x113ecf480, {{0.0, 30.0}, {375.0, 637.0}}
+                                Other, 0x113ecf5c0, {{0.0, 30.0}, {375.0, 124.8}}
+                              Other, 0x113ecf700, {{0.0, 30.0}, {375.0, 637.0}}
+                              Other, 0x113ecf840, {{0.0, 100.0}, {375.0, 520.5}}
+                                Image, 0x113ecf980, {{34.5, 136.5}, {31.0, 29.0}}, identifier: 'pencil.line', label: 'pencil.line'
+                                StaticText, 0x113ecfac0, {{20.0, 194.0}, {136.0, 26.5}}, label: 'Make it yours'
+                                StaticText, 0x113ecfc00, {{20.0, 232.5}, {317.5, 38.0}}, label: 'Your name and username are the only identity details friends need.'
+                                StaticText, 0x113ecfd40, {{38.0, 315.5}, {79.0, 14.5}}, label: 'Display name'
+                                TextField, 0x113ecfe80, {{38.0, 337.0}, {299.0, 22.0}}, identifier: 'displayNameField', placeholderValue: 'Display name', value: Unsaved review name, Keyboard Focused
+                                StaticText, 0x113f08000, {{38.0, 373.5}, {60.5, 14.5}}, label: 'Username'
+                                TextField, 0x113f08140, {{38.0, 395.0}, {299.0, 22.0}}, identifier: 'profileUsernameField', placeholderValue: 'Username', value: wangyang
+                                StaticText, 0x113f08280, {{24.0, 462.0}, {319.0, 34.0}}, label: 'Usernames use 3–20 lowercase letters, numbers, or underscores.'
+                                Button, 0x113f083c0, {{20.0, 516.0}, {335.0, 64.5}}, identifier: 'saveProfileButton', label: 'Save changes'
+                    Other, 0x113f08500, {{0.0, 30.0}, {375.0, 637.0}}
+                      Other, 0x113f08640, {{0.0, 30.0}, {375.0, 637.0}}
+    Window, 0x113f08780, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f088c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f08a00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f08b40, {{0.0, 407.0}, {375.0, 260.0}}
+          Other, 0x113f08c80, {{0.0, 407.0}, {375.0, 260.0}}, identifier: 'inputView'
+    Window, 0x113f08dc0, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f08f00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f09040, {{0.0, 407.0}, {375.0, 260.0}}
+          Other, 0x113f09180, {{0.0, 407.0}, {375.0, 44.0}}, identifier: 'SystemInputAssistantView'
+            Other, 0x113f092c0, {{0.0, 407.0}, {375.0, 44.0}}
+              Other, 0x113f09400, {{0.0, 407.0}, {375.0, 44.0}}, identifier: 'CenterPageView'
+                Other, 0x113f09540, {{0.0, -193.0}, {375.0, 1244.0}}
+                  ScrollView, 0x113f09680, {{0.0, 407.0}, {375.0, 44.0}}
+                Other, 0x113f097c0, {{0.0, 407.0}, {375.0, 44.0}}
+                  Other, 0x113f09900, {{0.0, 407.0}, {375.0, 44.0}}, label: 'Typing Predictions'
+                    Other, 0x113f09a40, {{0.0, 407.0}, {375.0, 44.0}}
+                      Other, 0x113f09b80, {{0.0, 407.0}, {375.0, 44.0}}
+                        Other, 0x113f09cc0, {{0.0, 407.0}, {125.0, 44.0}}, label: 'Said'
+                        Other, 0x113f09e00, {{125.0, 407.0}, {125.0, 44.0}}, label: 'Was'
+                        Other, 0x113f09f40, {{250.0, 407.0}, {125.0, 44.0}}, label: 'Is'
+          Other, 0x113f0a080, {{0.0, 407.0}, {375.0, 260.0}}
+            Other, 0x113f0a1c0, {{0.0, 407.0}, {375.0, 260.0}}
+              Other, 0x113f0a300, {{0.0, 407.0}, {375.0, 260.0}}
+          Other, 0x113f0a440, {{0.0, 451.0}, {375.0, 216.0}}
+            Keyboard, 0x113f0a580, {{0.0, 451.0}, {375.0, 216.0}}
+              Other, 0x113f0a6c0, {{0.0, 451.0}, {375.0, 216.0}}
+                Other, 0x113f0a800, {{0.0, 451.0}, {375.0, 216.0}}, identifier: 'UIKeyboardLayoutStar Preview'
+                  Key, 0x113f0a940, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Left'
+                  Key, 0x113f0aa80, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Right'
+                  Key, 0x113f0abc0, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Left'
+                  Key, 0x113f0ad00, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Right'
+                  Key, 0x113f0ae40, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Left'
+                  Key, 0x113f0af80, {{0.0, 451.0}, {0.0, 0.0}}, label: 'Padding-Right'
+                  Key, 0x113f0b0c0, {{4.5, 458.0}, {37.0, 54.0}}, label: 'Q'
+                  Key, 0x113f0b200, {{41.5, 458.0}, {36.5, 54.0}}, label: 'W'
+                  Key, 0x113f0b340, {{78.0, 458.0}, {37.0, 54.0}}, label: 'E'
+                  Key, 0x113f0b480, {{115.0, 458.0}, {36.5, 54.0}}, label: 'R'
+                  Key, 0x113f0b5c0, {{151.5, 458.0}, {37.0, 54.0}}, label: 'T'
+                  Key, 0x113f0b700, {{188.5, 458.0}, {37.0, 54.0}}, label: 'Y'
+                  Key, 0x113f0b840, {{225.5, 458.0}, {36.5, 54.0}}, label: 'U'
+                  Key, 0x113f0b980, {{262.0, 458.0}, {37.0, 54.0}}, label: 'I'
+                  Key, 0x113f0bac0, {{299.0, 458.0}, {36.5, 54.0}}, label: 'O'
+                  Key, 0x113f0bc00, {{335.5, 458.0}, {37.0, 54.0}}, label: 'P'
+                  Key, 0x113f0bd40, {{23.0, 512.0}, {36.5, 54.0}}, label: 'A'
+                  Key, 0x113f0be80, {{59.5, 512.0}, {37.0, 54.0}}, label: 'S'
+                  Key, 0x113f48000, {{96.5, 512.0}, {37.0, 54.0}}, label: 'D'
+                  Key, 0x113f48140, {{133.5, 512.0}, {36.5, 54.0}}, label: 'F'
+                  Key, 0x113f48280, {{170.0, 512.0}, {37.0, 54.0}}, label: 'G'
+                  Key, 0x113f483c0, {{207.0, 512.0}, {36.5, 54.0}}, label: 'H'
+                  Key, 0x113f48500, {{243.5, 512.0}, {37.0, 54.0}}, label: 'J'
+                  Key, 0x113f48640, {{280.5, 512.0}, {37.0, 54.0}}, label: 'K'
+                  Key, 0x113f48780, {{317.5, 512.0}, {36.5, 54.0}}, label: 'L'
+                  Button, 0x113f488c0, {{4.5, 566.0}, {48.0, 54.0}}, identifier: 'shift', label: 'shift', Selected
+                  Key, 0x113f48a00, {{59.5, 566.0}, {37.0, 54.0}}, label: 'Z'
+                  Key, 0x113f48b40, {{96.5, 566.0}, {37.0, 54.0}}, label: 'X'
+                  Key, 0x113f48c80, {{133.5, 566.0}, {36.5, 54.0}}, label: 'C'
+                  Key, 0x113f48dc0, {{170.0, 566.0}, {37.0, 54.0}}, label: 'V'
+                  Key, 0x113f48f00, {{207.0, 566.0}, {36.5, 54.0}}, label: 'B'
+                  Key, 0x113f49040, {{243.5, 566.0}, {37.0, 54.0}}, label: 'N'
+                  Key, 0x113f49180, {{280.5, 566.0}, {37.0, 54.0}}, label: 'M'
+                  Key, 0x113f492c0, {{324.5, 566.0}, {48.0, 54.0}}, identifier: 'delete', label: 'delete'
+                  Key, 0x113f49400, {{4.5, 620.0}, {46.0, 54.0}}, identifier: 'more', label: 'numbers'
+                  Button, 0x113f49540, {{50.5, 620.0}, {46.0, 54.0}}, identifier: 'emoji', label: 'Next keyboard', value: 简体拼音
+                  Button, 0x113f49680, {{96.5, 620.0}, {37.0, 54.0}}, identifier: 'dictation', label: 'Dictate'
+                  Key, 0x113f497c0, {{133.5, 620.0}, {147.0, 54.0}}, identifier: 'space', label: ' '
+                  Button, 0x113f49900, {{280.5, 620.0}, {92.0, 54.0}}, identifier: 'Return', label: 'return'
+Path to element:
+ →Application, 0x113f25b80, pid: 46996, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f49a40, pid: 46996, label: 'Across Us'
+  }

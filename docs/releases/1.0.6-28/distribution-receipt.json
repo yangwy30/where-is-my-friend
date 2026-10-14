@@ -1,0 +1,55 @@
+{
+  "version": "1.0.6",
+  "build": "28",
+  "appleBuildID": "cc636798-ff66-403c-a940-288c7e99fa10",
+  "url": "https://appstoreconnect.apple.com/teams/9b0eb9fa-54ee-4f56-83ae-1e79e3cf4125/apps/6807634842/testflight/ios/cc636798-ff66-403c-a940-288c7e99fa10",
+  "uploadStatus": "Complete",
+  "uploadedAtLocal": "2026-10-11 13:01 PDT",
+  "internalGroupVerificationPending": false,
+  "appStoreSubmissionPending": false,
+  "englishScreenshotsUploaded": 8,
+  "chineseScreenshotsUploaded": 8,
+  "browserConnectionPending": false,
+  "internalGroup": {
+    "name": "Testers",
+    "id": "d38a4439-aaf5-49c4-b681-520daef2e782",
+    "type": "Internal",
+    "testers": 1,
+    "buildStatus": "Testing"
+  },
+  "appStoreStatus": "Waiting for Review",
+  "submissionID": "91789c76-1cd5-4758-bd65-3feb088e10d2",
+  "submittedAtLocal": "2026-10-11 14:09 PDT",
+  "submissionURL": "https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/91789c76-1cd5-4758-bd65-3feb088e10d2",
+  "releaseMode": "Automatically release after approval",
+  "existingRatingsPreserved": true,
+  "screenshotAssignments": {
+    "en-US": {
+      "1206x2622": 8,
+      "1284x2778": 8
+    },
+    "zh-Hans": {
+      "1206x2622": 8,
+      "1284x2778": 8
+    }
+  },
+  "privacyPolicy": {
+    "url": "https://yangwy30.github.io/where-is-my-friend/privacy/",
+    "commit": "b56ec1c11a821354a07d9317e1f5a77689fc64fb",
+    "deployment": "https://github.com/yangwy30/where-is-my-friend/actions/runs/38174979989",
+    "deploymentStatus": "completed successfully",
+    "liveSHA256": "e7de409a8b7d009cded749d671c6a48b983a4af9d686ab7e5f7bc61559a9428a",
+    "liveMatchesLocal": true
+  },
+  "appPrivacyLabelsReviewed": 9,
+  "betaDescriptionsUpdated": [
+    "en-US",
+    "zh-Hans"
+  ],
+  "betaReviewNotesUpdated": true,
+  "build28WhatToTest": "English field contains both English and Simplified Chinese",
+  "evidence": {
+    "evidence/testflight-testing.jpg": "2742813c6fbe42700afec355e5183c98aaaeafebb18d726c18b5c79f12edaf92",
+    "evidence/app-store-waiting-for-review.jpg": "394cc60ac1b20de4f149cdfec564b9d59c6da10ba6e183cda4a95d442b846868"
+  }
+}

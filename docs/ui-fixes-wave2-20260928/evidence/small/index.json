@@ -1,0 +1,32 @@
+[
+  {
+    "file": "W2-F30-first-friend.png",
+    "test": "PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-native-calendar.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-flight-large-text.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F09-system-share.png",
+    "test": "PrototypeUITests/testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F26-long-history.png",
+    "test": "PrototypeUITests/testSameCityHistoryWrapsLongNamesAtLargestText()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F28-keyboard-save.png",
+    "test": "PrototypeUITests/testTripSaveStaysAboveKeyboardAndDoneIsAvailable()",
+    "device": "Across Us Onboarding QA — SE"
+  }
+]

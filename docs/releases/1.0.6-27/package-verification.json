@@ -1,0 +1,31 @@
+{
+  "ipa": "/private/tmp/across-ui-testflight27/export/Where Is My Friend.ipa",
+  "ipaSHA256": "dd3cdb49a5af5f9a5216ddb66e8c85278d7dd29a610d973b26fde83ce91afa99",
+  "bundles": [
+    {
+      "bundle": "com.yangwy30.whereismyfriend",
+      "version": "1.0.6",
+      "build": "27",
+      "distributionSignatureValid": true,
+      "debuggingDisabled": true,
+      "appGroup": [
+        "group.com.yangwy30.whereismyfriend"
+      ],
+      "apns": "production"
+    },
+    {
+      "bundle": "com.yangwy30.whereismyfriend.widget",
+      "version": "1.0.6",
+      "build": "27",
+      "distributionSignatureValid": true,
+      "debuggingDisabled": true,
+      "appGroup": [
+        "group.com.yangwy30.whereismyfriend"
+      ],
+      "apns": null
+    }
+  ],
+  "privacyManifestMatches": true,
+  "localDemoDisabled": true,
+  "productionBackendVerified": true
+}

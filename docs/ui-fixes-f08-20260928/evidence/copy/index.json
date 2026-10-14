@@ -1,0 +1,27 @@
+[
+  {
+    "file": "F08-import-saved-trip.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-trip-independent-dates.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-trip-private-draft.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-trip-confirm-city.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "F08-trip-copy-entry.png",
+    "test": "PrototypeUITests/testSharedTripDatesCreateIndependentPrivatePlan()",
+    "device": "Across Us iOS 27 UI QA"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "file": "W2-F22-onboarding-zh.png",
+    "test": "PrototypeUITests/testChineseOnboardingActionLabels()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W2-F09-system-share.png",
+    "test": "PrototypeUITests/testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W2-F11-invite-again.png",
+    "test": "PrototypeUITests/testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W2-F11-withdraw-confirmation.png",
+    "test": "PrototypeUITests/testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain()",
+    "device": "Across Us iOS 27 UI QA"
+  }
+]

@@ -1,0 +1,131 @@
+[
+  {
+    "stage": "main",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 11,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790653986.997,
+      "passedTests": 11,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790653754.082,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 10,
+          "testIdentifierString": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages",
+          "testName": "testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 12
+    }
+  },
+  {
+    "stage": "small",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 2,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790654170.455,
+      "passedTests": 2,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790653851.522,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 2
+    }
+  },
+  {
+    "stage": "retest",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 1,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790654363.516,
+      "passedTests": 1,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790654266.329,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  }
+]

@@ -1,0 +1,909 @@
+TAP version 13
+# Subtest: hosted API requires Supabase user JWTs and contains no debug login
+ok 1 - hosted API requires Supabase user JWTs and contains no debug login
+  ---
+  duration_ms: 21.64375
+  type: 'test'
+  ...
+# Subtest: a busy queue drains multiple batches while other kinds also progress, under a shared concurrency cap
+ok 2 - a busy queue drains multiple batches while other kinds also progress, under a shared concurrency cap
+  ---
+  duration_ms: 49.308916
+  type: 'test'
+  ...
+# Subtest: deadline prevents unstarted sends and new claims; queue errors and retries never spin
+ok 3 - deadline prevents unstarted sends and new claims; queue errors and retries never spin
+  ---
+  duration_ms: 1.405792
+  type: 'test'
+  ...
+# Subtest: same flight requests share a durable lease and cache; access is checked even on cache hits
+ok 4 - same flight requests share a durable lease and cache; access is checked even on cache hits
+  ---
+  duration_ms: 6728.10025
+  type: 'test'
+  ...
+# Subtest: failed and abandoned leases recover without refunding spend or accepting an old owner result
+ok 5 - failed and abandoned leases recover without refunding spend or accepting an old owner result
+  ---
+  duration_ms: 4159.030208
+  type: 'test'
+  ...
+# Subtest: global and background ceilings stay 50/20; hourly rejection never consumes a global reservation
+ok 6 - global and background ceilings stay 50/20; hourly rejection never consumes a global reservation
+  ---
+  duration_ms: 3499.057333
+  type: 'test'
+  ...
+# Subtest: a follower reuses the leader result without a second provider call and pending waits are bounded
+ok 7 - a follower reuses the leader result without a second provider call and pending waits are bounded
+  ---
+  duration_ms: 0.588458
+  type: 'test'
+  ...
+# Subtest: foreground and background share a lease and a fresh result without charging twice
+ok 8 - foreground and background share a lease and a fresh result without charging twice
+  ---
+  duration_ms: 4216.033208
+  type: 'test'
+  ...
+# Subtest: global worker slots coalesce wake-up bursts, preserve the scheduled lane and recover abandoned work
+ok 9 - global worker slots coalesce wake-up bursts, preserve the scheduled lane and recover abandoned work
+  ---
+  duration_ms: 4287.160209
+  type: 'test'
+  ...
+# Subtest: a batch waits for every started delivery before releasing the worker slot on failure
+ok 10 - a batch waits for every started delivery before releasing the worker slot on failure
+  ---
+  duration_ms: 35.629791
+  type: 'test'
+  ...
+# Subtest: one catalog covers reviewed cities, exact state aliases, cross-state groups and safe unknowns
+ok 11 - one catalog covers reviewed cities, exact state aliases, cross-state groups and safe unknowns
+  ---
+  duration_ms: 3.608708
+  type: 'test'
+  ...
+# Subtest: metadata survives snapshots, respects sharing and timestamps, clears for legacy clients, and never expands notifications
+ok 12 - metadata survives snapshots, respects sharing and timestamps, clears for legacy clients, and never expands notifications
+  ---
+  duration_ms: 6447.311375
+  type: 'test'
+  ...
+# Subtest: profile name and username save atomically; duplicate handles leave the original profile intact
+ok 13 - profile name and username save atomically; duplicate handles leave the original profile intact
+  ---
+  duration_ms: 6265.454875
+  type: 'test'
+  ...
+# Subtest: migration supports the complete two-user same-city vertical slice
+ok 14 - migration supports the complete two-user same-city vertical slice
+  ---
+  duration_ms: 3204.587958
+  type: 'test'
+  ...
+# Subtest: Supabase Auth bootstrap creates one stable app profile
+ok 15 - Supabase Auth bootstrap creates one stable app profile
+  ---
+  duration_ms: 2889.694875
+  type: 'test'
+  ...
+# Subtest: deleting a Supabase Auth user cascades account data without breaking an in-flight deletion request
+ok 16 - deleting a Supabase Auth user cascades account data without breaking an in-flight deletion request
+  ---
+  duration_ms: 2718.130417
+  type: 'test'
+  ...
+# Subtest: push registration is idempotent per installation and transfers ownership safely
+ok 17 - push registration is idempotent per installation and transfers ownership safely
+  ---
+  duration_ms: 2646.052125
+  type: 'test'
+  ...
+# Subtest: notification deliveries are claimed once and completed per device
+ok 18 - notification deliveries are claimed once and completed per device
+  ---
+  duration_ms: 2615.1265
+  type: 'test'
+  ...
+# Subtest: API route normalization preserves the v1 contract behind an Edge Function prefix
+ok 19 - API route normalization preserves the v1 contract behind an Edge Function prefix
+  ---
+  duration_ms: 5.253292
+  type: 'test'
+  ...
+# Subtest: debug usernames are normalized and strictly validated
+ok 20 - debug usernames are normalized and strictly validated
+  ---
+  duration_ms: 0.210709
+  type: 'test'
+  ...
+# Subtest: identifiers and location freshness reject malformed or future input
+ok 21 - identifiers and location freshness reject malformed or future input
+  ---
+  duration_ms: 0.266667
+  type: 'test'
+  ...
+# Subtest: lookup preserves schedule/revised/runway times, overnight dates and multiple routes without invented status
+ok 22 - lookup preserves schedule/revised/runway times, overnight dates and multiple routes without invented status
+  ---
+  duration_ms: 0.8485
+  type: 'test'
+  ...
+# Subtest: lookup sends server credential only to fixed provider host with departure-date filtering
+ok 23 - lookup sends server credential only to fixed provider host with departure-date filtering
+  ---
+  duration_ms: 64.388917
+  type: 'test'
+  ...
+# Subtest: provider failures never become mock flights or leak provider bodies
+ok 24 - provider failures never become mock flights or leak provider bodies
+  ---
+  duration_ms: 1.854458
+  type: 'test'
+  ...
+# Subtest: friend request persists without a device, delivers once after registration, and respects preview privacy
+ok 25 - friend request persists without a device, delivers once after registration, and respects preview privacy
+  ---
+  duration_ms: 6584.333084
+  type: 'test'
+  ...
+# Subtest: accepted, declined, replaced, expired and blocked requests cannot generate a stale push
+ok 26 - accepted, declined, replaced, expired and blocked requests cannot generate a stale push
+  ---
+  duration_ms: 4292.979167
+  type: 'test'
+  ...
+# Subtest: leases are bounded and an old delivery cannot disable a new device owner
+ok 27 - leases are bounded and an old delivery cannot disable a new device owner
+  ---
+  duration_ms: 3714.71675
+  type: 'test'
+  ...
+# Invitation wake-up unavailable; queued for scheduled retry.
+# Invitation wake-up failed; queued for scheduled retry.
+# Invitation wake-up failed; queued for scheduled retry.
+# Subtest: installing friend notification support does not backfill old pending requests
+ok 28 - installing friend notification support does not backfill old pending requests
+  ---
+  duration_ms: 4071.204166
+  type: 'test'
+  ...
+# Subtest: invitation wake-up is post-commit background work, private and non-blocking on failure
+ok 29 - invitation wake-up is post-commit background work, private and non-blocking on failure
+  ---
+  duration_ms: 20.788417
+  type: 'test'
+  ...
+# Subtest: same-city wake-up is bounded across a burst and still leaves a scheduled fallback on failure
+ok 30 - same-city wake-up is bounded across a burst and still leaves a scheduled fallback on failure
+  ---
+  duration_ms: 0.418833
+  type: 'test'
+  ...
+# Subtest: sender withdrawal clears both inboxes and queued push deliveries; retry is harmless
+ok 31 - sender withdrawal clears both inboxes and queued push deliveries; retry is harmless
+  ---
+  duration_ms: 6774.531875
+  type: 'test'
+  ...
+# Subtest: recipient and unrelated caller cannot withdraw a pending invitation
+ok 32 - recipient and unrelated caller cannot withdraw a pending invitation
+  ---
+  duration_ms: 3726.575042
+  type: 'test'
+  ...
+# Subtest: accepting before withdrawal preserves the friendship and its sharing preferences
+ok 33 - accepting before withdrawal preserves the friendship and its sharing preferences
+  ---
+  duration_ms: 2800.108958
+  type: 'test'
+  ...
+# Subtest: migration keeps legacy matching grants private; explicit browsing works without reciprocal plans or announcement pushes
+ok 34 - migration keeps legacy matching grants private; explicit browsing works without reciprocal plans or announcement pushes
+  ---
+  duration_ms: 7059.860958
+  type: 'test'
+  ...
+# Subtest: default migration opens existing plans to their selected friends and preserves later opt-outs
+ok 35 - default migration opens existing plans to their selected friends and preserves later opt-outs
+  ---
+  duration_ms: 4701.802334
+  type: 'test'
+  ...
+# Subtest: audience, opt-out, deletion, blocks, friendship removal and re-addition revoke friend browsing
+ok 36 - audience, opt-out, deletion, blocks, friendship removal and re-addition revoke friend browsing
+  ---
+  duration_ms: 4273.338708
+  type: 'test'
+  ...
+# Subtest: legacy writes preserve browsing choice and v2 revision/owner checks cannot be bypassed
+ok 37 - legacy writes preserve browsing choice and v2 revision/owner checks cannot be bypassed
+  ---
+  duration_ms: 3168.327167
+  type: 'test'
+  ...
+# Subtest: friend feed is date-sorted, excludes ended plans and deleted owners, and is service-role only
+ok 38 - friend feed is date-sorted, excludes ended plans and deleted owners, and is service-role only
+  ---
+  duration_ms: 3203.092958
+  type: 'test'
+  ...
+# Subtest: API input accepts an explicit visibility choice and preserves the legacy RPC shape
+ok 39 - API input accepts an explicit visibility choice and preserves the legacy RPC shape
+  ---
+  duration_ms: 1.198333
+  type: 'test'
+  ...
+# Subtest: error observations omit personal paths and normal responses, and throttle per isolate
+ok 40 - error observations omit personal paths and normal responses, and throttle per isolate
+  ---
+  duration_ms: 43.69675
+  type: 'test'
+  ...
+# Subtest: client event schema rejects raw text, identities and ordinary permission failures
+ok 41 - client event schema rejects raw text, identities and ordinary permission failures
+  ---
+  duration_ms: 8.709958
+  type: 'test'
+  ...
+# Subtest: incidents require repeated failures and eligible queue delay; recovery is quiet when the window clears
+ok 42 - incidents require repeated failures and eligible queue delay; recovery is quiet when the window clears
+  ---
+  duration_ms: 2.412292
+  type: 'test'
+  ...
+# Subtest: event storage is private, deduplicated, bounded and counts a request once across server/client
+ok 43 - event storage is private, deduplicated, bounded and counts a request once across server/client
+  ---
+  duration_ms: 6813.988667
+  type: 'test'
+  ...
+# Subtest: worker heartbeat detects stalled processing even with no deliveries, and event retention expires
+ok 44 - worker heartbeat detects stalled processing even with no deliveries, and event retention expires
+  ---
+  duration_ms: 4292.020792
+  type: 'test'
+  ...
+# (node:34707) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: monitor endpoints require the probe secret or a verified user and retain healthy/error status
+ok 45 - monitor endpoints require the probe secret or a verified user and retain healthy/error status
+  ---
+  duration_ms: 137.627625
+  type: 'test'
+  ...
+# Subtest: notification backoff retains original age and opted-out or disabled recipients do not alert
+ok 46 - notification backoff retains original age and opted-out or disabled recipients do not alert
+  ---
+  duration_ms: 3636.619708
+  type: 'test'
+  ...
+# Subtest: monitoring installs on the actual production baseline without the unreleased pagination migrations
+ok 47 - monitoring installs on the actual production baseline without the unreleased pagination migrations
+  ---
+  duration_ms: 4444.316791
+  type: 'test'
+  ...
+# Subtest: overview preserves badges/counts while cursor pages return every plan once in stable order
+ok 48 - overview preserves badges/counts while cursor pages return every plan once in stable order
+  ---
+  duration_ms: 5049.192791
+  type: 'test'
+  ...
+# Subtest: changes between pages force a restart and consent is always checked for pages and detail
+ok 49 - changes between pages force a restart and consent is always checked for pages and detail
+  ---
+  duration_ms: 4409.820125
+  type: 'test'
+  ...
+# Subtest: private paging helpers reject direct client access and oversized pages
+ok 50 - private paging helpers reject direct client access and oversized pages
+  ---
+  duration_ms: 3961.240667
+  type: 'test'
+  ...
+# Subtest: home overlap preview keeps the total and detail outside the preview; legacy stays complete
+ok 51 - home overlap preview keeps the total and detail outside the preview; legacy stays complete
+  ---
+  duration_ms: 3535.226459
+  type: 'test'
+  ...
+# Subtest: overlap helpers validate inputs and cannot be called by untrusted clients
+ok 52 - overlap helpers validate inputs and cannot be called by untrusted clients
+  ---
+  duration_ms: 3998.594458
+  type: 'test'
+  ...
+# Subtest: APNs token helpers validate, hash, and encrypt without deterministic ciphertext
+ok 53 - APNs token helpers validate, hash, and encrypt without deterministic ciphertext
+  ---
+  duration_ms: 19.024542
+  type: 'test'
+  ...
+# Subtest: APNs response policy disables only invalid devices and backs off transient failures
+ok 54 - APNs response policy disables only invalid devices and backs off transient failures
+  ---
+  duration_ms: 0.549125
+  type: 'test'
+  ...
+# Subtest: provider environment mismatches stop retrying the delivery without disabling a valid device
+ok 55 - provider environment mismatches stop retrying the delivery without disabling a valid device
+  ---
+  duration_ms: 0.137958
+  type: 'test'
+  ...
+# Subtest: tracked source files contain no deploy-time secrets
+ok 56 - tracked source files contain no deploy-time secrets
+  ---
+  duration_ms: 341.668208
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"queues":{"colocation":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":0,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# (node:34730) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: immediate same-city worker uses the interactive lease and no unrelated queues or scheduled heartbeat
+ok 57 - immediate same-city worker uses the interactive lease and no unrelated queues or scheduled heartbeat
+  ---
+  duration_ms: 101.147584
+  type: 'test'
+  ...
+# Subtest: same-name cities in different states or missing state never emit same-city events
+ok 58 - same-name cities in different states or missing state never emit same-city events
+  ---
+  duration_ms: 5652.646666
+  type: 'test'
+  ...
+# Subtest: 24h freshness gates new events without closing a stay or inventing a return
+ok 59 - 24h freshness gates new events without closing a stay or inventing a return
+  ---
+  duration_ms: 4150.542959
+  type: 'test'
+  ...
+# Subtest: identity migration and first upgraded samples never replay an existing same-city arrival
+ok 60 - identity migration and first upgraded samples never replay an existing same-city arrival
+  ---
+  duration_ms: 3182.397541
+  type: 'test'
+  ...
+# Subtest: production APNs routes the main and staging apps to distinct allowlisted topics
+ok 61 - production APNs routes the main and staging apps to distinct allowlisted topics
+  ---
+  duration_ms: 0.670667
+  type: 'test'
+  ...
+# Subtest: queued same-city delivery is checked again after freshness or visibility changes
+ok 62 - queued same-city delivery is checked again after freshness or visibility changes
+  ---
+  duration_ms: 4288.612042
+  type: 'test'
+  ...
+# Subtest: cloud tests refuse every known existing project before making requests
+ok 63 - cloud tests refuse every known existing project before making requests
+  ---
+  duration_ms: 0.74775
+  type: 'test'
+  ...
+# Subtest: project identity and environment marker must match before test writes
+ok 64 - project identity and environment marker must match before test writes
+  ---
+  duration_ms: 1.186875
+  type: 'test'
+  ...
+# Subtest: test tokens are scoped to the test issuer and bounded load stops on rate limits or errors
+ok 65 - test tokens are scoped to the test issuer and bounded load stops on rate limits or errors
+  ---
+  duration_ms: 3.047625
+  type: 'test'
+  ...
+# Subtest: hosted HTTP requests reject redirects rather than forwarding credentials
+ok 66 - hosted HTTP requests reject redirects rather than forwarding credentials
+  ---
+  duration_ms: 18.68725
+  type: 'test'
+  ...
+# Subtest: hosted runner verifies each actor response and stops at the first failed tier
+ok 67 - hosted runner verifies each actor response and stops at the first failed tier
+  ---
+  duration_ms: 24.04975
+  type: 'test'
+  ...
+# Subtest: hosted migration wrapper and fixture rehearse on a fresh database
+ok 68 - hosted migration wrapper and fixture rehearse on a fresh database
+  ---
+  duration_ms: 4635.520458
+  type: 'test'
+  ...
+# Subtest: initialization refuses unrelated public tables even when no App profile exists
+ok 69 - initialization refuses unrelated public tables even when no App profile exists
+  ---
+  duration_ms: 0.58375
+  type: 'test'
+  ...
+# Subtest: future identity matches supported aliases but never merges different or missing states
+ok 70 - future identity matches supported aliases but never merges different or missing states
+  ---
+  duration_ms: 6217.765667
+  type: 'test'
+  ...
+# Subtest: identity upgrade preserves sent state so a migrated overlap is not pushed again
+ok 71 - identity upgrade preserves sent state so a migrated overlap is not pushed again
+  ---
+  duration_ms: 4330.093625
+  type: 'test'
+  ...
+# Subtest: identity upgrade carries pending attempts and backoff without dropping queued work
+ok 72 - identity upgrade carries pending attempts and backoff without dropping queued work
+  ---
+  duration_ms: 4706.518083
+  type: 'test'
+  ...
+# Subtest: fifth attempt keeps its live lease; privacy revocation still cancels it immediately
+ok 73 - fifth attempt keeps its live lease; privacy revocation still cancels it immediately
+  ---
+  duration_ms: 3039.786083
+  type: 'test'
+  ...
+# Subtest: expired final lease is retired instead of receiving a sixth attempt
+ok 74 - expired final lease is retired instead of receiving a sixth attempt
+  ---
+  duration_ms: 2321.865458
+  type: 'test'
+  ...
+# Subtest: APNs key formatting accepts pasted PEM, escaped newlines, quoted and base64 values without inventing a key
+ok 75 - APNs key formatting accepts pasted PEM, escaped newlines, quoted and base64 values without inventing a key
+  ---
+  duration_ms: 0.627708
+  type: 'test'
+  ...
+# Subtest: travel plans: own-only CRUD, reciprocal audiences, exact date intersection, private without an audience and optimistic revision
+ok 76 - travel plans: own-only CRUD, reciprocal audiences, exact date intersection, private without an audience and optimistic revision
+  ---
+  duration_ms: 5888.689042
+  type: 'test'
+  ...
+# Subtest: overlaps do not conflate regions; blocks and friendship removal revoke immediately; dates and timezones validated
+ok 77 - overlaps do not conflate regions; blocks and friendship removal revoke immediately; dates and timezones validated
+  ---
+  duration_ms: 3554.584416
+  type: 'test'
+  ...
+# Subtest: upcoming push: opt-in, bounded lease, revalidation, privacy, per-device dedup, no stale owner delivery
+ok 78 - upcoming push: opt-in, bounded lease, revalidation, privacy, per-device dedup, no stale owner delivery
+  ---
+  duration_ms: 3642.666459
+  type: 'test'
+  ...
+# Subtest: travel input rejects owner injection and malformed dates; worker never sends a revoked prepared item
+ok 79 - travel input rejects owner injection and malformed dates; worker never sends a revoked prepared item
+  ---
+  duration_ms: 1.266417
+  type: 'test'
+  ...
+# Subtest: morning scheduling uses recipient local 9AM, handles DST and never guesses a missing time zone
+ok 80 - morning scheduling uses recipient local 9AM, handles DST and never guesses a missing time zone
+  ---
+  duration_ms: 5022.724125
+  type: 'test'
+  ...
+# Subtest: every member can remind another member; reminders share a 24-hour cooldown and reject spoofed/self/foreign targets
+ok 81 - every member can remind another member; reminders share a 24-hour cooldown and reject spoofed/self/foreign targets
+  ---
+  duration_ms: 3841.29875
+  type: 'test'
+  ...
+# Subtest: adding any outbound flight stops reminders; return-only flights still need outbound; legacy unclassified data stays conservative
+ok 82 - adding any outbound flight stops reminders; return-only flights still need outbound; legacy unclassified data stays conservative
+  ---
+  duration_ms: 3557.913083
+  type: 'test'
+  ...
+# Subtest: queued reminders respect opt-out, flight additions, member removal, deletion and device ownership at send time
+ok 83 - queued reminders respect opt-out, flight additions, member removal, deletion and device ownership at send time
+  ---
+  duration_ms: 10365.12425
+  type: 'test'
+  ...
+# Subtest: private previews hide names; localized reminder copy and deep links remain account-bound
+ok 84 - private previews hide names; localized reminder copy and deep links remain account-bound
+  ---
+  duration_ms: 1045.175917
+  type: 'test'
+  ...
+# Subtest: notification leases do not duplicate delivery or invalidate an active fifth attempt
+ok 85 - notification leases do not duplicate delivery or invalidate an active fifth attempt
+  ---
+  duration_ms: 1079.418042
+  type: 'test'
+  ...
+# Subtest: worker never sends an invalidated prepared reminder and releases its lease
+ok 86 - worker never sends an invalidated prepared reminder and releases its lease
+  ---
+  duration_ms: 0.577417
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"queues":{"booking":{"rounds":1,"claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":1,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# {"event":"push_queue_drain","claimed":1,"delivered":0,"retried":0,"failed":1,"deferred":0,"queues":{"booking":{"rounds":1,"claimed":1,"delivered":0,"retried":0,"failed":1,"deferred":0,"error":false}},"elapsedMs":0,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# (node:34749) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: push worker routes booking deliveries correctly and rechecks before APNs
+ok 87 - push worker routes booking deliveries correctly and rechecks before APNs
+  ---
+  duration_ms: 58.581084
+  type: 'test'
+  ...
+# Subtest: turning reminders off and back on does not erase cooldown or replay an old reminder
+ok 88 - turning reminders off and back on does not erase cooldown or replay an old reminder
+  ---
+  duration_ms: 1063.766917
+  type: 'test'
+  ...
+# Subtest: invitation outbox is transactional, account-bound, idempotent, per device and privacy-aware
+ok 89 - invitation outbox is transactional, account-bound, idempotent, per device and privacy-aware
+  ---
+  duration_ms: 4722.83075
+  type: 'test'
+  ...
+# Subtest: revoke, re-invite, block, expiry, acceptance and device reassignment cancel stale deliveries
+ok 90 - revoke, re-invite, block, expiry, acceptance and device reassignment cancel stale deliveries
+  ---
+  duration_ms: 4851.257625
+  type: 'test'
+  ...
+# Subtest: invitation delivery retries are leased, capped, and cannot disable a new device owner
+ok 91 - invitation delivery retries are leased, capped, and cannot disable a new device owner
+  ---
+  duration_ms: 3852.752458
+  type: 'test'
+  ...
+# Subtest: worker revalidates before sending and never sends a revoked invitation
+ok 92 - worker revalidates before sending and never sends a revoked invitation
+  ---
+  duration_ms: 1.51975
+  type: 'test'
+  ...
+# Subtest: members leave with their flights and alerts; cannot read or rejoin via old invite; lost response retry is safe
+ok 93 - members leave with their flights and alerts; cannot read or rejoin via old invite; lost response retry is safe
+  ---
+  duration_ms: 4098.389833
+  type: 'test'
+  ...
+# Subtest: only creator can remove members; stale revisions and owner removal are rejected
+ok 94 - only creator can remove members; stale revisions and owner removal are rejected
+  ---
+  duration_ms: 3124.210917
+  type: 'test'
+  ...
+# Subtest: cancellation archives and preserves records while blocking legacy and current writes, invites, lookup, tracking and pushes
+ok 95 - cancellation archives and preserves records while blocking legacy and current writes, invites, lookup, tracking and pushes
+  ---
+  duration_ms: 2706.460542
+  type: 'test'
+  ...
+# Subtest: deletion cascades only this trip and can be replayed only by its original actor/request
+ok 96 - deletion cascades only this trip and can be replayed only by its original actor/request
+  ---
+  duration_ms: 2660.975541
+  type: 'test'
+  ...
+# Subtest: cancelling expires pending invitations and invalidates already-claimed invitation deliveries
+ok 97 - cancelling expires pending invitations and invalidates already-claimed invitation deliveries
+  ---
+  duration_ms: 2012.690167
+  type: 'test'
+  ...
+# Subtest: leaving, removing and cancelling invalidate flight alerts already claimed for the affected member
+ok 98 - leaving, removing and cancelling invalidate flight alerts already claimed for the affected member
+  ---
+  duration_ms: 5613.646
+  type: 'test'
+  ...
+# Subtest: trip preferences and check-ins belong to actor; meeting edits require owner and revision
+ok 99 - trip preferences and check-ins belong to actor; meeting edits require owner and revision
+  ---
+  duration_ms: 3679.167708
+  type: 'test'
+  ...
+# Subtest: refresh leases prevent duplicate calls; only active verified flights qualify; daily cap is durable
+ok 100 - refresh leases prevent duplicate calls; only active verified flights qualify; daily cap is durable
+  ---
+  duration_ms: 2898.256834
+  type: 'test'
+  ...
+# Subtest: refresh persists selected route only; failure preserves previous time/status and revision
+ok 101 - refresh persists selected route only; failure preserves previous time/status and revision
+  ---
+  duration_ms: 2487.472334
+  type: 'test'
+  ...
+# Subtest: landed alert is deduplicated, opt-in only, account-bound, and never changes manual check-in
+ok 102 - landed alert is deduplicated, opt-in only, account-bound, and never changes manual check-in
+  ---
+  duration_ms: 2037.312167
+  type: 'test'
+  ...
+# Subtest: opt-out, blocks, changed installation owner and membership removal prevent queued alerts
+ok 103 - opt-out, blocks, changed installation owner and membership removal prevent queued alerts
+  ---
+  duration_ms: 2275.112292
+  type: 'test'
+  ...
+# Subtest: significant arrival delay threshold is 30 minutes; no initial opt-in means no push
+ok 104 - significant arrival delay threshold is 30 minutes; no initial opt-in means no push
+  ---
+  duration_ms: 1657.19275
+  type: 'test'
+  ...
+# Subtest: flight edited mid-request cannot receive a previous candidate update; expired worker lease is ignored
+ok 105 - flight edited mid-request cannot receive a previous candidate update; expired worker lease is ignored
+  ---
+  duration_ms: 1437.107625
+  type: 'test'
+  ...
+# Subtest: new tracking tables and RPCs cannot be accessed by direct clients
+ok 106 - new tracking tables and RPCs cannot be accessed by direct clients
+  ---
+  duration_ms: 1208.037583
+  type: 'test'
+  ...
+# Subtest: worker performs no provider request without a reservation, persists failures, and rechecks push access
+ok 107 - worker performs no provider request without a reservation, persists failures, and rechecks push access
+  ---
+  duration_ms: 1.411833
+  type: 'test'
+  ...
+# (node:34753) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: trip-worker HTTP refuses public keys and never consumes quota before authentication
+ok 108 - trip-worker HTTP refuses public keys and never consumes quota before authentication
+  ---
+  duration_ms: 56.159833
+  type: 'test'
+  ...
+# (node:34757) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: paged plan endpoints bind viewer identity, validate filters and reject malformed cursors
+ok 109 - paged plan endpoints bind viewer identity, validate filters and reject malformed cursors
+  ---
+  duration_ms: 189.376834
+  type: 'test'
+  ...
+# Subtest: collaboration endpoints accept only the authenticated actor and strict fields
+ok 110 - collaboration endpoints accept only the authenticated actor and strict fields
+  ---
+  duration_ms: 53.744084
+  type: 'test'
+  ...
+# Subtest: same-city wake follows a successful authorized presence write; failures never wake or repeat the write
+ok 111 - same-city wake follows a successful authorized presence write; failures never wake or repeat the write
+  ---
+  duration_ms: 95.755041
+  type: 'test'
+  ...
+# Subtest: upstream Auth timeouts never become expired sessions or reach application writes
+ok 112 - upstream Auth timeouts never become expired sessions or reach application writes
+  ---
+  duration_ms: 145.104834
+  type: 'test'
+  ...
+# Subtest: profile gateway failure stays 504, never replays write; business conflict remains 409
+ok 113 - profile gateway failure stays 504, never replays write; business conflict remains 409
+  ---
+  duration_ms: 55.029208
+  type: 'test'
+  ...
+# Subtest: Trips HTTP routes use only the verified App actor, ignoring supplied account IDs
+ok 114 - Trips HTTP routes use only the verified App actor, ignoring supplied account IDs
+  ---
+  duration_ms: 33.335917
+  type: 'test'
+  ...
+# Subtest: friend plan consent uses v2 with the authenticated actor; old payloads stay on the legacy write
+ok 115 - friend plan consent uses v2 with the authenticated actor; old payloads stay on the legacy write
+  ---
+  duration_ms: 6.860167
+  type: 'test'
+  ...
+# Subtest: personal travel HTTP validates auth, owner injection, revisions and RPC actor
+ok 116 - personal travel HTTP validates auth, owner injection, revisions and RPC actor
+  ---
+  duration_ms: 90.762958
+  type: 'test'
+  ...
+# Subtest: Trips HTTP rejects absent/expired sessions and invalid inputs before calling trip RPCs
+ok 117 - Trips HTTP rejects absent/expired sessions and invalid inputs before calling trip RPCs
+  ---
+  duration_ms: 39.709125
+  type: 'test'
+  ...
+# Subtest: Trips HTTP maps denied membership to 403 without returning trip data
+ok 118 - Trips HTTP maps denied membership to 403 without returning trip data
+  ---
+  duration_ms: 32.102583
+  type: 'test'
+  ...
+# Subtest: flight lookup authenticates and authorizes before provider use, caches results and rejects bad input
+ok 119 - flight lookup authenticates and authorizes before provider use, caches results and rejects bad input
+  ---
+  duration_ms: 73.540916
+  type: 'test'
+  ...
+# Subtest: cloud mutation routes reject identity/provider injection and require revisions
+ok 120 - cloud mutation routes reject identity/provider injection and require revisions
+  ---
+  duration_ms: 19.458042
+  type: 'test'
+  ...
+# Subtest: removed public lookup never spends provider quota with a public key or missing session
+ok 121 - removed public lookup never spends provider quota with a public key or missing session
+  ---
+  duration_ms: 16.53125
+  type: 'test'
+  ...
+# Subtest: lifecycle HTTP actions reject spoofed actors and malformed fields and bind retries to the authenticated actor
+ok 122 - lifecycle HTTP actions reject spoofed actors and malformed fields and bind retries to the authenticated actor
+  ---
+  duration_ms: 42.072875
+  type: 'test'
+  ...
+# Subtest: booking reminder APIs use verified actor and only recipient/context/preferences fields
+ok 123 - booking reminder APIs use verified actor and only recipient/context/preferences fields
+  ---
+  duration_ms: 4.765792
+  type: 'test'
+  ...
+# Subtest: overlap list and detail are bound to the authenticated viewer
+ok 124 - overlap list and detail are bound to the authenticated viewer
+  ---
+  duration_ms: 7.778666
+  type: 'test'
+  ...
+# Subtest: routine authenticated bootstrap reuses the resolved profile but first sign-in still initializes
+ok 125 - routine authenticated bootstrap reuses the resolved profile but first sign-in still initializes
+  ---
+  duration_ms: 39.070334
+  type: 'test'
+  ...
+# Subtest: trip create is atomic/idempotent and overlapping trips stay independent
+ok 126 - trip create is atomic/idempotent and overlapping trips stay independent
+  ---
+  duration_ms: 4368.062084
+  type: 'test'
+  ...
+# Subtest: members write only their own flights; owners manage only shared trip details
+ok 127 - members write only their own flights; owners manage only shared trip details
+  ---
+  duration_ms: 2877.606708
+  type: 'test'
+  ...
+# Subtest: unclaimed namesakes cannot be edited, and shared-editor RPCs no longer exist
+ok 128 - unclaimed namesakes cannot be edited, and shared-editor RPCs no longer exist
+  ---
+  duration_ms: 1870.258542
+  type: 'test'
+  ...
+# Subtest: account invitations require recipient acceptance and never claim legacy namesakes
+ok 129 - account invitations require recipient acceptance and never claim legacy namesakes
+  ---
+  duration_ms: 1757.983959
+  type: 'test'
+  ...
+# Subtest: cloud mutations check each resource revision and persist only cached provider candidates atomically
+ok 130 - cloud mutations check each resource revision and persist only cached provider candidates atomically
+  ---
+  duration_ms: 1246.993542
+  type: 'test'
+  ...
+# Subtest: invites can be declined/revoked, old links stay dead, and blocking prevents acceptance
+ok 131 - invites can be declined/revoked, old links stay dead, and blocking prevents acceptance
+  ---
+  duration_ms: 1061.900291
+  type: 'test'
+  ...
+# Subtest: anonymous and authenticated clients cannot bypass the App API or read imported trips
+ok 132 - anonymous and authenticated clients cannot bypass the App API or read imported trips
+  ---
+  duration_ms: 1071.768792
+  type: 'test'
+  ...
+# Subtest: flight lookup quotas persist across requests and cache never bypasses trip membership
+ok 133 - flight lookup quotas persist across requests and cache never bypasses trip membership
+  ---
+  duration_ms: 1072.413459
+  type: 'test'
+  ...
+# Subtest: legacy transform preserves IDs, strips access credentials, and never claims App identities
+ok 134 - legacy transform preserves IDs, strips access credentials, and never claims App identities
+  ---
+  duration_ms: 0.815458
+  type: 'test'
+  ...
+# Subtest: local import leaves legacy trips inaccessible and rolls back a conflicting import
+ok 135 - local import leaves legacy trips inaccessible and rolls back a conflicting import
+  ---
+  duration_ms: 991.434708
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"queues":{"friendInvitations":{"rounds":1,"claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"error":false},"tripInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":1,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# Subtest: friend invitation immediate wake-up sends its own APNs payload without claiming unrelated queues
+ok 136 - friend invitation immediate wake-up sends its own APNs payload without claiming unrelated queues
+  ---
+  duration_ms: 93.49375
+  type: 'test'
+  ...
+# (node:34773) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# {"event":"push_queue_drain","claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"queues":{"colocation":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"upcoming":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"friendInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"tripInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"booking":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":0,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# Subtest: push worker authenticates before signing/claiming, idle queues do not sign, readiness probe never sends
+ok 137 - push worker authenticates before signing/claiming, idle queues do not sign, readiness probe never sends
+  ---
+  duration_ms: 40.182041
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":2,"delivered":2,"retried":0,"failed":0,"deferred":0,"queues":{"colocation":{"rounds":1,"claimed":2,"delivered":2,"retried":0,"failed":0,"deferred":0,"error":false},"upcoming":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"friendInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"tripInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"booking":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":26,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# Subtest: parallel deliveries share one signing operation instead of minting a token per device
+ok 138 - parallel deliveries share one signing operation instead of minting a token per device
+  ---
+  duration_ms: 53.18975
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"queues":{"colocation":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"upcoming":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"friendInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"tripInvitations":{"rounds":1,"claimed":1,"delivered":1,"retried":0,"failed":0,"deferred":0,"error":false},"booking":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":0,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# Subtest: trip invitation reaches APNs with the account-bound join link and correct completion queue
+ok 139 - trip invitation reaches APNs with the account-bound join link and correct completion queue
+  ---
+  duration_ms: 4.380875
+  type: 'test'
+  ...
+# {"event":"push_queue_drain","claimed":1,"delivered":0,"retried":0,"failed":1,"deferred":0,"queues":{"colocation":{"rounds":1,"claimed":1,"delivered":0,"retried":0,"failed":1,"deferred":0,"error":false},"upcoming":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"friendInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"tripInvitations":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false},"booking":{"rounds":1,"claimed":0,"delivered":0,"retried":0,"failed":0,"deferred":0,"error":false}},"elapsedMs":0,"friendInvitationError":false,"invitationError":false,"upcomingError":false,"bookingReminderError":false}
+# Subtest: environment mismatch ends the failed delivery without retrying it or disabling the device
+ok 140 - environment mismatch ends the failed delivery without retrying it or disabling the device
+  ---
+  duration_ms: 14.754458
+  type: 'test'
+  ...
+# Subtest: read retry is exactly bounded and preserves the RPC payload
+ok 141 - read retry is exactly bounded and preserves the RPC payload
+  ---
+  duration_ms: 81.208042
+  type: 'test'
+  ...
+# Subtest: writes, invitations, paid lookup, token exchange and foreign origins never replay
+ok 142 - writes, invitations, paid lookup, token exchange and foreign origins never replay
+  ---
+  duration_ms: 22.104333
+  type: 'test'
+  ...
+# Subtest: auth rejection and rate limits do not retry
+ok 143 - auth rejection and rate limits do not retry
+  ---
+  duration_ms: 3.294
+  type: 'test'
+  ...
+# Subtest: transport timeout terminates, safe reads retry once, writes never retry
+ok 144 - transport timeout terminates, safe reads retry once, writes never retry
+  ---
+  duration_ms: 46.538792
+  type: 'test'
+  ...
+# Subtest: network failures retry a safe read once and retain temporary classification
+ok 145 - network failures retry a safe read once and retain temporary classification
+  ---
+  duration_ms: 1.769625
+  type: 'test'
+  ...
+# Subtest: caller cancellation does not trigger another request
+ok 146 - caller cancellation does not trigger another request
+  ---
+  duration_ms: 0.478583
+  type: 'test'
+  ...
+1..146
+# tests 146
+# suites 0
+# pass 146
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 49361.265292

@@ -1,0 +1,142 @@
+[
+  {
+    "label": "REVIEW-01-home-tree.txt",
+    "path": "evidence/final/REVIEW-01-home-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "4B6297B9-4E73-49DA-B5F2-5C1EA12277EC.txt"
+  },
+  {
+    "label": "REVIEW-01-home.png",
+    "path": "evidence/final/REVIEW-01-home.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "FAEB2A73-2B0C-4EC2-BEA1-13B593E91967.png"
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination-tree.txt",
+    "path": "evidence/final/REVIEW-02-city-sharing-destination-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "0A74D0D9-5F37-4EEF-9382-A533D22666B5.txt"
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination.png",
+    "path": "evidence/final/REVIEW-02-city-sharing-destination.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "436F855A-CB40-43D8-8556-9D2A6DB269D4.png"
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused-tree.txt",
+    "path": "evidence/final/REVIEW-03-global-sharing-paused-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "235F65C6-CCF8-4159-A835-8D91CA4567D9.txt"
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused.png",
+    "path": "evidence/final/REVIEW-03-global-sharing-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "61F9AACC-7B8A-43AD-8335-419486101A36.png"
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused-tree.txt",
+    "path": "evidence/final/REVIEW-04-friend-global-paused-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "2AECFD65-6196-4EE4-877E-2097A72C841F.txt"
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused.png",
+    "path": "evidence/final/REVIEW-04-friend-global-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "8D4941C8-0CA9-4D04-9D01-D73AB8BC7E50.png"
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off-tree.txt",
+    "path": "evidence/final/REVIEW-05-friend-sharing-off-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "FB64D022-2F84-4F2E-A697-91A292F6A8E3.txt"
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off.png",
+    "path": "evidence/final/REVIEW-05-friend-sharing-off.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "6E6D1E2E-5C01-4A33-B571-2A3AF378BF24.png"
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation-tree.txt",
+    "path": "evidence/final/REVIEW-06-remove-confirmation-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "6079DDC6-E258-4E91-8EE6-E12294813AB2.txt"
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation.png",
+    "path": "evidence/final/REVIEW-06-remove-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "539E105C-57CA-4126-B20F-929ADD45DDBD.png"
+  },
+  {
+    "label": "REVIEW-07-block-confirmation-tree.txt",
+    "path": "evidence/final/REVIEW-07-block-confirmation-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "98FCF83D-B7C0-4629-974E-C28F072DABE1.txt"
+  },
+  {
+    "label": "REVIEW-07-block-confirmation.png",
+    "path": "evidence/final/REVIEW-07-block-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "84ACB0D0-F63E-489F-B9A4-271C1BE9494B.png"
+  },
+  {
+    "label": "REVIEW-16-plan-feed-tree.txt",
+    "path": "evidence/final/REVIEW-16-plan-feed-tree.txt",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "EE36564B-07D4-4C77-98D5-34E27398CABD.txt"
+  },
+  {
+    "label": "REVIEW-16-plan-feed.png",
+    "path": "evidence/final/REVIEW-16-plan-feed.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "1465FB9C-5035-4869-9769-B7AE0CC05E47.png"
+  },
+  {
+    "label": "REVIEW-17-plan-match-only-tree.txt",
+    "path": "evidence/final/REVIEW-17-plan-match-only-tree.txt",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "BB6B4C53-AB92-4D7F-8DD4-7CB8A58779CA.txt"
+  },
+  {
+    "label": "REVIEW-17-plan-match-only.png",
+    "path": "evidence/final/REVIEW-17-plan-match-only.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "F9EC301E-4008-4414-BA5B-02433BD95E03.png"
+  },
+  {
+    "label": "REVIEW-18-plan-after-cancel-tree.txt",
+    "path": "evidence/final/REVIEW-18-plan-after-cancel-tree.txt",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "E7D7C9A7-D644-46CC-93A0-F0FF3188B45F.txt"
+  },
+  {
+    "label": "REVIEW-18-plan-after-cancel.png",
+    "path": "evidence/final/REVIEW-18-plan-after-cancel.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "9058ED4E-B916-4AA3-970A-A044E3E8A699.png"
+  }
+]

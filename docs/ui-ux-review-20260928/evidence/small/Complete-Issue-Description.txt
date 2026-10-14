@@ -1,0 +1,17 @@
+Failed to tap "myCitySharingCard" Button: No matches found for Elements matching predicate '"myCitySharingCard" IN identifiers' from input {(
+    Button, label: 'Friends',
+    Button, label: 'Trips',
+    Button, label: 'You', Selected,
+    Button, identifier: 'editProfileButton', label: 'Edit profile',
+    Button, identifier: 'profileCitySharingButton', label: 'City sharing, New York',
+    Button, identifier: 'sameCityMomentsLink', label: 'Same-city moments, 3 moments recorded',
+    Button, identifier: 'travelPlansLink', label: 'Travel plans, Where you’ll be next',
+    Button, identifier: 'notificationSettingsLink', label: 'Notifications, Same-city alerts and sound',
+    Button, identifier: 'widgetPrivacySettingsLink', label: 'Widget & Lock Screen, Choose what appears at a glance',
+    Button, identifier: 'appearanceSettingsButton', label: 'Appearance, Solar Jade',
+    Button, label: 'Blocked people, No blocked people',
+    Button, label: 'Privacy & data, What you share and save',
+    Button, label: 'Sign out',
+    Button, label: 'Delete account',
+    Button, label: 'Developer Lab & Tools, Demo Lab, Emblem Gallery, Widget Studio'
+)}

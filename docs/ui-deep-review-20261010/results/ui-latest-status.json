@@ -1,0 +1,380 @@
+{
+  "methodCount": 65,
+  "latestResults": {
+    "testAuditIntegratedHeaderShowsPeopleAndOpensFriend": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 16.912
+    },
+    "testAuditMutingSameCityAlertDoesNotHideHeader": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 25.014
+    },
+    "testAuditOfflineHomeExplainsCachedCitiesAndRetry": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 12.84
+    },
+    "testAuditPersonalPlanAndProfileProtectUnsavedChanges": {
+      "status": "passed",
+      "run": "final-pro",
+      "durationSeconds": 49.953
+    },
+    "testAuditRevokedFriendCannotKeepCachedDetailsVisible": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 14.061
+    },
+    "testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 62.924
+    },
+    "testSameCityCardStaysCollapsedAfterRefreshTabSwitchAndForeground": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 24.293
+    },
+    "testSameCityHeaderExpandsToFriendRows": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 13.092
+    },
+    "testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch": {
+      "status": "passed",
+      "run": "core-and-header",
+      "durationSeconds": 40.752
+    },
+    "testAuditAuthenticationAtLargestText": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 6.822
+    },
+    "testAuditIntegratedHeaderAtLargestChineseText": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 18.443
+    },
+    "testAuditSharingControlsComeFirstAtLargestText": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 16.957
+    },
+    "testAuditTripAndFlightProtectUnsavedChangesAndDateCancel": {
+      "status": "passed",
+      "run": "forms-retry",
+      "durationSeconds": 33.663
+    },
+    "testCityArtworkHandlesPausedAndUnavailableLocations": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 7.906
+    },
+    "testCompactTripFormAtAccessibilityTextSize": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 13.899
+    },
+    "testDateRangeTouchTargetsAtLargestText": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 29.328
+    },
+    "testFlightControlsAtLargestTextHaveReachableTargets": {
+      "status": "passed",
+      "run": "forms-retry",
+      "durationSeconds": 65.499
+    },
+    "testFriendsAccessibilityLayoutKeepsCityAndFriendReachable": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 18.221
+    },
+    "testLocationSetupAndSolidAccentButtonsInBothThemes": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 108.353
+    },
+    "testOnboardingReducedMotionShowsCompleteExamples": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 5.669
+    },
+    "testSameCityHistoryWrapsLongNamesAtLargestText": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 17.487
+    },
+    "testW3NotificationSettingsAtLargestText": {
+      "status": "passed",
+      "run": "small-and-forms",
+      "durationSeconds": 42.712
+    },
+    "testAuditFriendInvitationFailureIsVisibleAndRetryWorks": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 28.551
+    },
+    "testAuditNotificationSaveFailureIsVisibleFromProfileAndRetryWorks": {
+      "status": "passed",
+      "run": "forms-retry",
+      "durationSeconds": 33.206
+    },
+    "testProfileEditingAndWidgetPrivacyControls": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 34.072
+    },
+    "testAccountDeletionFailureShowsVisibleErrorWithoutSigningOut": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 21.516
+    },
+    "testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 20.166
+    },
+    "testFirstUseLocationAllowMovesToFriends": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 12.101
+    },
+    "testFirstUseLocationSetupRequestsSystemPermissionAndAllowsDecline": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 19.609
+    },
+    "testFriendInviteDeepLinkSurvivesRelaunchAndDismissal": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 42.532
+    },
+    "testFriendPlanBadgeOpensThatFriendsSharedCities": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 14.759
+    },
+    "testFriendPlanSecondPageOpensDetails": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 16.816
+    },
+    "testFriendRequestNotificationRestoresAndCanBeAccepted": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 20.323
+    },
+    "testFriendSharingDescriptionsAreLocalizedInChinese": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 76.573
+    },
+    "testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 76.317
+    },
+    "testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 21.271
+    },
+    "testManualCitySelectionDoesNotRequireLocationPermission": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 21.215
+    },
+    "testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 28.095
+    },
+    "testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 54.532
+    },
+    "testNoMatchCardsDisappearWhenCitySharingStops": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 45.624
+    },
+    "testOfflineEndToEndFlow": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 25.678
+    },
+    "testOnboardingCanSkipAndFinishFromProfile": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 25.593
+    },
+    "testOnboardingFourChaptersAndExamples": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 21.23
+    },
+    "testOnboardingMotionCanBeInterrupted": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 11.671
+    },
+    "testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 30.617
+    },
+    "testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 64.559
+    },
+    "testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 23.101
+    },
+    "testSystemAppearanceSelectionPersistsAcrossLaunch": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 39.842
+    },
+    "testTravelCitySearchFindsPalmSpringsFromProfile": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 25.004
+    },
+    "testTripCreationPersistencePeopleAndCompletion": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 63.556
+    },
+    "testTripDemoUnknownFlightDoesNotInventProviderResults": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 17.098
+    },
+    "testTripEditPreservesOtherTrips": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 26.807
+    },
+    "testTripInviteDeepLinkSurvivesRelaunchAndDismissal": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 31.483
+    },
+    "testTripMemberCanLeaveButCannotManageOthers": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 23.469
+    },
+    "testTripOwnerRemovesMemberAndDeletesWithConfirmation": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 30.459
+    },
+    "testTripUnverifiedFlightEntryAndMissingTravelerUpdate": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 41.962
+    },
+    "testTripVerifiedFlightLookupAndCandidateSelection": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 20.574
+    },
+    "testUnavailableUpcomingLinkIsSafeAfterColdLaunch": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 21.531
+    },
+    "testW3LiveTokyoSearchCanBeSelected": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 23.225
+    },
+    "testW3NotificationOverviewRoutesAndSavedPreferences": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 89.238
+    },
+    "testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations": {
+      "status": "passed",
+      "run": "journeys",
+      "durationSeconds": 33.647
+    },
+    "testWidgetPrivacyAndEdgeStates": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 71.871
+    },
+    "testAuditIncomingFriendRequestAtLargestText": {
+      "status": "passed",
+      "run": "final-small",
+      "durationSeconds": 16.006
+    },
+    "testAuditIncomingInviteFailureRemainsVisibleAndCanBeDismissed": {
+      "status": "passed",
+      "run": "final-invite-contrast",
+      "durationSeconds": 29.592
+    },
+    "testAuditIntegratedHeaderInDarkMode": {
+      "status": "passed",
+      "run": "final-pro",
+      "durationSeconds": 45.687
+    }
+  },
+  "runs": [
+    [
+      "core-and-header",
+      9
+    ],
+    [
+      "small-and-forms",
+      14
+    ],
+    [
+      "forms-retry",
+      5
+    ],
+    [
+      "recovery",
+      2
+    ],
+    [
+      "modal-stability",
+      2
+    ],
+    [
+      "profile-native-alert",
+      2
+    ],
+    [
+      "profile-trace",
+      1
+    ],
+    [
+      "profile-stable-presentation",
+      1
+    ],
+    [
+      "journeys",
+      39
+    ],
+    [
+      "final-small",
+      9
+    ],
+    [
+      "final-pro",
+      2
+    ],
+    [
+      "final-invite-contrast",
+      1
+    ]
+  ]
+}

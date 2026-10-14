@@ -1,0 +1,44 @@
+[
+  {
+    "label": "F04-privacyDeviceLocationSummary-en.png",
+    "path": "evidence/main/F04-privacyDeviceLocationSummary-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "E1EAAD3D-A730-4193-8ECE-5D2991CB4A76.png"
+  },
+  {
+    "label": "F04-privacyMomentsSummary-en.png",
+    "path": "evidence/main/F04-privacyMomentsSummary-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "CE6F8729-B9EF-4F21-BDA8-5867AF799DE9.png"
+  },
+  {
+    "label": "F04-privacySharedTripRetention-en.png",
+    "path": "evidence/main/F04-privacySharedTripRetention-en.png",
+    "test": "PrototypeUITests/testPrivacySummaryExplainsTravelHistoryAndRetentionInBothLanguages()",
+    "failure": false,
+    "source": "1A761161-5FCD-4823-BBC3-D3617BB312BB.png"
+  },
+  {
+    "label": "F07-no-current-session.png",
+    "path": "evidence/main/F07-no-current-session.png",
+    "test": "PrototypeUITests/testSameCityHistoryWithoutSessionShowsRecentMatchInsteadOfDuration()",
+    "failure": false,
+    "source": "612FFEB8-5E7C-4FF2-8CAB-AE3F75A9B436.png"
+  },
+  {
+    "label": "F07-repeated-visit-en.png",
+    "path": "evidence/main/F07-repeated-visit-en.png",
+    "test": "PrototypeUITests/testSameCityHistoryKeepsPreviousVisitSeparateFromCurrentStay()",
+    "failure": false,
+    "source": "A1F5FA91-069E-477F-BCE5-B842197E8D97.png"
+  },
+  {
+    "label": "F07-repeated-visit-zh-Hans.png",
+    "path": "evidence/main/F07-repeated-visit-zh-Hans.png",
+    "test": "PrototypeUITests/testSameCityHistoryKeepsPreviousVisitSeparateFromCurrentStay()",
+    "failure": false,
+    "source": "DC17FEEA-EFFC-4256-AB4D-6717DE2501F3.png"
+  }
+]

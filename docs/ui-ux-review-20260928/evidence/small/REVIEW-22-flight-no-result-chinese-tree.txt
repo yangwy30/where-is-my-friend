@@ -1,0 +1,174 @@
+Search frame: (232.01600646972656, 296.6493225097656, 100.52000427246094, 36.378692626953125)
+
+Attributes: Application, 0x113edf0c0, pid: 46769, label: 'Across Us'
+Element subtree:
+ →Application, 0x113edf0c0, pid: 46769, label: 'Across Us'
+    Window (Main), 0x113edebc0, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113eded00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113edee40, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113edef80, {{-375.0, -667.0}, {1125.0, 2001.0}}, identifier: 'PopoverDismissRegion', label: '关闭弹出式窗口'
+          Other, 0x113edf200, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113edf340, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x113edf480, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113edf5c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x113edf700, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x113edf840, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x113edf980, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x113edfac0, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x113edfc00, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x113edfd40, {{0.0, 20.0}, {375.0, 54.0}}, identifier: '_TtGC7SwiftUI29PresentationHosting'
+                              Button, 0x113edfe80, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: '行程'
+                              Other, 0x113f2c000, {{218.5, 24.0}, {38.0, 36.0}}, identifier: 'tripOptionsButton', label: 'Trip options'
+                                Other, 0x113f2c140, {{218.5, 24.0}, {38.0, 36.0}}
+                                  Button, 0x113f2c280, {{218.5, 24.0}, {38.0, 36.0}}, identifier: 'tripOptionsButton', label: 'Trip options'
+                                    Button, 0x113f2c3c0, {{218.5, 24.0}, {38.0, 36.0}}
+                                      Image, 0x113f2c500, {{227.5, 40.0}, {20.0, 4.5}}, identifier: 'ellipsis', label: '更多'
+                              Other, 0x113f2c640, {{272.5, 24.0}, {82.5, 36.0}}, identifier: 'addBoardFlightButton', label: 'Add my flight'
+                                Other, 0x113f2c780, {{272.5, 24.0}, {82.5, 36.0}}
+                                  Button, 0x113f2c8c0, {{272.5, 24.0}, {82.5, 36.0}}, identifier: 'addBoardFlightButton', label: 'Add my flight'
+                            Other, 0x113f2ca00, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f2cb40, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x113f2cc80, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x113f2cdc0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    ScrollView, 0x113f2cf00, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'fullTripArrivalBoard'
+                                      Other, 0x113f2d040, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f2d180, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x113f2d2c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x113f2d400, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f2d540, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x113f2d680, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x113f2d7c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f2d900, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x113f2da40, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f2db80, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f2dcc0, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x113f2de00, {{0.0, 74.0}, {375.0, 512.0}}
+                                        StaticText, 0x113f2df40, {{20.0, 82.0}, {188.0, 26.5}}, label: 'New York catch-up'
+                                        StaticText, 0x113f2e080, {{20.0, 113.5}, {106.0, 18.0}}, label: 'New York · JFK'
+                                        StaticText, 0x113f2e1c0, {{20.0, 151.2}, {145.5, 14.5}}, label: '9月27日 – 9月30日, 2026'
+                                        Button, 0x113f2e300, {{306.0, 151.2}, {49.0, 14.5}}, identifier: 'tripPeopleButton', label: '2 人'
+                                          Image, 0x113f2e440, {{306.0, 153.0}, {17.5, 12.0}}, identifier: 'person.2', label: 'person.2'
+                                          StaticText, 0x113f2e580, {{306.0, 151.2}, {49.0, 14.5}}, label: '2 人'
+                                        SegmentedControl, 0x113f2e6c0, {{20.0, 198.5}, {335.0, 31.0}}, identifier: 'tripDirectionPicker'
+                                          Button, 0x113f2e800, {{20.0, 198.5}, {167.0, 32.0}}, label: '去程', Selected
+                                          Button, 0x113f2e940, {{187.0, 198.5}, {168.0, 32.0}}, label: '返程'
+                                        StaticText, 0x113f2ea80, {{20.0, 247.5}, {335.0, 35.5}}, identifier: 'tripArrivalSummary', label: '已添加 0 / 2 人的航班、等待 2 人添加航班'
+                                          StaticText, 0x113f2ebc0, {{20.0, 247.5}, {143.0, 18.0}}, label: '已添加 0 / 2 人的航班'
+                                          StaticText, 0x113f2ed00, {{20.0, 268.5}, {97.5, 14.5}}, label: '等待 2 人添加航班'
+                                          Other, 0x113f2ee40, {{336.0, 262.0}, {19.0, 7.0}}
+                                        StaticText, 0x113f2ef80, {{20.0, 301.0}, {67.5, 20.5}}, label: '抵达安排'
+                                        StaticText, 0x113f2f0c0, {{250.0, 305.5}, {105.0, 14.5}}, label: 'New York 当地时间'
+                                        Other, 0x113f2f200, {{34.0, 347.8}, {307.0, 35.5}}, identifier: 'missingTraveler-20000000-0000-0000-0000-000000000001'
+                                          StaticText, 0x113f2f340, {{34.0, 348.5}, {34.0, 34.0}}, label: 'WY'
+                                          StaticText, 0x113f2f480, {{79.0, 347.8}, {78.5, 18.0}}, label: 'Wang Yang'
+                                          StaticText, 0x113f2f5c0, {{79.0, 368.8}, {95.5, 14.5}}, label: '添加你的去程航班'
+                                          Button, 0x113f2f700, {{283.0, 358.5}, {58.0, 14.5}}, identifier: 'tripNeedsHelpCard', label: 'Add flight'
+                                        Other, 0x113f2f840, {{34.0, 412.0}, {306.0, 35.5}}, identifier: 'missingTraveler-example-mia'
+                                          StaticText, 0x113f2f980, {{34.0, 413.0}, {34.0, 34.0}}, label: 'MC'
+                                          StaticText, 0x113f2fac0, {{79.0, 412.0}, {66.0, 18.0}}, label: 'Mia Chen'
+                                          StaticText, 0x113f2fc00, {{79.0, 433.0}, {72.0, 14.5}}, label: '尚未添加航班'
+                                          Image, 0x113f2fd40, {{328.0, 424.0}, {12.0, 12.0}}, identifier: 'clock', label: '时钟'
+                                        Button, 0x113f2fe80, {{22.0, 489.0}, {114.5, 19.5}}, identifier: 'inviteFriendsButton', label: 'Invite friends'
+                                          Image, 0x113f3c000, {{22.0, 491.0}, {17.5, 17.5}}, identifier: 'person.badge.plus', label: 'person.badge.plus'
+                                          StaticText, 0x113f3c140, {{22.0, 489.0}, {114.5, 19.5}}, label: 'Invite friends'
+                                        StaticText, 0x113f3c280, {{20.0, 539.5}, {48.0, 14.5}}, label: '示例行程'
+                                      Other, 0x113f3c3c0, {{342.0, 74.0}, {30.0, 510.0}}, label: '垂直滚动条, 2页', value: 0%
+                                        Other, 0x113f3c500, {{369.0, 77.0}, {3.0, 502.5}}
+                                      Other, 0x113f3c640, {{342.0, 74.0}, {30.0, 510.0}}, label: '垂直滚动条, 2页', value: 0%
+                                        Other, 0x113f3c780, {{369.0, 77.0}, {3.0, 502.5}}
+                            Other, 0x113f3c8c0, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f3ca00, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f3cb40, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x113f3cc80, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x113f3cdc0, {{0.0, 584.0}, {375.0, 83.0}}, label: '标签页栏'
+                      Other, 0x113f3cf00, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x113f3d040, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x113f3d180, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x113f3d2c0, {{55.0, 588.0}, {94.0, 54.0}}, identifier: 'friendsTab', label: '朋友'
+                            Image, 0x113f3d400, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x113f3d540, {{141.0, 588.0}, {94.0, 54.0}}, identifier: 'tripsTab', label: '行程', Selected
+                            Image, 0x113f3d680, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: '飞行模式'
+                          Button, 0x113f3d7c0, {{227.0, 588.0}, {94.0, 54.0}}, identifier: 'profileTab', label: '你'
+                            Image, 0x113f3d900, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x113f3da40, {{141.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x113f3db80, {{141.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f3dcc0, {{141.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f3de00, {{141.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f3df40, {{141.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f3e080, {{141.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x113f3e1c0, {{141.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f3e300, {{141.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f3e440, {{141.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x113f3e580, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x113f3e6c0, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x113f3e800, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113f3e940, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113f3ea80, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x113f3ebc0, {{0.0, 584.0}, {375.0, 83.0}}
+      Other, 0x113f3ed00, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f3ee40, {{-375.0, -667.0}, {1125.0, 2001.0}}, identifier: 'PopoverDismissRegion', label: '关闭弹出式窗口'
+        Other, 0x113f3ef80, {{8.0, 103.7}, {359.0, 555.3}}
+          Button, 0x113f3f0c0, {{151.1, 99.0}, {72.8, 23.9}}, label: '表单控制柄', value: 已展开
+          Other, 0x113f3f200, {{8.0, 103.7}, {359.0, 555.3}}
+            Other, 0x113f3f340, {{8.0, 103.7}, {359.0, 555.3}}
+              Other, 0x113f3f480, {{8.0, 103.7}, {359.0, 555.3}}
+                Other, 0x113f3f5c0, {{8.0, 103.7}, {359.0, 555.3}}
+                  Other, 0x113f3f700, {{8.0, 103.7}, {359.0, 555.3}}
+                    NavigationBar, 0x113f3f840, {{8.0, 119.1}, {359.0, 51.7}}, identifier: 'Add flight'
+                      Other, 0x113f3f980, {{27.1, 122.9}, {55.5, 34.5}}, label: '取消'
+                        Other, 0x113f3fac0, {{27.1, 122.9}, {55.5, 34.5}}
+                          Button, 0x113f3fc00, {{27.1, 122.9}, {55.5, 34.5}}, label: '取消'
+                      StaticText, 0x113f3fd40, {{150.2, 130.1}, {74.2, 20.1}}, label: 'Add flight'
+                    Other, 0x113f3fe80, {{8.0, 103.7}, {359.0, 555.3}}
+                      Other, 0x113f40000, {{8.0, 103.7}, {359.0, 555.3}}
+                        Other, 0x113f40140, {{8.0, 103.7}, {359.0, 555.3}}
+                          Other, 0x113f40280, {{8.0, 103.7}, {359.0, 555.3}}
+                            ScrollView, 0x113f403c0, {{8.0, 103.7}, {359.0, 555.3}}
+                              Other, 0x113f40500, {{8.0, 103.7}, {359.0, 555.3}}
+                                Other, 0x113f40640, {{8.0, 103.7}, {359.0, 119.5}}
+                              Other, 0x113f40780, {{8.0, 103.7}, {359.0, 555.3}}
+                              Other, 0x113f408c0, {{8.0, 170.8}, {359.0, 371.9}}
+                                StaticText, 0x113f40a00, {{37.7, 193.7}, {23.0, 13.9}}, label: '去程'
+                                StaticText, 0x113f40b40, {{76.9, 192.1}, {128.8, 17.2}}, label: 'New York catch-up'
+                                StaticText, 0x113f40c80, {{257.4, 190.4}, {88.6, 21.1}}, identifier: 'tripSignedInTraveler', label: 'Wang Yang'
+                                StaticText, 0x113f40dc0, {{27.1, 228.7}, {74.2, 12.9}}, identifier: 'tripFlightOwnershipCaption', label: '你的航班 · 演示'
+                                StaticText, 0x113f40f00, {{42.5, 274.2}, {95.3, 12.9}}, label: 'FLIGHT NUMBER'
+                                Image, 0x113f41040, {{44.4, 306.7}, {18.7, 16.8}}, identifier: 'airplane', label: '飞行模式'
+                                TextField, 0x113f41180, {{75.0, 302.9}, {116.8, 24.4}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: CZ 328
+                                Button, 0x113f412c0, {{204.7, 307.7}, {14.4, 14.4}}, identifier: 'xmark.circle.fill', label: '关闭'
+                                Button, 0x113f41400, {{232.0, 296.6}, {100.5, 36.4}}, identifier: 'lookupFlightButton', label: 'Search'
+                                  Image, 0x113f41540, {{248.8, 307.7}, {14.4, 14.4}}, identifier: 'magnifyingglass', label: '搜索'
+                                  StaticText, 0x113f41680, {{269.4, 306.2}, {47.9, 17.2}}, label: 'Search'
+                                StaticText, 0x113f417c0, {{27.1, 365.6}, {102.0, 12.9}}, label: 'DEPARTURE DATE'
+                                StaticText, 0x113f41900, {{208.6, 365.6}, {139.3, 12.9}}, label: 'Departure airport local date'
+                                Button, 0x113f41a40, {{27.1, 386.2}, {320.7, 45.0}}, identifier: 'tripFlightDatePicker', label: '周日, 9月 27'
+                                  Image, 0x113f41b80, {{42.5, 401.0}, {16.8, 15.3}}, identifier: 'calendar', label: '日历'
+                                  StaticText, 0x113f41cc0, {{72.6, 400.0}, {81.9, 17.2}}, label: '周日, 9月 27'
+                                  Image, 0x113f41e00, {{327.7, 403.4}, {6.2, 10.5}}, identifier: 'chevron.right', label: '前进'
+                                Image, 0x113f41f40, {{40.1, 460.8}, {16.8, 15.3}}, identifier: 'exclamationmark.triangle.fill', label: '警告'
+                                StaticText, 0x113f42080, {{67.8, 459.9}, {200.6, 29.2}}, label: 'No flight routes found for CZ 328 on 2026-09-27.'
+                              Other, 0x113f421c0, {{335.4, 170.8}, {28.7, 405.9}}, label: '垂直滚动条, 1页', value: 0%
+                                Other, 0x113f42300, {{361.3, 283.7}, {2.9, 344.6}}
+                              Other, 0x113f42440, {{335.4, 170.8}, {28.7, 405.9}}, label: '垂直滚动条, 1页', value: 0%
+                                Other, 0x113f42580, {{361.3, 283.7}, {2.9, 344.6}}
+                            Button, 0x113f426c0, {{27.1, 593.9}, {320.7, 49.8}}, identifier: 'confirmAddTripFlightButton', label: 'Add my flight'
+                    Other, 0x113f42800, {{8.0, 103.7}, {359.0, 555.3}}
+                      Other, 0x113f42940, {{8.0, 103.7}, {359.0, 555.3}}
+          Other, 0x113f42a80, {{8.0, 103.7}, {359.0, 555.3}}
+            Other, 0x113f42bc0, {{8.0, 103.7}, {359.0, 555.3}}
+              Other, 0x113f42d00, {{8.0, 103.7}, {359.0, 555.3}}
+                Other, 0x113f42e40, {{8.0, 103.7}, {359.0, 555.3}}
+                  Other, 0x113f42f80, {{8.0, 103.7}, {359.0, 555.3}}
+                    Other, 0x113f430c0, {{8.0, 103.7}, {359.0, 555.3}}
+                Other, 0x113f43200, {{8.0, 103.7}, {359.0, 555.3}}
+                  Other, 0x113f43340, {{8.0, 103.7}, {359.0, 555.3}}
+    Window, 0x113f43480, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f435c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f43700, {{0.0, 0.0}, {375.0, 667.0}}
+Path to element:
+ →Application, 0x113edf0c0, pid: 46769, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f43840, pid: 46769, label: 'Across Us'
+  }

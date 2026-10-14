@@ -1,0 +1,62 @@
+[
+  {
+    "file": "W2-F22-flight-no-result-zh.png",
+    "test": "PrototypeUITests/testChineseFlightStatesAndGeneratedTripNameAreLocalized()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F22-generated-name-zh.png",
+    "test": "PrototypeUITests/testChineseFlightStatesAndGeneratedTripNameAreLocalized()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F22-onboarding-zh.png",
+    "test": "PrototypeUITests/testChineseOnboardingActionLabels()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-date-range-large-text.png",
+    "test": "PrototypeUITests/testDateRangeTouchTargetsAtLargestText()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-saved-audience-zh-Hans.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-default-all-friends-zh-Hans.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F19-compact-feed-zh-Hans.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-saved-audience-en.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-default-all-friends-en.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F19-compact-feed-en.png",
+    "test": "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F21-system-home.png",
+    "test": "PrototypeUITests/testSystemAppearanceSelectionPersistsAcrossLaunch()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F21-system-appearance.png",
+    "test": "PrototypeUITests/testSystemAppearanceSelectionPersistsAcrossLaunch()",
+    "device": "Across Us Onboarding QA — SE"
+  }
+]

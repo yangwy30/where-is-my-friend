@@ -1,0 +1,18 @@
+{
+  "archive": "/Users/wangyang/.gemini/antigravity/where_is_my_friend/build/release-1.0.6-28/AcrossUs-1.0.6-28.xcarchive",
+  "bundles": [
+    {
+      "bundle": "com.yangwy30.whereismyfriend",
+      "version": "1.0.6",
+      "build": "28"
+    },
+    {
+      "bundle": "com.yangwy30.whereismyfriend.widget",
+      "version": "1.0.6",
+      "build": "28"
+    }
+  ],
+  "sourceUnchanged": true,
+  "distributionPackagePending": false,
+  "signingNote": "Intermediate archive retained the original project entitlements with an ad-hoc signature; Xcode then applied valid Apple Distribution signing. Final IPA entitlements were independently verified."
+}

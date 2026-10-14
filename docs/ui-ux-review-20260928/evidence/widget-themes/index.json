@@ -1,0 +1,86 @@
+[
+  {
+    "label": "widget-Friends-Large-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1A9F9123-50BC-4B6B-B095-CA1BED9F577E.png"
+  },
+  {
+    "label": "widget-Friends-Large-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "D64A65BD-D0D5-4501-813F-412D5015439C.png"
+  },
+  {
+    "label": "widget-Friends-Medium-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "A403F52D-CBE6-49DE-9B4F-D3D7C31482DC.png"
+  },
+  {
+    "label": "widget-Friends-Medium-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "5818B1BA-9160-4F35-81BB-AAFF0FEC7D62.png"
+  },
+  {
+    "label": "widget-Friends-Small-Dark.png",
+    "path": "evidence/widget-themes/widget-Friends-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "19A66E3E-75CE-4013-8AE4-294F9B798663.png"
+  },
+  {
+    "label": "widget-Friends-Small-Light.png",
+    "path": "evidence/widget-themes/widget-Friends-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "B5AAFA71-7AF9-48C2-A374-3EC4A58F6B83.png"
+  },
+  {
+    "label": "widget-Here together-Large-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Large-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "ADA7F749-5B27-4160-B46B-E76FF524E8FE.png"
+  },
+  {
+    "label": "widget-Here together-Large-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Large-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "DA4C99C0-78CD-4A41-892C-AF87B78BDA7A.png"
+  },
+  {
+    "label": "widget-Here together-Medium-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Medium-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "85F999D2-EEDA-42C3-89BA-7C3FA6CF421D.png"
+  },
+  {
+    "label": "widget-Here together-Medium-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Medium-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1A1BC9BC-F6CF-45BE-97A9-4D6C1E5B0300.png"
+  },
+  {
+    "label": "widget-Here together-Small-Dark.png",
+    "path": "evidence/widget-themes/widget-Here-together-Small-Dark.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "78E9C1D2-0305-4AA4-8F6A-45B499265783.png"
+  },
+  {
+    "label": "widget-Here together-Small-Light.png",
+    "path": "evidence/widget-themes/widget-Here-together-Small-Light.png",
+    "test": "PrototypeUITests/testCaptureRefinedWidgetLayouts()",
+    "failure": false,
+    "source": "1DCF1ADD-E4F3-4340-B271-704CA4C0D36D.png"
+  }
+]

@@ -1,0 +1,17 @@
+UI 与交互评审修复 — 1.0.6（27）
+
+请重点体验：
+• 取消 Apple 登录后返回登录页，不应出现失败提示。
+• 搜索 Tokyo, Japan 或“东京 日本”，选择城市并保存出行计划。
+• 收到好友请求时，打开添加好友页面应先看到待处理请求；接受或拒绝后请求应移除。
+• 点击好友 Widget 的具体朋友，应打开对应好友详情。也请从后台及完全关闭 App 后尝试；隐藏身份模式继续使用通用入口。
+• 设置中的通知页集中提供好友邀请、旅行邀请、同城提醒、出行计划重叠、航班与行程提醒。修改开关后重进，选择应保留。
+• iOS 通知关闭时应显示明确说明和系统设置入口；检查中文及大字号显示。
+
+English
+
+UI and interaction fixes — build 27.
+
+Please test cancelling Apple sign-in without a failure alert; searching for Tokyo and saving a travel plan; incoming friend requests appearing first and disappearing after a response; and friend widgets opening the selected friend, including from the background and a cold launch. Hidden identities retain a generic destination.
+
+Notification settings now groups friend invitations, trip invitations, same-city alerts, plan overlaps, and flight/planning alerts. Check that saved preferences persist and that disabled iOS notifications show a clear recovery option. Please also check Chinese text and larger accessibility text sizes.

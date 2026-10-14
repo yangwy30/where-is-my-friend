@@ -1,0 +1,119 @@
+
+
+Attributes: Application, 0x113f07e80, pid: 46654, label: 'Across Us'
+Element subtree:
+ →Application, 0x113f07e80, pid: 46654, label: 'Across Us'
+    Window (Main), 0x113f07980, {{0.0, 0.0}, {375.0, 667.0}}
+      Other, 0x113f075c0, {{0.0, 0.0}, {375.0, 667.0}}
+        Other, 0x113f06f80, {{0.0, 0.0}, {375.0, 667.0}}
+          Other, 0x113f07ac0, {{0.0, 0.0}, {375.0, 667.0}}
+            Other, 0x113f07200, {{0.0, 0.0}, {375.0, 667.0}}
+              Other, 0x113f07700, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f06bc0, {{0.0, 0.0}, {375.0, 667.0}}
+                  Other, 0x113f07480, {{0.0, 0.0}, {375.0, 667.0}}
+                    Other, 0x113f07840, {{0.0, 0.0}, {375.0, 667.0}}
+                      Other, 0x113f07c00, {{0.0, 0.0}, {375.0, 667.0}}
+                        Other, 0x113f070c0, {{0.0, 0.0}, {375.0, 667.0}}
+                          Other, 0x113f06e40, {{0.0, 0.0}, {375.0, 667.0}}
+                            NavigationBar, 0x113f07340, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Friend plans'
+                              Button, 0x113f06940, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Back'
+                              StaticText, 0x113f06800, {{138.5, 31.5}, {97.5, 21.0}}, label: 'Friend plans'
+                              Other, 0x113f06a80, {{274.5, 24.0}, {80.5, 36.0}}, identifier: 'manageOwnTravelPlans', label: 'My plans'
+                                Other, 0x113f06d00, {{274.5, 24.0}, {80.5, 36.0}}
+                                  Button, 0x113f07d40, {{274.5, 24.0}, {80.5, 36.0}}, identifier: 'manageOwnTravelPlans', label: 'My plans'
+                            Other, 0x113f08000, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f08140, {{0.0, 0.0}, {375.0, 667.0}}
+                                Other, 0x113f08280, {{0.0, 0.0}, {375.0, 667.0}}
+                                  Other, 0x113f083c0, {{0.0, 0.0}, {375.0, 667.0}}
+                                    Other, 0x113f08500, {{-122.5, -101.5}, {640.0, 945.0}}, identifier: 'friendPlansScreen'
+                                    ScrollView, 0x113f08640, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'friendPlansScreen'
+                                      Other, 0x113f08780, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f088c0, {{0.0, 0.0}, {375.0, 128.8}}
+                                        Other, 0x113f08a00, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x113f08b40, {{0.0, 0.0}, {375.0, 667.0}}
+                                        Other, 0x113f08c80, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Image, 0x113f08dc0, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay'
+                                          Other, 0x113f08f00, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f09040, {{0.0, 519.2}, {375.0, 147.8}}
+                                          Other, 0x113f09180, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f092c0, {{0.0, 519.2}, {375.0, 147.8}}
+                                            Other, 0x113f09400, {{0.0, 519.2}, {375.0, 147.8}}
+                                      Other, 0x113f09540, {{0.0, 74.0}, {375.0, 794.0}}
+                                        Other, 0x113f09680, {{20.0, 94.0}, {335.0, 701.0}}
+                                          StaticText, 0x113f097c0, {{20.0, 94.0}, {227.0, 82.0}}, label: 'Where are friends going?'
+                                          StaticText, 0x113f09900, {{20.0, 184.0}, {243.0, 18.0}}, label: 'See where your friends are headed.'
+                                          Button, 0x113f09a40, {{20.0, 222.0}, {335.0, 72.5}}, identifier: 'addMyFriendPlan', label: 'Add my plan, Add a city and your dates.'
+                                            Image, 0x113f09b80, {{40.5, 246.5}, {27.5, 23.5}}, identifier: 'calendar.badge.plus', label: 'Add To Calendar'
+                                            StaticText, 0x113f09cc0, {{76.5, 240.0}, {88.5, 18.0}}, label: 'Add my plan'
+                                            StaticText, 0x113f09e00, {{76.5, 262.0}, {147.5, 14.5}}, label: 'Add a city and your dates.'
+                                            Image, 0x113f09f40, {{330.5, 253.0}, {6.0, 10.5}}, identifier: 'chevron.right', label: 'Forward'
+                                          StaticText, 0x113f0a080, {{20.0, 314.5}, {194.5, 20.5}}, label: 'Friends’ upcoming cities'
+                                          StaticText, 0x113f0a1c0, {{282.0, 317.5}, {73.0, 14.5}}, label: 'By start date'
+                                          StaticText, 0x113f0a300, {{38.0, 373.0}, {28.0, 28.0}}, label: 'LZ'
+                                          StaticText, 0x113f0a440, {{74.0, 378.0}, {60.5, 18.0}}, label: 'Lin Zhao'
+                                          Button, 0x113f0a580, {{38.0, 413.0}, {299.0, 82.0}}, identifier: 'friendPlan-A7150000-0000-0000-0000-000000000001', label: 'Tokyo, Sep 29 – Oct 6, 2026, Tokyo'
+                                            StaticText, 0x113f0a6c0, {{38.0, 428.2}, {59.5, 26.5}}, label: 'Tokyo'
+                                            StaticText, 0x113f0a800, {{38.0, 461.8}, {147.5, 18.0}}, label: 'Sep 29 – Oct 6, 2026'
+                                            Other, 0x113f0a940, {{255.0, 413.0}, {82.0, 82.0}}, label: 'Tokyo'
+                                              Image, 0x113f0aa80, {{255.0, 413.0}, {82.0, 82.0}}
+                                          Button, 0x113f0abc0, {{39.5, 533.7}, {109.0, 14.8}}, identifier: 'copyFriendPlan-A7150000-0000-0000-0000-000000000001', label: 'I’ll be there too'
+                                            Image, 0x113f0ad00, {{39.5, 535.5}, {15.5, 13.0}}, identifier: 'calendar.badge.plus', label: 'Add To Calendar'
+                                            StaticText, 0x113f0ae40, {{39.5, 533.7}, {109.0, 14.8}}, label: 'I’ll be there too'
+                                          Button, 0x113f0af80, {{168.0, 534.0}, {75.5, 14.5}}, label: 'Say hello'
+                                            Image, 0x113f0b0c0, {{168.0, 535.5}, {13.5, 12.5}}, identifier: 'bubble.left', label: 'Comment Left'
+                                            StaticText, 0x113f0b200, {{168.0, 534.0}, {75.5, 14.5}}, label: 'Say hello'
+                                          StaticText, 0x113f0b340, {{38.0, 619.5}, {28.0, 28.0}}, label: 'CM'
+                                          StaticText, 0x113f0b480, {{74.0, 624.5}, {90.0, 18.0}}, label: 'Chloe Martin'
+                                          Button, 0x113f0b5c0, {{38.0, 659.5}, {299.0, 82.0}}, identifier: 'friendPlan-A7150000-0000-0000-0000-000000000002', label: 'Paris, Sep 29 – Oct 6, 2026, Paris'
+                                            StaticText, 0x113f0b700, {{38.0, 674.8}, {49.5, 26.5}}, label: 'Paris'
+                                            StaticText, 0x113f0b840, {{38.0, 708.2}, {147.5, 18.0}}, label: 'Sep 29 – Oct 6, 2026'
+                                            Other, 0x113f0b980, {{255.0, 659.5}, {82.0, 82.0}}, label: 'Paris'
+                                              Image, 0x113f0bac0, {{255.0, 659.5}, {82.0, 82.0}}
+                                          Button, 0x113f0bc00, {{39.5, 780.2}, {109.0, 14.8}}, identifier: 'copyFriendPlan-A7150000-0000-0000-0000-000000000002', label: 'I’ll be there too'
+                                            Image, 0x113f0bd40, {{39.5, 782.0}, {15.5, 13.0}}, identifier: 'calendar.badge.plus', label: 'Add To Calendar'
+                                            StaticText, 0x113f0be80, {{39.5, 780.2}, {109.0, 14.8}}, label: 'I’ll be there too'
+                                          Button, 0x113f24000, {{168.0, 780.5}, {75.5, 14.5}}, label: 'Say hello'
+                                            Image, 0x113f24140, {{168.0, 782.0}, {13.5, 12.5}}, identifier: 'bubble.left', label: 'Comment Left'
+                                            StaticText, 0x113f24280, {{168.0, 780.5}, {75.5, 14.5}}, label: 'Say hello'
+                                      Other, 0x113f243c0, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x113f24500, {{369.0, 222.0}, {3.0, 359.0}}
+                                      Other, 0x113f24640, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 2 pages', value: 0%
+                                        Other, 0x113f24780, {{369.0, 222.0}, {3.0, 359.0}}
+                            Other, 0x113f248c0, {{0.0, 0.0}, {375.0, 667.0}}
+                              Other, 0x113f24a00, {{0.0, 0.0}, {375.0, 667.0}}
+                Other, 0x113f24b40, {{0.0, 584.0}, {375.0, 83.0}}
+                  Other, 0x113f24c80, {{0.0, 0.0}, {375.0, 667.0}}
+                    TabBar, 0x113f24dc0, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar'
+                      Other, 0x113f24f00, {{51.0, 584.0}, {274.0, 62.0}}
+                        Other, 0x113f25040, {{51.0, 584.0}, {94.0, 54.0}}
+                        Other, 0x113f25180, {{51.0, 584.0}, {274.0, 62.0}}
+                          Button, 0x113f252c0, {{55.0, 588.0}, {94.0, 54.0}}, label: 'Friends', Selected
+                            Image, 0x113f25400, {{84.0, 596.0}, {37.0, 26.0}}, identifier: 'person.2.fill', label: 'person.2.fill'
+                          Button, 0x113f25540, {{141.0, 588.0}, {94.0, 54.0}}, label: 'Trips'
+                            Image, 0x113f25680, {{173.0, 594.5}, {29.5, 27.0}}, identifier: 'airplane', label: 'airplane mode'
+                          Button, 0x113f257c0, {{227.0, 588.0}, {94.0, 54.0}}, label: 'You'
+                            Image, 0x113f25900, {{261.0, 596.0}, {25.5, 24.5}}, identifier: 'person.fill', label: 'person.fill'
+                        Other, 0x113f25a40, {{55.0, 588.0}, {94.0, 54.0}}
+                          Other, 0x113f25b80, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f25cc0, {{55.0, 588.0}, {94.0, 54.0}}
+                            Other, 0x113f25e00, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f25f40, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f26080, {{55.0, 588.0}, {94.0, 54.0}}
+                                  Other, 0x113f261c0, {{55.0, 588.0}, {94.0, 54.0}}
+                                Other, 0x113f26300, {{55.0, 588.0}, {94.0, 54.0}}
+                              Other, 0x113f26440, {{55.0, 588.0}, {94.0, 54.0}}
+                  Other, 0x113f26580, {{0.0, 584.0}, {375.0, 83.0}}
+                    Other, 0x113f266c0, {{0.0, 584.0}, {375.0, 83.0}}
+                      Other, 0x113f26800, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113f26940, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113f26a80, {{0.0, 584.0}, {375.0, 83.0}}
+                            Other, 0x113f26bc0, {{0.0, 584.0}, {375.0, 83.0}}
+                        Other, 0x113f26d00, {{0.0, 584.0}, {375.0, 83.0}}
+                          Other, 0x113f26e40, {{0.0, 584.0}, {375.0, 83.0}}
+Path to element:
+ →Application, 0x113f07e80, pid: 46654, label: 'Across Us'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f26f80, pid: 46654, label: 'Across Us'
+  }

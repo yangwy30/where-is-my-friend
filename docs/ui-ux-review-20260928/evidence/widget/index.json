@@ -1,0 +1,58 @@
+[
+  {
+    "label": "widget-Friends-Empty.png",
+    "path": "evidence/widget/widget-Friends-Empty.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "2A0279F7-A45E-46D1-AD50-8C45CACE1B78.png"
+  },
+  {
+    "label": "widget-Friends-HideAll.png",
+    "path": "evidence/widget/widget-Friends-HideAll.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "D66C0E4F-E136-4F2E-926D-A484E76B7C24.png"
+  },
+  {
+    "label": "widget-Friends-HideNames.png",
+    "path": "evidence/widget/widget-Friends-HideNames.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "C9B77345-ED90-4F00-B38E-AA20681B8DAE.png"
+  },
+  {
+    "label": "widget-Friends-LongCity.png",
+    "path": "evidence/widget/widget-Friends-LongCity.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "4FAB29CF-D3C7-4138-AA8C-0AA2D37B2354.png"
+  },
+  {
+    "label": "widget-Here together-Empty.png",
+    "path": "evidence/widget/widget-Here-together-Empty.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "71EEE22A-43CC-4AD9-82E5-BC6B05D261BD.png"
+  },
+  {
+    "label": "widget-Here together-HideAll.png",
+    "path": "evidence/widget/widget-Here-together-HideAll.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "53598438-51DB-4548-A9AC-B70D325F1C29.png"
+  },
+  {
+    "label": "widget-Here together-HideNames.png",
+    "path": "evidence/widget/widget-Here-together-HideNames.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "BE4340A3-261F-4BE4-8336-7146AEDD3EBA.png"
+  },
+  {
+    "label": "widget-Here together-LongCity.png",
+    "path": "evidence/widget/widget-Here-together-LongCity.png",
+    "test": "PrototypeUITests/testReviewWidgetStatesAfterPrivacyReset()",
+    "failure": false,
+    "source": "E593590D-F52E-4DF5-8B8F-3EA015043BC5.png"
+  }
+]

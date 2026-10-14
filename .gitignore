@@ -35,3 +35,7 @@ Config/Staging.local.xcconfig
 
 # Operational monitor credentials and private deployment backups.
 .ops-private/
+
+# UI review and fix-wave evidence captures stay local; their README/JSON summaries are versioned.
+docs/ui-*/**/*.png
+docs/ui-*/**/*.jpg

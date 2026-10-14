@@ -1,0 +1,22 @@
+[
+  {
+    "file": "W2-F20-native-calendar.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-flight-large-text.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-number-target.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  },
+  {
+    "file": "W2-F20-flight-context.png",
+    "test": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+    "device": "Across Us Onboarding QA — SE"
+  }
+]

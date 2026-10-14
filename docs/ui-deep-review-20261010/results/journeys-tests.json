@@ -1,0 +1,3003 @@
+{
+  "devices" : [
+    {
+      "architecture" : "arm64",
+      "deviceId" : "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+      "deviceName" : "Across Us iOS 27 UI QA",
+      "modelName" : "iPhone 18 Pro",
+      "osBuildNumber" : "24A434",
+      "osVersion" : "27.0",
+      "platform" : "iOS Simulator"
+    }
+  ],
+  "testNodes" : [
+    {
+      "children" : [
+        {
+          "children" : [
+            {
+              "children" : [
+                {
+                  "duration" : "0.005s",
+                  "durationInSeconds" : 0.005015015602111816,
+                  "name" : "testAccentForegroundsMeetTextContrastInBothAppearances()",
+                  "nodeIdentifier" : "AppAccentContrastTests/testAccentForegroundsMeetTextContrastInBothAppearances()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppAccentContrastTests/testAccentForegroundsMeetTextContrastInBothAppearances",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "AppAccentContrastTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppAccentContrastTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.047s",
+                  "durationInSeconds" : 0.04654896259307861,
+                  "name" : "testAccountDeletionFailureIsVisibleAndAllowsRetry()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testAccountDeletionFailureIsVisibleAndAllowsRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testAccountDeletionFailureIsVisibleAndAllowsRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.21416401863098145,
+                  "name" : "testAuthenticationDuringRefreshStillLoadsTravelOverview()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testAuthenticationDuringRefreshStillLoadsTravelOverview()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testAuthenticationDuringRefreshStillLoadsTravelOverview",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.023s",
+                  "durationInSeconds" : 0.022782087326049805,
+                  "name" : "testAutomaticCityPreservesObservationDateAndCannotOverwriteManualOrOtherAccount()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testAutomaticCityPreservesObservationDateAndCannotOverwriteManualOrOtherAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testAutomaticCityPreservesObservationDateAndCannotOverwriteManualOrOtherAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.4s",
+                  "durationInSeconds" : 0.39845895767211914,
+                  "name" : "testBackgroundRefreshFailureDoesNotPresentAnAlert()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testBackgroundRefreshFailureDoesNotPresentAnAlert()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testBackgroundRefreshFailureDoesNotPresentAnAlert",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.4s",
+                  "durationInSeconds" : 0.40477097034454346,
+                  "name" : "testConcurrentRefreshesAreCoalesced()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testConcurrentRefreshesAreCoalesced()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testConcurrentRefreshesAreCoalesced",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.14s",
+                  "durationInSeconds" : 0.1355201005935669,
+                  "name" : "testConcurrentSharingControlsCannotRestorePausedCity()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testConcurrentSharingControlsCannotRestorePausedCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testConcurrentSharingControlsCannotRestorePausedCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.2089369297027588,
+                  "name" : "testFailedAutomaticReadsAreNotCached()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testFailedAutomaticReadsAreNotCached()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testFailedAutomaticReadsAreNotCached",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.051s",
+                  "durationInSeconds" : 0.05066394805908203,
+                  "name" : "testFriendNotificationLinkIsRetainedUntilSignInAndClearsOnSignOut()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testFriendNotificationLinkIsRetainedUntilSignInAndClearsOnSignOut()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testFriendNotificationLinkIsRetainedUntilSignInAndClearsOnSignOut",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.41s",
+                  "durationInSeconds" : 0.40739405155181885,
+                  "name" : "testFriendRequestResponseIsNotDroppedDuringRefresh()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testFriendRequestResponseIsNotDroppedDuringRefresh()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testFriendRequestResponseIsNotDroppedDuringRefresh",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.041s",
+                  "durationInSeconds" : 0.04098010063171387,
+                  "name" : "testInvitationForegroundRefreshDoesNotOpenAnUnrequestedSheet()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testInvitationForegroundRefreshDoesNotOpenAnUnrequestedSheet()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testInvitationForegroundRefreshDoesNotOpenAnUnrequestedSheet",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.41s",
+                  "durationInSeconds" : 0.4069420099258423,
+                  "name" : "testLocationUpdateWaitsForInFlightRefreshInsteadOfBeingDropped()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testLocationUpdateWaitsForInFlightRefreshInsteadOfBeingDropped()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testLocationUpdateWaitsForInFlightRefreshInsteadOfBeingDropped",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.4s",
+                  "durationInSeconds" : 0.4025259017944336,
+                  "name" : "testPendingManualCityWinsOverAutomaticResultDuringRefresh()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testPendingManualCityWinsOverAutomaticResultDuringRefresh()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testPendingManualCityWinsOverAutomaticResultDuringRefresh",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.13s",
+                  "durationInSeconds" : 0.13420796394348145,
+                  "name" : "testPerFriendSharingCannotBeRestoredByConcurrentAlertToggle()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testPerFriendSharingCannotBeRestoredByConcurrentAlertToggle()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testPerFriendSharingCannotBeRestoredByConcurrentAlertToggle",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0095s",
+                  "durationInSeconds" : 0.009527087211608887,
+                  "name" : "testProfileConflictAndOfflineErrorsStayInEditorAndReleaseSavingState()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testProfileConflictAndOfflineErrorsStayInEditorAndReleaseSavingState()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testProfileConflictAndOfflineErrorsStayInEditorAndReleaseSavingState",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.43s",
+                  "durationInSeconds" : 0.4288979768753052,
+                  "name" : "testProfileSaveIsNotDiscardedByARefreshStartedWhileSaving()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testProfileSaveIsNotDiscardedByARefreshStartedWhileSaving()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testProfileSaveIsNotDiscardedByARefreshStartedWhileSaving",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.26s",
+                  "durationInSeconds" : 0.25779998302459717,
+                  "name" : "testProfileTimeoutClearsSpinnerAndIgnoresLateResultThenAllowsRetry()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testProfileTimeoutClearsSpinnerAndIgnoresLateResultThenAllowsRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testProfileTimeoutClearsSpinnerAndIgnoresLateResultThenAllowsRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.10943996906280518,
+                  "name" : "testPushRegistrationCompletionCannotRestoreStateAfterSignOut()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testPushRegistrationCompletionCannotRestoreStateAfterSignOut()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testPushRegistrationCompletionCannotRestoreStateAfterSignOut",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.16s",
+                  "durationInSeconds" : 0.1615070104598999,
+                  "name" : "testPushRegistrationTimeoutIsRetryableAndLateResultIsIgnored()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testPushRegistrationTimeoutIsRetryableAndLateResultIsIgnored()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testPushRegistrationTimeoutIsRetryableAndLateResultIsIgnored",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.41s",
+                  "durationInSeconds" : 0.41339099407196045,
+                  "name" : "testRecentAutomaticReadsReuseSuccessfulResultButManualRefreshFetches()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testRecentAutomaticReadsReuseSuccessfulResultButManualRefreshFetches()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testRecentAutomaticReadsReuseSuccessfulResultButManualRefreshFetches",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.41s",
+                  "durationInSeconds" : 0.4067649841308594,
+                  "name" : "testRecentHomeSnapshotDoesNotSuppressFailedPlanRetry()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testRecentHomeSnapshotDoesNotSuppressFailedPlanRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testRecentHomeSnapshotDoesNotSuppressFailedPlanRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11201298236846924,
+                  "name" : "testRefreshAndProfileSaveCannotSupersedeAccountDeletion()",
+                  "nodeIdentifier" : "AppStoreReliabilityTests/testRefreshAndProfileSaveCannotSupersedeAccountDeletion()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests/testRefreshAndProfileSaveCannotSupersedeAccountDeletion",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "AppStoreReliabilityTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/AppStoreReliabilityTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0005s",
+                  "durationInSeconds" : 0.0004950761795043945,
+                  "name" : "testReleaseBackendRemainsAvailable()",
+                  "nodeIdentifier" : "BackendEnvironmentIsolationTests/testReleaseBackendRemainsAvailable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/BackendEnvironmentIsolationTests/testReleaseBackendRemainsAvailable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00056s",
+                  "durationInSeconds" : 0.0005559921264648438,
+                  "name" : "testStagingRejectsLiveAndMismatchedBackends()",
+                  "nodeIdentifier" : "BackendEnvironmentIsolationTests/testStagingRejectsLiveAndMismatchedBackends()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/BackendEnvironmentIsolationTests/testStagingRejectsLiveAndMismatchedBackends",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "BackendEnvironmentIsolationTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/BackendEnvironmentIsolationTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00058s",
+                  "durationInSeconds" : 0.0005779266357421875,
+                  "name" : "testHiddenFriendLocationDoesNotLeakThroughFullDetailLabel()",
+                  "nodeIdentifier" : "CityLocationLabelTests/testHiddenFriendLocationDoesNotLeakThroughFullDetailLabel()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityLocationLabelTests/testHiddenFriendLocationDoesNotLeakThroughFullDetailLabel",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0084s",
+                  "durationInSeconds" : 0.008427023887634277,
+                  "name" : "testMissingAndForeignRegionsAreNotGuessedOrConvertedToUSStates()",
+                  "nodeIdentifier" : "CityLocationLabelTests/testMissingAndForeignRegionsAreNotGuessedOrConvertedToUSStates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityLocationLabelTests/testMissingAndForeignRegionsAreNotGuessedOrConvertedToUSStates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005320310592651367,
+                  "name" : "testUSStateNamesAndCodesShareCompactAndFullLabels()",
+                  "nodeIdentifier" : "CityLocationLabelTests/testUSStateNamesAndCodesShareCompactAndFullLabels()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityLocationLabelTests/testUSStateNamesAndCodesShareCompactAndFullLabels",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "CityLocationLabelTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityLocationLabelTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0015s",
+                  "durationInSeconds" : 0.0015399456024169922,
+                  "name" : "testArtworkAliasesDoNotBecomeGeographicIdentity()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testArtworkAliasesDoNotBecomeGeographicIdentity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testArtworkAliasesDoNotBecomeGeographicIdentity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.14s",
+                  "durationInSeconds" : 0.13855397701263428,
+                  "name" : "testBackgroundExpiryRejectsLateGeocoderAndReleasesExecutionTime()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testBackgroundExpiryRejectsLateGeocoderAndReleasesExecutionTime()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testBackgroundExpiryRejectsLateGeocoderAndReleasesExecutionTime",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.2s",
+                  "durationInSeconds" : 0.20407402515411377,
+                  "name" : "testColdBackgroundLocationUploadsWithoutCreatingARootView()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testColdBackgroundLocationUploadsWithoutCreatingARootView()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testColdBackgroundLocationUploadsWithoutCreatingARootView",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11218094825744629,
+                  "name" : "testFailedGeocodeCanRetrySameValidSampleWithoutInventingFreshness()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testFailedGeocodeCanRetrySameValidSampleWithoutInventingFreshness()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testFailedGeocodeCanRetrySameValidSampleWithoutInventingFreshness",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.002s",
+                  "durationInSeconds" : 0.0019789934158325195,
+                  "name" : "testForegroundRefreshAndBackgroundConsent()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testForegroundRefreshAndBackgroundConsent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testForegroundRefreshAndBackgroundConsent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.14s",
+                  "durationInSeconds" : 0.1359570026397705,
+                  "name" : "testLateGeocodeCannotReplaceNewerCityOrPublishAfterAccountSwitch()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testLateGeocodeCannotReplaceNewerCityOrPublishAfterAccountSwitch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testLateGeocodeCannotReplaceNewerCityOrPublishAfterAccountSwitch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00067s",
+                  "durationInSeconds" : 0.0006670951843261719,
+                  "name" : "testManualCityAndPausedSharingDisableAutomaticUpdates()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testManualCityAndPausedSharingDisableAutomaticUpdates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testManualCityAndPausedSharingDisableAutomaticUpdates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.067s",
+                  "durationInSeconds" : 0.06650292873382568,
+                  "name" : "testOneShotTimeoutClearsProgress()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testOneShotTimeoutClearsProgress()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testOneShotTimeoutClearsProgress",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00071s",
+                  "durationInSeconds" : 0.0007129907608032227,
+                  "name" : "testRejectsCachedFutureInvalidAndOutOfOrderLocations()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testRejectsCachedFutureInvalidAndOutOfOrderLocations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testRejectsCachedFutureInvalidAndOutOfOrderLocations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00065s",
+                  "durationInSeconds" : 0.0006480216979980469,
+                  "name" : "testRepeatedCityObservationsHaveDistinctFreshness()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testRepeatedCityObservationsHaveDistinctFreshness()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testRepeatedCityObservationsHaveDistinctFreshness",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.097s",
+                  "durationInSeconds" : 0.09690892696380615,
+                  "name" : "testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00099s",
+                  "durationInSeconds" : 0.000986933708190918,
+                  "name" : "testStaleLocationDoesNotManufactureDepartureAndReturn()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testStaleLocationDoesNotManufactureDepartureAndReturn()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testStaleLocationDoesNotManufactureDepartureAndReturn",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.046s",
+                  "durationInSeconds" : 0.04551208019256592,
+                  "name" : "testStateWithoutLocalityIsNotPublishedAsACity()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testStateWithoutLocalityIsNotPublishedAsACity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testStateWithoutLocalityIsNotPublishedAsACity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00063s",
+                  "durationInSeconds" : 0.0006310939788818359,
+                  "name" : "testStrictPresenceIdentityAndUnifiedFreshness()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testStrictPresenceIdentityAndUnifiedFreshness()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testStrictPresenceIdentityAndUnifiedFreshness",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.041s",
+                  "durationInSeconds" : 0.04146003723144531,
+                  "name" : "testWhileUsingDoesNotPretendBackgroundMonitoringIsRunning()",
+                  "nodeIdentifier" : "CityRefreshRegressionTests/testWhileUsingDoesNotPretendBackgroundMonitoringIsRunning()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests/testWhileUsingDoesNotPretendBackgroundMonitoringIsRunning",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "CityRefreshRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRefreshRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.01s",
+                  "durationInSeconds" : 0.010326981544494629,
+                  "name" : "testBundledCatalogIsSharedAndEveryReviewedMemberResolves()",
+                  "nodeIdentifier" : "CityRegionCatalogTests/testBundledCatalogIsSharedAndEveryReviewedMemberResolves()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRegionCatalogTests/testBundledCatalogIsSharedAndEveryReviewedMemberResolves",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0019s",
+                  "durationInSeconds" : 0.0019289255142211914,
+                  "name" : "testLegacySnapshotAndPendingUploadDecodeWithoutState()",
+                  "nodeIdentifier" : "CityRegionCatalogTests/testLegacySnapshotAndPendingUploadDecodeWithoutState()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRegionCatalogTests/testLegacySnapshotAndPendingUploadDecodeWithoutState",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.018s",
+                  "durationInSeconds" : 0.018024086952209473,
+                  "name" : "testStateMetadataSurvivesAppStoreAndWidgetPersistence()",
+                  "nodeIdentifier" : "CityRegionCatalogTests/testStateMetadataSurvivesAppStoreAndWidgetPersistence()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRegionCatalogTests/testStateMetadataSurvivesAppStoreAndWidgetPersistence",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.002s",
+                  "durationInSeconds" : 0.0019739866256713867,
+                  "name" : "testUnknownAndAmbiguousLocationsNeverInheritRegionIdentity()",
+                  "nodeIdentifier" : "CityRegionCatalogTests/testUnknownAndAmbiguousLocationsNeverInheritRegionIdentity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRegionCatalogTests/testUnknownAndAmbiguousLocationsNeverInheritRegionIdentity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "CityRegionCatalogTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CityRegionCatalogTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.049s",
+                  "durationInSeconds" : 0.04868292808532715,
+                  "name" : "testDecodeFailureReportsOnceWithoutChangingTheOriginalError()",
+                  "nodeIdentifier" : "ClientDiagnosticTests/testDecodeFailureReportsOnceWithoutChangingTheOriginalError()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ClientDiagnosticTests/testDecodeFailureReportsOnceWithoutChangingTheOriginalError",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00068s",
+                  "durationInSeconds" : 0.0006799697875976562,
+                  "name" : "testDiagnosticsKeepOnlyFeatureAndUseSameProjectCollector()",
+                  "nodeIdentifier" : "ClientDiagnosticTests/testDiagnosticsKeepOnlyFeatureAndUseSameProjectCollector()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ClientDiagnosticTests/testDiagnosticsKeepOnlyFeatureAndUseSameProjectCollector",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.22s",
+                  "durationInSeconds" : 0.2180711030960083,
+                  "name" : "testOfflineAndNormalSessionExpiryDoNotReportIncidents()",
+                  "nodeIdentifier" : "ClientDiagnosticTests/testOfflineAndNormalSessionExpiryDoNotReportIncidents()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ClientDiagnosticTests/testOfflineAndNormalSessionExpiryDoNotReportIncidents",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "ClientDiagnosticTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ClientDiagnosticTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00054s",
+                  "durationInSeconds" : 0.0005439519882202148,
+                  "name" : "testDifferentVisitsOnSameDayAreNotMerged()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testDifferentVisitsOnSameDayAreNotMerged()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testDifferentVisitsOnSameDayAreNotMerged",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00051s",
+                  "durationInSeconds" : 0.0005120038986206055,
+                  "name" : "testGroupEventNeedsEveryParticipantInCurrentStay()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testGroupEventNeedsEveryParticipantInCurrentStay()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testGroupEventNeedsEveryParticipantInCurrentStay",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00048s",
+                  "durationInSeconds" : 0.00047707557678222656,
+                  "name" : "testMissingOrClosedSessionDoesNotInventStart()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testMissingOrClosedSessionDoesNotInventStart()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testMissingOrClosedSessionDoesNotInventStart",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00061s",
+                  "durationInSeconds" : 0.0006090402603149414,
+                  "name" : "testNewestValidActiveSessionWins()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testNewestValidActiveSessionWins()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testNewestValidActiveSessionWins",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00055s",
+                  "durationInSeconds" : 0.0005530118942260742,
+                  "name" : "testNewStayStartsAtCurrentSessionNotPriorVisit()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testNewStayStartsAtCurrentSessionNotPriorVisit()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testNewStayStartsAtCurrentSessionNotPriorVisit",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00042s",
+                  "durationInSeconds" : 0.0004159212112426758,
+                  "name" : "testPreviousVisitRemainsInHistoryAfterReturn()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testPreviousVisitRemainsInHistoryAfterReturn()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testPreviousVisitRemainsInHistoryAfterReturn",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00055s",
+                  "durationInSeconds" : 0.0005509853363037109,
+                  "name" : "testUnknownCityAndFutureEventsDoNotBecomeCurrentHistory()",
+                  "nodeIdentifier" : "ColocationHistoryPolicyTests/testUnknownCityAndFutureEventsDoNotBecomeCurrentHistory()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests/testUnknownCityAndFutureEventsDoNotBecomeCurrentHistory",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "ColocationHistoryPolicyTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/ColocationHistoryPolicyTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.03s",
+                  "durationInSeconds" : 0.02990901470184326,
+                  "name" : "testBootstrapDuringBackoffPreservesPendingPauseAndManualCity()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testBootstrapDuringBackoffPreservesPendingPauseAndManualCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testBootstrapDuringBackoffPreservesPendingPauseAndManualCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0044s",
+                  "durationInSeconds" : 0.004387021064758301,
+                  "name" : "testCityWaitsThroughPauseBackoffButPushRegistrationCanRetry()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testCityWaitsThroughPauseBackoffButPushRegistrationCanRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testCityWaitsThroughPauseBackoffButPushRegistrationCanRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.018s",
+                  "durationInSeconds" : 0.017711997032165527,
+                  "name" : "testExpiredSessionNeverReturnsAnOptimisticOfflineSnapshot()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testExpiredSessionNeverReturnsAnOptimisticOfflineSnapshot()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testExpiredSessionNeverReturnsAnOptimisticOfflineSnapshot",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.013s",
+                  "durationInSeconds" : 0.012980937957763672,
+                  "name" : "testForbiddenPauseDoesNotPublishCityOrBypassSessionExpiration()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testForbiddenPauseDoesNotPublishCityOrBypassSessionExpiration()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testForbiddenPauseDoesNotPublishCityOrBypassSessionExpiration",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.018s",
+                  "durationInSeconds" : 0.017856955528259277,
+                  "name" : "testManualCityChangeCannotBypassAnUnconfirmedSharingPause()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testManualCityChangeCannotBypassAnUnconfirmedSharingPause()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testManualCityChangeCannotBypassAnUnconfirmedSharingPause",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.018s",
+                  "durationInSeconds" : 0.0179290771484375,
+                  "name" : "testQueuedIntentFromAnotherAccountNeverOverlaysCurrentAccount()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testQueuedIntentFromAnotherAccountNeverOverlaysCurrentAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testQueuedIntentFromAnotherAccountNeverOverlaysCurrentAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.026s",
+                  "durationInSeconds" : 0.026480913162231445,
+                  "name" : "testRejectedPauseRetainsPrivacyIntentAndNeverPublishesCityUntilExplicitRecovery()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testRejectedPauseRetainsPrivacyIntentAndNeverPublishesCityUntilExplicitRecovery()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testRejectedPauseRetainsPrivacyIntentAndNeverPublishesCityUntilExplicitRecovery",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.023s",
+                  "durationInSeconds" : 0.022903919219970703,
+                  "name" : "testReplayAcknowledgesPauseBeforePublishingQueuedCity()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testReplayAcknowledgesPauseBeforePublishingQueuedCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testReplayAcknowledgesPauseBeforePublishingQueuedCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.02s",
+                  "durationInSeconds" : 0.020164012908935547,
+                  "name" : "testUnrelatedFavoriteResponseCannotReenablePendingSharingOrReplaceManualCity()",
+                  "nodeIdentifier" : "CoreOfflineIntentRegressionTests/testUnrelatedFavoriteResponseCannotReenablePendingSharingOrReplaceManualCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests/testUnrelatedFavoriteResponseCannotReenablePendingSharingOrReplaceManualCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "CoreOfflineIntentRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreOfflineIntentRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.084s",
+                  "durationInSeconds" : 0.08369302749633789,
+                  "name" : "testExplicitFriendLinkClearsCompetingSheetsAndSurvivesSignIn()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testExplicitFriendLinkClearsCompetingSheetsAndSurvivesSignIn()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testExplicitFriendLinkClearsCompetingSheetsAndSurvivesSignIn",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.035s",
+                  "durationInSeconds" : 0.0346369743347168,
+                  "name" : "testFailedWriteReleasesWaitingRefreshAndAllowsRetry()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testFailedWriteReleasesWaitingRefreshAndAllowsRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testFailedWriteReleasesWaitingRefreshAndAllowsRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.013s",
+                  "durationInSeconds" : 0.01294398307800293,
+                  "name" : "testFriendActionDefaultFailureStillUsesGlobalNotice()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testFriendActionDefaultFailureStillUsesGlobalNotice()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testFriendActionDefaultFailureStillUsesGlobalNotice",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.019s",
+                  "durationInSeconds" : 0.01906108856201172,
+                  "name" : "testFriendActionFailureCallbacksStayLocalAndAllowRetry()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testFriendActionFailureCallbacksStayLocalAndAllowRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testFriendActionFailureCallbacksStayLocalAndAllowRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.032s",
+                  "durationInSeconds" : 0.0321810245513916,
+                  "name" : "testOverlappingIndependentWritesReconcileOnceAfterAllConfirmations()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testOverlappingIndependentWritesReconcileOnceAfterAllConfirmations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testOverlappingIndependentWritesReconcileOnceAfterAllConfirmations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.032s",
+                  "durationInSeconds" : 0.03161799907684326,
+                  "name" : "testReconciliationDoesNotReuseReadStartedBeforeOverlappingWrites()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testReconciliationDoesNotReuseReadStartedBeforeOverlappingWrites()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testReconciliationDoesNotReuseReadStartedBeforeOverlappingWrites",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.032s",
+                  "durationInSeconds" : 0.03207802772521973,
+                  "name" : "testRefreshWaitsForFriendPrivacyWriteAndKeepsConfirmedPreference()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testRefreshWaitsForFriendPrivacyWriteAndKeepsConfirmedPreference()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testRefreshWaitsForFriendPrivacyWriteAndKeepsConfirmedPreference",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.021s",
+                  "durationInSeconds" : 0.020617008209228516,
+                  "name" : "testSequentialWritesDoNotAddUnnecessaryReconciliationReads()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testSequentialWritesDoNotAddUnnecessaryReconciliationReads()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testSequentialWritesDoNotAddUnnecessaryReconciliationReads",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.023s",
+                  "durationInSeconds" : 0.023032069206237793,
+                  "name" : "testSheetOwnedFriendFailureStillClearsExpiredSession()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testSheetOwnedFriendFailureStillClearsExpiredSession()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testSheetOwnedFriendFailureStillClearsExpiredSession",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.031s",
+                  "durationInSeconds" : 0.030733108520507812,
+                  "name" : "testSignOutInvalidatesRefreshWaitingBehindOldAccountWrite()",
+                  "nodeIdentifier" : "CoreSnapshotOrderingRegressionTests/testSignOutInvalidatesRefreshWaitingBehindOldAccountWrite()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests/testSignOutInvalidatesRefreshWaitingBehindOldAccountWrite",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "CoreSnapshotOrderingRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/CoreSnapshotOrderingRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.016s",
+                  "durationInSeconds" : 0.01630401611328125,
+                  "name" : "testClearingAccountCacheDoesNotRemoveAnotherUserOrAllowOldWrites()",
+                  "nodeIdentifier" : "DateRangeRegressionTests/testClearingAccountCacheDoesNotRemoveAnotherUserOrAllowOldWrites()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/DateRangeRegressionTests/testClearingAccountCacheDoesNotRemoveAnotherUserOrAllowOldWrites",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.019s",
+                  "durationInSeconds" : 0.01915907859802246,
+                  "name" : "testCrossYearLabelsAndAdministrativeAliases()",
+                  "nodeIdentifier" : "DateRangeRegressionTests/testCrossYearLabelsAndAdministrativeAliases()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/DateRangeRegressionTests/testCrossYearLabelsAndAdministrativeAliases",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0075s",
+                  "durationInSeconds" : 0.007461071014404297,
+                  "name" : "testRecentCitiesStayWithinTheAccountAndRemainBounded()",
+                  "nodeIdentifier" : "DateRangeRegressionTests/testRecentCitiesStayWithinTheAccountAndRemainBounded()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/DateRangeRegressionTests/testRecentCitiesStayWithinTheAccountAndRemainBounded",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0017s",
+                  "durationInSeconds" : 0.0017199516296386719,
+                  "name" : "testSameDayCrossMonthAndReverseSelection()",
+                  "nodeIdentifier" : "DateRangeRegressionTests/testSameDayCrossMonthAndReverseSelection()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/DateRangeRegressionTests/testSameDayCrossMonthAndReverseSelection",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "DateRangeRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/DateRangeRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005310773849487305,
+                  "name" : "testOnlyExactAppRequestLinksAreAccepted()",
+                  "nodeIdentifier" : "FriendNotificationLinkTests/testOnlyExactAppRequestLinksAreAccepted()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendNotificationLinkTests/testOnlyExactAppRequestLinksAreAccepted",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "FriendNotificationLinkTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendNotificationLinkTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.001s",
+                  "durationInSeconds" : 0.0010410547256469727,
+                  "name" : "testAPIConfigurationPreservesEdgeFunctionPrefixWhenBuildingEndpoint()",
+                  "nodeIdentifier" : "FriendPresenceTests/testAPIConfigurationPreservesEdgeFunctionPrefixWhenBuildingEndpoint()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testAPIConfigurationPreservesEdgeFunctionPrefixWhenBuildingEndpoint",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0007s",
+                  "durationInSeconds" : 0.000702977180480957,
+                  "name" : "testAPIConfigurationRejectsPlaceholderAndInsecureOrigins()",
+                  "nodeIdentifier" : "FriendPresenceTests/testAPIConfigurationRejectsPlaceholderAndInsecureOrigins()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testAPIConfigurationRejectsPlaceholderAndInsecureOrigins",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.001s",
+                  "durationInSeconds" : 0.0010379552841186523,
+                  "name" : "testAppleSignInNonceIsRandomAndHashable()",
+                  "nodeIdentifier" : "FriendPresenceTests/testAppleSignInNonceIsRandomAndHashable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testAppleSignInNonceIsRandomAndHashable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0012s",
+                  "durationInSeconds" : 0.001219034194946289,
+                  "name" : "testArchetypeRulesRespectMetadataAndWholeWords()",
+                  "nodeIdentifier" : "FriendPresenceTests/testArchetypeRulesRespectMetadataAndWholeWords()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testArchetypeRulesRespectMetadataAndWholeWords",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0013s",
+                  "durationInSeconds" : 0.0012979507446289062,
+                  "name" : "testCityEmblemResolutionAndAliases()",
+                  "nodeIdentifier" : "FriendPresenceTests/testCityEmblemResolutionAndAliases()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testCityEmblemResolutionAndAliases",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00056s",
+                  "durationInSeconds" : 0.0005559921264648438,
+                  "name" : "testCityIdentityIgnoresCaseWhitespaceAndDiacriticsButHonorsKnownCountry()",
+                  "nodeIdentifier" : "FriendPresenceTests/testCityIdentityIgnoresCaseWhitespaceAndDiacriticsButHonorsKnownCountry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testCityIdentityIgnoresCaseWhitespaceAndDiacriticsButHonorsKnownCountry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00055s",
+                  "durationInSeconds" : 0.0005450248718261719,
+                  "name" : "testCountryCodeBuildsFlag()",
+                  "nodeIdentifier" : "FriendPresenceTests/testCountryCodeBuildsFlag()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testCountryCodeBuildsFlag",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00049s",
+                  "durationInSeconds" : 0.00048601627349853516,
+                  "name" : "testFreshnessTransitions()",
+                  "nodeIdentifier" : "FriendPresenceTests/testFreshnessTransitions()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testFreshnessTransitions",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00055s",
+                  "durationInSeconds" : 0.000552058219909668,
+                  "name" : "testHiddenPresenceNeverRevealsCachedGeographyThroughArtwork()",
+                  "nodeIdentifier" : "FriendPresenceTests/testHiddenPresenceNeverRevealsCachedGeographyThroughArtwork()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testHiddenPresenceNeverRevealsCachedGeographyThroughArtwork",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005310773849487305,
+                  "name" : "testInviteLinkParserSupportsAppAndUniversalLinks()",
+                  "nodeIdentifier" : "FriendPresenceTests/testInviteLinkParserSupportsAppAndUniversalLinks()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testInviteLinkParserSupportsAppAndUniversalLinks",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0006s",
+                  "durationInSeconds" : 0.0005970001220703125,
+                  "name" : "testPausedPresenceIsUnavailableAndNotSameCityEligible()",
+                  "nodeIdentifier" : "FriendPresenceTests/testPausedPresenceIsUnavailableAndNotSameCityEligible()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testPausedPresenceIsUnavailableAndNotSameCityEligible",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00047s",
+                  "durationInSeconds" : 0.0004659891128540039,
+                  "name" : "testPrivacyPolicyConfigurationRequiresARealHTTPSURL()",
+                  "nodeIdentifier" : "FriendPresenceTests/testPrivacyPolicyConfigurationRequiresARealHTTPSURL()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testPrivacyPolicyConfigurationRequiresARealHTTPSURL",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0016s",
+                  "durationInSeconds" : 0.0016020536422729492,
+                  "name" : "testProfileValidationNormalizesSafeValues()",
+                  "nodeIdentifier" : "FriendPresenceTests/testProfileValidationNormalizesSafeValues()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testProfileValidationNormalizesSafeValues",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00071s",
+                  "durationInSeconds" : 0.0007120370864868164,
+                  "name" : "testSameCityListHonorsCountryCode()",
+                  "nodeIdentifier" : "FriendPresenceTests/testSameCityListHonorsCountryCode()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testSameCityListHonorsCountryCode",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00068s",
+                  "durationInSeconds" : 0.0006819963455200195,
+                  "name" : "testSameCityMatchingIncludesActiveFriendsAndExcludesPausedOrDifferentCity()",
+                  "nodeIdentifier" : "FriendPresenceTests/testSameCityMatchingIncludesActiveFriendsAndExcludesPausedOrDifferentCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testSameCityMatchingIncludesActiveFriendsAndExcludesPausedOrDifferentCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0016s",
+                  "durationInSeconds" : 0.0015599727630615234,
+                  "name" : "testSharedArchetypeDoesNotMeanSameCity()",
+                  "nodeIdentifier" : "FriendPresenceTests/testSharedArchetypeDoesNotMeanSameCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testSharedArchetypeDoesNotMeanSameCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00087s",
+                  "durationInSeconds" : 0.000867009162902832,
+                  "name" : "testSmartArchetypeCascadeMappingEngine()",
+                  "nodeIdentifier" : "FriendPresenceTests/testSmartArchetypeCascadeMappingEngine()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testSmartArchetypeCascadeMappingEngine",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0035s",
+                  "durationInSeconds" : 0.003515958786010742,
+                  "name" : "testSupabaseConfigurationRejectsSecretKeys()",
+                  "nodeIdentifier" : "FriendPresenceTests/testSupabaseConfigurationRejectsSecretKeys()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testSupabaseConfigurationRejectsSecretKeys",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.02s",
+                  "durationInSeconds" : 0.019690990447998047,
+                  "name" : "testUniversalCityFallbackAndUnknownLocationAssets()",
+                  "nodeIdentifier" : "FriendPresenceTests/testUniversalCityFallbackAndUnknownLocationAssets()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests/testUniversalCityFallbackAndUnknownLocationAssets",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "FriendPresenceTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendPresenceTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.23s",
+                  "durationInSeconds" : 0.2300119400024414,
+                  "name" : "testAccountChangeStartsANewReadAndOldWaitersCannotReplaceIt()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testAccountChangeStartsANewReadAndOldWaitersCannotReplaceIt()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testAccountChangeStartsANewReadAndOldWaitersCannotReplaceIt",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11433398723602295,
+                  "name" : "testAccountSwitchRetiresPendingPageAndClearsMemory()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testAccountSwitchRetiresPendingPageAndClearsMemory()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testAccountSwitchRetiresPendingPageAndClearsMemory",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.26s",
+                  "durationInSeconds" : 0.25530505180358887,
+                  "name" : "testChangedPageRestartsWithoutKeepingRevokedRows()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testChangedPageRestartsWithoutKeepingRevokedRows()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testChangedPageRestartsWithoutKeepingRevokedRows",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0019s",
+                  "durationInSeconds" : 0.0018529891967773438,
+                  "name" : "testCopyCreatesNewPrivatePlanAndDoesNotInheritAuthorOrNotifications()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testCopyCreatesNewPrivatePlanAndDoesNotInheritAuthorOrNotifications()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testCopyCreatesNewPrivatePlanAndDoesNotInheritAuthorOrNotifications",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.25s",
+                  "durationInSeconds" : 0.24879395961761475,
+                  "name" : "testFeedLoadsMoreOnceAndUnchangedRefreshPreservesTheLoadedTail()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testFeedLoadsMoreOnceAndUnchangedRefreshPreservesTheLoadedTail()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testFeedLoadsMoreOnceAndUnchangedRefreshPreservesTheLoadedTail",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.20672202110290527,
+                  "name" : "testFeedSortsAndFiltersRemovedFriendsAndDestinationDayExpiry()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testFeedSortsAndFiltersRemovedFriendsAndDestinationDayExpiry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testFeedSortsAndFiltersRemovedFriendsAndDestinationDayExpiry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.13s",
+                  "durationInSeconds" : 0.12983405590057373,
+                  "name" : "testFriendAccessChangeDuringSaveDoesNotLeaveSavingStuck()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testFriendAccessChangeDuringSaveDoesNotLeaveSavingStuck()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testFriendAccessChangeDuringSaveDoesNotLeaveSavingStuck",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.086s",
+                  "durationInSeconds" : 0.0858069658279419,
+                  "name" : "testFriendRemovalAndReadditionCannotReviveAPreviousPage()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testFriendRemovalAndReadditionCannotReviveAPreviousPage()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testFriendRemovalAndReadditionCannotReviveAPreviousPage",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0018s",
+                  "durationInSeconds" : 0.0017720460891723633,
+                  "name" : "testLegacyPlansAndSnapshotsUseTheCurrentBrowsingDefault()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testLegacyPlansAndSnapshotsUseTheCurrentBrowsingDefault()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testLegacyPlansAndSnapshotsUseTheCurrentBrowsingDefault",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.6s",
+                  "durationInSeconds" : 0.5981290340423584,
+                  "name" : "testLightOverviewDoesNotEraseOwnPlansAndOwnReadKeepsSharedOverview()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testLightOverviewDoesNotEraseOwnPlansAndOwnReadKeepsSharedOverview()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testLightOverviewDoesNotEraseOwnPlansAndOwnReadKeepsSharedOverview",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.21275699138641357,
+                  "name" : "testNavigationCancellationDoesNotFailTheNextScreensSharedRefresh()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testNavigationCancellationDoesNotFailTheNextScreensSharedRefresh()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testNavigationCancellationDoesNotFailTheNextScreensSharedRefresh",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.20911705493927002,
+                  "name" : "testOverviewRetainsEveryFriendsBadgeAndAccuratePlanCount()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testOverviewRetainsEveryFriendsBadgeAndAccuratePlanCount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testOverviewRetainsEveryFriendsBadgeAndAccuratePlanCount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.03s",
+                  "durationInSeconds" : 0.029579997062683105,
+                  "name" : "testSavingRetiresPendingReadWithoutRestoringItsOldSharedPlans()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testSavingRetiresPendingReadWithoutRestoringItsOldSharedPlans()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testSavingRetiresPendingReadWithoutRestoringItsOldSharedPlans",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.42s",
+                  "durationInSeconds" : 0.4174250364303589,
+                  "name" : "testSharedDatesAreNotCachedAndDisappearOnFailureAndAccountChange()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testSharedDatesAreNotCachedAndDisappearOnFailureAndAccountChange()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testSharedDatesAreNotCachedAndDisappearOnFailureAndAccountChange",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.59s",
+                  "durationInSeconds" : 0.5937620401382446,
+                  "name" : "testTransportCancellationDoesNotBecomeASharedPlanFailure()",
+                  "nodeIdentifier" : "FriendTravelPlanTests/testTransportCancellationDoesNotBecomeASharedPlanFailure()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests/testTransportCancellationDoesNotBecomeASharedPlanFailure",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "FriendTravelPlanTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/FriendTravelPlanTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.21357405185699463,
+                  "name" : "testAccountSwitchDiscardsPendingFullAndDetailReads()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testAccountSwitchDiscardsPendingFullAndDetailReads()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testAccountSwitchDiscardsPendingFullAndDetailReads",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.61s",
+                  "durationInSeconds" : 0.6107670068740845,
+                  "name" : "testChangedSummaryInvalidatesExpandedListAndRemovedTarget()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testChangedSummaryInvalidatesExpandedListAndRemovedTarget()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testChangedSummaryInvalidatesExpandedListAndRemovedTarget",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.51s",
+                  "durationInSeconds" : 0.5076299905776978,
+                  "name" : "testFailedDetailKeepsTotalAndCanRetry()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testFailedDetailKeepsTotalAndCanRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testFailedDetailKeepsTotalAndCanRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.41s",
+                  "durationInSeconds" : 0.40921998023986816,
+                  "name" : "testFailedExpansionCanRetryWithoutErasingSummary()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testFailedExpansionCanRetryWithoutErasingSummary()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testFailedExpansionCanRetryWithoutErasingSummary",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.35s",
+                  "durationInSeconds" : 0.3531770706176758,
+                  "name" : "testForegroundNotificationBeyondPreviewPresentsItsBanner()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testForegroundNotificationBeyondPreviewPresentsItsBanner()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testForegroundNotificationBeyondPreviewPresentsItsBanner",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.21s",
+                  "durationInSeconds" : 0.21499502658843994,
+                  "name" : "testFriendRemovalDiscardsPendingDetailAndCount()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testFriendRemovalDiscardsPendingDetailAndCount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testFriendRemovalDiscardsPendingDetailAndCount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.32s",
+                  "durationInSeconds" : 0.32256102561950684,
+                  "name" : "testNotificationTargetOutsidePreviewLoadsAndDuplicateReadsCoalesce()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testNotificationTargetOutsidePreviewLoadsAndDuplicateReadsCoalesce()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testNotificationTargetOutsidePreviewLoadsAndDuplicateReadsCoalesce",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.51s",
+                  "durationInSeconds" : 0.5095630884170532,
+                  "name" : "testPreviewCountAndExpandedRowsStayCompleteAcrossUnchangedRefresh()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testPreviewCountAndExpandedRowsStayCompleteAcrossUnchangedRefresh()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testPreviewCountAndExpandedRowsStayCompleteAcrossUnchangedRefresh",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.22s",
+                  "durationInSeconds" : 0.22014498710632324,
+                  "name" : "testSavingPlanRetiresInFlightOverlapResponse()",
+                  "nodeIdentifier" : "HomeOverlapSummaryTests/testSavingPlanRetiresInFlightOverlapResponse()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests/testSavingPlanRetiresInFlightOverlapResponse",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "HomeOverlapSummaryTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeOverlapSummaryTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00068s",
+                  "durationInSeconds" : 0.0006750822067260742,
+                  "name" : "testHiddenNamesRemoveNamesAndInitialsFromAllPresentations()",
+                  "nodeIdentifier" : "HomeWidgetPresentationTests/testHiddenNamesRemoveNamesAndInitialsFromAllPresentations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeWidgetPresentationTests/testHiddenNamesRemoveNamesAndInitialsFromAllPresentations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005290508270263672,
+                  "name" : "testTogetherUsesRecentMatchingCityAndOldestObservation()",
+                  "nodeIdentifier" : "HomeWidgetPresentationTests/testTogetherUsesRecentMatchingCityAndOldestObservation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeWidgetPresentationTests/testTogetherUsesRecentMatchingCityAndOldestObservation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "HomeWidgetPresentationTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/HomeWidgetPresentationTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0012s",
+                  "durationInSeconds" : 0.0011570453643798828,
+                  "name" : "testAcceptingIncomingRequestCreatesFriendAndPreferences()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testAcceptingIncomingRequestCreatesFriendAndPreferences()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testAcceptingIncomingRequestCreatesFriendAndPreferences",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00077s",
+                  "durationInSeconds" : 0.0007749795913696289,
+                  "name" : "testColocationRequiresExitAndCooldownBeforeAnotherEvent()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testColocationRequiresExitAndCooldownBeforeAnotherEvent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testColocationRequiresExitAndCooldownBeforeAnotherEvent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00081s",
+                  "durationInSeconds" : 0.0008099079132080078,
+                  "name" : "testDuplicateAndUnknownInvitesAreRejected()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testDuplicateAndUnknownInvitesAreRejected()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testDuplicateAndUnknownInvitesAreRejected",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0016s",
+                  "durationInSeconds" : 0.0015929937362670898,
+                  "name" : "testFriendPreferencesAreIndependent()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testFriendPreferencesAreIndependent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testFriendPreferencesAreIndependent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.001s",
+                  "durationInSeconds" : 0.0010110139846801758,
+                  "name" : "testProfileBlockAndUnblockLifecycle()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testProfileBlockAndUnblockLifecycle()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testProfileBlockAndUnblockLifecycle",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00091s",
+                  "durationInSeconds" : 0.0009119510650634766,
+                  "name" : "testSameCityEventIsIdempotentForRepeatedPresenceUpload()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testSameCityEventIsIdempotentForRepeatedPresenceUpload()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testSameCityEventIsIdempotentForRepeatedPresenceUpload",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00092s",
+                  "durationInSeconds" : 0.0009210109710693359,
+                  "name" : "testSendingKnownUsernameCreatesOutgoingRequest()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testSendingKnownUsernameCreatesOutgoingRequest()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testSendingKnownUsernameCreatesOutgoingRequest",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0011s",
+                  "durationInSeconds" : 0.0010620355606079102,
+                  "name" : "testSignOutClearsSensitiveWidgetSnapshotData()",
+                  "nodeIdentifier" : "LocalDemoRepositoryTests/testSignOutClearsSensitiveWidgetSnapshotData()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests/testSignOutClearsSensitiveWidgetSnapshotData",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "LocalDemoRepositoryTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocalDemoRepositoryTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0069s",
+                  "durationInSeconds" : 0.006901979446411133,
+                  "name" : "testAccountsAndInactivePagesDoNotShareOrConsumeReminders()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testAccountsAndInactivePagesDoNotShareOrConsumeReminders()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testAccountsAndInactivePagesDoNotShareOrConsumeReminders",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0034s",
+                  "durationInSeconds" : 0.0034350156784057617,
+                  "name" : "testCorruptSavedHistoryDoesNotResetTheReminderLimit()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testCorruptSavedHistoryDoesNotResetTheReminderLimit()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testCorruptSavedHistoryDoesNotResetTheReminderLimit",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005331039428710938,
+                  "name" : "testEligibilityRespectsManualCitiesSharingAndPermissionState()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testEligibilityRespectsManualCitiesSharingAndPermissionState()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testEligibilityRespectsManualCitiesSharingAndPermissionState",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0032s",
+                  "durationInSeconds" : 0.0032329559326171875,
+                  "name" : "testInitialSetupSkipDefersWithoutSpendingAReminder()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testInitialSetupSkipDefersWithoutSpendingAReminder()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testInitialSetupSkipDefersWithoutSpendingAReminder",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0036s",
+                  "durationInSeconds" : 0.0035910606384277344,
+                  "name" : "testLateDismissalAndClockRollbackCannotImmediatelyRepeat()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testLateDismissalAndClockRollbackCannotImmediatelyRepeat()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testLateDismissalAndClockRollbackCannotImmediatelyRepeat",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0033s",
+                  "durationInSeconds" : 0.003310084342956543,
+                  "name" : "testPermissionOrSharingChangeHidesAnAlreadyVisibleReminder()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testPermissionOrSharingChangeHidesAnAlreadyVisibleReminder()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testPermissionOrSharingChangeHidesAnAlreadyVisibleReminder",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0052s",
+                  "durationInSeconds" : 0.0051909685134887695,
+                  "name" : "testWeeklyCooldownPersistsAcrossRelaunchAndStopsAfterThreePresentations()",
+                  "nodeIdentifier" : "LocationPermissionReminderTests/testWeeklyCooldownPersistsAcrossRelaunchAndStopsAfterThreePresentations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests/testWeeklyCooldownPersistsAcrossRelaunchAndStopsAfterThreePresentations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "LocationPermissionReminderTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationPermissionReminderTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0005s",
+                  "durationInSeconds" : 0.0004950761795043945,
+                  "name" : "testFirstSignedInUsePromptsButPermissionAndExplicitSkipAreRespected()",
+                  "nodeIdentifier" : "LocationSetupPolicyTests/testFirstSignedInUsePromptsButPermissionAndExplicitSkipAreRespected()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationSetupPolicyTests/testFirstSignedInUsePromptsButPermissionAndExplicitSkipAreRespected",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "LocationSetupPolicyTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/LocationSetupPolicyTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0057s",
+                  "durationInSeconds" : 0.005717039108276367,
+                  "name" : "testQueueCoalescesAndBacksOffFailedMutations()",
+                  "nodeIdentifier" : "OfflineMutationQueueTests/testQueueCoalescesAndBacksOffFailedMutations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OfflineMutationQueueTests/testQueueCoalescesAndBacksOffFailedMutations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0035s",
+                  "durationInSeconds" : 0.0034589767456054688,
+                  "name" : "testQueueNeverReturnsAnotherAccountsMutations()",
+                  "nodeIdentifier" : "OfflineMutationQueueTests/testQueueNeverReturnsAnotherAccountsMutations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OfflineMutationQueueTests/testQueueNeverReturnsAnotherAccountsMutations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "OfflineMutationQueueTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OfflineMutationQueueTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0011s",
+                  "durationInSeconds" : 0.0010950565338134766,
+                  "name" : "testFlightCurvesConvergeAndTrailsFollowTheAircraft()",
+                  "nodeIdentifier" : "OnboardingAssetTests/testFlightCurvesConvergeAndTrailsFollowTheAircraft()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OnboardingAssetTests/testFlightCurvesConvergeAndTrailsFollowTheAircraft",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.019s",
+                  "durationInSeconds" : 0.0191190242767334,
+                  "name" : "testFreestandingCityAssetsHaveTransparentBackgrounds()",
+                  "nodeIdentifier" : "OnboardingAssetTests/testFreestandingCityAssetsHaveTransparentBackgrounds()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OnboardingAssetTests/testFreestandingCityAssetsHaveTransparentBackgrounds",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "OnboardingAssetTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/OnboardingAssetTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.072s",
+                  "durationInSeconds" : 0.07188498973846436,
+                  "name" : "testDemoCRUDRevocationAndAccountScope()",
+                  "nodeIdentifier" : "PersonalTravelPlanTests/testDemoCRUDRevocationAndAccountScope()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests/testDemoCRUDRevocationAndAccountScope",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0016s",
+                  "durationInSeconds" : 0.0016019344329833984,
+                  "name" : "testLocalDayBoundaryAndDSTCounting()",
+                  "nodeIdentifier" : "PersonalTravelPlanTests/testLocalDayBoundaryAndDSTCounting()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests/testLocalDayBoundaryAndDSTCounting",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.095s",
+                  "durationInSeconds" : 0.09474098682403564,
+                  "name" : "testOldRefreshCannotOverwriteSaveOrNewAccount()",
+                  "nodeIdentifier" : "PersonalTravelPlanTests/testOldRefreshCannotOverwriteSaveOrNewAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests/testOldRefreshCannotOverwriteSaveOrNewAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0024s",
+                  "durationInSeconds" : 0.002442002296447754,
+                  "name" : "testPrivateDefaultAndStrictCalendarDates()",
+                  "nodeIdentifier" : "PersonalTravelPlanTests/testPrivateDefaultAndStrictCalendarDates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests/testPrivateDefaultAndStrictCalendarDates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00049s",
+                  "durationInSeconds" : 0.0004919767379760742,
+                  "name" : "testUpcomingLinksRejectForeignSchemesAndMalformedIDs()",
+                  "nodeIdentifier" : "PersonalTravelPlanTests/testUpcomingLinksRejectForeignSchemesAndMalformedIDs()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests/testUpcomingLinksRejectForeignSchemesAndMalformedIDs",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "PersonalTravelPlanTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/PersonalTravelPlanTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.024s",
+                  "durationInSeconds" : 0.024431943893432617,
+                  "name" : "testAccountDeletionUsesDeleteEndpointAndClearsLocalSession()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testAccountDeletionUsesDeleteEndpointAndClearsLocalSession()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testAccountDeletionUsesDeleteEndpointAndClearsLocalSession",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.022s",
+                  "durationInSeconds" : 0.0221860408782959,
+                  "name" : "testCloudLibraryCachesReadsButDoesNotPretendOfflineWritesSucceeded()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testCloudLibraryCachesReadsButDoesNotPretendOfflineWritesSucceeded()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testCloudLibraryCachesReadsButDoesNotPretendOfflineWritesSucceeded",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.016s",
+                  "durationInSeconds" : 0.01572394371032715,
+                  "name" : "testExpiredSessionClearsToken()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testExpiredSessionClearsToken()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testExpiredSessionClearsToken",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.015s",
+                  "durationInSeconds" : 0.0152360200881958,
+                  "name" : "testExpiredSessionDuringPushRegistrationClearsToken()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testExpiredSessionDuringPushRegistrationClearsToken()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testExpiredSessionDuringPushRegistrationClearsToken",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.034s",
+                  "durationInSeconds" : 0.03392994403839111,
+                  "name" : "testLateFailuresNeverQueueOrReplayIntoAnotherAccount()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testLateFailuresNeverQueueOrReplayIntoAnotherAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testLateFailuresNeverQueueOrReplayIntoAnotherAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0062s",
+                  "durationInSeconds" : 0.00618898868560791,
+                  "name" : "testNetworkFailureDuringTokenRefreshPreservesSession()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testNetworkFailureDuringTokenRefreshPreservesSession()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testNetworkFailureDuringTokenRefreshPreservesSession",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.015s",
+                  "durationInSeconds" : 0.014877080917358398,
+                  "name" : "testOfflinePauseSharingAppliesLocallyAndQueuesRetry()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testOfflinePauseSharingAppliesLocallyAndQueuesRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testOfflinePauseSharingAppliesLocallyAndQueuesRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.014s",
+                  "durationInSeconds" : 0.01385200023651123,
+                  "name" : "testOfflinePushRegistrationReportsThatItIsWaitingForNetwork()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testOfflinePushRegistrationReportsThatItIsWaitingForNetwork()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testOfflinePushRegistrationReportsThatItIsWaitingForNetwork",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.015s",
+                  "durationInSeconds" : 0.015311956405639648,
+                  "name" : "testOldUnauthorizedResponseCannotRefreshOrSignOutNewAccount()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testOldUnauthorizedResponseCannotRefreshOrSignOutNewAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testOldUnauthorizedResponseCannotRefreshOrSignOutNewAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0034s",
+                  "durationInSeconds" : 0.003370046615600586,
+                  "name" : "testProfileRequestIsAuthenticatedBoundedAndReturnsConfirmedFields()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testProfileRequestIsAuthenticatedBoundedAndReturnsConfirmedFields()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testProfileRequestIsAuthenticatedBoundedAndReturnsConfirmedFields",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.016s",
+                  "durationInSeconds" : 0.015575051307678223,
+                  "name" : "testPushRegistrationSendsStableInstallationAndSandboxEnvironment()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testPushRegistrationSendsStableInstallationAndSandboxEnvironment()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testPushRegistrationSendsStableInstallationAndSandboxEnvironment",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.015s",
+                  "durationInSeconds" : 0.015286922454833984,
+                  "name" : "testStagingTestFlightSendsItsOwnBundleIDWithProductionAPNs()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testStagingTestFlightSendsItsOwnBundleIDWithProductionAPNs()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testStagingTestFlightSendsItsOwnBundleIDWithProductionAPNs",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.026s",
+                  "durationInSeconds" : 0.026160001754760742,
+                  "name" : "testSuccessfulSharingWriteRetiresOldOfflineIntent()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testSuccessfulSharingWriteRetiresOldOfflineIntent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testSuccessfulSharingWriteRetiresOldOfflineIntent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.017s",
+                  "durationInSeconds" : 0.01687800884246826,
+                  "name" : "testTerminalQueuedMutationIsRemovedInsteadOfBlockingFutureSync()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testTerminalQueuedMutationIsRemovedInsteadOfBlockingFutureSync()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testTerminalQueuedMutationIsRemovedInsteadOfBlockingFutureSync",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0091s",
+                  "durationInSeconds" : 0.00911402702331543,
+                  "name" : "testTripLifecycleWaitsForConfirmationAndReusesRequestIDAfterLostResponse()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testTripLifecycleWaitsForConfirmationAndReusesRequestIDAfterLostResponse()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testTripLifecycleWaitsForConfirmationAndReusesRequestIDAfterLostResponse",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0028s",
+                  "durationInSeconds" : 0.002794981002807617,
+                  "name" : "testTripPermissionDenialDoesNotSignUserOut()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testTripPermissionDenialDoesNotSignUserOut()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testTripPermissionDenialDoesNotSignUserOut",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0071s",
+                  "durationInSeconds" : 0.007148027420043945,
+                  "name" : "testTripRemindersUseOnlyAuthenticatedContextAndTarget()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testTripRemindersUseOnlyAuthenticatedContextAndTarget()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testTripRemindersUseOnlyAuthenticatedContextAndTarget",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0029s",
+                  "durationInSeconds" : 0.0029360055923461914,
+                  "name" : "testTripRequestsUseUserTokenAndOnlyPerResourceFields()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testTripRequestsUseUserTokenAndOnlyPerResourceFields()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testTripRequestsUseUserTokenAndOnlyPerResourceFields",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0032s",
+                  "durationInSeconds" : 0.0032351016998291016,
+                  "name" : "testUsernameConflictAfterTokenRefreshDoesNotSignOutTheUser()",
+                  "nodeIdentifier" : "RemoteAppRepositoryTests/testUsernameConflictAfterTokenRefreshDoesNotSignOutTheUser()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests/testUsernameConflictAfterTokenRefreshDoesNotSignOutTheUser",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "RemoteAppRepositoryTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/RemoteAppRepositoryTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.87s",
+                  "durationInSeconds" : 0.869968056678772,
+                  "name" : "testBackgroundSnapshotDoesNotQueueAnUnseenBannerForResume()",
+                  "nodeIdentifier" : "SameCityAlertDeliveryTests/testBackgroundSnapshotDoesNotQueueAnUnseenBannerForResume()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests/testBackgroundSnapshotDoesNotQueueAnUnseenBannerForResume",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "3s",
+                  "durationInSeconds" : 3.580794095993042,
+                  "name" : "testBootstrapDoesNotReplayHistoryAndDuplicatePushDoesNotReappear()",
+                  "nodeIdentifier" : "SameCityAlertDeliveryTests/testBootstrapDoesNotReplayHistoryAndDuplicatePushDoesNotReappear()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests/testBootstrapDoesNotReplayHistoryAndDuplicatePushDoesNotReappear",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.79s",
+                  "durationInSeconds" : 0.787883996963501,
+                  "name" : "testNewRemoteEventShowsWithoutPushAndLatePushDoesNotRepeat()",
+                  "nodeIdentifier" : "SameCityAlertDeliveryTests/testNewRemoteEventShowsWithoutPushAndLatePushDoesNotRepeat()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests/testNewRemoteEventShowsWithoutPushAndLatePushDoesNotRepeat",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.9s",
+                  "durationInSeconds" : 0.900236964225769,
+                  "name" : "testRemoteSnapshotRejectsOlderEventsDisabledAlertsAndNewAccountHistory()",
+                  "nodeIdentifier" : "SameCityAlertDeliveryTests/testRemoteSnapshotRejectsOlderEventsDisabledAlertsAndNewAccountHistory()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests/testRemoteSnapshotRejectsOlderEventsDisabledAlertsAndNewAccountHistory",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.076s",
+                  "durationInSeconds" : 0.0757070779800415,
+                  "name" : "testTapRoutesByIDAndSignOutClearsPendingPresentation()",
+                  "nodeIdentifier" : "SameCityAlertDeliveryTests/testTapRoutesByIDAndSignOutClearsPendingPresentation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests/testTapRoutesByIDAndSignOutClearsPendingPresentation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "SameCityAlertDeliveryTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertDeliveryTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00075s",
+                  "durationInSeconds" : 0.0007469654083251953,
+                  "name" : "testFreshMutuallySharedCityCanBeShownAsCurrent()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testFreshMutuallySharedCityCanBeShownAsCurrent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testFreshMutuallySharedCityCanBeShownAsCurrent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0051s",
+                  "durationInSeconds" : 0.005107998847961426,
+                  "name" : "testMultipleFriendsAreDistinctAndUnknownEventsAreUnavailable()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testMultipleFriendsAreDistinctAndUnknownEventsAreUnavailable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testMultipleFriendsAreDistinctAndUnknownEventsAreUnavailable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00068s",
+                  "durationInSeconds" : 0.0006760358810424805,
+                  "name" : "testNotificationPreviewPrivacyDoesNotRemoveInAppMoments()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testNotificationPreviewPrivacyDoesNotRemoveInAppMoments()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testNotificationPreviewPrivacyDoesNotRemoveInAppMoments",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0044s",
+                  "durationInSeconds" : 0.004403948783874512,
+                  "name" : "testOldEventIsHistoricalEvenIfBothSavedCitiesStillMatch()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testOldEventIsHistoricalEvenIfBothSavedCitiesStillMatch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testOldEventIsHistoricalEvenIfBothSavedCitiesStillMatch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00079s",
+                  "durationInSeconds" : 0.0007939338684082031,
+                  "name" : "testOldOrDifferentStateEventCannotBecomeCurrentAgain()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testOldOrDifferentStateEventCannotBecomeCurrentAgain()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testOldOrDifferentStateEventCannotBecomeCurrentAgain",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0014s",
+                  "durationInSeconds" : 0.001352071762084961,
+                  "name" : "testRevocationMuteSignOutAndBlockingHideEventDetails()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testRevocationMuteSignOutAndBlockingHideEventDetails()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testRevocationMuteSignOutAndBlockingHideEventDetails",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00052s",
+                  "durationInSeconds" : 0.0005179643630981445,
+                  "name" : "testSameNameDifferentCountryDoesNotMatch()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testSameNameDifferentCountryDoesNotMatch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testSameNameDifferentCountryDoesNotMatch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0012s",
+                  "durationInSeconds" : 0.001168966293334961,
+                  "name" : "testStaleMissingAndFutureDatedCityUpdatesDoNotAssertCurrentColocation()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testStaleMissingAndFutureDatedCityUpdatesDoNotAssertCurrentColocation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testStaleMissingAndFutureDatedCityUpdatesDoNotAssertCurrentColocation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00068s",
+                  "durationInSeconds" : 0.0006769895553588867,
+                  "name" : "testStrictNotificationDeepLinksKeepLegacyEventsRouteCompatible()",
+                  "nodeIdentifier" : "SameCityAlertPolicyTests/testStrictNotificationDeepLinksKeepLegacyEventsRouteCompatible()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests/testStrictNotificationDeepLinksKeepLegacyEventsRouteCompatible",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "SameCityAlertPolicyTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityAlertPolicyTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00063s",
+                  "durationInSeconds" : 0.0006320476531982422,
+                  "name" : "testChangingCurrentCityCollapsesAnExpandedSummary()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testChangingCurrentCityCollapsesAnExpandedSummary()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testChangingCurrentCityCollapsesAnExpandedSummary",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00059s",
+                  "durationInSeconds" : 0.0005869865417480469,
+                  "name" : "testExpiredObservationDoesNotProduceCurrentSameCitySummary()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testExpiredObservationDoesNotProduceCurrentSameCitySummary()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testExpiredObservationDoesNotProduceCurrentSameCitySummary",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00064s",
+                  "durationInSeconds" : 0.000635981559753418,
+                  "name" : "testHiddenSummaryStaysCollapsedWhenSharingOrMatchesReturn()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testHiddenSummaryStaysCollapsedWhenSharingOrMatchesReturn()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testHiddenSummaryStaysCollapsedWhenSharingOrMatchesReturn",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0008s",
+                  "durationInSeconds" : 0.0008039474487304688,
+                  "name" : "testMutingAlertsDoesNotHideVisibleSameCityFriends()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testMutingAlertsDoesNotHideVisibleSameCityFriends()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testMutingAlertsDoesNotHideVisibleSameCityFriends",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00073s",
+                  "durationInSeconds" : 0.0007300376892089844,
+                  "name" : "testPausedSharingAndRevokedFriendAccessStillHideSummary()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testPausedSharingAndRevokedFriendAccessStillHideSummary()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testPausedSharingAndRevokedFriendAccessStillHideSummary",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00054s",
+                  "durationInSeconds" : 0.0005420446395874023,
+                  "name" : "testRefreshingSameCityPreservesOnlyTheUsersExpansionChoice()",
+                  "nodeIdentifier" : "SameCityHeaderRegressionTests/testRefreshingSameCityPreservesOnlyTheUsersExpansionChoice()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests/testRefreshingSameCityPreservesOnlyTheUsersExpansionChoice",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "SameCityHeaderRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/SameCityHeaderRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.024s",
+                  "durationInSeconds" : 0.02356898784637451,
+                  "name" : "testChangedDayAndExplicitCandidateStillSubmitAnEdit()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testChangedDayAndExplicitCandidateStillSubmitAnEdit()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testChangedDayAndExplicitCandidateStillSubmitAnEdit",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0053s",
+                  "durationInSeconds" : 0.005254030227661133,
+                  "name" : "testFailedDeclineKeepsInvitationAndAllowsRetry()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testFailedDeclineKeepsInvitationAndAllowsRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testFailedDeclineKeepsInvitationAndAllowsRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0063s",
+                  "durationInSeconds" : 0.0062940120697021484,
+                  "name" : "testFailedNotificationWritePreservesAcknowledgedPreferences()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testFailedNotificationWritePreservesAcknowledgedPreferences()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testFailedNotificationWritePreservesAcknowledgedPreferences",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0049s",
+                  "durationInSeconds" : 0.00489497184753418,
+                  "name" : "testFlightCalendarDaySurvivesCacheRoundTripAcrossDateLine()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testFlightCalendarDaySurvivesCacheRoundTripAcrossDateLine()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testFlightCalendarDaySurvivesCacheRoundTripAcrossDateLine",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00096s",
+                  "durationInSeconds" : 0.0009629726409912109,
+                  "name" : "testFlightDraftIgnoresNumberFormattingButTracksDateAndRouteChanges()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testFlightDraftIgnoresNumberFormattingButTracksDateAndRouteChanges()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testFlightDraftIgnoresNumberFormattingButTracksDateAndRouteChanges",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0037s",
+                  "durationInSeconds" : 0.003694891929626465,
+                  "name" : "testLegacyFlightCacheStillDecodesAndVerifiedScheduleRecoversDay()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testLegacyFlightCacheStillDecodesAndVerifiedScheduleRecoversDay()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testLegacyFlightCacheStillDecodesAndVerifiedScheduleRecoversDay",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0056s",
+                  "durationInSeconds" : 0.005591034889221191,
+                  "name" : "testNoOpEditKeepsVerifiedFlightWithoutReusingExpiredCandidate()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testNoOpEditKeepsVerifiedFlightWithoutReusingExpiredCandidate()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testNoOpEditKeepsVerifiedFlightWithoutReusingExpiredCandidate",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0031s",
+                  "durationInSeconds" : 0.0031499862670898438,
+                  "name" : "testReturnFlightDefaultsToTripEndAndExistingDayWins()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testReturnFlightDefaultsToTripEndAndExistingDayWins()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testReturnFlightDefaultsToTripEndAndExistingDayWins",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0074s",
+                  "durationInSeconds" : 0.0073860883712768555,
+                  "name" : "testSuccessfulDeclineCannotBeUndoneByOlderInvitationRead()",
+                  "nodeIdentifier" : "TravelAuditRegressionTests/testSuccessfulDeclineCannotBeUndoneByOlderInvitationRead()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests/testSuccessfulDeclineCannotBeUndoneByOlderInvitationRead",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "TravelAuditRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelAuditRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005279779434204102,
+                  "name" : "testCopiedPlanAndSharedTripRemainIndependent()",
+                  "nodeIdentifier" : "TravelPlanCopyTests/testCopiedPlanAndSharedTripRemainIndependent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelPlanCopyTests/testCopiedPlanAndSharedTripRemainIndependent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0013s",
+                  "durationInSeconds" : 0.0013419389724731445,
+                  "name" : "testSharedTripCopyUsesConfirmedCityAndLocalDatesWithoutMemberOrAlertConsent()",
+                  "nodeIdentifier" : "TravelPlanCopyTests/testSharedTripCopyUsesConfirmedCityAndLocalDatesWithoutMemberOrAlertConsent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelPlanCopyTests/testSharedTripCopyUsesConfirmedCityAndLocalDatesWithoutMemberOrAlertConsent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "TravelPlanCopyTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TravelPlanCopyTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.013s",
+                  "durationInSeconds" : 0.01296699047088623,
+                  "name" : "testAirportLocationLookupAndSearch()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testAirportLocationLookupAndSearch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testAirportLocationLookupAndSearch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0027s",
+                  "durationInSeconds" : 0.0026639699935913086,
+                  "name" : "testAirportLocationRejectsFakeCodes()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testAirportLocationRejectsFakeCodes()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testAirportLocationRejectsFakeCodes",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0039s",
+                  "durationInSeconds" : 0.003909945487976074,
+                  "name" : "testArrivalDateUsesDestinationDayAndHandlesMissingSchedules()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testArrivalDateUsesDestinationDayAndHandlesMissingSchedules()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testArrivalDateUsesDestinationDayAndHandlesMissingSchedules",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0033s",
+                  "durationInSeconds" : 0.0032999515533447266,
+                  "name" : "testArrivalOverviewExcludesStaleFlightsFromNextArrival()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testArrivalOverviewExcludesStaleFlightsFromNextArrival()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testArrivalOverviewExcludesStaleFlightsFromNextArrival",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0012s",
+                  "durationInSeconds" : 0.0012090206146240234,
+                  "name" : "testChinaSouthernCZ328FlightLookup()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testChinaSouthernCZ328FlightLookup()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testChinaSouthernCZ328FlightLookup",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0014s",
+                  "durationInSeconds" : 0.0014109611511230469,
+                  "name" : "testCompletedOverviewPreservesAddedProgressWithoutInventingArrivals()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testCompletedOverviewPreservesAddedProgressWithoutInventingArrivals()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testCompletedOverviewPreservesAddedProgressWithoutInventingArrivals",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0041s",
+                  "durationInSeconds" : 0.004123091697692871,
+                  "name" : "testDecodeFlightLookupResponse()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testDecodeFlightLookupResponse()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testDecodeFlightLookupResponse",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00057s",
+                  "durationInSeconds" : 0.0005680322647094727,
+                  "name" : "testEachTripUsesItsOwnStartIncludingPastTrips()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testEachTripUsesItsOwnStartIncludingPastTrips()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testEachTripUsesItsOwnStartIncludingPastTrips",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00048s",
+                  "durationInSeconds" : 0.00048100948333740234,
+                  "name" : "testEditingFlightKeepsItsDateEvenIfTripDatesChange()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testEditingFlightKeepsItsDateEvenIfTripDatesChange()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testEditingFlightKeepsItsDateEvenIfTripDatesChange",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00098s",
+                  "durationInSeconds" : 0.0009810924530029297,
+                  "name" : "testLocalDemoRepositoryFlightLookup()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testLocalDemoRepositoryFlightLookup()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testLocalDemoRepositoryFlightLookup",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00051s",
+                  "durationInSeconds" : 0.0005140304565429688,
+                  "name" : "testNewFlightDateUsesTripStartInsteadOfToday()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testNewFlightDateUsesTripStartInsteadOfToday()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testNewFlightDateUsesTripStartInsteadOfToday",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0006s",
+                  "durationInSeconds" : 0.0006049871444702148,
+                  "name" : "testOvernightFlightDayOffset()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testOvernightFlightDayOffset()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testOvernightFlightDayOffset",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0051s",
+                  "durationInSeconds" : 0.005123019218444824,
+                  "name" : "testProviderTimestampsAndPredictedArrivalRespectUTCAndNextDay()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testProviderTimestampsAndPredictedArrivalRespectUTCAndNextDay()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testProviderTimestampsAndPredictedArrivalRespectUTCAndNextDay",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0021s",
+                  "durationInSeconds" : 0.0021479129791259766,
+                  "name" : "testReturnOverviewStaysInPlanningDuringOutboundTravel()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testReturnOverviewStaysInPlanningDuringOutboundTravel()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testReturnOverviewStaysInPlanningDuringOutboundTravel",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00091s",
+                  "durationInSeconds" : 0.0009100437164306641,
+                  "name" : "testStaleStatusAndTripNotificationLinks()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testStaleStatusAndTripNotificationLinks()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testStaleStatusAndTripNotificationLinks",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00044s",
+                  "durationInSeconds" : 0.0004410743713378906,
+                  "name" : "testStatusMapping()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testStatusMapping()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testStatusMapping",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00053s",
+                  "durationInSeconds" : 0.0005290508270263672,
+                  "name" : "testTripInvitationLinksRequireTrustedHostAndExactUUIDRoute()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testTripInvitationLinksRequireTrustedHostAndExactUUIDRoute()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testTripInvitationLinksRequireTrustedHostAndExactUUIDRoute",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0019s",
+                  "durationInSeconds" : 0.0018570423126220703,
+                  "name" : "testUpcomingOverviewCountsPeopleOnceAndSeparatesDirections()",
+                  "nodeIdentifier" : "TripFlightLookupTests/testUpcomingOverviewCountsPeopleOnceAndSeparatesDirections()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests/testUpcomingOverviewCountsPeopleOnceAndSeparatesDirections",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "TripFlightLookupTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripFlightLookupTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.24s",
+                  "durationInSeconds" : 0.23872196674346924,
+                  "name" : "testAccountSwitchKeepsNewTripSaveLockedUntilItsOwnResponse()",
+                  "nodeIdentifier" : "TripLibraryTests/testAccountSwitchKeepsNewTripSaveLockedUntilItsOwnResponse()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testAccountSwitchKeepsNewTripSaveLockedUntilItsOwnResponse",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.24s",
+                  "durationInSeconds" : 0.24027299880981445,
+                  "name" : "testAccountSwitchStartsNewTripRefreshWhileOldRequestIsStillInFlight()",
+                  "nodeIdentifier" : "TripLibraryTests/testAccountSwitchStartsNewTripRefreshWhileOldRequestIsStillInFlight()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testAccountSwitchStartsNewTripRefreshWhileOldRequestIsStillInFlight",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0038s",
+                  "durationInSeconds" : 0.0038100481033325195,
+                  "name" : "testCorruptArchiveIsPreservedAndCannotBeOverwritten()",
+                  "nodeIdentifier" : "TripLibraryTests/testCorruptArchiveIsPreservedAndCannotBeOverwritten()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testCorruptArchiveIsPreservedAndCannotBeOverwritten",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0032s",
+                  "durationInSeconds" : 0.003216981887817383,
+                  "name" : "testFlightReminderEligibilityAndLocalCooldown()",
+                  "nodeIdentifier" : "TripLibraryTests/testFlightReminderEligibilityAndLocalCooldown()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testFlightReminderEligibilityAndLocalCooldown",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0051s",
+                  "durationInSeconds" : 0.005132913589477539,
+                  "name" : "testInvalidDatesAndUnknownDestinationsAreRejected()",
+                  "nodeIdentifier" : "TripLibraryTests/testInvalidDatesAndUnknownDestinationsAreRejected()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testInvalidDatesAndUnknownDestinationsAreRejected",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.004s",
+                  "durationInSeconds" : 0.003954052925109863,
+                  "name" : "testLegacyNamesakesAreNotClaimedAndSignedOutCannotWrite()",
+                  "nodeIdentifier" : "TripLibraryTests/testLegacyNamesakesAreNotClaimedAndSignedOutCannotWrite()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testLegacyNamesakesAreNotClaimedAndSignedOutCannotWrite",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0046s",
+                  "durationInSeconds" : 0.004565000534057617,
+                  "name" : "testLifecycleRemovesOnlyTargetFlightsAndCancelledTripStaysReadOnlyAfterReload()",
+                  "nodeIdentifier" : "TripLibraryTests/testLifecycleRemovesOnlyTargetFlightsAndCancelledTripStaysReadOnlyAfterReload()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testLifecycleRemovesOnlyTargetFlightsAndCancelledTripStaysReadOnlyAfterReload",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0034s",
+                  "durationInSeconds" : 0.0034090280532836914,
+                  "name" : "testManualCompletionCanBeUndoneWithoutLosingPeopleOrFlights()",
+                  "nodeIdentifier" : "TripLibraryTests/testManualCompletionCanBeUndoneWithoutLosingPeopleOrFlights()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testManualCompletionCanBeUndoneWithoutLosingPeopleOrFlights",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0047s",
+                  "durationInSeconds" : 0.004727959632873535,
+                  "name" : "testMemberCanLeaveButCannotCancelDeleteOrRemoveAnyone()",
+                  "nodeIdentifier" : "TripLibraryTests/testMemberCanLeaveButCannotCancelDeleteOrRemoveAnyone()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testMemberCanLeaveButCannotCancelDeleteOrRemoveAnyone",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0044s",
+                  "durationInSeconds" : 0.0043790340423583984,
+                  "name" : "testNewAccountStartsEmptyAndOverlappingTripsRemainIndependent()",
+                  "nodeIdentifier" : "TripLibraryTests/testNewAccountStartsEmptyAndOverlappingTripsRemainIndependent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testNewAccountStartsEmptyAndOverlappingTripsRemainIndependent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.12s",
+                  "durationInSeconds" : 0.12408101558685303,
+                  "name" : "testOldInvitationFailureDoesNotAlertNewAccount()",
+                  "nodeIdentifier" : "TripLibraryTests/testOldInvitationFailureDoesNotAlertNewAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testOldInvitationFailureDoesNotAlertNewAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0035s",
+                  "durationInSeconds" : 0.0034950971603393555,
+                  "name" : "testOwnerCannotAddEditDeleteOrTakeOverAnotherTravelersFlight()",
+                  "nodeIdentifier" : "TripLibraryTests/testOwnerCannotAddEditDeleteOrTakeOverAnotherTravelersFlight()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testOwnerCannotAddEditDeleteOrTakeOverAnotherTravelersFlight",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0037s",
+                  "durationInSeconds" : 0.0037180185317993164,
+                  "name" : "testPersistenceAndAccountIsolation()",
+                  "nodeIdentifier" : "TripLibraryTests/testPersistenceAndAccountIsolation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testPersistenceAndAccountIsolation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0033s",
+                  "durationInSeconds" : 0.003331899642944336,
+                  "name" : "testPhaseUsesDestinationLocalDateAndIncludesWholeEndDay()",
+                  "nodeIdentifier" : "TripLibraryTests/testPhaseUsesDestinationLocalDateAndIncludesWholeEndDay()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests/testPhaseUsesDestinationLocalDateAndIncludesWholeEndDay",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "TripLibraryTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripLibraryTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0098s",
+                  "durationInSeconds" : 0.009835004806518555,
+                  "name" : "testInternationalRouteUsesActualCoordinates()",
+                  "nodeIdentifier" : "TripMapTests/testInternationalRouteUsesActualCoordinates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests/testInternationalRouteUsesActualCoordinates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0093s",
+                  "durationInSeconds" : 0.009312987327575684,
+                  "name" : "testPacificRouteFitsAcrossDateLineInsteadOfAcrossWholeWorld()",
+                  "nodeIdentifier" : "TripMapTests/testPacificRouteFitsAcrossDateLineInsteadOfAcrossWholeWorld()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests/testPacificRouteFitsAcrossDateLineInsteadOfAcrossWholeWorld",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00071s",
+                  "durationInSeconds" : 0.0007120370864868164,
+                  "name" : "testReturnArrivalsSortByDateAndDestinationTimezone()",
+                  "nodeIdentifier" : "TripMapTests/testReturnArrivalsSortByDateAndDestinationTimezone()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests/testReturnArrivalsSortByDateAndDestinationTimezone",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0004s",
+                  "durationInSeconds" : 0.0004010200500488281,
+                  "name" : "testUnknownAirportNeverFallsBackToLosAngeles()",
+                  "nodeIdentifier" : "TripMapTests/testUnknownAirportNeverFallsBackToLosAngeles()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests/testUnknownAirportNeverFallsBackToLosAngeles",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00043s",
+                  "durationInSeconds" : 0.0004290342330932617,
+                  "name" : "testUnverifiedEntryDoesNotInventRouteOrSortBeforeKnownArrivals()",
+                  "nodeIdentifier" : "TripMapTests/testUnverifiedEntryDoesNotInventRouteOrSortBeforeKnownArrivals()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests/testUnverifiedEntryDoesNotInventRouteOrSortBeforeKnownArrivals",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "TripMapTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/TripMapTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00049s",
+                  "durationInSeconds" : 0.00048804283142089844,
+                  "name" : "testAppleCancellationDoesNotHideRealErrors()",
+                  "nodeIdentifier" : "UIReviewWaveThreeTests/testAppleCancellationDoesNotHideRealErrors()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests/testAppleCancellationDoesNotHideRealErrors",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.052s",
+                  "durationInSeconds" : 0.051679015159606934,
+                  "name" : "testFriendLinkSurvivesSignInAndClearsOnSignOut()",
+                  "nodeIdentifier" : "UIReviewWaveThreeTests/testFriendLinkSurvivesSignInAndClearsOnSignOut()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests/testFriendLinkSurvivesSignInAndClearsOnSignOut",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1s",
+                  "durationInSeconds" : 1.1511609554290771,
+                  "name" : "testLiveMapKitCityResultsAreSelectable()",
+                  "nodeIdentifier" : "UIReviewWaveThreeTests/testLiveMapKitCityResultsAreSelectable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests/testLiveMapKitCityResultsAreSelectable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0006s",
+                  "durationInSeconds" : 0.0005980730056762695,
+                  "name" : "testTokyoCompatibilityRequiresExactCityAndPreservesOtherLocalities()",
+                  "nodeIdentifier" : "UIReviewWaveThreeTests/testTokyoCompatibilityRequiresExactCityAndPreservesOtherLocalities()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests/testTokyoCompatibilityRequiresExactCityAndPreservesOtherLocalities",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00078s",
+                  "durationInSeconds" : 0.0007840394973754883,
+                  "name" : "testWidgetDestinationsRespectPrivacyAndStrictURLParsing()",
+                  "nodeIdentifier" : "UIReviewWaveThreeTests/testWidgetDestinationsRespectPrivacyAndStrictURLParsing()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests/testWidgetDestinationsRespectPrivacyAndStrictURLParsing",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "UIReviewWaveThreeTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveThreeTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0015s",
+                  "durationInSeconds" : 0.0014719963073730469,
+                  "name" : "testDemoOutgoingInvitationCanBeWithdrawnAndSentAgain()",
+                  "nodeIdentifier" : "UIReviewWaveTwoTests/testDemoOutgoingInvitationCanBeWithdrawnAndSentAgain()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveTwoTests/testDemoOutgoingInvitationCanBeWithdrawnAndSentAgain",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.001s",
+                  "durationInSeconds" : 0.0010089874267578125,
+                  "name" : "testDemoRecipientCannotWithdrawIncomingInvitation()",
+                  "nodeIdentifier" : "UIReviewWaveTwoTests/testDemoRecipientCannotWithdrawIncomingInvitation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveTwoTests/testDemoRecipientCannotWithdrawIncomingInvitation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00046s",
+                  "durationInSeconds" : 0.0004589557647705078,
+                  "name" : "testNewPlanAudienceIncludesEveryCurrentFriendExceptBlockedAndDuplicates()",
+                  "nodeIdentifier" : "UIReviewWaveTwoTests/testNewPlanAudienceIncludesEveryCurrentFriendExceptBlockedAndDuplicates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveTwoTests/testNewPlanAudienceIncludesEveryCurrentFriendExceptBlockedAndDuplicates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0035s",
+                  "durationInSeconds" : 0.0035430192947387695,
+                  "name" : "testSystemAppearanceIsDefaultAndExistingExplicitChoiceIsPreserved()",
+                  "nodeIdentifier" : "UIReviewWaveTwoTests/testSystemAppearanceIsDefaultAndExistingExplicitChoiceIsPreserved()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveTwoTests/testSystemAppearanceIsDefaultAndExistingExplicitChoiceIsPreserved",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "UIReviewWaveTwoTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/UIReviewWaveTwoTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.00047s",
+                  "durationInSeconds" : 0.00046706199645996094,
+                  "name" : "testExpiredOrPausedPresenceIsNotShownAsSameCity()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testExpiredOrPausedPresenceIsNotShownAsSameCity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testExpiredOrPausedPresenceIsNotShownAsSameCity",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00061s",
+                  "durationInSeconds" : 0.0006089210510253906,
+                  "name" : "testGenericFriendWidgetKeepsDistantFriendsAndExistingOrder()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testGenericFriendWidgetKeepsDistantFriendsAndExistingOrder()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testGenericFriendWidgetKeepsDistantFriendsAndExistingOrder",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00057s",
+                  "durationInSeconds" : 0.0005719661712646484,
+                  "name" : "testHiddenModesDoNotExposeFriendIdentityThroughLink()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testHiddenModesDoNotExposeFriendIdentityThroughLink()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testHiddenModesDoNotExposeFriendIdentityThroughLink",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0018s",
+                  "durationInSeconds" : 0.001793980598449707,
+                  "name" : "testNoSameCityMatchDoesNotFallBackToFriendsElsewhere()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testNoSameCityMatchDoesNotFallBackToFriendsElsewhere()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testNoSameCityMatchDoesNotFallBackToFriendsElsewhere",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00048s",
+                  "durationInSeconds" : 0.00048100948333740234,
+                  "name" : "testOneSameCityMatchDoesNotFillSecondColumnWithDistantFriend()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testOneSameCityMatchDoesNotFillSecondColumnWithDistantFriend()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testOneSameCityMatchDoesNotFillSecondColumnWithDistantFriend",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00047s",
+                  "durationInSeconds" : 0.0004709959030151367,
+                  "name" : "testTwoSameCityMatchesRemainInSourceOrder()",
+                  "nodeIdentifier" : "WidgetAuditRegressionTests/testTwoSameCityMatchesRemainInSourceOrder()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests/testTwoSameCityMatchesRemainInSourceOrder",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "WidgetAuditRegressionTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests/WidgetAuditRegressionTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            }
+          ],
+          "name" : "WhereIsMyFriendTests",
+          "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendTests",
+          "nodeType" : "Unit test bundle",
+          "result" : "Passed"
+        },
+        {
+          "children" : [
+            {
+              "children" : [
+                {
+                  "duration" : "21s",
+                  "durationInSeconds" : 21.51617693901062,
+                  "name" : "testAccountDeletionFailureShowsVisibleErrorWithoutSigningOut()",
+                  "nodeIdentifier" : "PrototypeUITests/testAccountDeletionFailureShowsVisibleErrorWithoutSigningOut()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testAccountDeletionFailureShowsVisibleErrorWithoutSigningOut",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "XCTAssertTrue failed",
+                      "nodeType" : "Failure Message",
+                      "sourceLocation" : {
+                        "filePath" : "/Users/wangyang/.gemini/antigravity/where_is_my_friend/WhereIsMyFriendUITests/PrototypeUITests.swift",
+                        "lineNumber" : 130
+                      }
+                    }
+                  ],
+                  "duration" : "45s",
+                  "durationInSeconds" : 45.94711101055145,
+                  "name" : "testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+                  "nodeIdentifier" : "PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testAuditPersonalPlanAndProfileProtectUnsavedChanges",
+                  "nodeType" : "Test Case",
+                  "result" : "Failed"
+                },
+                {
+                  "duration" : "20s",
+                  "durationInSeconds" : 20.16574192047119,
+                  "name" : "testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+                  "nodeIdentifier" : "PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "12s",
+                  "durationInSeconds" : 12.100564956665039,
+                  "name" : "testFirstUseLocationAllowMovesToFriends()",
+                  "nodeIdentifier" : "PrototypeUITests/testFirstUseLocationAllowMovesToFriends()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFirstUseLocationAllowMovesToFriends",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "19s",
+                  "durationInSeconds" : 19.60898506641388,
+                  "name" : "testFirstUseLocationSetupRequestsSystemPermissionAndAllowsDecline()",
+                  "nodeIdentifier" : "PrototypeUITests/testFirstUseLocationSetupRequestsSystemPermissionAndAllowsDecline()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFirstUseLocationSetupRequestsSystemPermissionAndAllowsDecline",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "42s",
+                  "durationInSeconds" : 42.53184509277344,
+                  "name" : "testFriendInviteDeepLinkSurvivesRelaunchAndDismissal()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendInviteDeepLinkSurvivesRelaunchAndDismissal()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendInviteDeepLinkSurvivesRelaunchAndDismissal",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "14s",
+                  "durationInSeconds" : 14.759162068367004,
+                  "name" : "testFriendPlanBadgeOpensThatFriendsSharedCities()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendPlanBadgeOpensThatFriendsSharedCities",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "16s",
+                  "durationInSeconds" : 16.81646502017975,
+                  "name" : "testFriendPlanSecondPageOpensDetails()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendPlanSecondPageOpensDetails()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendPlanSecondPageOpensDetails",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "XCTAssertTrue failed",
+                      "nodeType" : "Failure Message",
+                      "sourceLocation" : {
+                        "filePath" : "/Users/wangyang/.gemini/antigravity/where_is_my_friend/WhereIsMyFriendUITests/PrototypeUITests.swift",
+                        "lineNumber" : 1543
+                      }
+                    }
+                  ],
+                  "duration" : "14s",
+                  "durationInSeconds" : 14.574363946914673,
+                  "name" : "testFriendRequestNotificationRestoresAndCanBeAccepted()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendRequestNotificationRestoresAndCanBeAccepted",
+                  "nodeType" : "Test Case",
+                  "result" : "Failed"
+                },
+                {
+                  "duration" : "1m 16s",
+                  "durationInSeconds" : 76.57331204414368,
+                  "name" : "testFriendSharingDescriptionsAreLocalizedInChinese()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendSharingDescriptionsAreLocalizedInChinese",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1m 16s",
+                  "durationInSeconds" : 76.31675803661346,
+                  "name" : "testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+                  "nodeIdentifier" : "PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFriendSharingDescriptionsFollowGlobalAndIndividualPreferences",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "21s",
+                  "durationInSeconds" : 21.271486043930054,
+                  "name" : "testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+                  "nodeIdentifier" : "PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testHomeSummaryExpandsEveryOverlapAndColdLinkOpensBeyondPreview",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "21s",
+                  "durationInSeconds" : 21.214908003807068,
+                  "name" : "testManualCitySelectionDoesNotRequireLocationPermission()",
+                  "nodeIdentifier" : "PrototypeUITests/testManualCitySelectionDoesNotRequireLocationPermission()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testManualCitySelectionDoesNotRequireLocationPermission",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "28s",
+                  "durationInSeconds" : 28.095210075378418,
+                  "name" : "testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+                  "nodeIdentifier" : "PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testMembersCanNudgeAndMuteFlightPlanningRemindersWithoutSyncClutter",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "54s",
+                  "durationInSeconds" : 54.53170704841614,
+                  "name" : "testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+                  "nodeIdentifier" : "PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testNewPlansSelectAllFriendsAndPreserveOptOutInBothLanguages",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "45s",
+                  "durationInSeconds" : 45.62353503704071,
+                  "name" : "testNoMatchCardsDisappearWhenCitySharingStops()",
+                  "nodeIdentifier" : "PrototypeUITests/testNoMatchCardsDisappearWhenCitySharingStops()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testNoMatchCardsDisappearWhenCitySharingStops",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "25s",
+                  "durationInSeconds" : 25.677576065063477,
+                  "name" : "testOfflineEndToEndFlow()",
+                  "nodeIdentifier" : "PrototypeUITests/testOfflineEndToEndFlow()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testOfflineEndToEndFlow",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "25s",
+                  "durationInSeconds" : 25.59293496608734,
+                  "name" : "testOnboardingCanSkipAndFinishFromProfile()",
+                  "nodeIdentifier" : "PrototypeUITests/testOnboardingCanSkipAndFinishFromProfile()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testOnboardingCanSkipAndFinishFromProfile",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "21s",
+                  "durationInSeconds" : 21.229506969451904,
+                  "name" : "testOnboardingFourChaptersAndExamples()",
+                  "nodeIdentifier" : "PrototypeUITests/testOnboardingFourChaptersAndExamples()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testOnboardingFourChaptersAndExamples",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "11s",
+                  "durationInSeconds" : 11.670507907867432,
+                  "name" : "testOnboardingMotionCanBeInterrupted()",
+                  "nodeIdentifier" : "PrototypeUITests/testOnboardingMotionCanBeInterrupted()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testOnboardingMotionCanBeInterrupted",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "30s",
+                  "durationInSeconds" : 30.61736297607422,
+                  "name" : "testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain()",
+                  "nodeIdentifier" : "PrototypeUITests/testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1m 4s",
+                  "durationInSeconds" : 64.55882108211517,
+                  "name" : "testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+                  "nodeIdentifier" : "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "29s",
+                  "durationInSeconds" : 29.426105976104736,
+                  "name" : "testProfileEditingAndWidgetPrivacyControls()",
+                  "nodeIdentifier" : "PrototypeUITests/testProfileEditingAndWidgetPrivacyControls()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testProfileEditingAndWidgetPrivacyControls",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "23s",
+                  "durationInSeconds" : 23.100679993629456,
+                  "name" : "testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates()",
+                  "nodeIdentifier" : "PrototypeUITests/testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testSingleCalendarSelectsRangeAcrossMonthsAndCancelKeepsDates",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "39s",
+                  "durationInSeconds" : 39.841869950294495,
+                  "name" : "testSystemAppearanceSelectionPersistsAcrossLaunch()",
+                  "nodeIdentifier" : "PrototypeUITests/testSystemAppearanceSelectionPersistsAcrossLaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testSystemAppearanceSelectionPersistsAcrossLaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "25s",
+                  "durationInSeconds" : 25.004395961761475,
+                  "name" : "testTravelCitySearchFindsPalmSpringsFromProfile()",
+                  "nodeIdentifier" : "PrototypeUITests/testTravelCitySearchFindsPalmSpringsFromProfile()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTravelCitySearchFindsPalmSpringsFromProfile",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "1m 3s",
+                  "durationInSeconds" : 63.556410908699036,
+                  "name" : "testTripCreationPersistencePeopleAndCompletion()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripCreationPersistencePeopleAndCompletion()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripCreationPersistencePeopleAndCompletion",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "17s",
+                  "durationInSeconds" : 17.097841024398804,
+                  "name" : "testTripDemoUnknownFlightDoesNotInventProviderResults()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripDemoUnknownFlightDoesNotInventProviderResults()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripDemoUnknownFlightDoesNotInventProviderResults",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "26s",
+                  "durationInSeconds" : 26.807265043258667,
+                  "name" : "testTripEditPreservesOtherTrips()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripEditPreservesOtherTrips()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripEditPreservesOtherTrips",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "31s",
+                  "durationInSeconds" : 31.483362913131714,
+                  "name" : "testTripInviteDeepLinkSurvivesRelaunchAndDismissal()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripInviteDeepLinkSurvivesRelaunchAndDismissal()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripInviteDeepLinkSurvivesRelaunchAndDismissal",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "23s",
+                  "durationInSeconds" : 23.469114899635315,
+                  "name" : "testTripMemberCanLeaveButCannotManageOthers()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripMemberCanLeaveButCannotManageOthers()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripMemberCanLeaveButCannotManageOthers",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "30s",
+                  "durationInSeconds" : 30.459220051765442,
+                  "name" : "testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripOwnerRemovesMemberAndDeletesWithConfirmation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "41s",
+                  "durationInSeconds" : 41.96234095096588,
+                  "name" : "testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripUnverifiedFlightEntryAndMissingTravelerUpdate",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "20s",
+                  "durationInSeconds" : 20.574044942855835,
+                  "name" : "testTripVerifiedFlightLookupAndCandidateSelection()",
+                  "nodeIdentifier" : "PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testTripVerifiedFlightLookupAndCandidateSelection",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "21s",
+                  "durationInSeconds" : 21.53105401992798,
+                  "name" : "testUnavailableUpcomingLinkIsSafeAfterColdLaunch()",
+                  "nodeIdentifier" : "PrototypeUITests/testUnavailableUpcomingLinkIsSafeAfterColdLaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testUnavailableUpcomingLinkIsSafeAfterColdLaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "23s",
+                  "durationInSeconds" : 23.225356101989746,
+                  "name" : "testW3LiveTokyoSearchCanBeSelected()",
+                  "nodeIdentifier" : "PrototypeUITests/testW3LiveTokyoSearchCanBeSelected()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testW3LiveTokyoSearchCanBeSelected",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1m 29s",
+                  "durationInSeconds" : 89.23837995529175,
+                  "name" : "testW3NotificationOverviewRoutesAndSavedPreferences()",
+                  "nodeIdentifier" : "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "33s",
+                  "durationInSeconds" : 33.646822929382324,
+                  "name" : "testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+                  "nodeIdentifier" : "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "XCTAssertTrue failed",
+                      "nodeType" : "Failure Message",
+                      "sourceLocation" : {
+                        "filePath" : "/Users/wangyang/.gemini/antigravity/where_is_my_friend/WhereIsMyFriendUITests/PrototypeUITests.swift",
+                        "lineNumber" : 2340
+                      }
+                    }
+                  ],
+                  "duration" : "14s",
+                  "durationInSeconds" : 14.18638801574707,
+                  "name" : "testWidgetPrivacyAndEdgeStates()",
+                  "nodeIdentifier" : "PrototypeUITests/testWidgetPrivacyAndEdgeStates()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testWidgetPrivacyAndEdgeStates",
+                  "nodeType" : "Test Case",
+                  "result" : "Failed"
+                }
+              ],
+              "name" : "PrototypeUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Failed"
+            }
+          ],
+          "name" : "WhereIsMyFriendUITests",
+          "nodeIdentifierURL" : "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests",
+          "nodeType" : "UI test bundle",
+          "result" : "Failed"
+        }
+      ],
+      "name" : "WhereIsMyFriend",
+      "nodeType" : "Test Plan",
+      "result" : "Failed"
+    }
+  ],
+  "testPlanConfigurations" : [
+    {
+      "configurationId" : "1",
+      "configurationName" : "Test Scheme Action"
+    }
+  ]
+}

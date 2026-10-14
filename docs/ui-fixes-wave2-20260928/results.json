@@ -1,0 +1,425 @@
+[
+  {
+    "stage": "main",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 3,
+          "passedTests": 12,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 3,
+      "finishTime": 1790659249.671,
+      "passedTests": 12,
+      "result": "Failed",
+      "runtimeWarnings": [
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        },
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        }
+      ],
+      "skippedTests": 0,
+      "startTime": 1790658839.566,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 7,
+          "testIdentifierString": "PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative",
+          "testName": "testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 9,
+          "testIdentifierString": "PrototypeUITests/testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons",
+          "testName": "testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons()"
+        },
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 12,
+          "testIdentifierString": "PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt",
+          "testName": "testPersonalPlanCreatesOverlapAndRevokingShareRemovesIt()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 15
+    }
+  },
+  {
+    "stage": "small",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 7,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790659613.225,
+      "passedTests": 7,
+      "result": "Failed",
+      "runtimeWarnings": [
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        },
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        }
+      ],
+      "skippedTests": 0,
+      "startTime": 1790659337.006,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertGreaterThan failed: (\"0\") is not greater than (\"20\")",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 1,
+          "testIdentifierString": "PrototypeUITests/testDateRangeTouchTargetsAtLargestText()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testDateRangeTouchTargetsAtLargestText",
+          "testName": "testDateRangeTouchTargetsAtLargestText()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 8
+    }
+  },
+  {
+    "stage": "refine",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 5,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790660321.438,
+      "passedTests": 5,
+      "result": "Failed",
+      "runtimeWarnings": [
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        }
+      ],
+      "skippedTests": 0,
+      "startTime": 1790660098.779,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\nElement debug description:\nAttributes: TextField, 0x1144ea580, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\nElement subtree:\n →TextField, 0x1144ea580, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\nPath to element:\n →Application, 0x1125eda40, pid: 73936, label: 'Across Us'\n  ↳Window (Main), 0x1125ef0c0, {{0.0, 0.0}, {375.0, 667.0}}\n   ↳Other, 0x1125e4280, {{0.0, 0.0}, {375.0, 667.0}}\n    ↳Other, 0x1127643c0, {{0.0, 30.0}, {375.0, 637.0}}\n     ↳Other, 0x112764b40, {{0.0, 30.0}, {375.0, 637.0}}\n      ↳Other, 0x1127648c0, {{0.0, 30.0}, {375.0, 637.0}}\n       ↳Other, 0x112765b80, {{0.0, 30.0}, {375.0, 637.0}}\n        ↳Other, 0x112765540, {{0.0, 30.0}, {375.0, 637.0}}\n         ↳Other, 0x112765400, {{0.0, 30.0}, {375.0, 637.0}}\n          ↳Other, 0x1127657c0, {{0.0, 30.0}, {375.0, 637.0}}\n           ↳Other, 0x112765cc0, {{0.0, 30.0}, {375.0, 637.0}}\n            ↳Other, 0x112764a00, {{0.0, 30.0}, {375.0, 637.0}}\n             ↳Other, 0x1144eb840, {{0.0, 30.0}, {375.0, 637.0}}\n              ↳ScrollView, 0x1144eb700, {{0.0, 30.0}, {375.0, 637.0}}\n               ↳Other, 0x1144ebc00, {{0.0, 100.0}, {375.0, 1139.5}}\n                ↳TextField, 0x1144ea580, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\nQuery chain:\n →Find: Target Application 'com.yangwy30.whereismyfriend'\n  Output: {\n    Application, 0x113bae1c0, pid: 73936, label: 'Across Us'\n  }\n  ↪︎Find: Descendants matching type TextField\n    Output: {\n      TextField, 0x113654b40, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\n    }\n    ↪︎Find: Elements matching predicate '\"tripFlightNumberField\" IN identifiers'\n      Output: {\n        TextField, 0x11473cf00, {{36.0, 592.0}, {303.0, 66.0}}, identifier: 'tripFlightNumberField', placeholderValue: 'e.g. CZ 328, UA 353', value: e.g. CZ 328, UA 353\n      }\n",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 4,
+          "testIdentifierString": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets",
+          "testName": "testFlightControlsAtLargestTextHaveReachableTargets()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 6
+    }
+  },
+  {
+    "stage": "flight",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 0,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790660515.789,
+      "passedTests": 0,
+      "result": "Failed",
+      "runtimeWarnings": [
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        }
+      ],
+      "skippedTests": 0,
+      "startTime": 1790660444.595,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 1,
+          "testIdentifierString": "PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testFlightControlsAtLargestTextHaveReachableTargets",
+          "testName": "testFlightControlsAtLargestTextHaveReachableTargets()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  },
+  {
+    "stage": "flight-final",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "848EA800-3A02-4E27-A128-4F2D4179D7CA",
+            "deviceName": "Across Us Onboarding QA — SE",
+            "modelName": "iPhone SE (3rd generation)",
+            "osBuildNumber": "23E254a",
+            "osVersion": "26.4.1",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 1,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790660743.984,
+      "passedTests": 1,
+      "result": "Passed",
+      "runtimeWarnings": [
+        {
+          "issueType": "Runtime Warning",
+          "message": "Invalid frame dimension (negative or non-finite)."
+        }
+      ],
+      "skippedTests": 0,
+      "startTime": 1790660665.327,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  },
+  {
+    "stage": "final",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 3,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790661051.59,
+      "passedTests": 3,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790660850.28,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 2,
+          "testIdentifierString": "PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative",
+          "testName": "testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 4
+    }
+  },
+  {
+    "stage": "empty",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 1,
+          "passedTests": 0,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "finishTime": 1790661364.367,
+      "passedTests": 0,
+      "result": "Failed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790661303.744,
+      "statistics": [],
+      "testFailures": [
+        {
+          "failureText": "XCTAssertTrue failed",
+          "targetName": "WhereIsMyFriendUITests",
+          "testIdentifier": 1,
+          "testIdentifierString": "PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()",
+          "testIdentifierURL": "test://com.apple.xcode/WhereIsMyFriend/WhereIsMyFriendUITests/PrototypeUITests/testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative",
+          "testName": "testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative()"
+        }
+      ],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  },
+  {
+    "stage": "empty-final",
+    "summary": {
+      "devicesAndConfigurations": [
+        {
+          "device": {
+            "architecture": "arm64",
+            "deviceId": "67A281F8-6CFF-4D7F-A257-8BB34E459060",
+            "deviceName": "Across Us iOS 27 UI QA",
+            "modelName": "iPhone 18 Pro",
+            "osBuildNumber": "24A434",
+            "osVersion": "27.0",
+            "platform": "iOS Simulator"
+          },
+          "expectedFailures": 0,
+          "failedTests": 0,
+          "passedTests": 1,
+          "skippedTests": 0,
+          "testPlanConfiguration": {
+            "configurationId": "1",
+            "configurationName": "Test Scheme Action"
+          }
+        }
+      ],
+      "environmentDescription": "WhereIsMyFriend · Built with macOS 27.0",
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "finishTime": 1790661684.848,
+      "passedTests": 1,
+      "result": "Passed",
+      "runtimeWarnings": [],
+      "skippedTests": 0,
+      "startTime": 1790661615.753,
+      "statistics": [],
+      "testFailures": [],
+      "title": "Test - WhereIsMyFriend",
+      "topInsights": [],
+      "totalTestCount": 1
+    }
+  }
+]

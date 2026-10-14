@@ -1,0 +1,24 @@
+See your friends’ shared cities, discover dates when your plans overlap, and keep everyone’s flights together for a shared trip.
+
+FRIENDS, HERE AND NEXT
+Browse friends’ latest shared cities and update times. A compact summary highlights friends who recently shared your city; tap to see them. Browse the travel cities and dates your friends have shared with you.
+
+PLAN YOUR NEXT CHANCE TO MEET
+Add a destination and your travel dates. New personal plans select all your current accepted, unblocked friends by default. Deselect anyone before saving, or change the audience later. Each plan supports up to 100 friends. Existing plans keep their saved audiences.
+
+Selected friends can browse a plan’s city and dates by default. Turn off browsing to keep it out of Friends’ travel plans while still allowing matches when mutually shared plans overlap. Clear the audience to keep a plan to yourself. Choose reminders for upcoming overlaps.
+
+TRAVEL TOGETHER
+Create a shared trip and invite friends. Each person adds and manages their own flights, and members can view available routes, schedules and arrival details together. The map shows airport routes from added flights, not device locations or live aircraft positions. Choose flight-change alerts and manage flight-planning reminders for each trip.
+
+Personal travel plans and shared trips are separate. Joining a trip does not publish a personal plan. Copy a shared trip’s dates into a personal plan, then review its dates and audience before saving.
+
+FRIENDS AT A GLANCE
+Add Friends or Here together widgets to your Home Screen or Lock Screen. Feature a preferred friend where supported, and choose whether widgets show names and cities, hide names, or hide all details.
+
+YOUR SHARING CHOICES
+Sign in with Apple and connect through accepted friend requests. Pause city sharing globally or for an individual friend, withdraw a pending invitation, or remove and block a friend. Enter a city manually if you prefer not to allow device location access. Find notification controls, appearance choices, privacy details and account deletion in You.
+
+Precise device coordinates are not sent to our servers. The service keeps city-level information and same-city history for its features; flight routes come from flights you add. Pausing city sharing does not change personal-plan audiences or shared-trip membership.
+
+Cities reflect the latest shared update. Background updates, widget refreshes and notifications depend on iOS, permissions and connectivity and are not guaranteed to be immediate. Flight information may be incomplete or outdated; confirm travel arrangements with your airline.

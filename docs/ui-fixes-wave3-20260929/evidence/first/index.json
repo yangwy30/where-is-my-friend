@@ -1,0 +1,27 @@
+[
+  {
+    "file": "W3-city-live-Tokyo-result.png",
+    "test": "PrototypeUITests/testW3LiveTokyoSearchCanBeSelected()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F16-overview-en.png",
+    "test": "PrototypeUITests/testW3NotificationOverviewRoutesAndSavedPreferences()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-unavailable.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-cold-Mia.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  },
+  {
+    "file": "W3-F24-warm-Lin.png",
+    "test": "PrototypeUITests/testW3WidgetFriendLinksOpenWarmColdAndUnavailableDestinations()",
+    "device": "Across Us iOS 27 UI QA"
+  }
+]

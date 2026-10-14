@@ -1,0 +1,14 @@
+{
+  "verifiedAt": "2026-09-29T06:42:25.129675+00:00",
+  "version": "1.0.6",
+  "build": "26",
+  "appleBuildID": "1b5e2423-6522-4197-94f3-90c5e3af530d",
+  "url": "https://appstoreconnect.apple.com/teams/9b0eb9fa-54ee-4f56-83ae-1e79e3cf4125/apps/6807634842/testflight/ios/1b5e2423-6522-4197-94f3-90c5e3af530d",
+  "uploadStatus": "Complete",
+  "group": "Testers",
+  "groupType": "Internal",
+  "testers": 1,
+  "bilingualTestNotesSaved": true,
+  "backendAPIVersion": 29,
+  "migration": "20260929010000"
+}

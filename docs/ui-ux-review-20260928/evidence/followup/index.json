@@ -1,0 +1,422 @@
+[
+  {
+    "label": "App UI hierarchy for com.yangwy30.whereismyfriend",
+    "path": "evidence/followup/App-UI-hierarchy-for-com.yangwy30.whereismyfriend.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": true,
+    "source": "FC39259E-57F9-4843-8CAC-6A079452B94B.txt"
+  },
+  {
+    "label": "Compact trip destination - nightJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-destination---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "F19CC6C4-3272-47FF-869F-3050D5D5AD76.png"
+  },
+  {
+    "label": "Compact trip destination - solarJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-destination---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "B564D75F-D86A-454D-90B4-64B5830FD16C.png"
+  },
+  {
+    "label": "Compact trip empty - nightJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-empty---nightJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "6C769759-5B19-4EE6-A268-CEF9CDD84F93.png"
+  },
+  {
+    "label": "Compact trip empty - solarJadeAppearance.png",
+    "path": "evidence/followup/Compact-trip-empty---solarJadeAppearance.png",
+    "test": "PrototypeUITests/testCompactTripFormThemesAndSingleCalendar()",
+    "failure": false,
+    "source": "4D53D16D-828F-4ECE-B108-6E16FCC0AB90.png"
+  },
+  {
+    "label": "Complete Issue Description.txt",
+    "path": "evidence/followup/Complete-Issue-Description.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": true,
+    "source": "9CF9E85D-CF20-4138-A8C6-5AB503B9FDE0.txt"
+  },
+  {
+    "label": "REVIEW-01-home-tree.txt",
+    "path": "evidence/followup/REVIEW-01-home-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "6EF0ECF9-8F57-47F3-BA88-8243E58B2D3B.txt"
+  },
+  {
+    "label": "REVIEW-01-home.png",
+    "path": "evidence/followup/REVIEW-01-home.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "4DF3288D-7F00-466B-B86C-8321812B836F.png"
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination-tree.txt",
+    "path": "evidence/followup/REVIEW-02-city-sharing-destination-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "BB5B2E49-9A11-4996-B446-CC700CCE61F1.txt"
+  },
+  {
+    "label": "REVIEW-02-city-sharing-destination.png",
+    "path": "evidence/followup/REVIEW-02-city-sharing-destination.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "172D4586-F1A5-40D6-9C8F-E5AC29D8452E.png"
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused-tree.txt",
+    "path": "evidence/followup/REVIEW-03-global-sharing-paused-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "B6630B4C-374B-468B-81E1-3FFDD125D52D.txt"
+  },
+  {
+    "label": "REVIEW-03-global-sharing-paused.png",
+    "path": "evidence/followup/REVIEW-03-global-sharing-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "B2E9F6B8-1867-46F0-8CE3-C35A2AAA9FBA.png"
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused-tree.txt",
+    "path": "evidence/followup/REVIEW-04-friend-global-paused-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "29C87611-B9BB-46A8-B082-E12596747FFE.txt"
+  },
+  {
+    "label": "REVIEW-04-friend-global-paused.png",
+    "path": "evidence/followup/REVIEW-04-friend-global-paused.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "2F14016C-A2EB-40E2-A31B-8034D6C19D2A.png"
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off-tree.txt",
+    "path": "evidence/followup/REVIEW-05-friend-sharing-off-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "8FD6F244-BAA2-4B4B-8457-0D9D877D1FEF.txt"
+  },
+  {
+    "label": "REVIEW-05-friend-sharing-off.png",
+    "path": "evidence/followup/REVIEW-05-friend-sharing-off.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "5F64F6ED-7C53-414B-9F36-FE64CBCDB56D.png"
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation-tree.txt",
+    "path": "evidence/followup/REVIEW-06-remove-confirmation-tree.txt",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "AA8BD17A-EB74-4D9D-948E-B6EB45B2F312.txt"
+  },
+  {
+    "label": "REVIEW-06-remove-confirmation.png",
+    "path": "evidence/followup/REVIEW-06-remove-confirmation.png",
+    "test": "PrototypeUITests/testReviewSharingAndFriendStates()",
+    "failure": false,
+    "source": "04ED07C6-7F03-48C2-947D-2C4302D92928.png"
+  },
+  {
+    "label": "REVIEW-08-profile-tree.txt",
+    "path": "evidence/followup/REVIEW-08-profile-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "AC284512-C149-4EF5-AC86-22DABFA53D42.txt"
+  },
+  {
+    "label": "REVIEW-08-profile.png",
+    "path": "evidence/followup/REVIEW-08-profile.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "B0FECDF0-1627-41C9-8900-440C4CC36041.png"
+  },
+  {
+    "label": "REVIEW-09-notifications-tree.txt",
+    "path": "evidence/followup/REVIEW-09-notifications-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "B79E4E5F-86FC-43FD-84C7-0B2C48763BB8.txt"
+  },
+  {
+    "label": "REVIEW-09-notifications.png",
+    "path": "evidence/followup/REVIEW-09-notifications.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "1081E5F9-2D13-419E-9732-9FC2022FC04A.png"
+  },
+  {
+    "label": "REVIEW-10-widget-privacy-tree.txt",
+    "path": "evidence/followup/REVIEW-10-widget-privacy-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "EBDD8F18-2CC5-4CD0-9AC4-8306BA5493B7.txt"
+  },
+  {
+    "label": "REVIEW-10-widget-privacy.png",
+    "path": "evidence/followup/REVIEW-10-widget-privacy.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "0D85C82A-41FC-4BDC-99B8-18D38757D8E4.png"
+  },
+  {
+    "label": "REVIEW-11-same-city-history-tree.txt",
+    "path": "evidence/followup/REVIEW-11-same-city-history-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "03E350DC-12D9-4CF3-AEF2-2AC49250A43A.txt"
+  },
+  {
+    "label": "REVIEW-11-same-city-history.png",
+    "path": "evidence/followup/REVIEW-11-same-city-history.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "5DE2FAB1-737E-491E-BA73-42C714D00415.png"
+  },
+  {
+    "label": "REVIEW-12-privacy-data-tree.txt",
+    "path": "evidence/followup/REVIEW-12-privacy-data-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "2E70F0CB-E583-4EF9-912B-F3F286C53059.txt"
+  },
+  {
+    "label": "REVIEW-12-privacy-data.png",
+    "path": "evidence/followup/REVIEW-12-privacy-data.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "CE336684-72D6-4549-A276-58FF28C2F749.png"
+  },
+  {
+    "label": "REVIEW-13-blocked-empty-tree.txt",
+    "path": "evidence/followup/REVIEW-13-blocked-empty-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "D19CDBC3-842E-4320-89C9-E6C2425266C5.txt"
+  },
+  {
+    "label": "REVIEW-13-blocked-empty.png",
+    "path": "evidence/followup/REVIEW-13-blocked-empty.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "966954A1-CA9F-42F5-9C81-C7600DEC928B.png"
+  },
+  {
+    "label": "REVIEW-14-home-dark-tree.txt",
+    "path": "evidence/followup/REVIEW-14-home-dark-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "DED56760-1553-4B63-8205-1CBC36168A02.txt"
+  },
+  {
+    "label": "REVIEW-14-home-dark.png",
+    "path": "evidence/followup/REVIEW-14-home-dark.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "3394C9E5-0F8C-4A4C-A621-DB4FEA9D6E50.png"
+  },
+  {
+    "label": "REVIEW-15-sharing-dark-tree.txt",
+    "path": "evidence/followup/REVIEW-15-sharing-dark-tree.txt",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "AC67C57A-FE37-428E-B697-265C9945C5A6.txt"
+  },
+  {
+    "label": "REVIEW-15-sharing-dark.png",
+    "path": "evidence/followup/REVIEW-15-sharing-dark.png",
+    "test": "PrototypeUITests/testReviewProfileAndPrivacyPages()",
+    "failure": false,
+    "source": "BD05E7B1-AB8A-494F-BB76-E27ADCB8D350.png"
+  },
+  {
+    "label": "REVIEW-16-plan-feed-tree.txt",
+    "path": "evidence/followup/REVIEW-16-plan-feed-tree.txt",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "F5FBDDF3-2271-43B6-AE6F-4C289210F0C5.txt"
+  },
+  {
+    "label": "REVIEW-16-plan-feed.png",
+    "path": "evidence/followup/REVIEW-16-plan-feed.png",
+    "test": "PrototypeUITests/testReviewPlanDraftAndSharingModes()",
+    "failure": false,
+    "source": "BAA4093C-FD81-4690-A461-00EFE19E2867.png"
+  },
+  {
+    "label": "REVIEW-30-empty-friends-tree.txt",
+    "path": "evidence/followup/REVIEW-30-empty-friends-tree.txt",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "7B3111F5-A16F-45E1-819D-33454D1DC1E4.txt"
+  },
+  {
+    "label": "REVIEW-30-empty-friends.png",
+    "path": "evidence/followup/REVIEW-30-empty-friends.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "6ABC0895-C09B-4AA6-B9BB-F9AF33896081.png"
+  },
+  {
+    "label": "REVIEW-31-first-friend-invitation-tree.txt",
+    "path": "evidence/followup/REVIEW-31-first-friend-invitation-tree.txt",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "9BD84A54-6833-4A64-942D-AFFBA35D5C12.txt"
+  },
+  {
+    "label": "REVIEW-31-first-friend-invitation.png",
+    "path": "evidence/followup/REVIEW-31-first-friend-invitation.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "3146C8A4-4856-47B0-8AC8-317167DAA1CC.png"
+  },
+  {
+    "label": "REVIEW-32-offline-state-tree.txt",
+    "path": "evidence/followup/REVIEW-32-offline-state-tree.txt",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "99C2C7F4-46FF-4EEC-BDED-62B721D0D536.txt"
+  },
+  {
+    "label": "REVIEW-32-offline-state.png",
+    "path": "evidence/followup/REVIEW-32-offline-state.png",
+    "test": "PrototypeUITests/testReviewEmptyFriendsAndOfflineState()",
+    "failure": false,
+    "source": "D892344E-E015-4481-BC9B-05AFF1088251.png"
+  },
+  {
+    "label": "REVIEW-33-repeat-stay-duration-tree.txt",
+    "path": "evidence/followup/REVIEW-33-repeat-stay-duration-tree.txt",
+    "test": "PrototypeUITests/testReviewRepeatedStayDuration()",
+    "failure": false,
+    "source": "1872F902-3443-419F-BC6D-3404AD08D437.txt"
+  },
+  {
+    "label": "REVIEW-33-repeat-stay-duration.png",
+    "path": "evidence/followup/REVIEW-33-repeat-stay-duration.png",
+    "test": "PrototypeUITests/testReviewRepeatedStayDuration()",
+    "failure": false,
+    "source": "FD67FF23-A1B4-45FC-AF19-A7BBB57D26A3.png"
+  },
+  {
+    "label": "REVIEW-34-long-name-largest-text-tree.txt",
+    "path": "evidence/followup/REVIEW-34-long-name-largest-text-tree.txt",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "DB2E2594-248A-4FF6-82E5-4A05FCA7B9AD.txt"
+  },
+  {
+    "label": "REVIEW-34-long-name-largest-text.png",
+    "path": "evidence/followup/REVIEW-34-long-name-largest-text.png",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "9DD47EC4-EB07-48E0-AB0D-07E078CED6DB.png"
+  },
+  {
+    "label": "REVIEW-35-friend-detail-largest-text-tree.txt",
+    "path": "evidence/followup/REVIEW-35-friend-detail-largest-text-tree.txt",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "C8CE1205-F7F5-4525-8D7B-EB87B92A3D63.txt"
+  },
+  {
+    "label": "REVIEW-35-friend-detail-largest-text.png",
+    "path": "evidence/followup/REVIEW-35-friend-detail-largest-text.png",
+    "test": "PrototypeUITests/testReviewLongNamesAtLargestText()",
+    "failure": false,
+    "source": "12DD0F1B-2CCE-4398-9F43-04EB73834651.png"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-0-tree.txt",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-0-tree.txt",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "0768E468-E208-4029-92BE-4DDBD8220146.txt"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-0.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-0.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "2D857781-9B98-4645-A9C2-A54E664AADAA.png"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-1-tree.txt",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-1-tree.txt",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "91A21A95-A614-40E2-BDD5-08DF03D577B1.txt"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-1.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-1.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "82F63864-4AE6-42C5-AF50-903ED0EF03CE.png"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-2-tree.txt",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-2-tree.txt",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "2A14B301-9572-479E-A1A0-60A6CE2AF30B.txt"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-2.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-2.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "8815EA36-9916-47B6-8EA8-05C980F719F8.png"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-3-tree.txt",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-3-tree.txt",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "A4C739BA-5FF9-48AA-8692-DC4F24D627B2.txt"
+  },
+  {
+    "label": "REVIEW-36-onboarding-AX-3.png",
+    "path": "evidence/followup/REVIEW-36-onboarding-AX-3.png",
+    "test": "PrototypeUITests/testReviewOnboardingLargestChineseText()",
+    "failure": false,
+    "source": "08837CAC-0D2A-448B-B555-29E02F499CDA.png"
+  },
+  {
+    "label": "REVIEW-37-request-deep-link-tree.txt",
+    "path": "evidence/followup/REVIEW-37-request-deep-link-tree.txt",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "C01006C8-1BD3-4FCE-82AE-B63FC4257BF4.txt"
+  },
+  {
+    "label": "REVIEW-37-request-deep-link.png",
+    "path": "evidence/followup/REVIEW-37-request-deep-link.png",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "70DD2B10-4D25-4AB3-ADF7-772D6663D2A9.png"
+  },
+  {
+    "label": "REVIEW-38-request-cold-restore-tree.txt",
+    "path": "evidence/followup/REVIEW-38-request-cold-restore-tree.txt",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "C3A78A8E-2941-4636-BE6B-94CB45007681.txt"
+  },
+  {
+    "label": "REVIEW-38-request-cold-restore.png",
+    "path": "evidence/followup/REVIEW-38-request-cold-restore.png",
+    "test": "PrototypeUITests/testReviewFriendRequestActualDeepLink()",
+    "failure": false,
+    "source": "5E3030EF-BF9B-4AA4-A976-FE435139D7A5.png"
+  }
+]

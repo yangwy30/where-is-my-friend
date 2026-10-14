@@ -1,0 +1,1250 @@
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd040, {{122.5, 493.8}, {6.0, 14.5}}, label: '1'
+Element subtree:
+ →StaticText, 0x113ecd040, {{122.5, 493.8}, {6.0, 14.5}}, label: '1'
+Path to element:
+ →Application, 0x113f270c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27200, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05040, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳StaticText, 0x113ecd040, {{122.5, 493.8}, {6.0, 14.5}}, label: '1'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450662848.267
+    Output: {
+      StaticText, 0x113b6e800, {{122.5, 493.8}, {6.0, 14.5}}, label: '1'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f04b40, {{38.0, 213.0}, {193.5, 14.5}}, label: 'New York · Sep 27 – Sep 30, 2026'
+Element subtree:
+ →StaticText, 0x113f04b40, {{38.0, 213.0}, {193.5, 14.5}}, label: 'New York · Sep 27 – Sep 30, 2026'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05a40, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f05540, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f04b40, {{38.0, 213.0}, {193.5, 14.5}}, label: 'New York · Sep 27 – Sep 30, 2026'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450941376.270
+    Output: {
+      StaticText, 0x113edfe80, {{38.0, 213.0}, {193.5, 14.5}}, label: 'New York · Sep 27 – Sep 30, 2026'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f06080, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Element subtree:
+ →StaticText, 0x113f06080, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04280, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f05b80, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f06080, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450935552.272
+    Output: {
+      StaticText, 0x113b6e940, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f05a40, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Element subtree:
+ →StaticText, 0x113f05a40, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f066c0, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f04140, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f05a40, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451111744.273
+    Output: {
+      StaticText, 0x113b6e800, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f05b80, {{246.5, 247.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Element subtree:
+ →StaticText, 0x113f05b80, {{246.5, 247.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05180, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f06580, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f05b80, {{246.5, 247.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451111296.274
+    Output: {
+      StaticText, 0x113b6fe80, {{246.5, 247.2}, {77.5, 14.5}}, label: 'Ready to plan'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Element subtree:
+ →StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05040, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f04000, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451113536.275
+    Output: {
+      StaticText, 0x113b6f5c0, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc3c0, {{38.0, 368.5}, {198.0, 14.5}}, label: 'Los Angeles · Sep 27 – Oct 1, 2026'
+Element subtree:
+ →StaticText, 0x113ecc3c0, {{38.0, 368.5}, {198.0, 14.5}}, label: 'Los Angeles · Sep 27 – Oct 1, 2026'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05040, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04dc0, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc3c0, {{38.0, 368.5}, {198.0, 14.5}}, label: 'Los Angeles · Sep 27 – Oct 1, 2026'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451110848.277
+    Output: {
+      StaticText, 0x113b6fd40, {{38.0, 368.5}, {198.0, 14.5}}, label: 'Los Angeles · Sep 27 – Oct 1, 2026'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Element subtree:
+ →StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04780, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451106816.279
+    Output: {
+      StaticText, 0x113b6e580, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Element subtree:
+ →StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04140, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451086144.280
+    Output: {
+      StaticText, 0x113b6e6c0, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Element subtree:
+ →StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06580, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451085696.281
+    Output: {
+      StaticText, 0x113b6f840, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Element subtree:
+ →StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f06580, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04500, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451085248.282
+    Output: {
+      StaticText, 0x113b6e800, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Element subtree:
+ →StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06440, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451084800.283
+    Output: {
+      StaticText, 0x113b6ee40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eccc80, {{213.0, 402.8}, {111.0, 14.5}}, label: '4 of 5 flights added'
+Element subtree:
+ →StaticText, 0x113eccc80, {{213.0, 402.8}, {111.0, 14.5}}, label: '4 of 5 flights added'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05680, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113eccc80, {{213.0, 402.8}, {111.0, 14.5}}, label: '4 of 5 flights added'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450861952.284
+    Output: {
+      StaticText, 0x113b6fc00, {{213.0, 402.8}, {111.0, 14.5}}, label: '4 of 5 flights added'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Element subtree:
+ →StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05040, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451002432.285
+    Output: {
+      StaticText, 0x113b6e800, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd400, {{38.0, 543.0}, {153.5, 24.0}}, label: 'Tokyo in autumn'
+Element subtree:
+ →StaticText, 0x113ecd400, {{38.0, 543.0}, {153.5, 24.0}}, label: 'Tokyo in autumn'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05040, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04dc0, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecd400, {{38.0, 543.0}, {153.5, 24.0}}, label: 'Tokyo in autumn'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450692032.286
+    Output: {
+      StaticText, 0x113f2c000, {{38.0, 543.0}, {153.5, 24.0}}, label: 'Tokyo in autumn'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd540, {{38.0, 572.0}, {169.5, 14.5}}, label: 'Tokyo · Oct 19 – Oct 26, 2026'
+Element subtree:
+ →StaticText, 0x113ecd540, {{38.0, 572.0}, {169.5, 14.5}}, label: 'Tokyo · Oct 19 – Oct 26, 2026'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04780, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecd540, {{38.0, 572.0}, {169.5, 14.5}}, label: 'Tokyo · Oct 19 – Oct 26, 2026'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450692928.287
+    Output: {
+      StaticText, 0x113f2c140, {{38.0, 572.0}, {169.5, 14.5}}, label: 'Tokyo · Oct 19 – Oct 26, 2026'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd680, {{302.5, 552.0}, {25.5, 14.5}}, label: 'NRT'
+Element subtree:
+ →StaticText, 0x113ecd680, {{302.5, 552.0}, {25.5, 14.5}}, label: 'NRT'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04140, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecd680, {{302.5, 552.0}, {25.5, 14.5}}, label: 'NRT'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450693824.288
+    Output: {
+      StaticText, 0x113f2c280, {{302.5, 552.0}, {25.5, 14.5}}, label: 'NRT'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd7c0, {{38.0, 600.5}, {26.0, 26.0}}, label: 'WY'
+Element subtree:
+ →StaticText, 0x113ecd7c0, {{38.0, 600.5}, {26.0, 26.0}}, label: 'WY'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06580, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecd7c0, {{38.0, 600.5}, {26.0, 26.0}}, label: 'WY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450694272.289
+    Output: {
+      StaticText, 0x113f2c3c0, {{38.0, 600.5}, {26.0, 26.0}}, label: 'WY'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecd900, {{69.0, 600.5}, {26.0, 26.0}}, label: 'LZ'
+Element subtree:
+ →StaticText, 0x113ecd900, {{69.0, 600.5}, {26.0, 26.0}}, label: 'LZ'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f06580, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04500, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecd900, {{69.0, 600.5}, {26.0, 26.0}}, label: 'LZ'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450694720.290
+    Output: {
+      StaticText, 0x113f2c500, {{69.0, 600.5}, {26.0, 26.0}}, label: 'LZ'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecda40, {{100.0, 600.5}, {26.0, 26.0}}, label: 'AR'
+Element subtree:
+ →StaticText, 0x113ecda40, {{100.0, 600.5}, {26.0, 26.0}}, label: 'AR'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04500, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06440, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecda40, {{100.0, 600.5}, {26.0, 26.0}}, label: 'AR'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450695616.291
+    Output: {
+      StaticText, 0x113f2c640, {{100.0, 600.5}, {26.0, 26.0}}, label: 'AR'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecdb80, {{246.5, 606.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Element subtree:
+ →StaticText, 0x113ecdb80, {{246.5, 606.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f06440, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05680, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecdb80, {{246.5, 606.2}, {77.5, 14.5}}, label: 'Ready to plan'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450696064.292
+    Output: {
+      StaticText, 0x113f2c780, {{246.5, 606.2}, {77.5, 14.5}}, label: 'Ready to plan'
+    }
+
+
+Type 1: Contrast failed
+Contrast failed for SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecde00, {{38.0, 640.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Element subtree:
+ →StaticText, 0x113ecde00, {{38.0, 640.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05040, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecd2c0, {{20.0, 525.0}, {335.0, 143.5}}, identifier: 'tripCard-example-tokyo', label: 'Tokyo in autumn, Tokyo · Oct 19 – Oct 26, 2026, NRT, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecde00, {{38.0, 640.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450695168.293
+    Output: {
+      StaticText, 0x113f2ca00, {{38.0, 640.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Element subtree:
+ →StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05040, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04dc0, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc640, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451106816.279
+    Output: {
+      StaticText, 0x113b6f980, {{38.0, 397.0}, {26.0, 26.0}}, label: 'WY'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Element subtree:
+ →StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06300, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04780, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113eccf00, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451002432.285
+    Output: {
+      StaticText, 0x113b6fe80, {{38.0, 437.0}, {47.0, 10.0}}, label: 'EXAMPLE'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f04140, {{20.0, 32.0}, {97.0, 53.0}}, label: 'Trips'
+Element subtree:
+ →StaticText, 0x113f04140, {{20.0, 32.0}, {97.0, 53.0}}, label: 'Trips'
+Path to element:
+ →Application, 0x113f270c0, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27200, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04dc0, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05540, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳StaticText, 0x113f04140, {{20.0, 32.0}, {97.0, 53.0}}, label: 'Trips'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450933760.259
+    Output: {
+      StaticText, 0x113edf480, {{20.0, 32.0}, {97.0, 53.0}}, label: 'Trips'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Element subtree:
+ →StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05540, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06580, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecca00, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451085248.282
+    Output: {
+      StaticText, 0x113b6e440, {{131.0, 397.0}, {26.0, 26.0}}, label: 'LZ'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Element subtree:
+ →StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f06580, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05680, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc780, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451086144.280
+    Output: {
+      StaticText, 0x113b6e6c0, {{69.0, 397.0}, {26.0, 26.0}}, label: 'MC'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f066c0, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Element subtree:
+ →StaticText, 0x113f066c0, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f061c0, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f06440, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f04500, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f066c0, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4450935552.272
+    Output: {
+      StaticText, 0x113b6e440, {{38.0, 241.5}, {26.0, 26.0}}, label: 'WY'
+    }
+
+
+Type 65536: Dynamic Type font sizes are partially unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Element subtree:
+ →StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f066c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05680, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04000, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113eccb40, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451084800.283
+    Output: {
+      StaticText, 0x113b6fc00, {{162.0, 403.2}, {12.5, 13.5}}, label: '+1'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Element subtree:
+ →StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f066c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f04000, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05040, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc8c0, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451085696.281
+    Output: {
+      StaticText, 0x113b6f840, {{100.0, 397.0}, {26.0, 26.0}}, label: 'DK'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Element subtree:
+ →StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f066c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05040, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f05540, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f052c0, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113ecc000, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451113536.275
+    Output: {
+      StaticText, 0x113b6fe80, {{38.0, 281.5}, {47.0, 10.0}}, label: 'EXAMPLE'
+    }
+
+
+Type 65536: Dynamic Type font sizes are unsupported
+User will not be able to change the font size of this SwiftUI.AccessibilityNode
+Element: Attributes: StaticText, 0x113f04780, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Element subtree:
+ →StaticText, 0x113f04780, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f066c0, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f04b40, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05540, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04dc0, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113f06300, {{20.0, 166.0}, {335.0, 143.5}}, identifier: 'tripCard-example-new-york', label: 'New York catch-up, New York · Sep 27 – Sep 30, 2026, JFK, Ready to plan, EXAMPLE'
+                     ↳StaticText, 0x113f04780, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451111744.273
+    Output: {
+      StaticText, 0x113b6f340, {{69.0, 241.5}, {26.0, 26.0}}, label: 'MC'
+    }
+
+
+Type 131072: Text clipped
+Text of this SwiftUI.AccessibilityNode may be clipped at larger Dynamic Type sizes.
+Element: Attributes: StaticText, 0x113ecc280, {{38.0, 339.5}, {198.0, 24.0}}, label: 'West Coast weekend'
+Element subtree:
+ →StaticText, 0x113ecc280, {{38.0, 339.5}, {198.0, 24.0}}, label: 'West Coast weekend'
+Path to element:
+ →Application, 0x113f27200, pid: 46654, label: 'Across Us'
+  ↳Window (Main), 0x113f27340, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x113f27480, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x113f275c0, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x113f27700, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Other, 0x113f27840, {{0.0, 0.0}, {375.0, 667.0}}
+       ↳Other, 0x113f27980, {{0.0, 0.0}, {375.0, 667.0}}
+        ↳Other, 0x113f27ac0, {{0.0, 0.0}, {375.0, 667.0}}
+         ↳Other, 0x113f27c00, {{0.0, 0.0}, {375.0, 667.0}}
+          ↳Other, 0x113f27d40, {{0.0, 0.0}, {375.0, 667.0}}
+           ↳Other, 0x113f27e80, {{0.0, 0.0}, {375.0, 667.0}}
+            ↳Other, 0x113f04780, {{0.0, 0.0}, {375.0, 667.0}}
+             ↳Other, 0x113f066c0, {{0.0, 0.0}, {375.0, 667.0}}
+              ↳Other, 0x113f04140, {{0.0, 0.0}, {375.0, 667.0}}
+               ↳Other, 0x113f05b80, {{0.0, 0.0}, {375.0, 667.0}}
+                ↳Other, 0x113f05a40, {{0.0, 0.0}, {375.0, 667.0}}
+                 ↳Other, 0x113f06080, {{0.0, 0.0}, {375.0, 667.0}}
+                  ↳ScrollView, 0x113f05540, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'tripsScreen'
+                   ↳Other, 0x113f04500, {{0.0, 20.0}, {375.0, 752.5}}
+                    ↳Button, 0x113ecc140, {{20.0, 321.5}, {335.0, 143.5}}, identifier: 'tripCard-example-west', label: 'West Coast weekend, Los Angeles · Sep 27 – Oct 1, 2026, LAX, +1, 4 of 5 flights added, EXAMPLE'
+                     ↳StaticText, 0x113ecc280, {{38.0, 339.5}, {198.0, 24.0}}, label: 'West Coast weekend'
+Query chain:
+ →Find: Target Application 'com.yangwy30.whereismyfriend'
+  Output: {
+    Application, 0x113f2fc00, pid: 46654, label: 'Across Us'
+  }
+  ↪︎Find: Descendant with identity binding to AX element pid: 46654, elementOrHash.elementID: 4451113088.276
+    Output: {
+      StaticText, 0x113b6f840, {{38.0, 339.5}, {198.0, 24.0}}, label: 'West Coast weekend'
+    }

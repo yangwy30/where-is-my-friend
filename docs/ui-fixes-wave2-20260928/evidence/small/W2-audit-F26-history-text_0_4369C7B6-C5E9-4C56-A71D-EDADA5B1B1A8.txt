@@ -1,0 +1,1 @@
+No native hit-region or text-clipping issues on this screen.
