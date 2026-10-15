@@ -282,8 +282,9 @@ private final class StubCityManager: CLLocationManager {
     var significantStarts = 0
     var alwaysRequests = 0
     override var authorizationStatus: CLAuthorizationStatus { permission }
+    var continuousStarts = 0
     override func requestLocation() { requests += 1 }
-    override func startUpdatingLocation() {}
+    override func startUpdatingLocation() { continuousStarts += 1 }
     override func stopUpdatingLocation() {}
     override func startMonitoringVisits() {}
     override func stopMonitoringVisits() {}
@@ -364,6 +365,34 @@ final class CityRegionCatalogTests: XCTestCase {
 }
 
 final class CityRefreshRegressionTests: XCTestCase {
+    @MainActor
+    func testSnapshotChangeDuringForegroundCheckKeepsTheOneShotRequestAlive() async throws {
+        // Opening the app requests one fix, and the home refresh reconfigures the service
+        // moments later. Starting continuous updates then drops the one-shot request; their
+        // cached fix is too old to accept and the 5 km filter withholds a fresh one, so the
+        // city never updated while the app sat still.
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        let context = CityLocationContext(ownerID: UUID(), isActive: true, automaticAllowed: true, backgroundEnabled: false)
+        service.configure(context)
+        XCTAssertEqual(manager.requests, 1)
+        XCTAssertTrue(service.isResolving)
+        let startsBeforeRefresh = manager.continuousStarts
+        service.configure(context)
+        XCTAssertEqual(manager.continuousStarts, startsBeforeRefresh, "Continuous updates must not start under an in-flight one-shot request")
+
+        let fix = CLLocation(latitude: 37.37, longitude: -122.04)
+        service.locationManager(manager, didUpdateLocations: [fix])
+        try await Task.sleep(for: .milliseconds(30))
+        geocoder.callbacks.last?([MKPlacemark(coordinate: fix.coordinate,
+            addressDictionary: ["City": "Sunnyvale", "CountryCode": "US", "State": "CA"])], nil)
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertEqual(service.latestCity?.city, "Sunnyvale")
+        XCTAssertFalse(service.isResolving)
+        XCTAssertEqual(manager.continuousStarts, startsBeforeRefresh + 1, "Travel monitoring resumes once the check completes")
+        service.configure(.init())
+    }
+
     @MainActor
     func testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates() async throws {
         let manager = StubCityManager(), geocoder = StubCityGeocoder()
