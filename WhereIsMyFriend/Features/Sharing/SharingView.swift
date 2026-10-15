@@ -209,8 +209,7 @@ struct CitySharingSheet: View {
         let recipientCount = store.friends.filter {
             store.preference(for: $0.id).sharesMyCity
         }.count
-        let updateTime = store.snapshot.currentPresence.updatedAt?
-            .formatted(date: .omitted, time: .shortened) ?? "—"
+        let updateTime = store.snapshot.currentPresence.updatedAt.map(Self.updateStamp) ?? "—"
 
         if recipientCount == 1 {
             return String(format: String(localized: "Shared with 1 friend · updated %@"), updateTime)
@@ -220,6 +219,17 @@ struct CitySharingSheet: View {
             Int64(recipientCount),
             updateTime
         )
+    }
+
+    /// Today's update shows just the time; older ones name the day, so yesterday's
+    /// 19:50 isn't read as this evening's.
+    static func updateStamp(_ date: Date) -> String {
+        if Calendar.current.isDateInToday(date) { return date.formatted(date: .omitted, time: .shortened) }
+        let formatter = DateFormatter()
+        formatter.doesRelativeDateFormatting = true
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 
     private var citySharingBinding: Binding<Bool> {

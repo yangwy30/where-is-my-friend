@@ -489,20 +489,35 @@ struct FriendsView: View {
 
     private var cityRecoveryCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(hasCurrentCity ? "Update your city to check who’s nearby." : "Choose a city to find same-city friends.")
-                .font(.subheadline)
-                .foregroundStyle(WIFTheme.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-            Button(action: onOpenCitySharing) {
-                Text(hasCurrentCity ? "Update your city" : "Set your city")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
+            if locationService.isResolving {
+                // Opening the app already starts a city check; asking for a manual
+                // update while it runs made a working app look stuck.
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Updating your city…")
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .frame(minHeight: 44)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("homeCityUpdating")
+            } else {
+                Text(hasCurrentCity ? "Update your city to check who’s nearby." : "Choose a city to find same-city friends.")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(action: onOpenCitySharing) {
+                    Text(hasCurrentCity ? "Update your city" : "Set your city")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("homeCityRecoveryButton")
             }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("homeCityRecoveryButton")
         }
+        .animation(.easeOut(duration: 0.2), value: locationService.isResolving)
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .wifContentSurface(tint: WIFTheme.surface.opacity(0.08),

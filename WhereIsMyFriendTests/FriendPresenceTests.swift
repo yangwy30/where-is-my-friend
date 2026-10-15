@@ -1223,6 +1223,17 @@ final class TripMapTests: XCTestCase {
         XCTAssertEqual(calendar.component(.day, from: london.arrivalSortDate), 21)
     }
 
+    func testSharingUpdateStampNamesTheDayWhenNotToday() throws {
+        // "updated 19:50" at 18:43 the next day read as a time still to come.
+        let calendar = Calendar.current
+        let today = try XCTUnwrap(calendar.date(bySettingHour: 9, minute: 5, second: 0, of: Date()))
+        let yesterday = try XCTUnwrap(calendar.date(byAdding: .day, value: -1, to: today))
+        let timeOnly: (Date) -> String = { $0.formatted(date: .omitted, time: .shortened) }
+        XCTAssertEqual(CitySharingSheet.updateStamp(today), timeOnly(today))
+        XCTAssertNotEqual(CitySharingSheet.updateStamp(yesterday), timeOnly(yesterday))
+        XCTAssertTrue(CitySharingSheet.updateStamp(yesterday).contains(timeOnly(yesterday)))
+    }
+
     func testReturnBoardReadsInSharedDepartureTime() throws {
         // Arrivals land in four zones; departures all leave LAX, so they read in order at a glance.
         let flights = TripFlight.previewFlights.filter { $0.direction == .inbound }
