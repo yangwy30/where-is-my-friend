@@ -33,10 +33,11 @@ jobs:
         run: npm run backend:test
 
   ios:
+    name: ios build and unit tests
     # iOS 27 SwiftUI symbols require the Xcode 27 SDK at compile time.
     runs-on: xcode-27
-    # Three build configurations plus the full UI suite took just over 35 minutes.
-    timeout-minutes: 50
+    # Three build configurations took about 14 minutes and the unit suite about 3.
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
         with:
@@ -95,19 +96,27 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Run unit and UI tests
+      - name: Run unit tests
+        run: scripts/ci/run-ios-tests.sh unit
+
+  ios-ui:
+    name: ios UI tests (${{ matrix.shard }}/3)
+    runs-on: xcode-27
+    # Each shard spent ~9 minutes building and ~26 running its 32-33 tests; the rest is retry headroom.
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode 27
         run: |
-          DEVICE_ID=$(xcrun simctl list devices available -j | ruby -rjson -e '
-            devices = JSON.parse(STDIN.read)["devices"].values.flatten
-            device = devices.find { |item| item["name"].start_with?("iPhone") && item["isAvailable"] }
-            abort "No available iPhone simulator" unless device
-            puts device["udid"]
-          ')
-          xcodebuild \
-            -project WhereIsMyFriend.xcodeproj \
-            -scheme WhereIsMyFriend \
-            -configuration Debug \
-            -destination "id=$DEVICE_ID" \
-            -parallel-testing-enabled NO \
-            CODE_SIGNING_ALLOWED=NO \
-            test
+          sudo xcode-select -s /Applications/Xcode_27.0.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Run UI test shard
+        run: scripts/ci/run-ios-tests.sh ui ${{ matrix.shard }} 3
