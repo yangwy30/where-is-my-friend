@@ -1,6 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Turn on notifications" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开通知"}}}},
+    "Turn on" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开"}}}},
+    "Hear when a friend is in your city, and get trip reminders from your group." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "朋友来到你所在的城市时收到通知，也能收到同行朋友的旅行提醒。"}}}},
+    "Send a message instead?" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "改为发消息提醒？"}}}},
+    "Send message" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "发消息"}}}},
+    "Across Us can’t remind %@ right now. You can ask them in a message instead." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "Across Us 暂时无法提醒 %@。你可以发条消息问问 TA。"}}}},
+    "Could you add your flight for “%@” in Across Us? Then we can all see when everyone arrives." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "可以在 Across Us 里填一下「%@」的航班吗？这样大家都能看到每个人什么时候到。"}}}},
     "Updating your city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在更新你的城市…"}}}},
     "Detecting current city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在检测当前城市…"}}}},
     "Detecting your city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在检测你的城市…"}}}},

@@ -74,6 +74,13 @@ struct FriendsView: View {
                     cityRecoveryCard
                         .padding(.top, 16)
                 }
+                if !showsLocationReminder, showsNotificationPrompt {
+                    NotificationPromptCard(service: store.notificationService,
+                                           ownerID: store.snapshot.currentUser.id) {
+                        await store.requestNotificationAuthorization()
+                    }
+                    .padding(.top, 16)
+                }
                 if store.incomingRequestCount > 0 {
                     InvitationNotificationStatusView(service: store.notificationService)
                         .padding(.top, 12)
@@ -214,6 +221,15 @@ struct FriendsView: View {
                 isHomeVisible: canPresent, sharingEnabled: store.snapshot.sharingPreferences.citySharingEnabled,
                 presence: store.snapshot.currentPresence, status: locationService.authorizationStatus)
         )
+    }
+
+    /// Live accounts only: demo-mode UI tests start with an undecided permission too.
+    private var showsNotificationPrompt: Bool {
+        var isLiveAccount = store.repositoryMode == .remote
+        #if DEBUG
+        isLiveAccount = isLiveAccount || ProcessInfo.processInfo.arguments.contains("-testNotificationPrompt")
+        #endif
+        return isLiveAccount && store.snapshot.isAuthenticated
     }
 
     private var showsLocationReminder: Bool {
@@ -616,6 +632,61 @@ struct FriendsView: View {
         )
     }
 
+}
+
+/// Accounts that never met a notification prompt have no push device, so trip
+/// reminders and same-city alerts can't reach them. Offered once, until decided.
+private struct NotificationPromptCard: View {
+    @ObservedObject var service: LocalNotificationService
+    let ownerID: UUID
+    let onEnable: () async -> Void
+    @State private var dismissed: Bool
+
+    init(service: LocalNotificationService, ownerID: UUID, onEnable: @escaping () async -> Void) {
+        self.service = service
+        self.ownerID = ownerID
+        self.onEnable = onEnable
+        _dismissed = State(initialValue: UserDefaults.standard.bool(forKey: Self.dismissalKey(ownerID)))
+    }
+
+    private static func dismissalKey(_ ownerID: UUID) -> String { "notifications.homePrompt.dismissed.\(ownerID.uuidString)" }
+    private var dismissalKey: String { Self.dismissalKey(ownerID) }
+
+    var body: some View {
+        if service.authorizationStatus == .notDetermined, !dismissed {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Turn on notifications", systemImage: "bell.badge")
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text("Hear when a friend is in your city, and get trip reminders from your group.")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 16) {
+                    Button("Turn on") { Task { await onEnable() } }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("homeEnableNotifications")
+                    Button("Not now") {
+                        UserDefaults.standard.set(true, forKey: dismissalKey)
+                        dismissed = true
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .frame(minHeight: 44)
+                    .accessibilityIdentifier("homeDismissNotifications")
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .wifContentSurface(tint: WIFTheme.fresh.opacity(0.07),
+                               in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("homeNotificationPrompt")
+        }
+    }
 }
 
 #Preview {
