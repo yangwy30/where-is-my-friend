@@ -17,31 +17,8 @@
 <link rel="icon" href="/assets/app_icon.png" type="image/png">
 <link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css">
-<style>
-body{background:var(--lime);min-height:100vh;min-height:100svh;display:flex;flex-direction:column}
-.invite{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-block:24px 48px}
-.invite-icon{width:88px;height:88px;border-radius:22px;box-shadow:0 18px 40px -16px rgba(14,26,19,.45);margin-bottom:36px}
-.invite h1{font-size:clamp(44px,7vw,80px);max-width:820px}
-.invite h1 .muted{color:rgba(14,26,19,.5)}
-.invite-sub{font-size:18px;line-height:1.45;max-width:420px;margin-top:24px}
-.invite-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:36px}
-.invite-note{font-size:14px;color:rgba(14,26,19,.6);margin-top:20px}
-.emblems{display:flex;justify-content:center;margin-top:56px}
-.emblems img{width:96px;height:96px;margin-inline:-8px}
-.emblems img:nth-child(even){transform:translateY(-14px)}
-@media(max-width:700px){
- .invite{justify-content:flex-start;padding-top:40px}
- .invite-icon{width:72px;height:72px;border-radius:18px;margin-bottom:28px}
- .invite h1{font-size:clamp(40px,11.5vw,56px)}
- .invite-sub{font-size:17px}
- .invite-actions{flex-direction:column;align-self:stretch}
- .invite-actions .pill{width:100%}
- .emblems{margin-top:44px}
- .emblems img{width:72px;height:72px;margin-inline:-6px}
-}
-</style>
 </head>
-<body>
+<body class="invite-page">
 <header class="wrap nav"><a class="wordmark" href="/" aria-label="Across Us home">across us</a></header>
 <main class="wrap invite">
  <img class="invite-icon" src="/assets/app_icon.png" width="88" height="88" alt="">
