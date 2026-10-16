@@ -12,7 +12,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:$(WIF_INVITE_HOST)</string>
+		<string>applinks:acrossus.app</string>
 	</array>
 	<key>aps-environment</key>
 	<string>$(WIF_APS_ENVIRONMENT)</string>

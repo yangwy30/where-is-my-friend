@@ -540,7 +540,7 @@
 			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "https://acrossus.app";
 			WIF_INVITE_HOST = acrossus.app;
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "";
 			WIF_SUPABASE_URL = "";
 			WIF_URL_SCHEME = whereismyfriend;
@@ -577,7 +577,7 @@
 			WIF_DISPLAY_NAME = "Across Us";
 			WIF_INVITE_BASE_URL = "https://acrossus.app";
 			WIF_INVITE_HOST = acrossus.app;
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
 			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
 			WIF_URL_SCHEME = whereismyfriend;
@@ -713,7 +713,7 @@
 			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = staging-invite.example.invalid;
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
 			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;
@@ -808,7 +808,7 @@
 			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = "";
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
 			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;

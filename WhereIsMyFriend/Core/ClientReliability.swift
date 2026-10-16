@@ -56,7 +56,7 @@ enum InviteLinkConfiguration {
 
 enum PrivacyPolicyConfiguration {
     static let fallbackURL = URL(
-        string: "https://yangwy30.github.io/where-is-my-friend/privacy/"
+        string: "https://acrossus.app/privacy/"
     )!
 
     static func validated(rawValue: String?) -> URL? {
