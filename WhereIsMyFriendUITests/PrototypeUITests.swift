@@ -1648,12 +1648,17 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityRegions", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        // The initial view can precede the repository's city-region fixture.
-        app.scrollViews["friendsScreen"].swipeDown()
-        let loadedCity = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "label CONTAINS %@", "Milpitas"),
-            object: app.staticTexts["homeCityStatus"])
-        XCTAssertEqual(XCTWaiter.wait(for: [loadedCity], timeout: 5), .completed)
+        // The initial view can precede the repository's city-region fixture, and one pull
+        // doesn't always trigger a refresh under the taller 1.0.8 header.
+        var loaded = false
+        for _ in 0..<3 where !loaded {
+            app.scrollViews["friendsScreen"].swipeDown()
+            let loadedCity = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "label CONTAINS %@", "Milpitas"),
+                object: app.staticTexts["homeCityStatus"])
+            loaded = XCTWaiter.wait(for: [loadedCity], timeout: 5) == .completed
+        }
+        XCTAssertTrue(loaded)
         openCitySharingFromProfile(in: app)
         let region = app.staticTexts["currentCityRegion"]
         XCTAssertTrue(region.waitForExistence(timeout: 5))
