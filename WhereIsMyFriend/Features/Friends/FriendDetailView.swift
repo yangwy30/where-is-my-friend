@@ -112,7 +112,7 @@ struct FriendDetailView: View {
                 citySurface(for: currentFriend).padding(.top, 20)
                 // Where they are now comes first (F12). Plans load after the view appears, so they
                 // also belong below the city: arriving late, they no longer shove it down the screen.
-                if !sharedPlans.isEmpty || planFeed.isLoading || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
+                if !sharedPlans.isEmpty || planFeed.errorMessage != nil { sharedPlansSection.padding(.top, 24) }
 
                 sectionLabel("Between you two").padding(.top, 24)
 
@@ -246,14 +246,13 @@ struct FriendDetailView: View {
     private var sharedPlansSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             sectionLabel("Travel plans")
-            if sharedPlans.isEmpty, planFeed.isLoading { ProgressView().padding(.vertical, 16) }
             if sharedPlans.isEmpty, let error = planFeed.errorMessage {
                 Text(error).font(.caption).foregroundStyle(WIFTheme.secondaryText)
                 Button("Try again") { Task { await planFeed.refresh() } }.frame(minHeight: 44)
             }
             ForEach(sharedPlans) { plan in
                 NavigationLink {
-                    FriendTravelPlanDetailView(planID: plan.id)
+                    FriendTravelPlanDetailView(planID: plan.id, initialPlan: plan)
                 } label: {
                     HStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 5) {

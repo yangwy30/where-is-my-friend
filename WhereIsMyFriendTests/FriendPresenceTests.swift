@@ -3654,6 +3654,26 @@ extension FriendTravelPlanTests {
         library.updateFriendAccess([row.friendID]); XCTAssertFalse(feed.matches(library))
         feed.connect(library); XCTAssertTrue(feed.items.isEmpty); XCTAssertFalse(feed.hasLoaded)
     }
+
+    @MainActor
+    func testReopenedFeedShowsTheLastPageWhileItRefreshes() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), row = shared(), later = shared()
+        library.connect(repository: repo, userID: UUID()); library.updateFriendAccess([row.friendID])
+        let first = FriendPlanFeed(); first.connect(library, friendID: row.friendID)
+        await repo.configurePages([FriendPlanPage(items: [row], nextCursor: nil, version: "a"),
+                                   FriendPlanPage(items: [later], nextCursor: nil, version: "b")])
+        await first.refresh()
+
+        // A second screen for the same friend starts with the remembered page, with no loading state.
+        let reopened = FriendPlanFeed(); reopened.connect(library, friendID: row.friendID)
+        XCTAssertEqual(reopened.items, [row]); XCTAssertTrue(reopened.hasLoaded)
+        await reopened.refresh()
+        XCTAssertEqual(reopened.items, [later])
+
+        // Another friend's screen doesn't borrow that page.
+        let other = FriendPlanFeed(); other.connect(library, friendID: UUID())
+        XCTAssertTrue(other.items.isEmpty); XCTAssertFalse(other.hasLoaded)
+    }
 }
 
 

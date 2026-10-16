@@ -108,7 +108,7 @@ private struct FriendTravelPlanRow: View {
     var body: some View {
         HStack(spacing: 8) {
             NavigationLink {
-                FriendTravelPlanDetailView(planID: plan.id)
+                FriendTravelPlanDetailView(planID: plan.id, initialPlan: plan)
             } label: {
                 HStack(spacing: 14) {
                     CityEmblemView(city: plan.city, countryCode: plan.countryCode, administrativeArea: plan.region, size: 56)
@@ -166,13 +166,17 @@ struct FriendTravelPlanDetailView: View {
     @EnvironmentObject private var library: TravelPlanLibrary
     @Environment(\.scenePhase) private var scenePhase
     let planID: UUID
+    /// The row that opened this screen already has the plan; show it while the feed refreshes.
+    var initialPlan: FriendTravelPlan? = nil
     @State private var draft: PersonalPlanDraft?
     @StateObject private var feed = FriendPlanFeed()
 
     private var plan: FriendTravelPlan? {
-        guard feed.matches(library) else { return nil }
+        let loaded = feed.matches(library) && feed.hasLoaded
+        let candidate = loaded ? feed.items.first { $0.id == planID } : initialPlan.flatMap { $0.id == planID ? $0 : nil }
         let allowed = Set(store.friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs)
-        return feed.items.first { $0.id == planID && allowed.contains($0.friendID) && !$0.isPast() }
+        guard let candidate, allowed.contains(candidate.friendID), !candidate.isPast() else { return nil }
+        return candidate
     }
 
     var body: some View {
