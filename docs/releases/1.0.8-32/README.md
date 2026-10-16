@@ -58,3 +58,18 @@ The privacy notes are unchanged: friends are selected by default, and the plan i
 Also checked: TestFlight never shows App Store screenshots. They're uploaded to the 1.0.8 version page at submission.
 
 Build 35 comes from tag `v1.0.8-35` and was uploaded at 13:25 PDT. Submit build 35.
+
+## Submitted — October 16, 2026, 14:07 PDT
+
+The user confirmed build 35 and asked to submit it.
+
+- 1.0.7 (31) was removed from App Review while it was In Review. The submission shows as Removed, and the version became Developer Rejected.
+- The same version record was renamed to 1.0.8. Build 31 was replaced with build 35.
+- Screenshots: the [October 16 set](../../app_store_screenshots/2026-10-16/README.md), five per locale, in English and Chinese. They were uploaded to the 6.3" (1206×2622) and 6.5" (1284×2778) slots, replacing the seven 1.0.7 images. The old images remain in the Asset Library.
+- What's New ([English](en-US-whatsNew.txt), [Chinese](zh-Hans-whatsNew.txt)) and the [review notes](review-notes.txt) (3,965 characters) were entered and saved.
+- The submission also carries the app-level privacy policy URLs changed earlier, which are now acrossus.app.
+- Release settings are unchanged: automatic release after approval, all users at once, existing rating kept.
+
+Status: **Waiting for Review**. [Submission 9aa4ff6b-fa4d-484b-aafd-eec2abb1cc55](https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/9aa4ff6b-fa4d-484b-aafd-eec2abb1cc55).
+
+After approval, merge `ui/1.0.8-combined` into `main`. Pushing `main` redeploys the website, which already matches.
