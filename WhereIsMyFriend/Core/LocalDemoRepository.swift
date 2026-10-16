@@ -140,6 +140,18 @@ actor LocalDemoRepository: AppRepository {
             self.snapshot.colocationSessions = []
             if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
         }
+        // `-previewSameCityCount N` puts the first N demo friends in Mia's city.
+        let sameCityCount = UserDefaults.standard.integer(forKey: "previewSameCityCount")
+        if sameCityCount > 0, let mia = self.snapshot.friends.first(where: { $0.username == "mia" }) {
+            let now = Date()
+            for (offset, index) in self.snapshot.friends.indices.prefix(sameCityCount).enumerated() {
+                self.snapshot.friends[index].city = mia.city
+                self.snapshot.friends[index].countryCode = mia.countryCode
+                self.snapshot.friends[index].administrativeArea = mia.administrativeArea
+                self.snapshot.friends[index].updatedAt = now.addingTimeInterval(-Double(8 + offset * 6) * 60)
+            }
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
+        }
         if ProcessInfo.processInfo.arguments.contains("-testOfflineHome") {
             self.snapshot.syncState = .offline
             self.snapshot.lastSyncedAt = Date().addingTimeInterval(-1800)

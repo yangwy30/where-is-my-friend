@@ -746,6 +746,17 @@ struct UpcomingTogetherCard: View {
     private var overlapCount: Int { library.overlapsFullyLoaded ? overlaps.count : library.overlapCount }
     private var isLoading: Bool { library.isLoading || library.isLoadingOverlaps || (selectedID.map { library.resolvingOverlapIDs.contains($0) } ?? false) }
     private var selected: TravelOverlap? { overlaps.first { $0.id == selectedID } }
+    /// Collapsed, a single overlap previews itself instead of a count.
+    private var preview: TravelOverlap? { !expanded && overlapCount == 1 && overlaps.count == 1 ? overlaps[0] : nil }
+    private func firstName(_ name: String) -> String { name.split(whereSeparator: \.isWhitespace).first.map(String.init) ?? name }
+    private func myPlan(for overlap: TravelOverlap) -> (start: String, end: String)? {
+        library.plans.first { $0.city == overlap.city && $0.startDay <= overlap.startDay && $0.endDay >= overlap.endDay }
+            .map { ($0.startDay, $0.endDay) }
+    }
+    private func friendPlan(for overlap: TravelOverlap) -> (start: String, end: String)? {
+        library.friendPlans.first { $0.friendID == overlap.friendID && $0.city == overlap.city && $0.startDay <= overlap.startDay && $0.endDay >= overlap.endDay }
+            .map { ($0.startDay, $0.endDay) }
+    }
     var body: some View {
         // An explicitly opened notification keeps its unavailable state until dismissed.
         // Otherwise, an empty match list must not occupy space on Friends.
@@ -760,13 +771,18 @@ struct UpcomingTogetherCard: View {
                 withAnimation(reduceMotion ? nil : .spring(response: 0.46, dampingFraction: 0.84)) { expanded.toggle() }
             } label: {
                 HStack(spacing: 12) {
-                    Image(systemName: "calendar.badge.clock").foregroundStyle(WIFTheme.fresh)
-                        .frame(width: 40, height: 40).background(WIFTheme.fresh.opacity(0.12), in: Circle())
+                    if let preview {
+                        CityEmblemView(city: preview.city, countryCode: preview.countryCode, administrativeArea: preview.region, size: 44)
+                            .frame(width: 40, height: 40)
+                    } else {
+                        Image(systemName: "calendar.badge.clock").foregroundStyle(WIFTheme.fresh)
+                            .frame(width: 40, height: 40).background(WIFTheme.fresh.opacity(0.12), in: Circle())
+                    }
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Together soon").font(.subheadline.weight(.semibold))
-                        Text(overlapCount == 0
+                        Text(preview.map { "\(firstName($0.friendName)) · \($0.city) · \(OverlapTimeline.shortRange($0.startDay, $0.endDay))" } ?? (overlapCount == 0
                              ? (isLoading ? String(localized: "Loading shared dates…") : String(localized: "This overlap is no longer available"))
-                             : (overlapCount == 1 ? String(localized: "1 upcoming overlap") : String(localized: "\(overlapCount) upcoming overlaps")))
+                             : (overlapCount == 1 ? String(localized: "1 upcoming overlap") : String(localized: "\(overlapCount) upcoming overlaps"))))
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Spacer()
@@ -776,16 +792,27 @@ struct UpcomingTogetherCard: View {
             if expanded {
                 VStack(spacing: 16) {
                     if let selected {
-                        Button("All overlaps") { selectedID = nil }.font(.caption).frame(minHeight: 44)
-                        CityEmblemView(city: selected.city, countryCode: selected.countryCode, administrativeArea: selected.region, size: 108)
-                        Text("You + \(selected.friendName), in \(selected.city).")
-                            .font(.title2.weight(.semibold)).multilineTextAlignment(.center)
-                        Text(selected.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.fresh)
-                        Text("\(selected.daysTogether) days in common · local dates")
-                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        ShareLink(item: String(localized: "We’ll both be in \(selected.city) on \(selected.dateLabel). Coffee?")) {
-                            Label("Share a meetup invite", systemImage: "square.and.arrow.up")
-                        }.buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("upcomingSayHello")
+                        HStack(alignment: .center, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(selected.city)
+                                    .font(.system(size: 38, weight: .regular, design: .serif)).tracking(-0.8)
+                                    .lineLimit(1).minimumScaleFactor(0.7)
+                                Text("with \(firstName(selected.friendName)) · \(selected.daysTogether) days together")
+                                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                            }
+                            Spacer(minLength: 0)
+                            CityEmblemView(city: selected.city, countryCode: selected.countryCode, administrativeArea: selected.region, size: 104)
+                                .frame(width: 96, height: 96)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        OverlapTimeline(overlap: selected, mine: myPlan(for: selected), theirs: friendPlan(for: selected),
+                                        friendName: firstName(selected.friendName))
+                        HStack {
+                            if overlapCount > 1 { Button("All overlaps") { selectedID = nil } }
+                            Spacer()
+                            Button("My travel plans") { showsPlans = true }
+                        }
+                        .font(.caption).frame(minHeight: 36)
                     } else if selectedID != nil {
                         if isLoading { ProgressView() }
                         else if let error = library.overlapError {
@@ -811,15 +838,11 @@ struct UpcomingTogetherCard: View {
                             }.buttonStyle(.plain).accessibilityIdentifier("upcomingOverlap-\(overlap.id)")
                         }
                     }
-                    Button("My travel plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
-                    Button("Back to Friends") {
-                        expanded = false
-                        selectedID = nil
+                    if selected == nil {
+                        Button("My travel plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
                     }
-                    .font(.caption).foregroundStyle(WIFTheme.secondaryText).frame(minHeight: 44)
-                    .accessibilityIdentifier("closeUpcomingTogether")
                 }
-                .padding(.horizontal, 20).padding(.bottom, 16)
+                .padding(.horizontal, 18).padding(.bottom, 16)
                 .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
             }
         }
@@ -829,12 +852,126 @@ struct UpcomingTogetherCard: View {
             else if expanded { Task { await library.loadAllOverlaps() } }
         }
         .onChange(of: expanded) { _, open in
-            if open && selectedID == nil { Task { await library.loadAllOverlaps() } }
+            if open && selectedID == nil {
+                // A single overlap needs no list to pick from.
+                if overlaps.count == 1 { selectedID = overlaps[0].id } else { Task { await library.loadAllOverlaps() } }
+            }
         }
         .onChange(of: library.overlapVersion) { _, _ in
             guard expanded else { return }
             Task { if let selectedID { await library.resolveOverlap(selectedID) } else { await library.loadAllOverlaps() } }
         }
         .sheet(isPresented: $showsPlans) { NavigationStack { TravelPlansView().toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { showsPlans = false } } } } }
+    }
+}
+
+/// Two stays on one day axis, with the shared days drawn solid.
+struct OverlapTimeline: View {
+    let overlap: TravelOverlap
+    let mine: (start: String, end: String)?
+    let theirs: (start: String, end: String)?
+    let friendName: String
+
+    private static func day(_ value: String) -> Double {
+        (PersonalTravelPlan.parseDay(value)?.timeIntervalSince1970 ?? 0) / 86400
+    }
+    static func shortRange(_ start: String, _ end: String) -> String {
+        guard let a = PersonalTravelPlan.parseDay(start), let b = PersonalTravelPlan.parseDay(end) else { return "" }
+        if a >= b {
+            var style = Date.FormatStyle(date: .omitted, time: .omitted).month(.abbreviated).day()
+            style.timeZone = .gmt
+            return a.formatted(style)
+        }
+        var style = Date.IntervalFormatStyle().month(.abbreviated).day()
+        style.timeZone = .gmt
+        return (a..<b).formatted(style)
+    }
+    private static func short(_ value: String) -> String { shortRange(value, value) }
+
+    private static let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .gmt
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private struct Day: Identifiable {
+        let id: String
+        let date: Date
+        let mine: Bool
+        let theirs: Bool
+        let shared: Bool
+    }
+
+    /// The union of both stays, trimmed to at most ten days centred on the shared ones.
+    private var days: [Day] {
+        let myStart = mine?.start ?? overlap.startDay, myEnd = mine?.end ?? overlap.endDay
+        let theirStart = theirs?.start ?? overlap.startDay, theirEnd = theirs?.end ?? overlap.endDay
+        guard var cursor = PersonalTravelPlan.parseDay(min(myStart, theirStart)),
+              let last = PersonalTravelPlan.parseDay(max(myEnd, theirEnd)) else { return [] }
+        var result: [Day] = []
+        while cursor <= last, result.count < 60 {
+            let key = Self.dayFormatter.string(from: cursor)
+            result.append(Day(id: key, date: cursor,
+                              mine: key >= myStart && key <= myEnd,
+                              theirs: key >= theirStart && key <= theirEnd,
+                              shared: key >= overlap.startDay && key <= overlap.endDay))
+            cursor = cursor.addingTimeInterval(86400)
+        }
+        guard result.count > 10, let first = result.firstIndex(where: \.shared) else { return result }
+        let lower = max(0, min(first - 2, result.count - 10))
+        return Array(result[lower..<min(result.count, lower + 10)])
+    }
+
+    private var monthLabel: String {
+        guard let first = days.first?.date else { return "" }
+        var style = Date.FormatStyle(date: .omitted, time: .omitted).month(.wide).year()
+        style.timeZone = .gmt
+        return first.formatted(style)
+    }
+
+    var body: some View {
+        let friendTint = WIFPersonPalette.fill(for: overlap.friendName)
+        VStack(alignment: .leading, spacing: 10) {
+            Text(monthLabel)
+                .font(.caption2.weight(.semibold)).textCase(.uppercase).tracking(1.2)
+                .foregroundStyle(WIFTheme.secondaryText)
+            HStack(spacing: 5) {
+                ForEach(days) { day in
+                    VStack(spacing: 5) {
+                        Text(day.date.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.narrow)))
+                            .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
+                        Text(day.date.formatted(Date.FormatStyle(timeZone: .gmt).day()))
+                            .font(.subheadline.weight(day.shared ? .semibold : .regular).monospacedDigit())
+                            .foregroundStyle(day.shared ? WIFTheme.onFresh : (day.mine || day.theirs ? WIFTheme.primaryText : WIFTheme.secondaryText))
+                            .frame(maxWidth: .infinity, minHeight: 38)
+                            .background {
+                                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                                    .fill(day.shared ? WIFTheme.fresh : WIFTheme.fresh.opacity(day.mine || day.theirs ? 0.08 : 0))
+                            }
+                        HStack(spacing: 3) {
+                            Circle().fill(WIFTheme.fresh).frame(width: 5, height: 5).opacity(day.mine ? 1 : 0)
+                            Circle().fill(friendTint).frame(width: 5, height: 5).opacity(day.theirs ? 1 : 0)
+                        }
+                    }
+                }
+            }
+            HStack(spacing: 14) {
+                legend(String(localized: "You"), WIFTheme.fresh)
+                legend(friendName, friendTint)
+                Spacer()
+            }
+            .padding(.top, 2)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Shared days \(overlap.dateLabel)"))
+    }
+
+    private func legend(_ label: String, _ tint: Color) -> some View {
+        HStack(spacing: 5) {
+            Circle().fill(tint).frame(width: 6, height: 6)
+            Text(label).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+        }
     }
 }
