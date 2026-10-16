@@ -155,6 +155,7 @@
     "Clear flight number" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "清除航班号"}}}},
     "Add by username" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "通过用户名添加"}}}},
     "Invite your first friend" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请第一位朋友"}}}},
+    "Join me on Across Us" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "来 Across Us 加我吧"}}}},
     "Invite someone you know to share cities and find time together." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请认识的朋友，分享所在城市，发现相聚的机会。"}}}},
     "Invitation withdrawn." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请已撤回。"}}}},
     "%@ will no longer be able to accept this invitation." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%@将无法再接受这份邀请。"}}}},

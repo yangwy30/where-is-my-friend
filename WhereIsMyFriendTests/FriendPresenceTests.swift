@@ -1694,6 +1694,21 @@ final class FriendPresenceTests: XCTestCase {
         XCTAssertNil(InviteLinkParser.parse(URL(string: "whereismyfriend://invite/bad-name")!))
     }
 
+    func testInviteLinksUseTheShortWebPath() {
+        let link = InviteURLFactory.make(username: "wang_yang", baseURLString: "https://acrossus.app")
+        XCTAssertEqual(link.absoluteString, "https://acrossus.app/i/wang_yang")
+        XCTAssertEqual(InviteLinkParser.parse(link, trustedInviteHosts: ["acrossus.app"])?.username, "wang_yang")
+        XCTAssertEqual(
+            InviteLinkParser.parse(URL(string: "https://acrossus.app/i/@Priya")!, trustedInviteHosts: ["acrossus.app"])?.username,
+            "priya"
+        )
+        XCTAssertNil(InviteLinkParser.parse(link, trustedInviteHosts: ["example.com"]))
+        XCTAssertEqual(
+            InviteURLFactory.make(username: "jamie", baseURLString: "").absoluteString,
+            "\(SharedAppLink.urlScheme)://invite/jamie"
+        )
+    }
+
     func testPrivacyPolicyConfigurationRequiresARealHTTPSURL() {
         XCTAssertNil(PrivacyPolicyConfiguration.validated(rawValue: nil))
         XCTAssertNil(PrivacyPolicyConfiguration.validated(rawValue: "http://example.com/privacy"))

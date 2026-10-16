@@ -103,7 +103,7 @@ struct FriendsView: View {
                     } description: {
                         Text("Invite someone you know to share cities and find time together.")
                     } actions: {
-                        ShareLink(item: InviteURLFactory.make(username: store.snapshot.currentUser.username)) {
+                        InviteShareLink(username: store.snapshot.currentUser.username) {
                             Label("Invite your first friend", systemImage: "square.and.arrow.up")
                                 .font(.headline).frame(maxWidth: .infinity, minHeight: 54)
                                 .foregroundStyle(WIFTheme.onFresh)
