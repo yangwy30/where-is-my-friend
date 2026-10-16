@@ -29,7 +29,7 @@
 
 ## Build 33 — October 16, 2026
 
-The user's test of build 32 found three problems:
+The user's test of build 32 found three problems. The page transition glitch and the loading animation had one cause, so they're listed together:
 
 1. Opening a friend, or a plan from Friends' travel plans, played a loading animation and the page jumped. Each screen started an empty plan feed. The friend page also showed a spinner-only "Travel plans" section that then collapsed or filled in. Fix (73c3763): the feed keeps the last page per account, access revision and filter for this launch, and refreshes in the background. The plan screen starts from the row you tapped. The friend page no longer shows a spinner-only section.
 2. Opening your own invite link offered to send a friend request to yourself. Fix (04dbf74): it now says "This is your invite link", with a Done button.
