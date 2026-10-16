@@ -687,6 +687,13 @@ final class CityRefreshRegressionTests: XCTestCase {
         XCTAssertNil(CityEmblem.resolve(city: "Santa Clara", countryCode: "US").assetName)
         XCTAssertNil(CityEmblem.resolve(city: "Milpitas", countryCode: "US").assetName)
         XCTAssertNil(CityEmblem.resolve(city: "Paris", countryCode: "US").assetName)
+        XCTAssertNil(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "ME").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "ME").archetype, .historicBrick)
+        XCTAssertEqual(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "OR").assetName, "City_portland")
+        XCTAssertNil(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NH").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NC").assetName, "City_durham")
+        XCTAssertNil(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "GA").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "OH").assetName, "City_columbus")
         XCTAssertEqual(CityEmblem.resolve(city: " LA ", countryCode: "us").cityID, "los_angeles")
         XCTAssertEqual(CityEmblem.resolve(city: "Shinjuku", countryCode: "JP").cityID, "tokyo")
         for pair in [("Santa Clara", "Los Angeles"), ("Shinjuku", "Tokyo"), ("Milpitas", "San Jose"), ("Clearwater", "Tampa")] {

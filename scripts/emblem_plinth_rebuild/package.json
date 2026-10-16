@@ -1,0 +1,8 @@
+{
+  "name": "emblem-plinth-rebuild",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}
