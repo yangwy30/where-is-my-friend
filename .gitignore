@@ -39,3 +39,6 @@ Config/Staging.local.xcconfig
 # UI review and fix-wave evidence captures stay local; their README/JSON summaries are versioned.
 docs/ui-*/**/*.png
 docs/ui-*/**/*.jpg
+
+# Scratch output from the App Store screenshot renderers
+docs/app_store_screenshots/*/.work/
