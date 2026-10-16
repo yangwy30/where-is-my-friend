@@ -805,6 +805,8 @@ struct UpcomingTogetherCard: View {
                                 .frame(width: 96, height: 96)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier("upcomingOverlapDetail")
                         OverlapTimeline(overlap: selected, mine: myPlan(for: selected), theirs: friendPlan(for: selected),
                                         friendName: firstName(selected.friendName))
                         HStack {
@@ -841,6 +843,12 @@ struct UpcomingTogetherCard: View {
                     if selected == nil {
                         Button("My travel plans") { showsPlans = true }.font(.caption).frame(minHeight: 44)
                     }
+                    Button("Back to Friends") {
+                        expanded = false
+                        selectedID = nil
+                    }
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText).frame(minHeight: 44)
+                    .accessibilityIdentifier("closeUpcomingTogether")
                 }
                 .padding(.horizontal, 18).padding(.bottom, 16)
                 .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
