@@ -1,0 +1,15 @@
+{
+  "en-US": {
+    "name": "Across Us: Friends & Trips",
+    "subtitle": "Share cities & travel plans",
+    "promotionalText": "Friends in other cities? Add where you’re headed, see whose plans overlap with yours, and plan the trip together — flights and all.",
+    "keywords": "widget,location,meetup,group,overlap,reunion,flight,arrival,itinerary,abroad,long distance,catch up",
+    "description": "Your friends are spread across cities. Across Us helps you catch them when your paths cross: see where everyone is, find the dates you’ll be in the same city, and plan group trips with everyone’s flights in one place.\n\nMade for friends who live apart — after graduation, a move abroad, or a new job across the country.\n\nWHERE EVERYONE IS\n• See the city each friend has shared, and when they last updated it.\n• See when a friend is in the same city as you.\n• Keep friends on your Home Screen and Lock Screen with widgets.\n\nWHEN YOU’LL MEET\n• Add the cities and dates you’re traveling, and choose which friends can see them.\n• Browse the travel plans friends share with you.\n• When your shared plans put you in the same city, Together soon shows the dates — then share a meetup invite.\n\nTRAVEL TOGETHER\n• Create a shared trip and invite friends.\n• Everyone adds their own flights. See all the routes on one map.\n• Check who has landed, who’s on the way, and who still needs to add a flight.\n\nPRIVATE BY DESIGN\n• Friends see a city, never your exact location. Precise coordinates are not sent to our servers.\n• No contacts upload, no ads, no cross-app tracking.\n• Pause sharing for everyone or for one friend, and choose who sees each plan. Prefer not to share location? Pick your city manually.\n• Sign in with Apple.\n\nCity updates, widgets and notifications depend on iOS permissions and connectivity. Confirm flight details with your airline."
+  },
+  "zh-Hans": {
+    "subtitle": "分享城市，发现下一次相聚",
+    "promotionalText": "朋友在别的城市？添加你的下一站，看看谁的行程和你重叠；一起出发时，大家的航班都在同一个行程里。",
+    "keywords": "朋友,好友,同城,旅行,行程,航班,小组件,出行,聚会,见面,留学,异地,结伴",
+    "description": "朋友散落在不同城市？Across Us 帮你抓住每一次相遇：看看大家在哪，发现你们会在同一座城市的日子；一起出发时，所有人的航班都在同一个行程里。\n\n适合毕业后各奔东西、出国留学或异地工作的朋友。\n\n大家现在在哪\n• 查看每位好友分享的城市和更新时间。\n• 朋友和你在同一座城市时，一眼就能看到。\n• 用小组件把朋友放在主屏幕和锁定屏幕上。\n\n下一次在哪见\n• 添加你要去的城市和日期，选择分享给哪些好友。\n• 浏览朋友分享给你的出行计划。\n• 双方分享的计划落在同一座城市时，“即将相聚”会显示重叠日期，还能直接分享见面邀约。\n\n一起旅行\n• 创建共同旅行，邀请朋友加入。\n• 每个人添加自己的航班，在一张地图上看到所有人的航线。\n• 谁已落地、谁还在路上、谁还没添加航班，一目了然。\n\n隐私，从设计开始\n• 朋友只看到城市，看不到你的精确位置；精确坐标不会发送到我们的服务器。\n• 不上传通讯录，没有广告，不做跨 App 追踪。\n• 可以暂停对所有人或某位好友的城市共享，并为每份计划选择可见好友；不想授权定位，也能手动选择城市。\n• 通过 Apple 登录。\n\n城市更新、小组件与通知受 iOS 权限和网络影响；航班信息请以航空公司为准。"
+  }
+}
