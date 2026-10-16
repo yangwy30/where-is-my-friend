@@ -466,13 +466,32 @@ struct TravelCityPicker: View {
                 let result = try await MKLocalSearch(request: request).start()
                 guard !Task.isCancelled else { return }
                 var seen = Set<String>()
-                cities = result.mapItems.compactMap { item in
-                    guard let value = TravelCitySearchPolicy.resolve(name: item.name,
+                var resolved: [TravelCity] = []
+                var placesWithoutCity: [CLLocation] = []
+                for item in result.mapItems {
+                    if let value = TravelCitySearchPolicy.resolve(name: item.name,
                         locality: item.placemark.locality, region: item.placemark.administrativeArea,
                         countryCode: item.placemark.isoCountryCode,
-                        timeZone: (item.timeZone ?? item.placemark.timeZone)?.identifier) else { return nil }
-                    return seen.insert(value.id).inserted ? value : nil
+                        timeZone: (item.timeZone ?? item.placemark.timeZone)?.identifier) {
+                        if seen.insert(value.id).inserted { resolved.append(value) }
+                    } else if placesWithoutCity.count < 2, let location = item.placemark.location {
+                        placesWithoutCity.append(location)
+                    }
                 }
+                // Islands, counties and regions (e.g. a Kauai trip from its LIH airport) come back
+                // without a city. Offer the city at that spot instead of "No city found".
+                if resolved.isEmpty {
+                    for location in placesWithoutCity {
+                        guard !Task.isCancelled,
+                              let place = try? await CLGeocoder().reverseGeocodeLocation(location).first,
+                              let value = TravelCitySearchPolicy.resolve(name: place.name, locality: place.locality,
+                                  region: place.administrativeArea, countryCode: place.isoCountryCode,
+                                  timeZone: place.timeZone?.identifier) else { continue }
+                        if seen.insert(value.id).inserted { resolved.append(value) }
+                    }
+                }
+                guard !Task.isCancelled else { return }
+                cities = resolved
                 if cities.isEmpty { error = String(localized: "No city found. Try adding the country or region.") }
                 isSearching = false
             } catch is CancellationError { } catch {
