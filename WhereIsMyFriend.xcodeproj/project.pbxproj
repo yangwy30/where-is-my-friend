@@ -538,9 +538,9 @@
 			WIF_API_BASE_URL = "http://127.0.0.1:54321/functions/v1/api";
 			WIF_APS_ENVIRONMENT = development;
 			WIF_DISPLAY_NAME = "Across Us";
-			WIF_INVITE_BASE_URL = "";
-			WIF_INVITE_HOST = invite.example.invalid;
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_INVITE_BASE_URL = "https://acrossus.app";
+			WIF_INVITE_HOST = acrossus.app;
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "";
 			WIF_SUPABASE_URL = "";
 			WIF_URL_SCHEME = whereismyfriend;
@@ -575,9 +575,9 @@
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
 			WIF_DISPLAY_NAME = "Across Us";
-			WIF_INVITE_BASE_URL = "";
-			WIF_INVITE_HOST = "";
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_INVITE_BASE_URL = "https://acrossus.app";
+			WIF_INVITE_HOST = acrossus.app;
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = sb_publishable_YwlGnoJufalF2R7YwaZCiQ_LRnuwRO5;
 			WIF_SUPABASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co";
 			WIF_URL_SCHEME = whereismyfriend;
@@ -713,7 +713,7 @@
 			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = staging-invite.example.invalid;
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
 			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;
@@ -779,7 +779,7 @@
 		800000000000000000000017 /* Staging TestFlight */ = {isa = XCBuildConfiguration; buildSettings = {
 			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 			ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriendTestFlight.entitlements;
+			CODE_SIGN_ENTITLEMENTS = WhereIsMyFriend/App/WhereIsMyFriendStagingTestFlight.entitlements;
 			CODE_SIGN_STYLE = Automatic;
 			CURRENT_PROJECT_VERSION = 11;
 			DEVELOPMENT_TEAM = 93RUQ2A6KX;
@@ -808,7 +808,7 @@
 			WIF_DISPLAY_NAME = "Across Us Test";
 			WIF_INVITE_BASE_URL = "";
 			WIF_INVITE_HOST = "";
-			WIF_PRIVACY_POLICY_URL = "https://yangwy30.github.io/where-is-my-friend/privacy/";
+			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";
 			WIF_SUPABASE_PUBLISHABLE_KEY = "$(WIF_STAGING_PUBLISHABLE_KEY)";
 			WIF_SUPABASE_URL = "$(WIF_STAGING_SUPABASE_URL)";
 			WIF_URL_SCHEME = whereismyfriend-staging;

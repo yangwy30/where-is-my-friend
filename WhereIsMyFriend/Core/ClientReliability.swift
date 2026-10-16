@@ -22,7 +22,7 @@ enum InviteLinkParser {
         } else if url.scheme == "https",
                   let host = url.host?.lowercased(),
                   trustedInviteHosts.contains(host),
-                  let inviteIndex = components.firstIndex(of: "invite"),
+                  let inviteIndex = components.firstIndex(where: { $0 == "i" || $0 == "invite" }),
                   components.indices.contains(inviteIndex + 1) {
             rawUsername = components[inviteIndex + 1]
         } else {
@@ -56,7 +56,7 @@ enum InviteLinkConfiguration {
 
 enum PrivacyPolicyConfiguration {
     static let fallbackURL = URL(
-        string: "https://yangwy30.github.io/where-is-my-friend/privacy/"
+        string: "https://acrossus.app/privacy/"
     )!
 
     static func validated(rawValue: String?) -> URL? {
@@ -79,10 +79,14 @@ enum PrivacyPolicyConfiguration {
 
 enum InviteURLFactory {
     static func make(username: String, bundle: Bundle = .main) -> URL {
+        make(username: username, baseURLString: bundle.object(forInfoDictionaryKey: "WIFInviteBaseURL") as? String)
+    }
+
+    /// Web invites use the short `/i/<username>` path; the site still redirects `/invite/<username>`.
+    static func make(username: String, baseURLString: String?) -> URL {
         let normalized = username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? username
-        if let base = bundle.object(forInfoDictionaryKey: "WIFInviteBaseURL") as? String,
-           let baseURL = URL(string: base), baseURL.scheme == "https" {
-            return baseURL.appending(path: "invite").appending(path: normalized)
+        if let baseURLString, let baseURL = URL(string: baseURLString), baseURL.scheme == "https" {
+            return baseURL.appending(path: "i").appending(path: normalized)
         }
         return SharedAppLink.make(host: "invite", path: normalized)
     }
