@@ -950,7 +950,7 @@ struct OverlapTimeline: View {
                     VStack(spacing: 5) {
                         Text(day.date.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.narrow)))
                             .font(.caption2).foregroundStyle(WIFTheme.secondaryText)
-                        Text(day.date.formatted(Date.FormatStyle(timeZone: .gmt).day()))
+                        Text(day.date.formatted(Date.FormatStyle(locale: Locale(identifier: "en_US_POSIX"), timeZone: .gmt).day()))
                             .font(.subheadline.weight(day.shared ? .semibold : .regular).monospacedDigit())
                             .foregroundStyle(day.shared ? WIFTheme.onFresh : (day.mine || day.theirs ? WIFTheme.primaryText : WIFTheme.secondaryText))
                             .frame(maxWidth: .infinity, minHeight: 38)

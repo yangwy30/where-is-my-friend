@@ -181,8 +181,8 @@ struct FriendsView: View {
             Task {
                 await store.refresh()
                 referenceDate = Date()
-                guard selectedSameCityEventID == id else { return }
-                proxy.scrollTo("sameCityReunion", anchor: .top)
+                guard selectedSameCityEventID == id, isHeaderCollapsed else { return }
+                proxy.scrollTo("sameCityReunion", anchor: UnitPoint(x: 0.5, y: 0.12))
             }
         }
         .task(id: isHomeVisible) {
@@ -197,8 +197,8 @@ struct FriendsView: View {
         .onChange(of: selectedUpcomingID, initial: true) { _, id in
             guard let id else { return }
             Task {
-                guard selectedUpcomingID == id else { return }
-                proxy.scrollTo("upcomingTogether", anchor: .top)
+                guard selectedUpcomingID == id, isHeaderCollapsed else { return }
+                proxy.scrollTo("upcomingTogether", anchor: UnitPoint(x: 0.5, y: 0.12))
             }
         }
         }

@@ -132,7 +132,7 @@ private struct FriendTravelPlanRow: View {
                             }
                         }
                         Text("\(firstName) · \(plan.dateLabel)")
-                            .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
+                            .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1).minimumScaleFactor(0.85)
                     }
                     Spacer(minLength: 0)
                 }

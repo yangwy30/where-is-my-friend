@@ -3492,6 +3492,8 @@ final class DateRangeRegressionTests: XCTestCase {
     func testCrossYearLabelsAndAdministrativeAliases() {
         let label = TravelDateRangeSelection.label(start: "2026-12-29", end: "2027-01-03")
         XCTAssertTrue(label.contains("2026")); XCTAssertTrue(label.contains("2027"))
+        let sameYear = TravelDateRangeSelection.label(start: "2026-10-16", end: "2026-10-23")
+        XCTAssertEqual(sameYear.components(separatedBy: "2026").count - 1, 1)
         let a = TravelCity(name: "New York", countryCode: "US", region: "NY", timeZone: "America/New_York")
         let b = TravelCity(name: "New York", countryCode: "US", region: "New York", timeZone: "America/New_York")
         XCTAssertEqual(a.matchingKey, b.matchingKey)
