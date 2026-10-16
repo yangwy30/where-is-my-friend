@@ -1,4 +1,4 @@
-# Across Us 1.0.8 (32–34) — internal TestFlight
+# Across Us 1.0.8 (32–35) — internal TestFlight
 
 1.0.8 is meant to replace 1.0.7 (31), which is still Waiting for Review. Plan agreed on October 16, 2026: get 1.0.8 onto TestFlight first and keep 1.0.7 in review until 1.0.8 has been tested on a device. Then remove 1.0.7 from review, switch the version to 1.0.8 with build 32, upload the new screenshots and submit.
 
@@ -42,4 +42,19 @@ Build 33 comes from tag `v1.0.8-33` (ba30568). It was signed the same way as bui
 
 Testing build 33 found one more problem. For a Kauai trip (LIH), "Use these dates for my travel plan" searched "Kauai, United States" and showed "No city found". Apple returns Kauai as an island record with no city. Fix (6c75034): when no search result has a city, the picker looks up the city at those places and offers it. Kauai gives Lihue, HI. This also covers the "From your shared trips" shortcuts and typing an island or county name. The fix was checked on the simulator with live Apple search. The city picker and shared trip date UI tests pass.
 
-Build 34 comes from tag `v1.0.8-34` and was uploaded at 12:58 PDT. Submit build 34.
+Build 34 comes from tag `v1.0.8-34` and was uploaded at 12:58 PDT.
+
+## Build 35 — October 16, 2026
+
+The user called the "New travel plan" editor a bit ugly. It's redesigned to the [design rules](../../WEBSITE_DESIGN_DIRECTION_20261015.md):
+
+- City, dates and who can see the plan are one card with three matching rows.
+- The two switches share a second card, with each explanation under its label.
+- The copied-from note is one line.
+- Everything fits on one screen, including the overlap reminder, which used to be below the fold.
+
+The privacy notes are unchanged: friends are selected by default, and the plan is saved separately from the shared trip. 15 editor UI tests pass. The share sheet test helper was updated for the share preview header added in build 32.
+
+Also checked: TestFlight never shows App Store screenshots. They're uploaded to the 1.0.8 version page at submission.
+
+Build 35 comes from tag `v1.0.8-35` and was uploaded at 13:25 PDT. Submit build 35.
