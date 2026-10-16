@@ -188,81 +188,68 @@ struct PersonalPlanEditor: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("I’ll be in…").font(.largeTitle.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
-                    if let source {
-                        VStack(alignment: .leading, spacing: 6) {
-                            switch source {
-                            case .friend(let name): Text("City and dates copied from \(name)")
-                            case .sharedTrip(let name): Text("Using dates from “\(name)”")
-                            }
-                            Text("Review your dates and choose who can see this plan.")
-                                .foregroundStyle(WIFTheme.secondaryText)
-                        }
-                        .font(.subheadline).fixedSize(horizontal: false, vertical: true)
-                        .accessibilityElement(children: .combine).accessibilityIdentifier("travelPlanCopySource")
-                    }
+                VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 8) {
-                        fieldLabel("City")
-                        Button { choosingCity = true } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(plan.city.isEmpty ? "Search a city" : plan.city).font(.title3)
-                                    if !plan.city.isEmpty { Text(plan.destination.subtitle).font(.caption).foregroundStyle(WIFTheme.secondaryText) }
+                        Text("I’ll be in…").font(.largeTitle.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                        if let source {
+                            Group {
+                                switch source {
+                                case .friend(let name): Text("City and dates copied from \(name)")
+                                case .sharedTrip(let name): Text("Using dates from “\(name)”")
                                 }
-                                Spacer(); Image(systemName: "chevron.right").font(.caption)
-                            }.padding(18).frame(maxWidth: .infinity, minHeight: 60, alignment: .leading)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain).background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-                        .accessibilityIdentifier("travelPlanCity")
-                    }
-                    VStack(alignment: .leading, spacing: 8) {
-                        fieldLabel("Dates")
-                        Button { choosingDates = true } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "calendar").foregroundStyle(WIFTheme.fresh)
-                                Text(plan.dateLabel).font(.subheadline.weight(.medium)).foregroundStyle(WIFTheme.primaryText)
-                                Spacer(minLength: 0)
-                                Image(systemName: "chevron.right").font(.caption).foregroundStyle(WIFTheme.secondaryText)
                             }
-                            .padding(18).frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
-                            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20)).contentShape(Rectangle())
+                            .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("travelPlanCopySource")
+                        }
+                    }
+
+                    // City, dates and audience read as one plan, so they share one card.
+                    VStack(spacing: 0) {
+                        Button { choosingCity = true } label: {
+                            planRow(symbol: "mappin", title: "City",
+                                    value: plan.city.isEmpty ? String(localized: "Search a city") : plan.city,
+                                    detail: plan.city.isEmpty ? nil : plan.destination.subtitle,
+                                    valueIsPlaceholder: plan.city.isEmpty)
+                        }
+                        .buttonStyle(.plain).accessibilityIdentifier("travelPlanCity")
+                        rowDivider
+                        Button { choosingDates = true } label: {
+                            planRow(symbol: "calendar", title: "Dates", value: plan.dateLabel,
+                                    detail: plan.city.isEmpty ? nil : String(localized: "Local dates in \(plan.city)"))
                         }
                         .buttonStyle(.plain).accessibilityIdentifier("travelPlanDates")
-                        if !plan.city.isEmpty { Text("Local dates in \(plan.city)").font(.caption).foregroundStyle(WIFTheme.secondaryText) }
+                        rowDivider
+                        Button { choosingAudience = true } label: {
+                            planRow(symbol: "person.2", title: "Share with", value: audienceSummary,
+                                    detail: plan.revision == 0 && !customizedAudience
+                                        ? String(localized: "All current friends are selected by default. Deselect anyone before saving.") : nil)
+                        }
+                        .buttonStyle(.plain).accessibilityIdentifier("travelPlanAudience")
                     }
-                    Button { choosingAudience = true } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Share with").font(.subheadline)
-                                Text(plan.audience.isEmpty ? String(localized: "Only me · choose friends")
-                                     : Set(plan.audience) == Set(allFriendIDs) ? String(localized: "All friends (\(plan.audience.count))")
-                                     : String(localized: "\(plan.audience.count) selected friends"))
-                                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                            }
-                            Spacer(); Image(systemName: "chevron.right").font(.caption)
-                        }.padding(18).contentShape(Rectangle())
-                    }.buttonStyle(.plain)
-                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-                    .accessibilityIdentifier("travelPlanAudience")
-                    if plan.revision == 0 {
-                        Text("All current friends are selected by default. Deselect anyone before saving.")
-                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+
+                    VStack(spacing: 0) {
+                        Toggle(isOn: $plan.allowFriendBrowsing) {
+                            toggleLabel("Show in friends’ travel plans", detail: plan.audience.isEmpty
+                                ? String(localized: "Choose friends to show them this plan.")
+                                : plan.allowFriendBrowsing
+                                    ? String(localized: "Selected friends can see its city and dates.")
+                                    : String(localized: "Selected friends can still see a match when your dates overlap."))
+                        }
+                        .padding(.horizontal, 18).padding(.vertical, 14)
+                        .accessibilityIdentifier("travelPlanBrowsing")
+                        rowDivider
+                        Toggle(isOn: $plan.alertsEnabled) {
+                            toggleLabel("Remind me about overlaps",
+                                        detail: String(localized: "Get a reminder up to 14 days before your plans overlap."))
+                        }
+                        .padding(.horizontal, 18).padding(.vertical, 14)
+                        .accessibilityIdentifier("travelPlanAlerts")
                     }
-                    Toggle("Show in friends’ travel plans", isOn: $plan.allowFriendBrowsing)
-                        .font(.subheadline).accessibilityIdentifier("travelPlanBrowsing")
-                    Text(plan.audience.isEmpty
-                         ? "Choose friends to show them this plan."
-                         : plan.allowFriendBrowsing
-                             ? "Selected friends can see its city and dates."
-                             : "Selected friends can still see a match when your dates overlap.")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    Toggle("Remind me about overlaps", isOn: $plan.alertsEnabled)
-                        .font(.subheadline).accessibilityIdentifier("travelPlanAlerts")
-                    Text("Get a reminder up to 14 days before your plans overlap.")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    .tint(WIFTheme.fresh)
+                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+
                     Group {
                         if case .sharedTrip = source {
                             Text("This plan is saved separately. Update it yourself if the shared trip’s dates change.")
@@ -270,10 +257,11 @@ struct PersonalPlanEditor: View {
                             Text("This saves your own travel plan. It doesn’t join a shared trip.")
                         }
                     }
-                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    .font(.footnote).foregroundStyle(WIFTheme.secondaryText)
+                    .padding(.horizontal, 4)
                     .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("travelPlanBoundary")
                 }
-                .padding(24)
+                .padding(.horizontal, 20).padding(.top, 8).padding(.bottom, 24)
             }
             // Save stays on screen instead of below five paragraphs of settings; errors sit beside it.
             .safeAreaInset(edge: .bottom) {
@@ -374,7 +362,46 @@ struct PersonalPlanEditor: View {
         }
     }
 
-    private func fieldLabel(_ title: LocalizedStringKey) -> some View { Text(title).font(.caption).foregroundStyle(WIFTheme.secondaryText).padding(.leading, 4) }
+    private var audienceSummary: String {
+        plan.audience.isEmpty ? String(localized: "Only me · choose friends")
+            : Set(plan.audience) == Set(allFriendIDs) ? String(localized: "All friends (\(plan.audience.count))")
+            : String(localized: "\(plan.audience.count) selected friends")
+    }
+
+    private var rowDivider: some View { Divider().overlay(WIFTheme.border).padding(.leading, 62) }
+
+    private func planRow(symbol: String, title: LocalizedStringKey, value: String, detail: String?,
+                         valueIsPlaceholder: Bool = false) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            Image(systemName: symbol)
+                .font(.system(size: 16, weight: .medium)).foregroundStyle(WIFTheme.fresh)
+                .frame(width: 30, height: 30)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                Text(value).font(.body.weight(.semibold))
+                    .foregroundStyle(valueIsPlaceholder ? WIFTheme.secondaryText : WIFTheme.primaryText)
+                if let detail {
+                    Text(detail).font(.footnote).foregroundStyle(WIFTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                .accessibilityHidden(true)
+        }
+        .padding(.horizontal, 18).padding(.vertical, 14)
+        .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+        .contentShape(Rectangle())
+    }
+
+    private func toggleLabel(_ title: LocalizedStringKey, detail: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title).font(.body).foregroundStyle(WIFTheme.primaryText)
+            Text(detail).font(.footnote).foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
 }
 
 struct TravelCityPicker: View {
