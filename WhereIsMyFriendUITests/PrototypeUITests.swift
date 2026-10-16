@@ -738,15 +738,21 @@ final class PrototypeUITests: XCTestCase {
     }
 
     private func dismissSystemShare(in app: XCUIApplication) {
+        let copy = app.descendants(matching: .any).matching(identifier: "Copy").firstMatch
         if app.buttons["Close"].firstMatch.exists { app.buttons["Close"].firstMatch.tap() }
         else if app.buttons["Cancel"].firstMatch.exists { app.buttons["Cancel"].firstMatch.tap() }
         else {
             let sheet = app.otherElements["ActivityListView"]
             if sheet.exists, sheet.frame.minY > 50 {
                 app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: (sheet.frame.minY - 30) / app.frame.height)).tap()
-            } else { sheet.swipeDown() }
+            } else if sheet.exists, !sheet.frame.isEmpty {
+                sheet.swipeDown()
+            } else {
+                // A share sheet with a titled preview doesn't expose its list frame; tap above it.
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)).tap()
+            }
         }
-        XCTAssertTrue(app.otherElements["ActivityListView"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(copy.waitForNonExistence(timeout: 5))
     }
 
     private func clearTravelAudience(in app: XCUIApplication) {
