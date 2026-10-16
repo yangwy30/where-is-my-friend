@@ -916,8 +916,11 @@ final class PrototypeUITests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
             selectAppTab(2, in: app)
+            let privacySettings = app.buttons["privacySettingsLink"]
+            for _ in 0..<5 where !privacySettings.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            privacySettings.tap()
             let privacy = app.buttons["privacyDataLink"]
-            for _ in 0..<5 where !privacy.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            XCTAssertTrue(privacy.waitForExistence(timeout: 3))
             privacy.tap()
             XCTAssertTrue(app.scrollViews["privacyDataScreen"].waitForExistence(timeout: 5))
             for (id, text) in [("privacyTravelSummary", travel), ("privacyMomentsSummary", moments),
@@ -1636,8 +1639,11 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
         selectAppTab(2, in: app)
+        let privacy = app.buttons["privacySettingsLink"]
+        for _ in 0..<6 where !privacy.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        privacy.tap()
         let button = app.buttons["Delete account"]
-        for _ in 0..<12 where !button.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        XCTAssertTrue(button.waitForExistence(timeout: 3))
         XCTAssertTrue(button.isHittable)
         button.tap()
         let confirm = app.sheets.buttons["Delete account"]

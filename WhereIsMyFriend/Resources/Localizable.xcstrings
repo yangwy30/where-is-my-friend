@@ -1,6 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Version %@ (%@)" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "版本 %1$@ (%2$@)"}}}},
     "%@ and %@ are here too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ 和 %2$@ 也在这里"}}}},
     "Here with you" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和你同城"}}}},
     "You’re there too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你也会去"}}}},
