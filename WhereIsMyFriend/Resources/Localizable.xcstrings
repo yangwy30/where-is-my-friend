@@ -3875,6 +3875,26 @@
         }
       }
     },
+    "This is your invite link" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这是你自己的邀请链接"
+          }
+        }
+      }
+    },
+    "Share it with friends so they can send you a friend request." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把它分享给朋友，对方就能向你发送好友请求。"
+          }
+        }
+      }
+    },
     "Connecting" : {
       "extractionState" : "stale",
       "localizations" : {

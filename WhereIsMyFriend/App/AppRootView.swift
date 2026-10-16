@@ -209,52 +209,78 @@ private struct IncomingInviteView: View {
     let invite: PendingInvite
     @ObservedObject var draft: FriendInvitationDraft
 
+    /// Opening your own link (for example, testing it after sharing) must not offer a request to yourself.
+    private var isOwnLink: Bool {
+        invite.username.caseInsensitiveCompare(store.snapshot.currentUser.username) == .orderedSame
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    Image(systemName: "link.badge.plus")
-                        .font(.system(size: 58))
-                        .foregroundStyle(WIFTheme.fresh)
-                    Text("Connect with @\(invite.username)?")
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-                    Text("Send a friend request to connect.")
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .multilineTextAlignment(.center)
-                    Button {
-                        draft.inviteError = nil
-                        Task {
-                            await store.acceptPendingInvite(onFailure: { message in
-                                guard store.snapshot.isAuthenticated, store.pendingInvite == invite else { return }
-                                draft.inviteError = message
-                            })
-                            if store.pendingInvite == nil { dismiss() }
-                        }
-                    } label: {
-                        if store.isSendingFriendRequest {
-                            ProgressView().frame(maxWidth: .infinity)
-                        } else {
-                            Text("Send friend request").foregroundStyle(WIFTheme.primaryText)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                        }
-                    }
-                    .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                    .disabled(store.isSendingFriendRequest)
-                    .accessibilityIdentifier("acceptIncomingInvite")
-                    if let inviteError = draft.inviteError {
-                        Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                    if isOwnLink {
+                        Image(systemName: "person.crop.circle.badge.checkmark")
+                            .font(.system(size: 58))
+                            .foregroundStyle(WIFTheme.fresh)
+                        Text("This is your invite link")
+                            .font(.title2.bold())
                             .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier("incomingInviteError")
+                        Text("Share it with friends so they can send you a friend request.")
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            store.discardPendingInvite()
+                            dismiss()
+                        } label: {
+                            Text("Done").foregroundStyle(WIFTheme.primaryText)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                        }
+                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                        .accessibilityIdentifier("dismissOwnInvite")
+                    } else {
+                        Image(systemName: "link.badge.plus")
+                            .font(.system(size: 58))
+                            .foregroundStyle(WIFTheme.fresh)
+                        Text("Connect with @\(invite.username)?")
+                            .font(.title2.bold())
+                            .multilineTextAlignment(.center)
+                        Text("Send a friend request to connect.")
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            draft.inviteError = nil
+                            Task {
+                                await store.acceptPendingInvite(onFailure: { message in
+                                    guard store.snapshot.isAuthenticated, store.pendingInvite == invite else { return }
+                                    draft.inviteError = message
+                                })
+                                if store.pendingInvite == nil { dismiss() }
+                            }
+                        } label: {
+                            if store.isSendingFriendRequest {
+                                ProgressView().frame(maxWidth: .infinity)
+                            } else {
+                                Text("Send friend request").foregroundStyle(WIFTheme.primaryText)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                            }
+                        }
+                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                        .disabled(store.isSendingFriendRequest)
+                        .accessibilityIdentifier("acceptIncomingInvite")
+                        if let inviteError = draft.inviteError {
+                            Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("incomingInviteError")
+                        }
+                        Button("Not now", role: .cancel) {
+                            store.discardPendingInvite()
+                            dismiss()
+                        }
+                        .disabled(store.isSendingFriendRequest)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("dismissIncomingInvite")
                     }
-                    Button("Not now", role: .cancel) {
-                        store.discardPendingInvite()
-                        dismiss()
-                    }
-                    .disabled(store.isSendingFriendRequest)
-                    .frame(minHeight: 44)
-                    .accessibilityIdentifier("dismissIncomingInvite")
                 }
                 .padding(28)
                 .frame(maxWidth: .infinity)

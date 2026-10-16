@@ -1952,6 +1952,43 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["Not now"].tap()
     }
 
+    func testFriendDetailShowsSharedPlanRightAfterLaunchAndOnReturn() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+        XCTAssertTrue(lin.waitForExistence(timeout: 8))
+        let tokyo = app.staticTexts.matching(NSPredicate(format: "label == %@", "Tokyo, Japan"))
+        for _ in 0..<2 {
+            lin.tap()
+            XCTAssertTrue(app.navigationBars["Lin"].waitForExistence(timeout: 5))
+            // Lin's current city card says "Tokyo, Japan" once; the shared plan adds a second one.
+            let shown = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count >= 2"), object: tokyo)
+            XCTAssertEqual(XCTWaiter.wait(for: [shown], timeout: 3), .completed)
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(lin.waitForExistence(timeout: 5))
+        }
+    }
+
+    func testOwnInviteLinkDoesNotOfferAFriendRequest() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+
+        // The demo account is @wangyang; a differently cased username still counts as yours.
+        app.open(URL(string: "whereismyfriend://invite/WangYang")!)
+        XCTAssertTrue(app.staticTexts["This is your invite link"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Send friend request"].exists)
+        app.buttons["dismissOwnInvite"].tap()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["This is your invite link"].exists)
+    }
+
     func testTripInviteDeepLinkSurvivesRelaunchAndDismissal() {
         continueAfterFailure = false
         let app = XCUIApplication()
