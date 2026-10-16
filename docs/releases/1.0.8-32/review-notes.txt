@@ -12,4 +12,4 @@ Review paths:
 
 City sharing and personal-plan/trip sharing have separate controls. Stored data also includes same-city events/stay periods, flight lookup requests and bounded operational diagnostics described in the public privacy policy. No address-book import, advertising or cross-app tracking is included.
 
-Version 1.0.8 replaces 1.0.7 before release. It includes the 1.0.7 changes (the city check while the app is open, the optional notification prompt above, and offering the iOS share sheet with a suggested message when a trip reminder cannot be delivered). It adds a "here too" chip on Friends that lists friends in your city, a timeline of overlapping days in Together soon, and invite links on acrossus.app. It does not provide in-app chat.
+Version 1.0.8 replaces the unreleased 1.0.7. It fixes the city check while the app is open, adds the optional notification prompt above, and offers the iOS share sheet with a suggested message when a trip reminder cannot be delivered. New: a "here too" chip listing friends in your city, a timeline of overlapping days in Together soon, and acrossus.app invite links. No in-app chat.
