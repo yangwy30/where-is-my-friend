@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "93RUQ2A6KX.com.yangwy30.whereismyfriend",
+          "93RUQ2A6KX.com.yangwy30.whereismyfriend.staging"
+        ],
+        "components": [
+          { "/": "/i/*", "comment": "Friend invitation links" },
+          { "/": "/invite/*", "comment": "Older friend invitation links" },
+          { "/": "/trips/join/*", "comment": "Account-bound trip invitations" }
+        ]
+      }
+    ]
+  }
+}

@@ -39,3 +39,6 @@ Config/Staging.local.xcconfig
 # UI review and fix-wave evidence captures stay local; their README/JSON summaries are versioned.
 docs/ui-*/**/*.png
 docs/ui-*/**/*.jpg
+
+# Local Cloudflare Pages dev state
+.wrangler/
