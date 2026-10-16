@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ and %@ are here too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ 和 %2$@ 也在这里"}}}},
+    "Here with you" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和你同城"}}}},
+    "You’re there too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你也会去"}}}},
+    "Shared days %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "共同停留：%@"}}}},
+    "with %@ · %lld days together" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和 %1$@ · 共同停留 %2$lld 天"}}}},
+    "Dismiss" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "关闭"}}}},
     "Turn on notifications" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开通知"}}}},
     "Turn on" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开"}}}},
     "Hear when a friend is in your city, and get trip reminders from your group." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "朋友来到你所在的城市时收到通知，也能收到同行朋友的旅行提醒。"}}}},
