@@ -120,114 +120,82 @@ struct SameCityReunionCard: View {
             ?? String(localized: "This update is no longer available")
     }
 
+    private var city: (name: String, countryCode: String?, region: String?) {
+        if let event, !isCurrent { return (event.city, nil, nil) }
+        let presence = store.snapshot.currentPresence
+        return (presence.city ?? event?.city ?? "", presence.countryCode, presence.administrativeArea)
+    }
+    private var headline: String {
+        guard isCurrent, let friend = people.first else { return String(localized: "Same-city moment") }
+        let name = friend.displayName.split(whereSeparator: \.isWhitespace).first.map(String.init) ?? friend.displayName
+        if people.count == 1 { return String(localized: "\(name) is in \(city.name) too") }
+        return String(localized: "\(name) + \(people.count - 1) more are in \(city.name) too")
+    }
+    private var freshness: String {
+        if isCurrent, people.count == 1, let friend = people.first { return friend.relativeUpdateLongText(at: referenceDate) }
+        return summaryDetail
+    }
+
     var body: some View {
         Group {
-        if expansionContext.isVisible {
-            VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    withAnimation(motion) { expansion.toggle() }
-                } label: {
-                    HStack(spacing: 10) {
-                        if !typeSize.isAccessibilitySize {
-                            if people.isEmpty {
-                                Image(systemName: "clock").frame(width: 26, height: 26)
-                                    .accessibilityHidden(true)
-                            } else {
-                                HStack(spacing: -7) {
-                                    ForEach(Array(people.prefix(3))) { friend in
-                                        avatar(friend, size: 26)
-                                            .overlay(Circle().stroke(WIFTheme.canvas, lineWidth: 2))
-                                    }
-                                }.accessibilityHidden(true)
-                            }
-                        }
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(summaryTitle)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(WIFTheme.fresh)
-                                .accessibilityIdentifier("sameCitySummaryTitle")
-                            Text(summaryDetail)
-                                .font(.caption)
-                                .foregroundStyle(WIFTheme.secondaryText)
-                                .accessibilityIdentifier("sameCitySummaryFreshness")
-                        }
-                        .fixedSize(horizontal: false, vertical: true)
-                        Spacer(minLength: 4)
-                        Image(systemName: "chevron.down")
-                            .font(.caption.weight(.semibold))
-                            .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
-                            .rotationEffect(.degrees(expanded ? 180 : 0))
-                            .accessibilityHidden(true)
-                    }
-                    .foregroundStyle(WIFTheme.fresh)
-                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-                    .padding(.vertical, 4)
-                    .contentShape(Rectangle())
+        // A current same-city moment lives in the Friends header; this card only
+        // explains a notification whose moment has since ended.
+        if expansionContext.isVisible && !isCurrent {
+            HStack(spacing: 14) {
+                summary
+                Button { eventID = nil } label: {
+                    Image(systemName: "xmark").font(.caption.weight(.semibold)).frame(width: 44, height: 44)
                 }
-                .buttonStyle(.plain)
-                .sensoryFeedback(.selection, trigger: expanded)
-                .accessibilityIdentifier("sameCityReunionToggle")
-                .accessibilityValue(expanded ? Text("Expanded") : Text("Collapsed"))
-
-                if expanded {
-                    VStack(alignment: .leading, spacing: 0) {
-                        if people.isEmpty {
-                            Text("The moment may have expired or sharing may have changed.")
-                                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                                .fixedSize(horizontal: false, vertical: true).padding(.vertical, 12)
-                        } else {
-                            ForEach(people) { friend in
-                                NavigationLink(value: friend) {
-                                    HStack(spacing: 12) {
-                                        if !typeSize.isAccessibilitySize { avatar(friend, size: 34) }
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(friend.displayName).font(.subheadline.weight(.medium))
-                                                .foregroundStyle(WIFTheme.primaryText)
-                                            Text(isCurrent ? friend.relativeUpdateLongText(at: referenceDate) : String(localized: "Past city update"))
-                                                .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                                        }.fixedSize(horizontal: false, vertical: true)
-                                        Spacer(minLength: 4)
-                                        Image(systemName: "chevron.right").font(.caption)
-                                            .foregroundStyle(WIFTheme.secondaryText).accessibilityHidden(true)
-                                    }
-                                    .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
-                                    .padding(.vertical, 4).contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityIdentifier("sameCityFriend-\(friend.username)")
-                            }
-                        }
-                        Button {
-                            withAnimation(motion) { expansion.collapse(); eventID = nil }
-                        } label: {
-                            Text("Collapse").font(.caption)
-                                .frame(maxWidth: .infinity, minHeight: 44, alignment: .trailing)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain).foregroundStyle(WIFTheme.secondaryText)
-                        .accessibilityIdentifier("closeSameCityReunion")
-                    }
-                    .padding(.top, 4)
-                    .transition(.opacity)
-                }
-                Divider().overlay(WIFTheme.border.opacity(0.35)).padding(.top, 12)
+                .buttonStyle(.plain).foregroundStyle(WIFTheme.secondaryText)
+                .accessibilityLabel("Dismiss")
+                .accessibilityIdentifier("closeSameCityReunion")
             }
-            // Event selection is only content: it must never reopen this summary.
-            .animation(motion, value: expanded)
-            .padding(.top, 10)
+            .padding(.leading, 14).padding(.trailing, 12).padding(.vertical, 12)
+            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
+            .padding(.top, 14)
         }
         }
-        // Keep this observer outside the conditional content so hiding the
-        // summary also retires its expansion before it becomes visible again.
         .onChange(of: expansionContext, initial: true) { _, context in
             expansion.reconcile(context)
         }
     }
 
+    /// The emblem says where; the avatar badge on its corner says who.
+    private var summary: some View {
+        HStack(spacing: 14) {
+            if !typeSize.isAccessibilitySize {
+                CityEmblemView(city: city.name, countryCode: city.countryCode, administrativeArea: city.region, size: 60)
+                    .frame(width: 60, height: 60)
+                    .overlay(alignment: .bottomTrailing) {
+                        HStack(spacing: -8) {
+                            ForEach(Array(people.prefix(2))) { friend in
+                                avatar(friend, size: 26).overlay(Circle().stroke(WIFTheme.surface, lineWidth: 2))
+                            }
+                        }
+                        .offset(x: 6, y: 4)
+                    }
+                    .accessibilityHidden(true)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(headline)
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .accessibilityIdentifier("sameCitySummaryTitle")
+                Text(freshness)
+                    .font(.caption)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .accessibilityIdentifier("sameCitySummaryFreshness")
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private func avatar(_ friend: FriendPresence, size: CGFloat) -> some View {
         let tint = WIFPersonPalette.tint(for: friend.displayName)
         return Text(friend.initials)
-            .font(.system(size: size * 0.32, weight: .semibold, design: .rounded))
+            .font(.system(size: size * 0.36, weight: .semibold, design: .rounded))
             .foregroundStyle(WIFTheme.primaryText)
             .frame(width: size, height: size)
             .background(tint, in: Circle())

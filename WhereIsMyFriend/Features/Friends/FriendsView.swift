@@ -10,6 +10,7 @@ struct FriendsView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
+    @State private var showsSameCityFriends = false
     @StateObject private var invitationDraft = FriendInvitationDraft()
     @State private var isScreenVisible = false
     @State private var isHeaderCollapsed = false
@@ -158,6 +159,9 @@ struct FriendsView: View {
         }
         .navigationDestination(for: FriendPresence.self) { friend in
             FriendDetailView(friend: friend)
+        }
+        .sheet(isPresented: $showsSameCityFriends) {
+            SameCityFriendsSheet(friends: sameCityFriends, presence: store.snapshot.currentPresence, referenceDate: referenceDate)
         }
         .sheet(isPresented: $isAddingFriend) {
             AddFriendView(draft: invitationDraft)
@@ -409,11 +413,75 @@ struct FriendsView: View {
             .foregroundStyle(WIFTheme.primaryText)
     }
 
+    private var sameCityFriends: [FriendPresence] {
+        SameCityPresencePolicy.currentFriends(in: store.snapshot, at: referenceDate)
+            .sorted { ($0.updatedAt ?? .distantPast) > ($1.updatedAt ?? .distantPast) }
+    }
+
+    private func firstName(_ friend: FriendPresence) -> String {
+        friend.displayName.split(whereSeparator: \.isWhitespace).first.map(String.init) ?? friend.displayName
+    }
+
+    /// Names while they fit in one glance; a count once a list would be needed.
+    private var sameCityLine: String {
+        let names = sameCityFriends.map(firstName)
+        switch names.count {
+        case 0: return ""
+        case 1: return String(localized: "\(names[0]) is here too")
+        case 2: return String(localized: "\(names[0]) and \(names[1]) are here too")
+        default: return String(localized: "\(names.count) friends are here too")
+        }
+    }
+
+    private var sameCityChip: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: -4) {
+                ForEach(Array(sameCityFriends.prefix(3))) { friend in
+                    FriendAvatarView(friend: friend, size: 24)
+                        .overlay(Circle().stroke(WIFTheme.surface, lineWidth: 1.5))
+                }
+                if sameCityFriends.count > 3 {
+                    Text("+\(sameCityFriends.count - 3)")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(width: 24, height: 24)
+                        .background(WIFTheme.freshSurface, in: Circle())
+                        .overlay(Circle().stroke(WIFTheme.surface, lineWidth: 1.5))
+                }
+            }
+            .accessibilityHidden(true)
+            Text(sameCityLine)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.bold))
+                .opacity(0.6)
+                .accessibilityHidden(true)
+        }
+        .foregroundStyle(WIFTheme.fresh)
+        .padding(.leading, 4).padding(.trailing, 12).padding(.vertical, 4)
+        .background(WIFTheme.surface.opacity(0.85), in: Capsule())
+        .overlay(Capsule().strokeBorder(WIFTheme.border, lineWidth: 0.5))
+        .contentShape(Capsule())
+    }
+
     private var cityStatus: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(cityStatusText)
                 .font(.subheadline)
                 .accessibilityIdentifier("homeCityStatus")
+            if let friend = sameCityFriends.first {
+                Group {
+                    if sameCityFriends.count == 1 {
+                        NavigationLink(value: friend) { sameCityChip }
+                    } else {
+                        Button { showsSameCityFriends = true } label: { sameCityChip }
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 6)
+                .accessibilityIdentifier("sameCitySummaryTitle")
+            }
             if !sharingIsEnabled {
                 Text(store.snapshot.syncState == .offline ? "City sharing is off on this device" : "City sharing is paused")
                     .font(.caption)
@@ -555,11 +623,6 @@ struct FriendsView: View {
             Label(friend.isFavorite ? "Remove favorite" : "Add favorite",
                   systemImage: friend.isFavorite ? "star.slash" : "star")
         }
-        if let plan = nextPlan(for: friend) {
-            ShareLink(item: greeting(for: plan)) {
-                Label("Share a meetup invite", systemImage: "square.and.arrow.up")
-            }
-        }
     }
 
     private func friendCard(_ friend: FriendPresence) -> some View {
@@ -696,4 +759,70 @@ private struct NotificationPromptCard: View {
     }
     .environmentObject(store)
     .environmentObject(store.travelPlans)
+}
+
+/// Everyone sharing your city, opened from the Friends header when there's more than one.
+private struct SameCityFriendsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let friends: [FriendPresence]
+    let presence: CurrentUserPresence
+    let referenceDate: Date
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    HStack(alignment: .center, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Here with you")
+                                .font(.caption2.weight(.semibold)).textCase(.uppercase).tracking(1.2)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                            Text(presence.city ?? "")
+                                .font(.system(size: 38, weight: .regular, design: .serif)).tracking(-0.8)
+                                .lineLimit(1).minimumScaleFactor(0.7)
+                            Text("\(friends.count) friends")
+                                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        Spacer(minLength: 0)
+                        CityEmblemView(city: presence.city, countryCode: presence.countryCode,
+                                       administrativeArea: presence.administrativeArea, size: 104)
+                            .frame(width: 96, height: 96)
+                    }
+                    VStack(spacing: 0) {
+                        ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
+                            if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 70) }
+                            NavigationLink(value: friend) {
+                                HStack(spacing: 14) {
+                                    FriendAvatarView(friend: friend, size: 40)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(friend.displayName).font(.headline)
+                                        Text(friend.relativeUpdateLongText(at: referenceDate))
+                                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                                        .foregroundStyle(WIFTheme.secondaryText).accessibilityHidden(true)
+                                }
+                                .padding(.horizontal, 16).padding(.vertical, 12)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("sameCityFriend-\(friend.username)")
+                        }
+                    }
+                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
+                }
+                .foregroundStyle(WIFTheme.primaryText)
+                .padding(WIFTheme.screenInset)
+            }
+            .wifAmbientBackground()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: FriendPresence.self) { FriendDetailView(friend: $0) }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
 }

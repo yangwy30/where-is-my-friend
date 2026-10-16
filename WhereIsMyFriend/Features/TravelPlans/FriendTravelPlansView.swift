@@ -13,6 +13,12 @@ struct FriendTravelPlansView: View {
         return feed.items.filter { allowed.contains($0.friendID) && !$0.isPast() }
     }
 
+    private func overlapsMine(_ plan: FriendTravelPlan) -> Bool {
+        library.plans.contains {
+            $0.city == plan.city && $0.countryCode == plan.countryCode && $0.startDay <= plan.endDay && $0.endDay >= plan.startDay
+        }
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 20) {
@@ -44,14 +50,16 @@ struct FriendTravelPlansView: View {
                     }
                     .accessibilityIdentifier("friendPlansEmpty")
                 } else {
-                    HStack {
-                        Text("Friends’ upcoming cities").font(.headline)
-                        Spacer()
-                        Text("By start date").font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    Text("Friends’ upcoming cities").font(.headline).padding(.leading, 4)
+                    VStack(spacing: 0) {
+                        ForEach(Array(plans.enumerated()), id: \.element.id) { index, plan in
+                            if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 86) }
+                            FriendTravelPlanRow(plan: plan, isAlsoMine: overlapsMine(plan)) {
+                                editing = PersonalPlanDraft(plan: plan.privateDraft(), source: .friend(plan.friendName))
+                            }
+                        }
                     }
-                    ForEach(plans) { plan in
-                        FriendTravelPlanCard(plan: plan) { editing = PersonalPlanDraft(plan: plan.privateDraft(), source: .friend(plan.friendName)) }
-                    }
+                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
                     if feed.nextCursor != nil {
                         Button { Task { await feed.loadMore() } } label: { Text(feed.errorMessage == nil ? String(localized: "Load more") : String(localized: "Try again")) }
                             .frame(maxWidth: .infinity, minHeight: 44).disabled(feed.isLoading)
@@ -87,48 +95,69 @@ struct FriendTravelPlansView: View {
     }
 }
 
-private struct FriendTravelPlanCard: View {
+private struct FriendTravelPlanRow: View {
     @EnvironmentObject private var store: AppStore
     let plan: FriendTravelPlan
+    let isAlsoMine: Bool
     let onCopy: () -> Void
 
+    private var firstName: String {
+        plan.friendName.split(whereSeparator: \.isWhitespace).first.map(String.init) ?? plan.friendName
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                if let friend = store.friend(id: plan.friendID) { FriendAvatarView(friend: friend, size: 28) }
-                Text(plan.friendName).font(.subheadline.weight(.medium))
-                Spacer(minLength: 4)
-            }
+        HStack(spacing: 8) {
             NavigationLink {
                 FriendTravelPlanDetailView(planID: plan.id)
             } label: {
                 HStack(spacing: 14) {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text(plan.city).font(.title2.weight(.semibold))
-                        Text(plan.dateLabel).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                    CityEmblemView(city: plan.city, countryCode: plan.countryCode, administrativeArea: plan.region, size: 56)
+                        .frame(width: 56, height: 56)
+                        .overlay(alignment: .bottomTrailing) {
+                            if let friend = store.friend(id: plan.friendID) {
+                                FriendAvatarView(friend: friend, size: 24)
+                                    .overlay(Circle().stroke(WIFTheme.surface, lineWidth: 2))
+                                    .offset(x: 5, y: 3)
+                            }
+                        }
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text(plan.city).font(.system(size: 23, weight: .regular, design: .serif)).tracking(-0.4).lineLimit(1)
+                            if isAlsoMine {
+                                Text("You’re there too")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(WIFTheme.fresh)
+                                    .padding(.horizontal, 7).padding(.vertical, 3)
+                                    .background(WIFTheme.fresh.opacity(0.14), in: Capsule())
+                            }
+                        }
+                        Text("\(firstName) · \(plan.dateLabel)")
+                            .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
                     }
                     Spacer(minLength: 0)
-                    CityEmblemView(city: plan.city, countryCode: plan.countryCode, administrativeArea: plan.region, size: 82)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
             }
             .buttonStyle(.plain).accessibilityIdentifier("friendPlan-\(plan.id)")
-            Divider().overlay(WIFTheme.border)
-            // One row instead of two full-width links: the card is about the friend's city, not its buttons.
-            HStack(spacing: 8) {
-                Button(action: onCopy) { Label("Add to my travel plans", systemImage: "calendar.badge.plus").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }
-                    .accessibilityIdentifier("copyFriendPlan-\(plan.id)")
-                ShareLink(item: greeting(for: plan)) {
-                    Image(systemName: "square.and.arrow.up")
-                        .frame(width: 44, height: 44).contentShape(Rectangle())
-                }
-                .accessibilityLabel("Share a meetup invite")
-                .accessibilityHint("Choose an app to send your invitation.")
-                .accessibilityIdentifier("shareFriendPlanInvite-\(plan.id)")
+            .contextMenu {
+                Button(action: onCopy) { Label("Add to my travel plans", systemImage: "calendar.badge.plus") }
             }
-            .font(.subheadline.weight(.medium)).buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
+            if isAlsoMine {
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText).frame(width: 32).accessibilityHidden(true)
+            } else {
+                Button(action: onCopy) {
+                    Image(systemName: "calendar.badge.plus")
+                        .font(.body).foregroundStyle(WIFTheme.fresh)
+                        .frame(width: 44, height: 44)
+                        .background(WIFTheme.fresh.opacity(0.12), in: Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Add to my travel plans")
+                .accessibilityIdentifier("copyFriendPlan-\(plan.id)")
+            }
         }
-        .padding(18).background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 24))
+        .padding(.leading, 16).padding(.trailing, 12).padding(.vertical, 14)
     }
 }
 
@@ -159,9 +188,6 @@ struct FriendTravelPlanDetailView: View {
                         Label("Add to my travel plans", systemImage: "calendar.badge.plus")
                     }
                     .buttonStyle(TravelPrimaryButtonStyle()).accessibilityIdentifier("copyFriendPlanDetail")
-                    ShareLink(item: greeting(for: plan)) { Label("Share a meetup invite", systemImage: "square.and.arrow.up") }
-                        .font(.subheadline).frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
-                        .accessibilityIdentifier("shareFriendPlanInvite")
                     Text("Copy the city and dates, then choose who can see your own plan.")
                         .font(.caption).foregroundStyle(WIFTheme.secondaryText).multilineTextAlignment(.center)
                 }
@@ -197,7 +223,3 @@ struct FriendTravelPlanDetailView: View {
     }
 }
 
-/// The meetup invite shared from a friend's plan, the plan feed, or a friend card's menu.
-func greeting(for plan: FriendTravelPlan) -> String {
-    String(localized: "I saw you’ll be in \(plan.city) on \(plan.dateLabel). Want to meet up?")
-}
