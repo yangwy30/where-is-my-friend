@@ -1,4 +1,4 @@
-# Across Us 1.0.8 (32, 33) — internal TestFlight
+# Across Us 1.0.8 (32–34) — internal TestFlight
 
 1.0.8 is meant to replace 1.0.7 (31), which is still Waiting for Review. Plan agreed on October 16, 2026: get 1.0.8 onto TestFlight first and keep 1.0.7 in review until 1.0.8 has been tested on a device. Then remove 1.0.7 from review, switch the version to 1.0.8 with build 32, upload the new screenshots and submit.
 
@@ -37,3 +37,9 @@ The user's test of build 32 found three problems. The page transition glitch and
 Tests: all 264 unit tests passed, including a new feed test. 24 UI tests passed, including new tests for opening your own link and for Lin's shared plan appearing right away on each visit (5 of 5 runs). In one manual check before the UI test, Lin's plan didn't appear until a pull to refresh. It didn't happen again in the repeat check or in the 5 test runs.
 
 Build 33 comes from tag `v1.0.8-33` (ba30568). It was signed the same way as build 32, with `applinks:acrossus.app`, and uploaded at 12:20 PDT.
+
+## Build 34 — October 16, 2026
+
+Testing build 33 found one more problem. For a Kauai trip (LIH), "Use these dates for my travel plan" searched "Kauai, United States" and showed "No city found". Apple returns Kauai as an island record with no city. Fix (6c75034): when no search result has a city, the picker looks up the city at those places and offers it. Kauai gives Lihue, HI. This also covers the "From your shared trips" shortcuts and typing an island or county name. The fix was checked on the simulator with live Apple search. The city picker and shared trip date UI tests pass.
+
+Build 34 comes from tag `v1.0.8-34` and was uploaded at 12:58 PDT. Submit build 34.
