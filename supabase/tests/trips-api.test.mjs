@@ -10,6 +10,7 @@ import { travelPlanInput } from "../functions/_shared/travel-plans.mjs";
 import { wakeInvitationWorker } from "../functions/_shared/invitation-wakeup.mjs";
 import { presenceAdministrativeArea } from "../functions/_shared/city-regions.mjs";
 import { resilientSupabaseFetch, temporaryStatus, authFailureStatus } from "../functions/_shared/upstream-policy.mjs";
+import { wholeSecondTimestamps } from "../functions/_shared/wire-dates.mjs";
 
 const userID = "10000000-0000-0000-0000-000000000001";
 const authID = "20000000-0000-0000-0000-000000000001";
@@ -71,7 +72,7 @@ async function harness({ databaseError = null, cached = null, upstreamStatus, au
     const javascript = stripTypeScriptTypes(source, { mode: "transform" });
     vm.runInNewContext(javascript, {
         Request, Response, URL, console, isUUID, normalizeAPIPath, FlightLookupError, flightLookupInput, travelPlanInput,
-        resilientSupabaseFetch, temporaryStatus, authFailureStatus, presenceAdministrativeArea, wakeInvitationWorker: onWake ?? wakeInvitationWorker,
+        resilientSupabaseFetch, temporaryStatus, authFailureStatus, wholeSecondTimestamps, presenceAdministrativeArea, wakeInvitationWorker: onWake ?? wakeInvitationWorker,
         fetchFlightLookup: async input => { calls.push({ name: "provider", parameters: input }); return { source: "aerodatabox", ...input, flights: [] }; },
         sharedFlightLookup: (rpc, actor, trip, input, key) => sharedFlightLookup(rpc, actor, trip, input, key, {
             provider: async input => { calls.push({name: 'provider', parameters: input}); return {source: 'aerodatabox', ...input, flights: []}; },
@@ -337,4 +338,12 @@ test('routine authenticated bootstrap reuses the resolved profile but first sign
  assert.equal(fresh.calls.find(c=>c.name==='wif_ensure_app_user').parameters.p_auth_user_id,authID);
  const invalid=await harness();assert.equal((await invalid.request('POST','/v1/auth/bootstrap',{displayName:12})).status,400);
  assert.equal(invalid.calls.filter(c=>c.name==='wif_ensure_app_user').length,0);
+});
+
+test("API responses carry whole-second timestamps that iOS 18 can decode", async () => {
+    const api = await harness();
+    const response = await api.request("POST", "/v1/auth/logout");
+    assert.equal(response.status, 200);
+    const { lastSyncedAt } = await response.json();
+    assert.match(lastSyncedAt, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
 });

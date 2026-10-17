@@ -9,6 +9,7 @@ import { encryptAPNSToken, hashAPNSToken, normalizeAPNSToken } from "../_shared/
 import { FlightLookupError, flightLookupInput, fetchFlightLookup } from "../_shared/flight-lookup.mjs";
 import { travelPlanInput } from "../_shared/travel-plans.mjs";
 import { resilientSupabaseFetch, temporaryStatus, authFailureStatus } from "../_shared/upstream-policy.mjs";
+import { wholeSecondTimestamps } from "../_shared/wire-dates.mjs";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -37,7 +38,7 @@ const database = createClient(supabaseURL, serviceRoleKey, {
 });
 
 function json(value: unknown, status = 200): Response {
-    return new Response(JSON.stringify(value), {
+    return new Response(JSON.stringify(value, wholeSecondTimestamps), {
         status,
         headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" },
     });
