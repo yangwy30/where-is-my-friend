@@ -1,10 +1,10 @@
 # City Emblem Plinth Rebuild & Standardization (`scripts/emblem_plinth_rebuild`)
 
-This directory contains the reproducible pipeline used to rebuild all 211 3D city emblems in `WhereIsMyFriend/Resources/Assets.xcassets/CityEmblems` from their pre-cleanup `@3x` masters at commit `728cbe3` (and commit `3cef555` for the 5 regional archetypes, plus the corrected Fukuoka Tower master in `masters/City_fukuoka.png`).
+This directory contains the reproducible pipeline used to rebuild all 295 3D city emblems in `WhereIsMyFriend/Resources/Assets.xcassets/CityEmblems` from their pre-cleanup `@3x` masters at commit `728cbe3` (and commit `3cef555` for the 5 regional archetypes, plus the corrected Fukuoka Tower master and 84 newly added US 100k+ city masters stored in `masters/`).
 
 ---
 
-## Quick Start: Reproducing All 211 Emblems from `728cbe3`
+## Quick Start: Reproducing All 295 Emblems
 
 First, install the `sharp` dependency once (or point `NODE_PATH` to an existing `node_modules` with `sharp`):
 
@@ -12,7 +12,7 @@ First, install the `sharp` dependency once (or point `NODE_PATH` to an existing 
 npm --prefix scripts/emblem_plinth_rebuild install
 ```
 
-### Option A — Run Directly from Git History (`728cbe3` / `3cef555`)
+### Option A — Run Directly from Git History (`728cbe3` / `3cef555`) and `masters/`
 
 From the repository root, run:
 
@@ -20,7 +20,7 @@ From the repository root, run:
 node scripts/emblem_plinth_rebuild/rebuild_plinths.mjs
 ```
 
-This reads each `City_<name>@3x.png` directly via `git show 728cbe3:...` (and `3cef555` for the 5 `archetype_*` sets, plus `scripts/emblem_plinth_rebuild/masters/City_fukuoka.png` for `fukuoka`), cleans and reconstructs the 3D plinths, normalizes dimensions and baselines, and writes `@3x` (`512×512`), `@2x` (`341×341`), and `1x` (`170×170`) PNGs in-place.
+This checks `scripts/emblem_plinth_rebuild/masters/City_<name>.{png,jpg}` first (for `fukuoka` and the 84 newly generated US 100k+ city emblems), falls back to reading each existing `City_<name>@3x.png` directly via `git show 728cbe3:...` (and `3cef555` for the 5 `archetype_*` sets), cleans and reconstructs the 3D plinths, normalizes dimensions and baselines, and writes `@3x` (`512×512`), `@2x` (`341×341`), and `1x` (`170×170`) PNGs in-place.
 
 ### Option B — Extract `728cbe3` Originals to a Folder First, Then Rebuild
 

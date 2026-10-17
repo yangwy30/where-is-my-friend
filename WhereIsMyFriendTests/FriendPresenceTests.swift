@@ -692,7 +692,8 @@ final class CityRefreshRegressionTests: XCTestCase {
         XCTAssertEqual(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "OR").assetName, "City_portland")
         XCTAssertNil(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NH").assetName)
         XCTAssertEqual(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NC").assetName, "City_durham")
-        XCTAssertNil(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "GA").assetName)
+        XCTAssertNil(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "IN").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "GA").assetName, "City_columbus_ga")
         XCTAssertEqual(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "OH").assetName, "City_columbus")
         XCTAssertEqual(CityEmblem.resolve(city: " LA ", countryCode: "us").cityID, "los_angeles")
         XCTAssertEqual(CityEmblem.resolve(city: "Shinjuku", countryCode: "JP").cityID, "tokyo")
@@ -1877,22 +1878,202 @@ final class FriendPresenceTests: XCTestCase {
         let fallbackKorean = CityEmblem.resolve(city: "Daegu", countryCode: "KR")
         XCTAssertEqual(fallbackKorean.archetype, .asian)
         XCTAssertNil(fallbackKorean.assetName)
+
+        // Newly added US 194k+ core cities with dedicated 3D emblems (Batch 1 + Batch 2)
+        let dedicatedUSCities: [(city: String, state: String, asset: String)] = [
+            ("Fort Worth", "TX", "City_fort_worth"),
+            ("Jacksonville", "FL", "City_jacksonville"),
+            ("Fresno", "CA", "City_fresno"),
+            ("Colorado Springs", "CO", "City_colorado_springs"),
+            ("Omaha", "NE", "City_omaha"),
+            ("Virginia Beach", "VA", "City_virginia_beach"),
+            ("Long Beach", "CA", "City_long_beach"),
+            ("Oakland", "CA", "City_oakland"),
+            ("Bakersfield", "CA", "City_bakersfield"),
+            ("Tulsa", "OK", "City_tulsa"),
+            ("Wichita", "KS", "City_wichita"),
+            ("Lexington", "KY", "City_lexington"),
+            ("Stockton", "CA", "City_stockton"),
+            ("Newark", "NJ", "City_newark"),
+            ("Corpus Christi", "TX", "City_corpus_christi"),
+            ("Greensboro", "NC", "City_greensboro"),
+            ("Lincoln", "NE", "City_lincoln"),
+            ("Reno", "NV", "City_reno"),
+            ("Buffalo", "NY", "City_buffalo"),
+            ("Fort Wayne", "IN", "City_fort_wayne"),
+            ("Lubbock", "TX", "City_lubbock"),
+            ("Laredo", "TX", "City_laredo"),
+            ("Toledo", "OH", "City_toledo"),
+            ("Richmond", "VA", "City_richmond"),
+            ("Huntsville", "AL", "City_huntsville"),
+            ("Spokane", "WA", "City_spokane"),
+            ("Baton Rouge", "LA", "City_baton_rouge"),
+            ("Sioux Falls", "SD", "City_sioux_falls"),
+            ("Des Moines", "IA", "City_des_moines"),
+            ("Fayetteville", "NC", "City_fayetteville"),
+            ("Little Rock", "AR", "City_little_rock"),
+            ("Rochester", "NY", "City_rochester"),
+            ("Amarillo", "TX", "City_amarillo"),
+            ("Tallahassee", "FL", "City_tallahassee"),
+            ("Knoxville", "TN", "City_knoxville"),
+            ("Augusta", "GA", "City_augusta"),
+            ("Grand Rapids", "MI", "City_grand_rapids"),
+            ("Mobile", "AL", "City_mobile"),
+            ("Birmingham", "AL", "City_birmingham_al"),
+            ("Montgomery", "AL", "City_montgomery"),
+            ("Chattanooga", "TN", "City_chattanooga"),
+            ("Akron", "OH", "City_akron"),
+            ("Shreveport", "LA", "City_shreveport"),
+            ("Eugene", "OR", "City_eugene"),
+            ("Salem", "OR", "City_salem"),
+            ("Springfield", "MO", "City_springfield_mo"),
+            ("Fort Collins", "CO", "City_fort_collins"),
+            ("Jackson", "MS", "City_jackson_ms"),
+            ("Syracuse", "NY", "City_syracuse"),
+            ("Dayton", "OH", "City_dayton"),
+            ("Waco", "TX", "City_waco"),
+            ("Columbia", "SC", "City_columbia_sc"),
+            ("Cedar Rapids", "IA", "City_cedar_rapids"),
+            ("Fargo", "ND", "City_fargo"),
+            ("Midland", "TX", "City_midland"),
+            ("Abilene", "TX", "City_abilene"),
+            ("Topeka", "KS", "City_topeka"),
+            ("Wilmington", "NC", "City_wilmington"),
+            ("Lafayette", "LA", "City_lafayette"),
+            ("Billings", "MT", "City_billings"),
+            ("Hartford", "CT", "City_hartford"),
+            ("Springfield", "IL", "City_springfield_il"),
+            ("Lansing", "MI", "City_lansing"),
+            ("Evansville", "IN", "City_evansville"),
+            ("South Bend", "IN", "City_south_bend"),
+            ("Columbus", "GA", "City_columbus_ga"),
+            ("Brownsville", "TX", "City_brownsville"),
+            ("Macon", "GA", "City_macon"),
+            ("McAllen", "TX", "City_mcallen"),
+            ("Killeen", "TX", "City_killeen"),
+            ("College Station", "TX", "City_college_station"),
+            ("Tyler", "TX", "City_tyler"),
+            ("Beaumont", "TX", "City_beaumont"),
+            ("Green Bay", "WI", "City_green_bay"),
+            ("Peoria", "IL", "City_peoria_il"),
+            ("Champaign", "IL", "City_champaign"),
+            ("Rochester", "MN", "City_rochester_mn"),
+            ("Las Cruces", "NM", "City_las_cruces"),
+            ("Bend", "OR", "City_bend"),
+            ("St. George", "UT", "City_st_george"),
+            ("Tuscaloosa", "AL", "City_tuscaloosa"),
+            ("Yuma", "AZ", "City_yuma"),
+            ("Visalia", "CA", "City_visalia")
+        ]
+        for entry in dedicatedUSCities {
+            let emblem = CityEmblem.resolve(city: entry.city, countryCode: "US", administrativeArea: entry.state)
+            XCTAssertEqual(emblem.assetName, entry.asset, "Expected dedicated asset for \(entry.city), \(entry.state)")
+            XCTAssertEqual(emblem.displayName, entry.city)
+        }
+        XCTAssertEqual(CityEmblem.resolve(city: "Jersey City", countryCode: "US").assetName, "City_jersey_city")
+
+        // State-scoped US 100k+ metro satellite cities reuse parent metro 3D emblem while preserving own identity
+        let planoTX = CityEmblem.resolve(city: "Plano", countryCode: "US", administrativeArea: "TX")
+        XCTAssertEqual(planoTX.cityID, "plano")
+        XCTAssertEqual(planoTX.displayName, "Plano")
+        XCTAssertEqual(planoTX.assetName, "City_dallas")
+        XCTAssertNil(CityEmblem.resolve(city: "Plano", countryCode: "US", administrativeArea: "IL").assetName)
+        XCTAssertNil(CityEmblem.resolve(city: "Plano", countryCode: "US").assetName)
+
+        let mesaAZ = CityEmblem.resolve(city: "Mesa", countryCode: "US", administrativeArea: "Arizona")
+        XCTAssertEqual(mesaAZ.cityID, "mesa")
+        XCTAssertEqual(mesaAZ.displayName, "Mesa")
+        XCTAssertEqual(mesaAZ.assetName, "City_phoenix")
+
+        let cambridgeMA = CityEmblem.resolve(city: "Cambridge", countryCode: "US", administrativeArea: "MA")
+        XCTAssertEqual(cambridgeMA.assetName, "City_boston")
+        XCTAssertEqual(CityEmblem.resolve(city: "Cambridge", countryCode: "GB").assetName, "City_cambridge")
+
+        let vancouverWA = CityEmblem.resolve(city: "Vancouver", countryCode: "US", administrativeArea: "WA")
+        XCTAssertEqual(vancouverWA.assetName, "City_portland")
+        XCTAssertEqual(CityEmblem.resolve(city: "Vancouver", countryCode: "CA").assetName, "City_vancouver")
+
+        // Namesake disambiguation across states and countries
+        XCTAssertEqual(CityEmblem.resolve(city: "Birmingham", countryCode: "GB").assetName, "City_birmingham")
+        XCTAssertEqual(CityEmblem.resolve(city: "Birmingham", countryCode: "US", administrativeArea: "AL").assetName, "City_birmingham_al")
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "US", administrativeArea: "VA").assetName, "City_richmond")
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "US", administrativeArea: "CA").assetName, "City_oakland")
+        XCTAssertEqual(CityEmblem.resolve(city: "Rochester", countryCode: "US", administrativeArea: "NY").assetName, "City_rochester")
+        XCTAssertEqual(CityEmblem.resolve(city: "Rochester", countryCode: "US", administrativeArea: "MN").assetName, "City_rochester_mn")
+        XCTAssertEqual(CityEmblem.resolve(city: "Peoria", countryCode: "US", administrativeArea: "IL").assetName, "City_peoria_il")
+        XCTAssertEqual(CityEmblem.resolve(city: "Peoria", countryCode: "US", administrativeArea: "AZ").assetName, "City_phoenix")
+        XCTAssertEqual(CityEmblem.resolve(city: "Springfield", countryCode: "US", administrativeArea: "MO").assetName, "City_springfield_mo")
+        XCTAssertEqual(CityEmblem.resolve(city: "Springfield", countryCode: "US", administrativeArea: "IL").assetName, "City_springfield_il")
+        XCTAssertEqual(CityEmblem.resolve(city: "Springfield", countryCode: "US", administrativeArea: "MA").assetName, "City_boston")
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbia", countryCode: "US", administrativeArea: "SC").assetName, "City_columbia_sc")
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbia", countryCode: "US", administrativeArea: "MD").assetName, "City_baltimore")
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbia", countryCode: "US", administrativeArea: "MO").assetName, "City_st_louis")
+        XCTAssertEqual(CityEmblem.resolve(city: "Spokane Valley", countryCode: "US", administrativeArea: "WA").assetName, "City_spokane")
+        XCTAssertEqual(CityEmblem.resolve(city: "Sparks", countryCode: "US", administrativeArea: "NV").assetName, "City_reno")
+        XCTAssertEqual(CityEmblem.resolve(city: "Odessa", countryCode: "US", administrativeArea: "TX").assetName, "City_midland")
+        XCTAssertEqual(CityEmblem.resolve(city: "Edinburg", countryCode: "US", administrativeArea: "TX").assetName, "City_mcallen")
+
+        // High-frequency US sub-100k satellite cities (tech/suburban hubs) preserve own identity while reusing parent metro emblem
+        let redmondWA = CityEmblem.resolve(city: "Redmond", countryCode: "US", administrativeArea: "WA")
+        XCTAssertEqual(redmondWA.cityID, "redmond")
+        XCTAssertEqual(redmondWA.displayName, "Redmond")
+        XCTAssertEqual(redmondWA.assetName, "City_seattle")
+
+        let menloParkCA = CityEmblem.resolve(city: "Menlo Park", countryCode: "US", administrativeArea: "CA")
+        XCTAssertEqual(menloParkCA.cityID, "menlo_park")
+        XCTAssertEqual(menloParkCA.displayName, "Menlo Park")
+        XCTAssertEqual(menloParkCA.assetName, "City_palo_alto")
+
+        XCTAssertEqual(CityEmblem.resolve(city: "Newport Beach", countryCode: "US", administrativeArea: "CA").assetName, "City_irvine")
+        XCTAssertEqual(CityEmblem.resolve(city: "Arcadia", countryCode: "US", administrativeArea: "CA").assetName, "City_los_angeles")
+        XCTAssertEqual(CityEmblem.resolve(city: "Brookline", countryCode: "US", administrativeArea: "MA").assetName, "City_boston")
+        XCTAssertEqual(CityEmblem.resolve(city: "Evanston", countryCode: "US", administrativeArea: "IL").assetName, "City_chicago")
+        XCTAssertEqual(CityEmblem.resolve(city: "Bethesda", countryCode: "US", administrativeArea: "MD").assetName, "City_washington")
+
+        // International metropolitan satellite cities (country-scoped, preserving own cityID & displayName)
+        let mississauga = CityEmblem.resolve(city: "Mississauga", countryCode: "CA")
+        XCTAssertEqual(mississauga.cityID, "mississauga")
+        XCTAssertEqual(mississauga.displayName, "Mississauga")
+        XCTAssertEqual(mississauga.assetName, "City_toronto")
+
+        let burnaby = CityEmblem.resolve(city: "Burnaby", countryCode: "CA")
+        XCTAssertEqual(burnaby.cityID, "burnaby")
+        XCTAssertEqual(burnaby.displayName, "Burnaby")
+        XCTAssertEqual(burnaby.assetName, "City_vancouver")
+
+        // Four-way namesake disambiguation for "Richmond" across countries and US states
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "CA").assetName, "City_vancouver")
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "GB").assetName, "City_london")
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "US", administrativeArea: "VA").assetName, "City_richmond")
+        XCTAssertEqual(CityEmblem.resolve(city: "Richmond", countryCode: "US", administrativeArea: "CA").assetName, "City_oakland")
+
+        XCTAssertEqual(CityEmblem.resolve(city: "Kawasaki", countryCode: "JP").assetName, "City_tokyo")
+        XCTAssertEqual(CityEmblem.resolve(city: "Sakai", countryCode: "JP").assetName, "City_osaka")
+        XCTAssertEqual(CityEmblem.resolve(city: "Uji", countryCode: "JP").assetName, "City_kyoto")
+        XCTAssertEqual(CityEmblem.resolve(city: "Seongnam", countryCode: "KR").assetName, "City_seoul")
+        XCTAssertEqual(CityEmblem.resolve(city: "Banqiao", countryCode: "TW").assetName, "City_taipei")
+        XCTAssertEqual(CityEmblem.resolve(city: "Foshan", countryCode: "CN").assetName, "City_guangzhou")
+        XCTAssertEqual(CityEmblem.resolve(city: "Dongguan", countryCode: "CN").assetName, "City_shenzhen")
+        XCTAssertEqual(CityEmblem.resolve(city: "Kunshan", countryCode: "CN").assetName, "City_suzhou")
+        XCTAssertEqual(CityEmblem.resolve(city: "Versailles", countryCode: "FR").assetName, "City_paris")
+        XCTAssertEqual(CityEmblem.resolve(city: "Potsdam", countryCode: "DE").assetName, "City_berlin")
+        XCTAssertEqual(CityEmblem.resolve(city: "Sharjah", countryCode: "AE").assetName, "City_dubai")
     }
 
     func testUniversalCityFallbackAndUnknownLocationAssets() throws {
-        let bakersfield = CityEmblem.resolve(city: "Bakersfield", countryCode: "US", administrativeArea: "CA")
-        XCTAssertEqual(bakersfield.cityID, "bakersfield")
-        XCTAssertNil(bakersfield.assetName)
-        XCTAssertEqual(bakersfield.displayName, "Bakersfield")
-        XCTAssertEqual(bakersfield.archetype, .centralValley)
-        XCTAssertEqual(bakersfield.fallbackAssetName, "City_archetype_central_valley")
+        let merced = CityEmblem.resolve(city: "Merced", countryCode: "US", administrativeArea: "CA")
+        XCTAssertEqual(merced.cityID, "merced")
+        XCTAssertNil(merced.assetName)
+        XCTAssertEqual(merced.displayName, "Merced")
+        XCTAssertEqual(merced.archetype, .centralValley)
+        XCTAssertEqual(merced.fallbackAssetName, "City_archetype_central_valley")
 
-        let fremont = CityEmblem.resolve(city: "Fremont", countryCode: "US", administrativeArea: "CA")
-        XCTAssertEqual(fremont.cityID, "fremont")
-        XCTAssertNil(fremont.assetName)
-        XCTAssertEqual(fremont.displayName, "Fremont")
-        XCTAssertEqual(fremont.archetype, .siliconValley)
-        XCTAssertEqual(fremont.fallbackAssetName, "City_archetype_silicon_valley")
+        let redwoodCity = CityEmblem.resolve(city: "Redwood City", countryCode: "US", administrativeArea: "CA")
+        XCTAssertEqual(redwoodCity.cityID, "redwood_city")
+        XCTAssertNil(redwoodCity.assetName)
+        XCTAssertEqual(redwoodCity.displayName, "Redwood City")
+        XCTAssertEqual(redwoodCity.archetype, .siliconValley)
+        XCTAssertEqual(redwoodCity.fallbackAssetName, "City_archetype_silicon_valley")
 
         let unknown = CityEmblem.resolve(city: nil)
         XCTAssertEqual(unknown.cityID, "unknown")
@@ -1994,12 +2175,21 @@ final class FriendPresenceTests: XCTestCase {
 
     func testSharedArchetypeDoesNotMeanSameCity() {
         let now = Date()
-        let a = CityEmblem.resolve(city: "Bakersfield", countryCode: "US", administrativeArea: "CA")
-        let b = CityEmblem.resolve(city: "Fresno", countryCode: "US", administrativeArea: "California")
+        let a = CityEmblem.resolve(city: "Merced", countryCode: "US", administrativeArea: "CA")
+        let b = CityEmblem.resolve(city: "Visalia", countryCode: "US", administrativeArea: "California")
         XCTAssertEqual(a.fallbackAssetName, b.fallbackAssetName)
-        let me = CurrentUserPresence(administrativeArea: "CA", city: "Bakersfield", countryCode: "US", updatedAt: now, source: .manual)
-        let friend = FriendPresence(displayName: "Example", username: "example", city: "Fresno", countryCode: "US", updatedAt: now, administrativeArea: "California")
+        let me = CurrentUserPresence(administrativeArea: "CA", city: "Merced", countryCode: "US", updatedAt: now, source: .manual)
+        let friend = FriendPresence(displayName: "Example", username: "example", city: "Visalia", countryCode: "US", updatedAt: now, administrativeArea: "California")
         XCTAssertFalse(PresenceMatchPolicy.matches(me, friend, at: now))
+
+        // Shared metro satellite artwork also never conflates two distinct cities
+        let plano = CityEmblem.resolve(city: "Plano", countryCode: "US", administrativeArea: "TX")
+        let irving = CityEmblem.resolve(city: "Irving", countryCode: "US", administrativeArea: "TX")
+        XCTAssertEqual(plano.assetName, "City_dallas")
+        XCTAssertEqual(irving.assetName, "City_dallas")
+        let mePlano = CurrentUserPresence(administrativeArea: "TX", city: "Plano", countryCode: "US", updatedAt: now, source: .manual)
+        let friendIrving = FriendPresence(displayName: "Example", username: "example", city: "Irving", countryCode: "US", updatedAt: now, administrativeArea: "TX")
+        XCTAssertFalse(PresenceMatchPolicy.matches(mePlano, friendIrving, at: now))
     }
 
     private func makeFriend(
