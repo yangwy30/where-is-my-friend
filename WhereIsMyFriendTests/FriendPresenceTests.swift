@@ -158,6 +158,45 @@ final class AppAccentContrastTests: XCTestCase {
         }
     }
 
+    func testFlightStatusColoursStayReadableAsCaptionText() {
+        for appearance in [UIUserInterfaceStyle.light, .dark] {
+            let traits = UITraitCollection(userInterfaceStyle: appearance)
+            let surface = UIColor(WIFTheme.surface).resolvedColor(with: traits)
+            for status in [TripFlightStatus.delayed, .cancelled, .onTime, .scheduled] {
+                XCTAssertGreaterThanOrEqual(contrast(UIColor(status.accent).resolvedColor(with: traits), surface), 4.5,
+                                            "\(status) status text in \(appearance)")
+            }
+        }
+    }
+
+    func testPersonPaletteIsStableAcrossLaunchesAndSpellings() {
+        // Pinned so a change to the hash can't silently recolour everyone's friends.
+        XCTAssertEqual(WIFPersonPalette.index(for: "Mia Chen"), 3)
+        XCTAssertEqual(WIFPersonPalette.index(for: "Lin Zhao"), 1)
+        XCTAssertEqual(WIFPersonPalette.index(for: "  mia CHEN "), WIFPersonPalette.index(for: "Mia Chen"))
+    }
+
+    func testPersonPaletteInitialsStayLegibleInBothAppearances() {
+        for appearance in [UIUserInterfaceStyle.light, .dark] {
+            let traits = UITraitCollection(userInterfaceStyle: appearance)
+            for fill in WIFPersonPalette.fills {
+                // Bold initials on a filled avatar: WCAG large-text minimum.
+                XCTAssertGreaterThanOrEqual(contrast(.white, UIColor(fill).resolvedColor(with: traits)), 3,
+                                            "White initials on avatar fill in \(appearance)")
+            }
+            for tint in WIFPersonPalette.tints {
+                XCTAssertGreaterThanOrEqual(
+                    contrast(UIColor(WIFTheme.primaryText).resolvedColor(with: traits), UIColor(tint).resolvedColor(with: traits)), 4.5,
+                    "Ink initials on avatar tint in \(appearance)")
+            }
+        }
+    }
+
+    private func contrast(_ a: UIColor, _ b: UIColor) -> Double {
+        let (la, lb) = (luminance(a), luminance(b))
+        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    }
+
     private func luminance(_ color: UIColor) -> Double {
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         XCTAssertTrue(color.getRed(&red, green: &green, blue: &blue, alpha: &alpha))
@@ -243,8 +282,9 @@ private final class StubCityManager: CLLocationManager {
     var significantStarts = 0
     var alwaysRequests = 0
     override var authorizationStatus: CLAuthorizationStatus { permission }
+    var continuousStarts = 0
     override func requestLocation() { requests += 1 }
-    override func startUpdatingLocation() {}
+    override func startUpdatingLocation() { continuousStarts += 1 }
     override func stopUpdatingLocation() {}
     override func startMonitoringVisits() {}
     override func stopMonitoringVisits() {}
@@ -325,6 +365,34 @@ final class CityRegionCatalogTests: XCTestCase {
 }
 
 final class CityRefreshRegressionTests: XCTestCase {
+    @MainActor
+    func testSnapshotChangeDuringForegroundCheckKeepsTheOneShotRequestAlive() async throws {
+        // Opening the app requests one fix, and the home refresh reconfigures the service
+        // moments later. Starting continuous updates then drops the one-shot request; their
+        // cached fix is too old to accept and the 5 km filter withholds a fresh one, so the
+        // city never updated while the app sat still.
+        let manager = StubCityManager(), geocoder = StubCityGeocoder()
+        let service = CityLocationService(manager: manager, geocoder: geocoder)
+        let context = CityLocationContext(ownerID: UUID(), isActive: true, automaticAllowed: true, backgroundEnabled: false)
+        service.configure(context)
+        XCTAssertEqual(manager.requests, 1)
+        XCTAssertTrue(service.isResolving)
+        let startsBeforeRefresh = manager.continuousStarts
+        service.configure(context)
+        XCTAssertEqual(manager.continuousStarts, startsBeforeRefresh, "Continuous updates must not start under an in-flight one-shot request")
+
+        let fix = CLLocation(latitude: 37.37, longitude: -122.04)
+        service.locationManager(manager, didUpdateLocations: [fix])
+        try await Task.sleep(for: .milliseconds(30))
+        geocoder.callbacks.last?([MKPlacemark(coordinate: fix.coordinate,
+            addressDictionary: ["City": "Sunnyvale", "CountryCode": "US", "State": "CA"])], nil)
+        try await Task.sleep(for: .milliseconds(30))
+        XCTAssertEqual(service.latestCity?.city, "Sunnyvale")
+        XCTAssertFalse(service.isResolving)
+        XCTAssertEqual(manager.continuousStarts, startsBeforeRefresh + 1, "Travel monitoring resumes once the check completes")
+        service.configure(.init())
+    }
+
     @MainActor
     func testStaleBackgroundWakeRequestsOneFreshFixWithoutPublishingCachedCoordinates() async throws {
         let manager = StubCityManager(), geocoder = StubCityGeocoder()
@@ -619,6 +687,13 @@ final class CityRefreshRegressionTests: XCTestCase {
         XCTAssertNil(CityEmblem.resolve(city: "Santa Clara", countryCode: "US").assetName)
         XCTAssertNil(CityEmblem.resolve(city: "Milpitas", countryCode: "US").assetName)
         XCTAssertNil(CityEmblem.resolve(city: "Paris", countryCode: "US").assetName)
+        XCTAssertNil(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "ME").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "ME").archetype, .historicBrick)
+        XCTAssertEqual(CityEmblem.resolve(city: "Portland", countryCode: "US", administrativeArea: "OR").assetName, "City_portland")
+        XCTAssertNil(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NH").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Durham", countryCode: "US", administrativeArea: "NC").assetName, "City_durham")
+        XCTAssertNil(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "GA").assetName)
+        XCTAssertEqual(CityEmblem.resolve(city: "Columbus", countryCode: "US", administrativeArea: "OH").assetName, "City_columbus")
         XCTAssertEqual(CityEmblem.resolve(city: " LA ", countryCode: "us").cityID, "los_angeles")
         XCTAssertEqual(CityEmblem.resolve(city: "Shinjuku", countryCode: "JP").cityID, "tokyo")
         for pair in [("Santa Clara", "Los Angeles"), ("Shinjuku", "Tokyo"), ("Milpitas", "San Jose"), ("Clearwater", "Tampa")] {
@@ -1183,6 +1258,26 @@ final class TripMapTests: XCTestCase {
         calendar.timeZone = TimeZone(identifier: "Europe/London")!
         XCTAssertEqual(calendar.component(.day, from: london.arrivalSortDate), 21)
     }
+
+    func testSharingUpdateStampNamesTheDayWhenNotToday() throws {
+        // "updated 19:50" at 18:43 the next day read as a time still to come.
+        let calendar = Calendar.current
+        let today = try XCTUnwrap(calendar.date(bySettingHour: 9, minute: 5, second: 0, of: Date()))
+        let yesterday = try XCTUnwrap(calendar.date(byAdding: .day, value: -1, to: today))
+        let timeOnly: (Date) -> String = { $0.formatted(date: .omitted, time: .shortened) }
+        XCTAssertEqual(CitySharingSheet.updateStamp(today), timeOnly(today))
+        XCTAssertNotEqual(CitySharingSheet.updateStamp(yesterday), timeOnly(yesterday))
+        XCTAssertTrue(CitySharingSheet.updateStamp(yesterday).contains(timeOnly(yesterday)))
+    }
+
+    func testReturnBoardReadsInSharedDepartureTime() throws {
+        // Arrivals land in four zones; departures all leave LAX, so they read in order at a glance.
+        let flights = TripFlight.previewFlights.filter { $0.direction == .inbound }
+            .sorted { $0.departureSortDate < $1.departureSortDate }
+        XCTAssertEqual(flights.map(\.id), ["wang-in", "mia-in", "david-in", "alex-in"])
+        XCTAssertEqual(flights.map(\.departureTime), ["13:15", "14:05", "16:20", "17:30"])
+        XCTAssertEqual(Set(flights.compactMap(\.departureTimeZoneLabel)).count, 1)
+    }
 }
 
 @MainActor
@@ -1597,6 +1692,21 @@ final class FriendPresenceTests: XCTestCase {
             )
         )
         XCTAssertNil(InviteLinkParser.parse(URL(string: "whereismyfriend://invite/bad-name")!))
+    }
+
+    func testInviteLinksUseTheShortWebPath() {
+        let link = InviteURLFactory.make(username: "wang_yang", baseURLString: "https://acrossus.app")
+        XCTAssertEqual(link.absoluteString, "https://acrossus.app/i/wang_yang")
+        XCTAssertEqual(InviteLinkParser.parse(link, trustedInviteHosts: ["acrossus.app"])?.username, "wang_yang")
+        XCTAssertEqual(
+            InviteLinkParser.parse(URL(string: "https://acrossus.app/i/@Priya")!, trustedInviteHosts: ["acrossus.app"])?.username,
+            "priya"
+        )
+        XCTAssertNil(InviteLinkParser.parse(link, trustedInviteHosts: ["example.com"]))
+        XCTAssertEqual(
+            InviteURLFactory.make(username: "jamie", baseURLString: "").absoluteString,
+            "\(SharedAppLink.urlScheme)://invite/jamie"
+        )
     }
 
     func testPrivacyPolicyConfigurationRequiresARealHTTPSURL() {
@@ -3397,6 +3507,8 @@ final class DateRangeRegressionTests: XCTestCase {
     func testCrossYearLabelsAndAdministrativeAliases() {
         let label = TravelDateRangeSelection.label(start: "2026-12-29", end: "2027-01-03")
         XCTAssertTrue(label.contains("2026")); XCTAssertTrue(label.contains("2027"))
+        let sameYear = TravelDateRangeSelection.label(start: "2026-10-16", end: "2026-10-23")
+        XCTAssertEqual(sameYear.components(separatedBy: "2026").count - 1, 1)
         let a = TravelCity(name: "New York", countryCode: "US", region: "NY", timeZone: "America/New_York")
         let b = TravelCity(name: "New York", countryCode: "US", region: "New York", timeZone: "America/New_York")
         XCTAssertEqual(a.matchingKey, b.matchingKey)
@@ -3541,6 +3653,26 @@ extension FriendTravelPlanTests {
         library.updateFriendAccess([]); XCTAssertFalse(feed.matches(library))
         library.updateFriendAccess([row.friendID]); XCTAssertFalse(feed.matches(library))
         feed.connect(library); XCTAssertTrue(feed.items.isEmpty); XCTAssertFalse(feed.hasLoaded)
+    }
+
+    @MainActor
+    func testReopenedFeedShowsTheLastPageWhileItRefreshes() async {
+        let repo = SlowTestRepository(), library = TravelPlanLibrary(), row = shared(), later = shared()
+        library.connect(repository: repo, userID: UUID()); library.updateFriendAccess([row.friendID])
+        let first = FriendPlanFeed(); first.connect(library, friendID: row.friendID)
+        await repo.configurePages([FriendPlanPage(items: [row], nextCursor: nil, version: "a"),
+                                   FriendPlanPage(items: [later], nextCursor: nil, version: "b")])
+        await first.refresh()
+
+        // A second screen for the same friend starts with the remembered page, with no loading state.
+        let reopened = FriendPlanFeed(); reopened.connect(library, friendID: row.friendID)
+        XCTAssertEqual(reopened.items, [row]); XCTAssertTrue(reopened.hasLoaded)
+        await reopened.refresh()
+        XCTAssertEqual(reopened.items, [later])
+
+        // Another friend's screen doesn't borrow that page.
+        let other = FriendPlanFeed(); other.connect(library, friendID: UUID())
+        XCTAssertTrue(other.items.isEmpty); XCTAssertFalse(other.hasLoaded)
     }
 }
 
@@ -3789,5 +3921,37 @@ final class ClientDiagnosticTests: XCTestCase {
             do { let _: TravelPlanSnapshot = try await client.request(path: "/v2/travel-plans", method: "GET", body: Optional<String>.none, bearerToken: "synthetic"); XCTFail("Expected failure") } catch {}
         }
         await fulfillment(of: [reported], timeout: 0.2)
+    }
+}
+
+final class ServerDateDecodingTests: XCTestCase {
+    func testServerDatesParseWithAndWithoutFractionalSeconds() {
+        let expected = Date(timeIntervalSince1970: 1_792_193_669)
+        for value in ["2026-10-16T23:34:29+00:00", "2026-10-16T23:34:29Z"] {
+            XCTAssertEqual(ServerDate.parse(value), expected, value)
+        }
+        for value in ["2026-10-16T23:34:29.852301+00:00", "2026-10-16T23:34:29.85230+00:00",
+                      "2026-10-16T23:34:29.85+00:00", "2026-10-16T23:34:29.8Z"] {
+            let parsed = ServerDate.parse(value)
+            XCTAssertNotNil(parsed, value)
+            XCTAssertEqual(parsed?.timeIntervalSince1970 ?? 0, expected.timeIntervalSince1970, accuracy: 1, value)
+        }
+        XCTAssertNil(ServerDate.parse("2026-10-16 23:34:29"))
+    }
+
+    func testSnapshotWithPostgresMicrosecondsDecodes() throws {
+        // The bootstrap response that iOS 18 couldn't read: every timestamp carries microseconds.
+        let json = """
+        {"schemaVersion":2,"isAuthenticated":true,
+         "currentUser":{"id":"684bffbb-72da-4276-83a2-ec236972787f","displayName":"Test","username":"friend_test","appleUserID":null,"avatarPalette":3},
+         "currentPresence":{"city":null,"countryCode":null,"administrativeArea":null,"updatedAt":null,"source":"manual"},
+         "sharingPreferences":{"citySharingEnabled":true,"backgroundUpdatesEnabled":false,"notificationPreviewEnabled":true},
+         "friends":[],"friendRequests":[],"friendPreferences":[],"colocationEvents":[],"colocationSessions":[],"blockedPeople":[],
+         "lastSyncedAt":"2026-10-16T23:34:29.852301+00:00","syncState":"synced"}
+        """
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = ServerDate.decodingStrategy
+        let snapshot = try decoder.decode(AppSnapshot.self, from: Data(json.utf8))
+        XCTAssertEqual(snapshot.lastSyncedAt?.timeIntervalSince1970 ?? 0, 1_792_193_669.852, accuracy: 0.01)
     }
 }

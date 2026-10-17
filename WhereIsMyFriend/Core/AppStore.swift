@@ -331,9 +331,14 @@ final class AppStore: ObservableObject {
         guard !respondingRequestIDs.contains(requestID) else { return false }
         respondingRequestIDs.insert(requestID)
         defer { respondingRequestIDs.remove(requestID) }
-        let message = response == .accept
-            ? String(localized: "Friend request accepted.")
-            : String(localized: "Friend request declined.")
+        let requesterName = snapshot.incomingRequests.first { $0.id == requestID }?.displayName
+        let message: String
+        if response == .accept {
+            message = requesterName.map { String(format: String(localized: "You and %@ are now friends."), $0) }
+                ?? String(localized: "Friend request accepted.")
+        } else {
+            message = String(localized: "Friend request declined.")
+        }
         return await perform(successMessage: message, onFailure: onFailure) {
             try await self.repository.respond(to: requestID, response: response)
         }
@@ -372,7 +377,11 @@ final class AppStore: ObservableObject {
     }
 
     func setFavorite(friendID: UUID, isFavorite: Bool) async {
-        await perform(successMessage: nil) {
+        // The star's only effect is ordering on Friends, so say so rather than leave it a mystery.
+        let message = isFavorite
+            ? String(localized: "Favorite. They’ll appear first on Friends.")
+            : String(localized: "Removed from favorites.")
+        await perform(successMessage: message) {
             try await self.repository.setFavorite(friendID: friendID, isFavorite: isFavorite)
         }
     }

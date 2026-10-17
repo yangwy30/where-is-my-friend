@@ -76,11 +76,6 @@ enum HomeWidgetPalette {
     static let rule = color(0xE2E6DB, 0x3A453D)
     static let accent = color(0x247450, 0xA4CFB3)
     static let sage = color(0xE6ECDF, 0x36463A)
-    static let rose = color(0xEDE3DF, 0x50423F)
-    static let blue = color(0xE1E7E8, 0x35444C)
-    static func avatar(_ index: Int) -> Color {
-        switch (index % 3 + 3) % 3 { case 1: rose; case 2: blue; default: sage }
-    }
 }
 
 struct FriendDirectoryWidget: View {
@@ -114,7 +109,7 @@ struct FriendDirectoryWidget: View {
     private func small(_ friend: FriendPresence) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                HomeWidgetAvatar(initials: content.initials(for: friend), palette: friend.avatarPalette, size: 26)
+                HomeWidgetAvatar(initials: content.initials(for: friend), tone: WIFPersonPalette.tint(for: friend.displayName), size: 26)
                 Spacer(minLength: 4)
                 if sameCityIDs.contains(friend.id) { Image(systemName: "person.2").foregroundStyle(HomeWidgetPalette.accent).font(.caption) }
             }
@@ -172,7 +167,7 @@ struct FriendDirectoryWidget: View {
 
     private func row(_ friend: FriendPresence, compact: Bool) -> some View {
         HStack(spacing: compact ? 7 : 10) {
-            HomeWidgetAvatar(initials: content.initials(for: friend), palette: friend.avatarPalette, size: compact ? 28 : 32)
+            HomeWidgetAvatar(initials: content.initials(for: friend), tone: WIFPersonPalette.tint(for: friend.displayName), size: compact ? 28 : 32)
             VStack(alignment: .leading, spacing: 2) {
                 Text(content.name(for: friend, short: compact)).font(compact ? .caption.weight(.semibold) : .subheadline.weight(.semibold)).lineLimit(1)
                 Text(friend.cityDisplay).font(.caption2).foregroundStyle(HomeWidgetPalette.muted).lineLimit(1)
@@ -267,10 +262,10 @@ struct TogetherHomeWidget: View {
     private var avatars: some View {
         let diameter: CGFloat = size == .large ? 52 : (size == .medium ? 38 : 26)
         return HStack(spacing: -7) {
-            HomeWidgetAvatar(initials: nil, palette: 0, size: diameter, symbol: "person.fill", emphasized: true)
+            HomeWidgetAvatar(initials: nil, tone: HomeWidgetPalette.sage, size: diameter, symbol: "person.fill", emphasized: true)
                 .overlay(Circle().strokeBorder(HomeWidgetPalette.together, lineWidth: 2))
             ForEach(people.prefix(size == .small ? 1 : 2)) { friend in
-                HomeWidgetAvatar(initials: content.initials(for: friend), palette: friend.avatarPalette + 1, size: diameter)
+                HomeWidgetAvatar(initials: content.initials(for: friend), tone: WIFPersonPalette.tint(for: friend.displayName), size: diameter)
                     .overlay(Circle().strokeBorder(HomeWidgetPalette.together, lineWidth: 2))
             }
         }
@@ -312,7 +307,7 @@ private struct HomeWidgetHeading: View {
 
 private struct HomeWidgetAvatar: View {
     let initials: String?
-    let palette: Int
+    let tone: Color
     let size: CGFloat
     var symbol = "person.fill"
     var emphasized = false
@@ -322,7 +317,7 @@ private struct HomeWidgetAvatar: View {
             else { Image(systemName: symbol).font(.system(size: size * 0.4)) }
         }
         .foregroundStyle(emphasized ? HomeWidgetPalette.paper : HomeWidgetPalette.ink)
-        .frame(width: size, height: size).background(emphasized ? HomeWidgetPalette.accent : HomeWidgetPalette.avatar(palette), in: Circle())
+        .frame(width: size, height: size).background(emphasized ? HomeWidgetPalette.accent : tone, in: Circle())
         .accessibilityHidden(true)
     }
 }

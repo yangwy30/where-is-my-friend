@@ -31,3 +31,5 @@ Both components are unchanged real SwiftUI captures. The directory comes from th
 The iOS 27 wallpaper revision is now used as position 2 in the prepared next-update screenshot set. The app itself is unchanged. The user's instruction to keep approved 1.0.4 (20) unchanged and defer new store images to the next update remains in effect. No App Store Connect action was taken.
 
 Wallpaper provenance, delivered source resolution and checksum are recorded in `wallpaper-source.json`. The original installed-widget screenshot is retained, unmodified, for source evidence. Run the study renderer before the set renderer when updating the composition.
+
+October 14, 2026: the zh-Hans composition now uses Chinese captures from `docs/widget_redesign/2026-10-14-zh-Hans/`, taken on a zh-Hans simulator. Widgets render in the system language, so the earlier English captures were wrong for this locale. The English composition is unchanged.

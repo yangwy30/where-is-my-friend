@@ -10,8 +10,10 @@ struct FriendsView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
+    @State private var showsSameCityFriends = false
     @StateObject private var invitationDraft = FriendInvitationDraft()
     @State private var isScreenVisible = false
+    @State private var isHeaderCollapsed = false
     @State private var referenceDate = Date()
     @Binding private var selectedSameCityEventID: UUID?
     @Binding private var selectedUpcomingID: String?
@@ -73,6 +75,13 @@ struct FriendsView: View {
                     cityRecoveryCard
                         .padding(.top, 16)
                 }
+                if !showsLocationReminder, showsNotificationPrompt {
+                    NotificationPromptCard(service: store.notificationService,
+                                           ownerID: store.snapshot.currentUser.id) {
+                        await store.requestNotificationAuthorization()
+                    }
+                    .padding(.top, 16)
+                }
                 if store.incomingRequestCount > 0 {
                     InvitationNotificationStatusView(service: store.notificationService)
                         .padding(.top, 12)
@@ -94,7 +103,7 @@ struct FriendsView: View {
                     } description: {
                         Text("Invite someone you know to share cities and find time together.")
                     } actions: {
-                        ShareLink(item: InviteURLFactory.make(username: store.snapshot.currentUser.username)) {
+                        InviteShareLink(username: store.snapshot.currentUser.username) {
                             Label("Invite your first friend", systemImage: "square.and.arrow.up")
                                 .font(.headline).frame(maxWidth: .infinity, minHeight: 54)
                                 .foregroundStyle(WIFTheme.onFresh)
@@ -122,6 +131,7 @@ struct FriendsView: View {
                                 friendCard(friend)
                             }
                             .buttonStyle(.plain)
+                            .contextMenu { friendCardMenu(friend) }
                             .accessibilityIdentifier("friendCard-\(friend.id)")
                         }
                     }
@@ -132,6 +142,15 @@ struct FriendsView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 24)
         }
+        // Once the large title scrolls away, a compact bar keeps the title and Add friend in reach.
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 64
+        } action: { _, collapsed in
+            withAnimation(.easeOut(duration: 0.18)) { isHeaderCollapsed = collapsed }
+        }
+        .overlay(alignment: .top) {
+            if isHeaderCollapsed { compactHeader.transition(.opacity) }
+        }
         .wifAmbientBackground()
         .toolbar(.hidden, for: .navigationBar)
         .refreshable {
@@ -140,6 +159,9 @@ struct FriendsView: View {
         }
         .navigationDestination(for: FriendPresence.self) { friend in
             FriendDetailView(friend: friend)
+        }
+        .sheet(isPresented: $showsSameCityFriends) {
+            SameCityFriendsSheet(friends: sameCityFriends, presence: store.snapshot.currentPresence, referenceDate: referenceDate)
         }
         .sheet(isPresented: $isAddingFriend) {
             AddFriendView(draft: invitationDraft)
@@ -159,8 +181,8 @@ struct FriendsView: View {
             Task {
                 await store.refresh()
                 referenceDate = Date()
-                guard selectedSameCityEventID == id else { return }
-                proxy.scrollTo("sameCityReunion", anchor: .top)
+                guard selectedSameCityEventID == id, isHeaderCollapsed else { return }
+                proxy.scrollTo("sameCityReunion", anchor: UnitPoint(x: 0.5, y: 0.12))
             }
         }
         .task(id: isHomeVisible) {
@@ -175,8 +197,8 @@ struct FriendsView: View {
         .onChange(of: selectedUpcomingID, initial: true) { _, id in
             guard let id else { return }
             Task {
-                guard selectedUpcomingID == id else { return }
-                proxy.scrollTo("upcomingTogether", anchor: .top)
+                guard selectedUpcomingID == id, isHeaderCollapsed else { return }
+                proxy.scrollTo("upcomingTogether", anchor: UnitPoint(x: 0.5, y: 0.12))
             }
         }
         }
@@ -203,6 +225,15 @@ struct FriendsView: View {
                 isHomeVisible: canPresent, sharingEnabled: store.snapshot.sharingPreferences.citySharingEnabled,
                 presence: store.snapshot.currentPresence, status: locationService.authorizationStatus)
         )
+    }
+
+    /// Live accounts only: demo-mode UI tests start with an undecided permission too.
+    private var showsNotificationPrompt: Bool {
+        var isLiveAccount = store.repositoryMode == .remote
+        #if DEBUG
+        isLiveAccount = isLiveAccount || ProcessInfo.processInfo.arguments.contains("-testNotificationPrompt")
+        #endif
+        return isLiveAccount && store.snapshot.isAuthenticated
     }
 
     private var showsLocationReminder: Bool {
@@ -333,7 +364,7 @@ struct FriendsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     title
                     cityStatus
-                    addFriendButton
+                    addFriendButton()
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             } else {
@@ -345,11 +376,30 @@ struct FriendsView: View {
 
                     Spacer()
 
-                    addFriendButton
+                    addFriendButton()
                 }
             }
         }
         .padding(.top, 12)
+    }
+
+    private var compactHeader: some View {
+        HStack {
+            Text("Friends")
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                .foregroundStyle(WIFTheme.primaryText)
+                // The large title is still in the accessibility tree; don't announce it twice.
+                .accessibilityHidden(true)
+            Spacer()
+            addFriendButton(identifier: "addFriendButtonCompact")
+        }
+        .padding(.horizontal, WIFTheme.screenInset)
+        .padding(.bottom, 6)
+        .background {
+            WIFTheme.canvas.opacity(0.72)
+                .background(.ultraThinMaterial)
+                .ignoresSafeArea(edges: .top)
+        }
     }
 
     private var title: some View {
@@ -363,11 +413,78 @@ struct FriendsView: View {
             .foregroundStyle(WIFTheme.primaryText)
     }
 
+    private var sameCityFriends: [FriendPresence] {
+        SameCityPresencePolicy.currentFriends(in: store.snapshot, at: referenceDate)
+            .sorted { ($0.updatedAt ?? .distantPast) > ($1.updatedAt ?? .distantPast) }
+    }
+
+    private func firstName(_ friend: FriendPresence) -> String {
+        friend.displayName.split(whereSeparator: \.isWhitespace).first.map(String.init) ?? friend.displayName
+    }
+
+    /// Names while they fit in one glance; a count once a list would be needed.
+    private var sameCityLine: String {
+        let names = sameCityFriends.map(firstName)
+        switch names.count {
+        case 0: return ""
+        case 1: return String(localized: "\(names[0]) is here too")
+        case 2: return String(localized: "\(names[0]) and \(names[1]) are here too")
+        default: return String(localized: "\(names.count) friends are here too")
+        }
+    }
+
+    private var sameCityChip: some View {
+        HStack(spacing: 8) {
+            HStack(spacing: -4) {
+                ForEach(Array(sameCityFriends.prefix(3))) { friend in
+                    FriendAvatarView(friend: friend, size: 24)
+                        .overlay(Circle().stroke(WIFTheme.surface, lineWidth: 1.5))
+                }
+                if sameCityFriends.count > 3 {
+                    Text("+\(sameCityFriends.count - 3)")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(width: 24, height: 24)
+                        .background(WIFTheme.freshSurface, in: Circle())
+                        .overlay(Circle().stroke(WIFTheme.surface, lineWidth: 1.5))
+                }
+            }
+            .accessibilityHidden(true)
+            Text(sameCityLine)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+            Image(systemName: "chevron.right")
+                .font(.caption2.weight(.bold))
+                .opacity(0.6)
+                .accessibilityHidden(true)
+        }
+        .foregroundStyle(WIFTheme.fresh)
+        .padding(.leading, 4).padding(.trailing, 12).padding(.vertical, 4)
+        .background(WIFTheme.surface.opacity(0.85), in: Capsule())
+        .overlay(Capsule().strokeBorder(WIFTheme.border, lineWidth: 0.5))
+        // The capsule stays compact. Its tap target reaches 44 pt by growing down only:
+        // growing upward put it close enough to the city line that taps there opened a friend.
+        .padding(.bottom, 12)
+        .contentShape(Rectangle())
+    }
+
     private var cityStatus: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(cityStatusText)
                 .font(.subheadline)
                 .accessibilityIdentifier("homeCityStatus")
+            if let friend = sameCityFriends.first {
+                Group {
+                    if sameCityFriends.count == 1 {
+                        NavigationLink(value: friend) { sameCityChip }
+                    } else {
+                        Button { showsSameCityFriends = true } label: { sameCityChip }
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 6)
+                .accessibilityIdentifier("sameCitySummaryTitle")
+            }
             if !sharingIsEnabled {
                 Text(store.snapshot.syncState == .offline ? "City sharing is off on this device" : "City sharing is paused")
                     .font(.caption)
@@ -407,7 +524,7 @@ struct FriendsView: View {
         .accessibilityIdentifier("homeSyncStatus")
     }
 
-    private var addFriendButton: some View {
+    private func addFriendButton(identifier: String = "addFriendButton") -> some View {
         WIFGlassEffectGroup(spacing: 10) {
             Button {
                 invitationDraft.reset()
@@ -433,7 +550,7 @@ struct FriendsView: View {
             .buttonStyle(.plain)
             .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.16), interactive: true, in: Circle())
             .accessibilityLabel("Add a friend")
-            .accessibilityIdentifier("addFriendButton")
+            .accessibilityIdentifier(identifier)
         }
     }
 
@@ -459,32 +576,62 @@ struct FriendsView: View {
 
     private var cityRecoveryCard: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(hasCurrentCity ? "Update your city to check who’s nearby." : "Choose a city to find same-city friends.")
-                .font(.subheadline)
-                .foregroundStyle(WIFTheme.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-            Button(action: onOpenCitySharing) {
-                Text(hasCurrentCity ? "Update your city" : "Set your city")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WIFTheme.fresh)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
+            if locationService.isResolving {
+                // Opening the app already starts a city check; asking for a manual
+                // update while it runs made a working app look stuck.
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Updating your city…")
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .frame(minHeight: 44)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier("homeCityUpdating")
+            } else {
+                Text(hasCurrentCity ? "Update your city to check who’s nearby." : "Choose a city to find same-city friends.")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(action: onOpenCitySharing) {
+                    Text(hasCurrentCity ? "Update your city" : "Set your city")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("homeCityRecoveryButton")
             }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("homeCityRecoveryButton")
         }
+        .animation(.easeOut(duration: 0.2), value: locationService.isResolving)
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .wifContentSurface(tint: WIFTheme.surface.opacity(0.08),
                            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
     }
 
+    private func nextPlan(for friend: FriendPresence) -> FriendTravelPlan? {
+        travelPlans.visibleFriendPlans(
+            friendIDs: Set(friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs), at: referenceDate
+        ).first { $0.friendID == friend.id }
+    }
+
+    /// Long-press shortcuts so the common actions don't require opening the detail page.
+    @ViewBuilder
+    private func friendCardMenu(_ friend: FriendPresence) -> some View {
+        Button {
+            Task { await store.setFavorite(friendID: friend.id, isFavorite: !friend.isFavorite) }
+        } label: {
+            Label(friend.isFavorite ? "Remove favorite" : "Add favorite",
+                  systemImage: friend.isFavorite ? "star.slash" : "star")
+        }
+    }
+
     private func friendCard(_ friend: FriendPresence) -> some View {
         let freshness = friend.freshness(at: referenceDate)
         let isSameCity = isFriendInSameCity(friend)
-        let nextPlan = travelPlans.visibleFriendPlans(
-            friendIDs: Set(friends.map(\.id)).subtracting(store.snapshot.blockedUserIDs), at: referenceDate
-        ).first { $0.friendID == friend.id }
+        let nextPlan = nextPlan(for: friend)
 
         return VStack(spacing: 6) {
             CityEmblemView(friend: friend, size: 88)
@@ -503,21 +650,27 @@ struct FriendsView: View {
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
                     .minimumScaleFactor(dynamicTypeSize.isAccessibilitySize ? 1 : 0.82)
 
+                // Green is reserved for the live same-city state; a recent update is the
+                // normal case and stays quiet, while an old one earns a clock.
                 HStack(spacing: 4) {
-                    Circle()
-                        .fill(isSameCity ? WIFTheme.fresh : freshnessDotColor(freshness))
-                        .frame(width: 5, height: 5)
-
                     if isSameCity {
+                        Circle()
+                            .fill(WIFTheme.fresh)
+                            .frame(width: 5, height: 5)
+
                         Text("Same city")
                             .foregroundStyle(WIFTheme.fresh)
 
                         Text("·")
                             .foregroundStyle(WIFTheme.secondaryText.opacity(0.72))
+                    } else if freshness != .fresh {
+                        Image(systemName: "clock")
+                            .imageScale(.small)
+                            .foregroundStyle(WIFTheme.secondaryText)
                     }
 
                     Text(friend.relativeUpdateText(at: referenceDate))
-                        .foregroundStyle(freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText)
+                        .foregroundStyle(isSameCity ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
                 .font(.caption2.weight(.medium))
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
@@ -545,10 +698,61 @@ struct FriendsView: View {
         )
     }
 
-    private func freshnessDotColor(_ freshness: PresenceFreshness) -> Color {
-        freshness == .fresh ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.42)
+}
+
+/// Accounts that never met a notification prompt have no push device, so trip
+/// reminders and same-city alerts can't reach them. Offered once, until decided.
+private struct NotificationPromptCard: View {
+    @ObservedObject var service: LocalNotificationService
+    let ownerID: UUID
+    let onEnable: () async -> Void
+    @State private var dismissed: Bool
+
+    init(service: LocalNotificationService, ownerID: UUID, onEnable: @escaping () async -> Void) {
+        self.service = service
+        self.ownerID = ownerID
+        self.onEnable = onEnable
+        _dismissed = State(initialValue: UserDefaults.standard.bool(forKey: Self.dismissalKey(ownerID)))
     }
 
+    private static func dismissalKey(_ ownerID: UUID) -> String { "notifications.homePrompt.dismissed.\(ownerID.uuidString)" }
+    private var dismissalKey: String { Self.dismissalKey(ownerID) }
+
+    var body: some View {
+        if service.authorizationStatus == .notDetermined, !dismissed {
+            VStack(alignment: .leading, spacing: 8) {
+                Label("Turn on notifications", systemImage: "bell.badge")
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                Text("Hear when a friend is in your city, and get trip reminders from your group.")
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 16) {
+                    Button("Turn on") { Task { await onEnable() } }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("homeEnableNotifications")
+                    Button("Not now") {
+                        UserDefaults.standard.set(true, forKey: dismissalKey)
+                        dismissed = true
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .frame(minHeight: 44)
+                    .accessibilityIdentifier("homeDismissNotifications")
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .wifContentSurface(tint: WIFTheme.fresh.opacity(0.07),
+                               in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("homeNotificationPrompt")
+        }
+    }
 }
 
 #Preview {
@@ -558,4 +762,70 @@ struct FriendsView: View {
     }
     .environmentObject(store)
     .environmentObject(store.travelPlans)
+}
+
+/// Everyone sharing your city, opened from the Friends header when there's more than one.
+private struct SameCityFriendsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let friends: [FriendPresence]
+    let presence: CurrentUserPresence
+    let referenceDate: Date
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    HStack(alignment: .center, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Here with you")
+                                .font(.caption2.weight(.semibold)).textCase(.uppercase).tracking(1.2)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                            Text(presence.city ?? "")
+                                .font(.system(size: 38, weight: .regular, design: .serif)).tracking(-0.8)
+                                .lineLimit(1).minimumScaleFactor(0.7)
+                            Text("\(friends.count) friends")
+                                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                        }
+                        Spacer(minLength: 0)
+                        CityEmblemView(city: presence.city, countryCode: presence.countryCode,
+                                       administrativeArea: presence.administrativeArea, size: 104)
+                            .frame(width: 96, height: 96)
+                    }
+                    VStack(spacing: 0) {
+                        ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
+                            if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 70) }
+                            NavigationLink(value: friend) {
+                                HStack(spacing: 14) {
+                                    FriendAvatarView(friend: friend, size: 40)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(friend.displayName).font(.headline)
+                                        Text(friend.relativeUpdateLongText(at: referenceDate))
+                                            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right").font(.caption.weight(.semibold))
+                                        .foregroundStyle(WIFTheme.secondaryText).accessibilityHidden(true)
+                                }
+                                .padding(.horizontal, 16).padding(.vertical, 12)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("sameCityFriend-\(friend.username)")
+                        }
+                    }
+                    .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
+                }
+                .foregroundStyle(WIFTheme.primaryText)
+                .padding(WIFTheme.screenInset)
+            }
+            .wifAmbientBackground()
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: FriendPresence.self) { FriendDetailView(friend: $0) }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
 }

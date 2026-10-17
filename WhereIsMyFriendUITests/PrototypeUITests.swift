@@ -63,20 +63,19 @@ final class PrototypeUITests: XCTestCase {
     func testAuditIntegratedHeaderShowsPeopleAndOpensFriend() {
         continueAfterFailure = false
         let app = waveTwoApp(extra: ["-testSameCityHeader"])
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        XCTAssertTrue(toggle.label.contains("Mia + 2 friends"))
-        XCTAssertLessThan(toggle.frame.maxY, app.frame.height * 0.45)
-        assertTouchTarget(toggle)
-        capture("AUDIT-header-three-collapsed-en")
-        toggle.tap()
+        let chip = app.buttons["sameCitySummaryTitle"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
+        XCTAssertTrue(chip.label.contains("3 friends are here too"))
+        XCTAssertLessThan(chip.frame.maxY, app.frame.height * 0.45)
+        assertTouchTarget(chip)
+        capture("AUDIT-header-three-chip-en")
+        chip.tap()
         let friend = app.buttons["sameCityFriend-mia"]
         XCTAssertTrue(friend.waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["sameCityFriend-lin"].exists)
         XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
         XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
-        capture("AUDIT-header-three-expanded-en")
+        capture("AUDIT-header-three-sheet-en")
         friend.tap()
         XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
     }
@@ -85,32 +84,33 @@ final class PrototypeUITests: XCTestCase {
         continueAfterFailure = false
         let app = waveTwoApp(extra: ["-testSameCityHeader"])
         selectAppearance("nightJadeAppearance", in: app)
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        assertTouchTarget(toggle)
-        capture("AUDIT-header-dark-collapsed")
-        toggle.tap()
+        let chip = app.buttons["sameCitySummaryTitle"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
+        assertTouchTarget(chip)
+        capture("AUDIT-header-dark-chip")
+        try auditRelevantControls(app, prefixes: ["sameCitySummaryTitle"], name: "integrated-header-dark")
+        chip.tap()
         XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 5))
-        capture("AUDIT-header-dark-expanded")
-        try auditRelevantControls(app, prefixes: ["sameCityReunionToggle", "sameCityFriend-"], name: "integrated-header-dark")
+        capture("AUDIT-header-dark-sheet")
+        try auditRelevantControls(app, prefixes: ["sameCityFriend-"], name: "integrated-header-dark-sheet")
+        app.buttons["Done"].tap()
         selectAppearance("solarJadeAppearance", in: app)
     }
 
     func testAuditIntegratedHeaderAtLargestChineseText() throws {
         continueAfterFailure = false
         let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-testSameCityHeader", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5)); assertTouchTarget(toggle)
-        XCTAssertTrue(toggle.label.contains("另外 2 位好友"))
-        XCTAssertEqual(toggle.value as? String, "已折叠")
-        capture("AUDIT-header-large-collapsed-zh")
-        toggle.tap()
+        let chip = app.buttons["sameCitySummaryTitle"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 5)); assertTouchTarget(chip)
+        XCTAssertTrue(chip.label.contains("3 位朋友也在这里"))
+        capture("AUDIT-header-large-chip-zh")
+        chip.tap()
         let friend = app.buttons["sameCityFriend-mia"]
-        for _ in 0..<5 where !friend.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
-        XCTAssertTrue(friend.waitForExistence(timeout: 4)); assertTouchTarget(friend)
-        capture("AUDIT-header-large-expanded-zh")
-        try auditRelevantControls(app, prefixes: ["sameCityFriend-", "sameCityReunionToggle"], name: "integrated-header")
+        XCTAssertTrue(friend.waitForExistence(timeout: 4))
+        for _ in 0..<5 where !friend.isHittable { app.swipeUp() }
+        assertTouchTarget(friend)
+        capture("AUDIT-header-large-sheet-zh")
+        try auditRelevantControls(app, prefixes: ["sameCityFriend-"], name: "integrated-header")
     }
 
     func testAuditMutingSameCityAlertDoesNotHideHeader() {
@@ -125,7 +125,7 @@ final class PrototypeUITests: XCTestCase {
         if toggle.value as? String == "1" { toggle.switches.firstMatch.tap() }
         XCTAssertEqual(toggle.value as? String, "0")
         selectAppTab(0, in: app)
-        XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCitySummaryTitle"].waitForExistence(timeout: 5))
         capture("AUDIT-muted-alert-keeps-same-city-summary")
     }
 
@@ -501,23 +501,17 @@ final class PrototypeUITests: XCTestCase {
         }
     }
 
-    func testMeetupInviteUsesSystemSharingAndAccessiblePlanButtons() throws {
+    func testFriendPlanCopyButtonIsAccessible() throws {
         continueAfterFailure = false
         let app = waveTwoApp()
         app.buttons["friendPlansLink"].tap()
         let copy = app.buttons["copyFriendPlan-A7150000-0000-0000-0000-000000000001"]
-        let share = app.buttons["shareFriendPlanInvite-A7150000-0000-0000-0000-000000000001"]
-        XCTAssertTrue(share.waitForExistence(timeout: 5))
-        for _ in 0..<4 where !share.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
-        for control in [copy, share] { assertTouchTarget(control) }
-        XCTAssertTrue(share.label.contains("Share a meetup invite"))
-        try auditRelevantControls(app, prefixes: ["copyFriendPlan-", "shareFriendPlanInvite-"], name: "F09-F20-plan-actions")
-        share.tap()
-        XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "Copy").firstMatch.waitForExistence(timeout: 5))
-        capture("W2-F09-system-share")
-        dismissSystemShare(in: app)
-        XCTAssertTrue(share.waitForExistence(timeout: 5))
-        XCTAssertTrue(share.isHittable)
+        XCTAssertTrue(copy.waitForExistence(timeout: 5))
+        for _ in 0..<4 where !copy.isHittable { app.scrollViews["friendPlansScreen"].swipeUp() }
+        assertTouchTarget(copy)
+        XCTAssertTrue(copy.label.contains("Add to my travel plans"))
+        try auditRelevantControls(app, prefixes: ["copyFriendPlan-"], name: "F09-F20-plan-actions")
+        XCTAssertFalse(app.buttons["shareFriendPlanInvite-A7150000-0000-0000-0000-000000000001"].exists)
     }
 
     func testOutgoingInvitationCanBeKeptWithdrawnAndSentAgain() {
@@ -624,6 +618,9 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["目的地"].exists)
         capture("W2-F22-generated-name-zh")
         app.navigationBars.buttons["取消"].tap()
+        // Picking a destination makes the form dirty, so Cancel now asks first (F02).
+        let discard = app.alerts.buttons["放弃修改"]
+        if discard.waitForExistence(timeout: 3) { discard.tap() }
         let card = app.buttons["tripCard-example-west"]
         for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
         card.tap(); app.buttons["addBoardFlightButton"].tap()
@@ -710,6 +707,17 @@ final class PrototypeUITests: XCTestCase {
         return app
     }
 
+    /// Expands Together soon and opens an overlap. With one overlap the card opens it directly.
+    private func openOverlapDetail(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
+        let toggle = app.buttons["upcomingTogetherToggle"]
+        if !toggle.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
+        toggle.tap()
+        let detail = app.descendants(matching: .any)["upcomingOverlapDetail"]
+        let row = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
+        if !detail.waitForExistence(timeout: 3), row.waitForExistence(timeout: 3) { row.tap() }
+        XCTAssertTrue(detail.waitForExistence(timeout: 5), file: file, line: line)
+    }
+
     private func assertTouchTarget(_ control: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertGreaterThanOrEqual(control.frame.width, 43.5, file: file, line: line)
         XCTAssertGreaterThanOrEqual(control.frame.height, 43.5, file: file, line: line)
@@ -730,15 +738,21 @@ final class PrototypeUITests: XCTestCase {
     }
 
     private func dismissSystemShare(in app: XCUIApplication) {
+        let copy = app.descendants(matching: .any).matching(identifier: "Copy").firstMatch
         if app.buttons["Close"].firstMatch.exists { app.buttons["Close"].firstMatch.tap() }
         else if app.buttons["Cancel"].firstMatch.exists { app.buttons["Cancel"].firstMatch.tap() }
         else {
             let sheet = app.otherElements["ActivityListView"]
             if sheet.exists, sheet.frame.minY > 50 {
                 app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: (sheet.frame.minY - 30) / app.frame.height)).tap()
-            } else { sheet.swipeDown() }
+            } else if sheet.exists, !sheet.frame.isEmpty {
+                sheet.swipeDown()
+            } else {
+                // A share sheet with a titled preview doesn't expose its list frame; tap above it.
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)).tap()
+            }
         }
-        XCTAssertTrue(app.otherElements["ActivityListView"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(copy.waitForNonExistence(timeout: 5))
     }
 
     private func clearTravelAudience(in app: XCUIApplication) {
@@ -982,7 +996,7 @@ final class PrototypeUITests: XCTestCase {
         capture("F07-no-current-session")
     }
 
-    func testHomeCityStatusDoesNotOpenSettingsAndSameCitySummaryExpands() {
+    func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensFriend() {
         continueAfterFailure = false
         for (language, locale, prefix, summary) in [
             ("en", "en_US", "You’re in ", "Mia is here too"),
@@ -999,15 +1013,15 @@ final class PrototypeUITests: XCTestCase {
             XCTAssertFalse(app.buttons["homeCityRecoveryButton"].exists)
             city.tap()
             XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
-            XCTAssertEqual(app.staticTexts["sameCitySummaryTitle"].label, summary)
+            let sameCity = app.buttons["sameCitySummaryTitle"]
+            XCTAssertEqual(sameCity.label, summary)
             capture("F01-home-\(language)")
-            let sameCity = app.buttons["sameCityReunionToggle"]
             sameCity.tap()
-            XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 4))
+            XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
             XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
-            capture("F01-same-city-expanded-\(language)")
-            sameCity.tap()
-            XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+            capture("F01-same-city-friend-\(language)")
+            app.navigationBars["Mia"].buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(sameCity.waitForExistence(timeout: 4))
             openCitySharingFromProfile(in: app)
             XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 4))
             app.terminate()
@@ -1035,7 +1049,7 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.staticTexts["homeCityStatus"].waitForExistence(timeout: 8))
         XCTAssertEqual(app.staticTexts["homeCityStatus"].label, "Your city isn’t set yet")
-        XCTAssertFalse(app.buttons["sameCityReunionToggle"].exists)
+        XCTAssertFalse(app.buttons["sameCitySummaryTitle"].exists)
         XCTAssertTrue(app.buttons["homeCityRecoveryButton"].exists)
         capture("F01-city-not-set")
         let mia = app.buttons["friendCard-10000000-0000-0000-0000-000000000001"]
@@ -1504,6 +1518,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(plan.waitForExistence(timeout: 5))
         XCTAssertTrue(plan.label.contains("Tokyo"))
         XCTAssertFalse(app.buttons["friendDetailPlan-A7150000-0000-0000-0000-000000000002"].exists)
+        for _ in 0..<3 where !plan.isHittable { app.swipeUp() }
         capture("friend-shared-plans")
         plan.tap()
         XCTAssertTrue(app.scrollViews["friendPlanDetail"].waitForExistence(timeout: 3))
@@ -1639,12 +1654,17 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-previewCityRegions", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
-        // The initial view can precede the repository's city-region fixture.
-        app.scrollViews["friendsScreen"].swipeDown()
-        let loadedCity = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "label CONTAINS %@", "Milpitas"),
-            object: app.staticTexts["homeCityStatus"])
-        XCTAssertEqual(XCTWaiter.wait(for: [loadedCity], timeout: 5), .completed)
+        // The initial view can precede the repository's city-region fixture, and one pull
+        // doesn't always trigger a refresh under the taller 1.0.8 header.
+        var loaded = false
+        for _ in 0..<3 where !loaded {
+            app.scrollViews["friendsScreen"].swipeDown()
+            let loadedCity = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "label CONTAINS %@", "Milpitas"),
+                object: app.staticTexts["homeCityStatus"])
+            loaded = XCTWaiter.wait(for: [loadedCity], timeout: 5) == .completed
+        }
+        XCTAssertTrue(loaded)
         openCitySharingFromProfile(in: app)
         let region = app.staticTexts["currentCityRegion"]
         XCTAssertTrue(region.waitForExistence(timeout: 5))
@@ -1653,7 +1673,7 @@ final class PrototypeUITests: XCTestCase {
         capture("city-region-milpitas-details")
         app.buttons["Done"].tap()
         selectAppTab(0, in: app)
-        XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCitySummaryTitle"].waitForNonExistence(timeout: 5))
         capture("city-region-friends-real-cities")
     }
 
@@ -1705,10 +1725,8 @@ final class PrototypeUITests: XCTestCase {
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
-        XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCitySummaryTitle"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
-        app.buttons["sameCityReunionToggle"].tap()
-        XCTAssertEqual(app.buttons["sameCityReunionToggle"].value as? String, "Expanded")
         openCitySharingFromProfile(in: app)
         let sharing = app.switches["citySharingToggle"]
         XCTAssertTrue(sharing.waitForExistence(timeout: 3))
@@ -1716,7 +1734,7 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["Done"].tap()
         selectAppTab(0, in: app)
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["sameCityReunionToggle"].waitForNonExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["sameCitySummaryTitle"].waitForNonExistence(timeout: 5))
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
         capture("friends-without-matches")
         openCitySharingFromProfile(in: app)
@@ -1724,11 +1742,10 @@ final class PrototypeUITests: XCTestCase {
         sharing.switches.firstMatch.tap()
         app.buttons["Done"].tap()
         selectAppTab(0, in: app)
-        let summary = app.buttons["sameCityReunionToggle"]
+        let summary = app.buttons["sameCitySummaryTitle"]
         XCTAssertTrue(summary.waitForExistence(timeout: 5))
-        XCTAssertEqual(summary.value as? String, "Collapsed")
         XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
-        capture("AUDIT-sharing-resume-keeps-header-collapsed")
+        capture("AUDIT-sharing-resume-restores-header")
     }
 
     func testTravelCitySearchFindsPalmSpringsFromProfile() {
@@ -1782,10 +1799,8 @@ final class PrototypeUITests: XCTestCase {
         save.tap()
         XCTAssertTrue(app.navigationBars["My travel plans"].waitForExistence(timeout: 5))
         selectAppTab(0, in: app)
-        XCTAssertTrue(entry.waitForExistence(timeout: 5)); entry.tap()
-        let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
-        XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
-        XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 3))
+        XCTAssertTrue(entry.waitForExistence(timeout: 5))
+        openOverlapDetail(in: app)
         capture("upcoming-together-expanded")
         let manage = app.buttons["My travel plans"]
         if !manage.isHittable { app.scrollViews["friendsScreen"].swipeUp() }; manage.tap()
@@ -1798,7 +1813,7 @@ final class PrototypeUITests: XCTestCase {
         if !save.isHittable { app.scrollViews.firstMatch.swipeUp() }; save.tap()
         XCTAssertTrue(app.navigationBars["My travel plans"].waitForExistence(timeout: 5))
         app.buttons["Done"].tap()
-        XCTAssertFalse(app.buttons["upcomingSayHello"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["upcomingOverlapDetail"].exists)
         XCTAssertTrue(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].exists)
         let close = app.buttons["closeUpcomingTogether"]
         if !close.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
@@ -1821,7 +1836,7 @@ final class PrototypeUITests: XCTestCase {
         capture("home-summary-all-five-overlaps")
         let id = String(rows.element(boundBy: 4).identifier.dropFirst("upcomingOverlap-".count))
         app.terminate(); app.open(URL(string: "whereismyfriend://upcoming/" + id)!)
-        XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.descendants(matching: .any)["upcomingOverlapDetail"].waitForExistence(timeout: 8))
         XCTAssertFalse(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].exists)
         capture("home-summary-fifth-overlap-cold-link")
     }
@@ -1836,55 +1851,54 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].waitForExistence(timeout: 5))
         app.terminate(); app.open(url)
         XCTAssertTrue(app.staticTexts["This overlap is no longer available. Plans or sharing may have changed."].waitForExistence(timeout: 8))
-        XCTAssertFalse(app.buttons["upcomingSayHello"].exists)
+        XCTAssertFalse(app.descendants(matching: .any)["upcomingOverlapDetail"].exists)
         app.buttons["closeUpcomingTogether"].tap()
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
     }
 
-    func testSameCityHeaderExpandsToFriendRows() {
+    func testSameCityChipOpensOneFriendOrTheFriendList() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        toggle.tap()
-        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.buttons["sameCityFriend-mia"].exists)
-        capture("same-city-expanded")
-        let close = app.buttons["closeSameCityReunion"]
-        if !close.isHittable { app.scrollViews["friendsScreen"].swipeUp() }
-        close.tap()
-        XCTAssertFalse(app.buttons["sameCitySayHello"].exists)
+        let chip = app.buttons["sameCitySummaryTitle"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
+        XCTAssertEqual(chip.label, "Mia is here too")
+        chip.tap()
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
+        XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
+        app.terminate()
+
+        app.launchArguments += ["-previewSameCityCount", "3"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
+        XCTAssertEqual(chip.label, "3 friends are here too")
+        chip.tap()
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 4))
+        capture("same-city-sheet")
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForNonExistence(timeout: 4))
     }
 
-    func testSameCityCardStaysCollapsedAfterRefreshTabSwitchAndForeground() {
+    func testSameCityChipStaysClosedAfterRefreshTabSwitchAndForeground() {
         continueAfterFailure = false
         let app = waveTwoApp()
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        toggle.tap()
-        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 3))
-        toggle.tap()
-        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForNonExistence(timeout: 3))
+        let chip = app.buttons["sameCitySummaryTitle"]
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
 
         app.scrollViews["friendsScreen"].swipeDown()
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
         selectAppTab(2, in: app)
         selectAppTab(0, in: app)
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
         XCUIDevice.shared.press(.home)
         app.activate()
-        XCTAssertTrue(toggle.waitForExistence(timeout: 5))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
+        XCTAssertTrue(chip.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
         XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
-        capture("manual-same-city-collapsed-after-refresh-and-foreground")
-
-        toggle.tap()
-        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
-        XCTAssertEqual(toggle.value as? String, "Expanded")
+        capture("manual-same-city-chip-after-refresh-and-foreground")
     }
 
     func testUnavailableSameCityLinkOpensSafelyFromAnotherTabAndAfterRelaunch() {
@@ -1898,27 +1912,16 @@ final class PrototypeUITests: XCTestCase {
         let url = URL(string: "whereismyfriend://events/11111111-2222-4333-8444-555555555555")!
         app.open(url)
         XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 5))
-        let toggle = app.buttons["sameCityReunionToggle"]
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
+        XCTAssertTrue(app.buttons["closeSameCityReunion"].exists)
         XCTAssertFalse(app.buttons["sameCitySayHello"].exists)
-        toggle.tap()
-        XCTAssertTrue(app.staticTexts["The moment may have expired or sharing may have changed."].waitForExistence(timeout: 3))
-        toggle.tap()
-        XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForNonExistence(timeout: 3))
         // Replaying the event rebuilds the Friends view with the same selected ID.
         app.open(url)
         XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 5))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
-        capture("manual-same-city-event-replay-stays-collapsed")
+        capture("manual-same-city-event-replay")
         app.terminate()
         app.open(url)
         XCTAssertTrue(app.staticTexts["This update is no longer available"].waitForExistence(timeout: 8))
-        XCTAssertEqual(toggle.value as? String, "Collapsed")
-        XCTAssertFalse(app.buttons["closeSameCityReunion"].exists)
-        capture("manual-same-city-cold-link-stays-collapsed")
-        toggle.tap()
+        capture("manual-same-city-cold-link")
         XCTAssertTrue(app.buttons["closeSameCityReunion"].waitForExistence(timeout: 3))
         app.buttons["closeSameCityReunion"].tap()
         XCTAssertFalse(app.staticTexts["This update is no longer available"].exists)
@@ -1953,6 +1956,43 @@ final class PrototypeUITests: XCTestCase {
         app.open(url)
         XCTAssertTrue(app.buttons["Not now"].waitForExistence(timeout: 5))
         app.buttons["Not now"].tap()
+    }
+
+    func testFriendDetailShowsSharedPlanRightAfterLaunchAndOnReturn() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+        XCTAssertTrue(lin.waitForExistence(timeout: 8))
+        let tokyo = app.staticTexts.matching(NSPredicate(format: "label == %@", "Tokyo, Japan"))
+        for _ in 0..<2 {
+            lin.tap()
+            XCTAssertTrue(app.navigationBars["Lin"].waitForExistence(timeout: 5))
+            // Lin's current city card says "Tokyo, Japan" once; the shared plan adds a second one.
+            let shown = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count >= 2"), object: tokyo)
+            XCTAssertEqual(XCTWaiter.wait(for: [shown], timeout: 3), .completed)
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(lin.waitForExistence(timeout: 5))
+        }
+    }
+
+    func testOwnInviteLinkDoesNotOfferAFriendRequest() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+
+        // The demo account is @wangyang; a differently cased username still counts as yours.
+        app.open(URL(string: "whereismyfriend://invite/WangYang")!)
+        XCTAssertTrue(app.staticTexts["This is your invite link"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["Send friend request"].exists)
+        app.buttons["dismissOwnInvite"].tap()
+        XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["This is your invite link"].exists)
     }
 
     func testTripInviteDeepLinkSurvivesRelaunchAndDismissal() {
@@ -2214,8 +2254,8 @@ final class PrototypeUITests: XCTestCase {
         if app.buttons["Not now"].waitForExistence(timeout: 1) { app.buttons["Not now"].tap() }
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
         capture("marketing-01-friends")
-        app.buttons["sameCityReunionToggle"].tap()
-        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 3))
+        app.buttons["sameCitySummaryTitle"].tap()
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 3))
         capture("marketing-02-same-city")
         app.terminate()
 
@@ -2257,8 +2297,8 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 5))
         capture("\(language)-02-friend-plans")
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        app.buttons["sameCityReunionToggle"].tap()
-        XCTAssertTrue(app.buttons["sameCityFriend-mia"].waitForExistence(timeout: 5))
+        app.buttons["sameCitySummaryTitle"].tap()
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
         capture("\(language)-04-here-together")
         app.terminate()
 
@@ -2268,11 +2308,8 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["friendPlansLink"].tap()
         XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        let upcoming = app.buttons["upcomingTogetherToggle"]
-        XCTAssertTrue(upcoming.waitForExistence(timeout: 8)); upcoming.tap()
-        let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
-        XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
-        XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["upcomingTogetherToggle"].waitForExistence(timeout: 8))
+        openOverlapDetail(in: app)
         capture("\(language)-03-together-soon")
         app.terminate()
 
@@ -2355,11 +2392,8 @@ final class PrototypeUITests: XCTestCase {
             app.buttons["friendPlansLink"].tap()
             XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
             app.navigationBars.buttons.element(boundBy: 0).tap()
-            let upcoming = app.buttons["upcomingTogetherToggle"]
-            XCTAssertTrue(upcoming.waitForExistence(timeout: 8)); upcoming.tap()
-            let overlap = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "upcomingOverlap-")).firstMatch
-            XCTAssertTrue(overlap.waitForExistence(timeout: 5)); overlap.tap()
-            XCTAssertTrue(app.buttons["upcomingSayHello"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["upcomingTogetherToggle"].waitForExistence(timeout: 8))
+            openOverlapDetail(in: app)
             capture("\(language)-03-together-soon")
             app.terminate()
         }
@@ -2627,7 +2661,8 @@ final class PrototypeUITests: XCTestCase {
             scroll.swipeDown()
         }
         app.segmentedControls["tripDirectionPicker"].buttons["Return"].tap()
-        XCTAssertTrue(app.staticTexts["Local arrival times"].exists)
+        // Return legs leave together from the trip airport, so the board reads in its departure time.
+        XCTAssertTrue(app.staticTexts["Departing Los Angeles time"].exists)
         XCTAssertFalse(app.buttons["mapTraveler-mia-out"].exists)
         XCTAssertTrue(app.buttons["flightCard-mia-in"].exists)
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "4 of 5 flights added")).firstMatch.exists)
@@ -2984,7 +3019,7 @@ final class PrototypeUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         selectAppTab(0, in: app)
         XCTAssertTrue(app.staticTexts["homeSharingPaused"].waitForExistence(timeout: 4))
-        XCTAssertFalse(app.buttons["sameCityReunionToggle"].exists)
+        XCTAssertFalse(app.buttons["sameCitySummaryTitle"].exists)
         XCTAssertFalse(app.buttons["homeCityRecoveryButton"].exists)
         capture("F01-home-sharing-paused-\(language)")
         mia.tap()

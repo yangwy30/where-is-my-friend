@@ -20,8 +20,7 @@ struct TravelDateRangeSelection: Equatable {
         let formatter = DateIntervalFormatter()
         formatter.locale = .current
         formatter.timeZone = .gmt
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
+        formatter.dateTemplate = "yMMMd"
         return formatter.string(from: first, to: last)
     }
 }

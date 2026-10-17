@@ -1,0 +1,5 @@
+• Your city now updates reliably while the app is open, and Friends shows when an automatic city check is running.
+• Turn on notifications during setup or from the Friends screen to hear when a friend is in your city and get trip reminders.
+• If a trip reminder can’t reach a friend, send them a message instead.
+• City emblems and one visual style now carry across Trips and You.
+• Key actions stay within reach, and return flights are easier to read.

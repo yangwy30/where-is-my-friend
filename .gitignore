@@ -42,3 +42,6 @@ docs/ui-*/**/*.jpg
 
 # Local Cloudflare Pages dev state
 .wrangler/
+
+# Scratch output from the App Store screenshot renderers
+docs/app_store_screenshots/*/.work/

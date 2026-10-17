@@ -182,9 +182,13 @@ struct TripsView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "suitcase.rolling")
-                .font(.system(size: 40, weight: .light)).foregroundStyle(WIFTheme.fresh)
-                .frame(width: 92, height: 92).background(WIFTheme.freshSurface.opacity(0.6), in: Circle())
+            // Different cities converging, the same idea the onboarding opens with.
+            HStack(alignment: .bottom, spacing: -14) {
+                CityEmblemView(city: "New York", countryCode: "US", size: 76).offset(y: -6)
+                CityEmblemView(city: "Paris", countryCode: "FR", size: 104).zIndex(1)
+                CityEmblemView(city: "Tokyo", countryCode: "JP", size: 76).offset(y: -6)
+            }
+            .accessibilityHidden(true)
             Text("Your next adventure\nstarts here.")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
@@ -228,13 +232,22 @@ struct TripsView: View {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(trip.name).font(.system(.title3, design: .rounded, weight: .bold))
-                        Text("\(trip.destinationName) · \(trip.dateLabel)")
+                        Text("\(trip.destinationName) · \(trip.destinationAirport) · \(trip.dateLabel)")
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                        if trip.isExample {
+                            Text("EXAMPLE").font(.system(size: 9, weight: .semibold)).tracking(1.0)
+                                .foregroundStyle(WIFTheme.secondaryText)
+                                .padding(.horizontal, 7).padding(.vertical, 3)
+                                .background(WIFTheme.secondaryText.opacity(0.10), in: Capsule())
+                                .padding(.top, 2)
+                        }
                     }
                     Spacer(minLength: 8)
-                    Text(trip.destinationAirport)
-                        .font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
-                        .padding(9).background(WIFTheme.freshSurface.opacity(0.6), in: RoundedRectangle(cornerRadius: 10))
+                    // The destination's emblem, as on friend cards, in place of a bare airport code.
+                    CityEmblemView(city: trip.destinationName,
+                                   countryCode: AirportLocation.location(for: trip.destinationAirport)?.countryCode,
+                                   size: 64)
+                        .padding(.top, -6)
                 }
                 HStack(spacing: 5) {
                     ForEach(trip.participants.prefix(4)) { person in
@@ -252,10 +265,6 @@ struct TripsView: View {
                             .font(.caption).foregroundStyle(WIFTheme.secondaryText)
                     }
                     Image(systemName: "chevron.right").font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(WIFTheme.secondaryText)
-                }
-                if trip.isExample {
-                    Text("EXAMPLE").font(.system(size: 8, weight: .semibold)).tracking(1.0)
                         .foregroundStyle(WIFTheme.secondaryText)
                 }
             }
@@ -466,7 +475,10 @@ private struct FullTripArrivalBoard: View {
     @State private var showsMap = false
 
     private var visibleFlights: [TripFlight] {
-        trip.flights.filter { $0.direction == direction }.sorted { $0.arrivalSortDate < $1.arrivalSortDate }
+        let flights = trip.flights.filter { $0.direction == direction }
+        return direction == .inbound
+            ? flights.sorted { $0.departureSortDate < $1.departureSortDate }
+            : flights.sorted { $0.arrivalSortDate < $1.arrivalSortDate }
     }
 
     private var missingPeople: [TripParticipant] {
@@ -522,7 +534,7 @@ private struct FullTripArrivalBoard: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.top, 8).padding(.bottom, 32)
         }
-        .background(WIFTheme.canvas.ignoresSafeArea())
+        .wifAmbientBackground()
         .navigationTitle("").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
         .wifNavigationSurface()
@@ -618,7 +630,9 @@ private struct FullTripArrivalBoard: View {
                 ForEach(Array(visibleFlights.enumerated()), id: \.element.id) { index, flight in
                     TripFlightCard(flight: flight, isExpanded: selectedFlightID == flight.id,
                                    isCurrentUser: flight.travelerID == selfParticipant?.id && selfParticipant != nil,
-                                   showsArrivalTimeZone: direction == .inbound || flight.destination != trip.destinationAirport) {
+                                   showsArrivalTimeZone: flight.destination != trip.destinationAirport,
+                                   showsDeparture: direction == .inbound,
+                                   showsDepartureTimeZone: flight.origin != trip.destinationAirport) {
                         withAnimation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.88)) {
                             selectedFlightID = selectedFlightID == flight.id ? nil : flight.id
                         }
@@ -646,9 +660,17 @@ private struct FullTripArrivalBoard: View {
     }
 
     private var arrivalTimeCaption: some View {
-        let usesDestinationTime = direction == .outbound && visibleFlights.allSatisfy { $0.destination == trip.destinationAirport }
-        return Text(usesDestinationTime ? String(localized: "\(trip.destinationName) time") : String(localized: "Local arrival times"))
-            .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+        let caption: String
+        if direction == .inbound {
+            caption = visibleFlights.allSatisfy { $0.origin == trip.destinationAirport }
+                ? String(localized: "Departing \(trip.destinationName) time")
+                : String(localized: "Local departure times")
+        } else {
+            caption = visibleFlights.allSatisfy { $0.destination == trip.destinationAirport }
+                ? String(localized: "\(trip.destinationName) time")
+                : String(localized: "Local arrival times")
+        }
+        return Text(caption).font(.caption).foregroundStyle(WIFTheme.secondaryText)
     }
 
     private func missingTraveler(_ person: TripParticipant) -> some View {
@@ -687,6 +709,8 @@ private struct TripArrivalSummary: View {
     let isExpanded: Bool
     var isCurrentUser = false
     var showsArrivalTimeZone = false
+    var showsDeparture = false
+    var showsDepartureTimeZone = false
 
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
@@ -729,12 +753,17 @@ private struct TripArrivalSummary: View {
     }
 
     private var arrivalDetails: some View {
-        VStack(alignment: dynamicTypeSize.isAccessibilitySize ? .leading : .trailing, spacing: 3) {
-            Text(flight.arrivalTime).font(.system(.title3, design: .rounded, weight: .semibold)).monospacedDigit()
-            if let day = flight.arrivalDayLabel {
+        let time = showsDeparture ? flight.departureTime : flight.arrivalTime
+        let day = showsDeparture ? flight.departureDayLabel : flight.arrivalDayLabel
+        let zone = showsDeparture
+            ? (showsDepartureTimeZone ? flight.departureTimeZoneLabel : nil)
+            : (showsArrivalTimeZone ? flight.arrivalTimeZoneLabel : nil)
+        return VStack(alignment: dynamicTypeSize.isAccessibilitySize ? .leading : .trailing, spacing: 3) {
+            Text(time).font(.system(.title3, design: .rounded, weight: .semibold)).monospacedDigit()
+            if let day {
                 Text(day).font(.caption2).foregroundStyle(WIFTheme.secondaryText)
             }
-            if showsArrivalTimeZone, let zone = flight.arrivalTimeZoneLabel {
+            if let zone {
                 Text(zone).font(.caption2).foregroundStyle(WIFTheme.secondaryText)
             }
         }
@@ -747,17 +776,26 @@ private struct TripFlightCard: View {
     let isExpanded: Bool
     var isCurrentUser = false
     var showsArrivalTimeZone = false
+    var showsDeparture = false
+    var showsDepartureTimeZone = false
     let onToggle: () -> Void
+
+    private var timeAccessibilityText: String {
+        showsDeparture
+            ? String(localized: "departs \(flight.departureDayLabel ?? String(localized: "date unconfirmed")), \(flight.departureTime) \(flight.departureTimeZoneLabel ?? "")")
+            : String(localized: "arrives \(flight.arrivalDayLabel ?? String(localized: "date unconfirmed")), \(flight.arrivalTime) \(flight.arrivalTimeZoneLabel ?? "")")
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: onToggle) {
                 TripArrivalSummary(flight: flight, isExpanded: isExpanded, isCurrentUser: isCurrentUser,
-                                   showsArrivalTimeZone: showsArrivalTimeZone)
+                                   showsArrivalTimeZone: showsArrivalTimeZone, showsDeparture: showsDeparture,
+                                   showsDepartureTimeZone: showsDepartureTimeZone)
                     .padding(.vertical, 13).contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("\(flight.traveler), \(flight.flightNumber), \(flight.origin) to \(flight.destination), arrives \(flight.arrivalDayLabel ?? "date unconfirmed"), \(flight.arrivalTime) \(flight.arrivalTimeZoneLabel ?? ""), \(flight.status.title)")
+            .accessibilityLabel("\(flight.traveler), \(flight.flightNumber), \(flight.origin) to \(flight.destination), \(timeAccessibilityText), \(flight.status.title)")
             .accessibilityValue(isExpanded ? "Details expanded" : "Details collapsed")
             .accessibilityHint("Double tap to \(isExpanded ? "hide" : "show") flight details")
             .accessibilityIdentifier("flightCard-\(flight.id)")
@@ -767,7 +805,7 @@ private struct TripFlightCard: View {
                     HStack(alignment: .top) {
                         endpoint(flight.origin, time: flight.departureTime, caption: "Departure")
                         Spacer()
-                        Image(systemName: "airplane").font(.subheadline).foregroundStyle(flight.accent).padding(.top, 22)
+                        Image(systemName: "airplane").font(.subheadline).foregroundStyle(WIFTheme.fresh).padding(.top, 22)
                         Spacer()
                         endpoint(flight.destination, time: flight.arrivalTime, caption: "Arrival", trailing: true)
                     }
@@ -1748,10 +1786,11 @@ enum TripFlightStatus: String, Codable {
 
     var accent: Color {
         switch self {
-        case .landed, .onTime, .airborne: WIFTheme.fresh
-        case .boarding: WIFTripTheme.sky
+        // Green: on track. Amber: worth a look. Red: only when the flight is off.
+        case .landed, .onTime, .airborne, .boarding: WIFTheme.fresh
         case .scheduled, .unverified, .unknown: WIFTheme.secondaryText
-        case .delayed, .cancelled, .diverted: WIFTheme.destructive
+        case .delayed, .diverted: WIFTheme.caution
+        case .cancelled: WIFTheme.destructive
         }
     }
 }
@@ -1843,9 +1882,32 @@ struct TripFlight: Identifiable, Codable {
     }
 
     var arrivalSortDate: Date {
-        guard let airport = AirportLocation.location(for: destination),
+        localInstant(time: arrivalTime, airportCode: destination, dayOffset: arrivalDayOffset)
+    }
+
+    /// Return legs usually leave from the trip's own airport, so departure in one shared
+    /// zone is the readable order; arrivals land across several zones.
+    var departureSortDate: Date {
+        localInstant(time: departureTime, airportCode: origin, dayOffset: 0)
+    }
+
+    var departureDayLabel: String? {
+        guard departureSortDate != .distantFuture, let airport = AirportLocation.location(for: origin) else { return nil }
+        let formatter = DateFormatter()
+        formatter.timeZone = airport.timeZone
+        formatter.setLocalizedDateFormatFromTemplate("MMMd")
+        return formatter.string(from: departureSortDate)
+    }
+
+    var departureTimeZoneLabel: String? {
+        guard departureSortDate != .distantFuture else { return nil }
+        return AirportLocation.location(for: origin)?.timeZone.abbreviation(for: departureSortDate)
+    }
+
+    private func localInstant(time: String, airportCode: String, dayOffset: Int) -> Date {
+        guard let airport = AirportLocation.location(for: airportCode),
               status != .unverified else { return .distantFuture }
-        let parts = arrivalTime.split(separator: ":").compactMap { Int($0) }
+        let parts = time.split(separator: ":").compactMap { Int($0) }
         guard parts.count == 2 else { return .distantFuture }
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = airport.timeZone
@@ -1855,19 +1917,11 @@ struct TripFlight: Identifiable, Codable {
         components.hour = parts[0]
         components.minute = parts[1]
         guard let day = calendar.date(from: components),
-              let arrival = calendar.date(byAdding: .day, value: arrivalDayOffset, to: day) else { return .distantFuture }
-        return arrival
+              let instant = calendar.date(byAdding: .day, value: dayOffset, to: day) else { return .distantFuture }
+        return instant
     }
 
-    static func color(for traveler: String) -> Color {
-        switch traveler {
-        case "Mia Chen": return WIFTripTheme.warm
-        case "David Kim": return Color(red: 0.74, green: 0.49, blue: 0.16)
-        case "Lin Zhao": return WIFTripTheme.violet
-        case "Alex Rivera": return Color(red: 0.16, green: 0.57, blue: 0.50)
-        default: return WIFTripTheme.sky
-        }
-    }
+    static func color(for traveler: String) -> Color { WIFPersonPalette.fill(for: traveler) }
 
     static let previewFlights: [TripFlight] = {
         let date = Calendar.current.date(from: DateComponents(year: 2026, month: 4, day: 15)) ?? Date()

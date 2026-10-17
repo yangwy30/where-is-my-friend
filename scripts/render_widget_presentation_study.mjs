@@ -9,18 +9,20 @@ const out=path.join(root,'docs/app_store_screenshots/2026-09-26/widget-study');
 fs.mkdirSync(out,{recursive:true});
 const wallpaper=await sharp(path.join(out,'ios27-blue.png')).resize(1320,2868)
  .extract({left:0,top:880,width:1320,height:1340}).png().toBuffer();
-const directory=await sharp(path.join(root,'docs/widget_redesign/2026-09-26/actual-widget-page-2.png'))
- .extract({left:94,top:934,width:1132,height:1182}).png().toBuffer();
+// Widgets render in the simulator's system language, so each locale has its own capture.
+const captures={en:'docs/widget_redesign/2026-09-26',['zh-Hans']:'docs/widget_redesign/2026-10-14-zh-Hans'};
 const uri=b=>`data:image/png;base64,${b.toString('base64')}`;
+for(const locale of ['zh-Hans','en']){
+const directory=await sharp(path.join(root,captures[locale],'actual-widget-page-2.png'))
+ .extract({left:94,top:934,width:1132,height:1182}).png().toBuffer();
 const home=await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1340">
  <defs><clipPath id="widget"><rect x="94" y="54" width="1132" height="1182" rx="132"/></clipPath></defs>
  <image width="1320" height="1340" href="${uri(wallpaper)}"/>
  <image x="94" y="54" width="1132" height="1182" href="${uri(directory)}" clip-path="url(#widget)"/>
  <text x="660" y="1295" text-anchor="middle" font-family="Helvetica Neue,sans-serif" font-size="42" fill="#FFFFFF">Across Us</text>
  </svg>`)).png().toBuffer();
-const together=await sharp(path.join(root,'docs/widget_redesign/2026-09-26/widget-Here-together-Small-Light.png'))
+const together=await sharp(path.join(root,captures[locale],'widget-Here-together-Small-Light.png'))
  .extract({left:405,top:738,width:510,height:510}).png().toBuffer();
-for(const locale of ['zh-Hans','en']){
  const chinese=locale==='zh-Hans';
  const title=chinese?['把朋友，','放在主屏幕']:['Friends, one','glance away.'];
  const sub=chinese?'在主屏幕上，一眼看到朋友。':'Friends on your Home Screen.';

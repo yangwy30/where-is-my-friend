@@ -52,7 +52,10 @@ struct LocationSetupView: View {
 
 /// A single illustrated world, reframed across four chapters. All interaction here
 /// is a preview: it deliberately has no access to location or sharing settings.
+/// The one exception is the same-city chapter's notification request; the app never
+/// asked anywhere prominent, so most accounts had no push device and missed alerts.
 struct OnboardingView: View {
+  @EnvironmentObject private var store: AppStore
   let onComplete: () -> Void
   @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -244,10 +247,15 @@ struct OnboardingView: View {
 
   private func sceneHeight(compact: Bool, available: CGFloat) -> CGFloat {
     switch step {
-    case 1: compact ? 145 : min(available * 0.31, 255)
+    // The notification request adds a "Not now" row to the footer; make room for it.
+    case 1: (compact ? 145 : min(available * 0.31, 255)) - (asksForNotifications ? 48 : 0)
     case 2: compact ? 110 : min(available * 0.25, 210)
     default: compact ? 180 : min(available * 0.37, 310)
     }
+  }
+
+  private var asksForNotifications: Bool {
+    step == 1 && store.notificationService.authorizationStatus == .notDetermined
   }
 
   private var spreadCities: Bool { step == 0 || step == 2 }
@@ -294,22 +302,21 @@ struct OnboardingView: View {
       }
       .accessibilityElement(children: .ignore)
       .accessibilityLabel("Page \(step + 1) of \(Self.pageCount)")
-      Button {
-        if step == Self.pageCount - 1 { onComplete() } else { go(to: step + 1) }
-      } label: {
-        HStack(spacing: 10) {
-          Text(step == Self.pageCount - 1 ? "Get started" : "Continue")
-          Image(systemName: "arrow.right").font(.body.weight(.medium))
+      OnboardingPrimaryActions(
+        service: store.notificationService,
+        asksForNotifications: step == 1,
+        isLastPage: step == Self.pageCount - 1,
+        verticalPadding: dynamicTypeSize.isAccessibilitySize ? 8 : 0,
+        onEnable: {
+          Task {
+            await store.requestNotificationAuthorization()
+            go(to: 2)
+          }
+        },
+        onContinue: {
+          if step == Self.pageCount - 1 { onComplete() } else { go(to: step + 1) }
         }
-        .font(.headline)
-        .frame(maxWidth: .infinity, minHeight: 54)
-        .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 8 : 0)
-        .background(WIFTheme.fresh, in: Capsule())
-        .foregroundStyle(WIFTheme.canvas)
-        .contentShape(Capsule())
-      }
-      .buttonStyle(.plain)
-      .accessibilityIdentifier("onboardingContinueButton")
+      )
     }
     .padding(.horizontal, 30)
     .padding(.top, 10)
@@ -683,6 +690,46 @@ private struct OnboardingFlightRoutes: View, Animatable {
         .rotationEffect(.degrees(OnboardingFlightTrajectory.heading(at: p, fromEast: fromEast)))
         .position(point)
         .opacity(p < 0.03 ? Double(p / 0.03) : (p > 0.93 ? Double((1 - p) / 0.07) : 1))
+    }
+  }
+}
+
+/// The same-city chapter asks for notification permission once, while the example
+/// notification is on screen; every other chapter, and any decided status, just continues.
+private struct OnboardingPrimaryActions: View {
+  @ObservedObject var service: LocalNotificationService
+  let asksForNotifications: Bool
+  let isLastPage: Bool
+  let verticalPadding: CGFloat
+  let onEnable: () -> Void
+  let onContinue: () -> Void
+
+  private var asks: Bool { asksForNotifications && service.authorizationStatus == .notDetermined }
+
+  var body: some View {
+    VStack(spacing: 4) {
+      Button(action: asks ? onEnable : onContinue) {
+        HStack(spacing: 10) {
+          Text(asks ? "Turn on notifications" : isLastPage ? "Get started" : "Continue")
+          Image(systemName: asks ? "bell.badge" : "arrow.right").font(.body.weight(.medium))
+        }
+        .font(.headline)
+        .frame(maxWidth: .infinity, minHeight: 54)
+        .padding(.vertical, verticalPadding)
+        .background(WIFTheme.fresh, in: Capsule())
+        .foregroundStyle(WIFTheme.canvas)
+        .contentShape(Capsule())
+      }
+      .buttonStyle(.plain)
+      .accessibilityIdentifier(asks ? "onboardingEnableNotifications" : "onboardingContinueButton")
+      if asks {
+        Button("Not now", action: onContinue)
+          .font(.subheadline)
+          .foregroundStyle(WIFTheme.secondaryText)
+          .frame(maxWidth: .infinity, minHeight: 44)
+          .contentShape(Rectangle())
+          .accessibilityIdentifier("onboardingContinueButton")
+      }
     }
   }
 }

@@ -204,6 +204,11 @@ final class CityLocationService: NSObject, ObservableObject {
         let shouldRun = context.ownerID != nil && context.isActive && context.automaticAllowed
             && (authorizationStatus == .authorizedAlways || authorizationStatus == .authorizedWhenInUse)
         guard shouldRun != foregroundMonitoring else { return }
+        // Starting continuous updates drops an in-flight requestLocation, and their first
+        // (cached) fix is usually too old to accept while the 5 km filter withholds a fresh
+        // one. Any snapshot change reconfigures this service, so without this guard the home
+        // refresh cancelled every foreground check. Resolution completion restarts monitoring.
+        if shouldRun && isResolving { return }
         foregroundMonitoring = shouldRun
         if shouldRun { manager.startUpdatingLocation() }
         else { manager.stopUpdatingLocation() }

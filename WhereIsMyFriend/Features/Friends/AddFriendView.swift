@@ -142,6 +142,7 @@ struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: AppStore
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @StateObject private var draft: FriendInvitationDraft
     @State private var withdrawing: FriendRequest?
     @FocusState private var usernameFocused: Bool
@@ -177,6 +178,9 @@ struct AddFriendView: View {
                     }
                 }
                 .padding(WIFTheme.screenInset)
+                // Answered requests fold away instead of snapping the rest of the sheet upward.
+                .animation(reduceMotion ? nil : .snappy, value: store.snapshot.incomingRequests.map(\.id))
+                .animation(reduceMotion ? nil : .snappy, value: store.snapshot.outgoingRequests.map(\.id))
             }
             .accessibilityIdentifier("addFriendScreen")
             .scrollDismissesKeyboard(.interactively)
@@ -301,7 +305,7 @@ struct AddFriendView: View {
                 .font(.headline)
                 .foregroundStyle(WIFTheme.primaryText)
 
-            ShareLink(item: InviteURLFactory.make(username: store.snapshot.currentUser.username)) {
+            InviteShareLink(username: store.snapshot.currentUser.username) {
                 Label("Share invite link", systemImage: "square.and.arrow.up")
                     .font(.body.weight(.semibold))
                     .frame(maxWidth: .infinity)
@@ -401,4 +405,20 @@ struct AddFriendView: View {
 #Preview {
     AddFriendView()
         .environmentObject(AppStore())
+}
+
+/// Shares the user's acrossus.app invite with a titled preview in the share sheet.
+/// The page behind the link shows who sent it, so the message adds no text of its own.
+struct InviteShareLink<Content: View>: View {
+    let username: String
+    @ViewBuilder let label: () -> Content
+
+    var body: some View {
+        ShareLink(
+            item: InviteURLFactory.make(username: username),
+            subject: Text("Join me on Across Us"),
+            preview: SharePreview(Text("Join me on Across Us"), image: Image("OnboardingAppIcon")),
+            label: label
+        )
+    }
 }

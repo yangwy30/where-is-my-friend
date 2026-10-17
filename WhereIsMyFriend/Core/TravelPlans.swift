@@ -561,11 +561,23 @@ final class FriendPlanFeed: ObservableObject {
     private var task: Task<FriendPlanPage, Error>?
     private var lastRefreshAt: Date?
 
+    /// The last first page per account, access revision and filter, kept in memory for this launch
+    /// so reopening a friend or plan shows it at once while a refresh runs.
+    private struct CachedPage { let items: [FriendTravelPlan]; let nextCursor: FriendPlanCursor?; let version: String? }
+    private static var cache: [String: CachedPage] = [:]
+    private var cacheKey: String? {
+        guard let accountScope else { return nil }
+        return "\(accountScope)|\(accessRevision)|\(friendID?.uuidString ?? "-")|\(planID?.uuidString ?? "-")"
+    }
+
     func connect(_ library: TravelPlanLibrary, friendID: UUID? = nil, planID: UUID? = nil) {
         guard self.library !== library || !matches(library) || self.friendID != friendID || self.planID != planID else { return }
         epoch += 1; task?.cancel(); task = nil; requestID = nil
         self.library = library; accountScope = library.accountScope; accessRevision = library.accessRevision; self.friendID = friendID; self.planID = planID
         items = []; nextCursor = nil; version = nil; errorMessage = nil; hasLoaded = false; isLoading = false; lastRefreshAt = nil
+        if let cacheKey, let cached = Self.cache[cacheKey] {
+            items = cached.items; nextCursor = cached.nextCursor; version = cached.version; hasLoaded = true
+        }
     }
 
     func refresh(minimumInterval: TimeInterval = 0) async {
@@ -593,12 +605,14 @@ final class FriendPlanFeed: ObservableObject {
             guard requestID == ticket, epoch == currentEpoch, scope == library.accountScope, matches(library) else { return }
             if page.resetRequired || (cursor != nil && version != page.version) {
                 items = []; nextCursor = nil; version = nil; hasLoaded = false
+                if let cacheKey { Self.cache[cacheKey] = nil }
                 restart = true
             } else if cursor == nil {
                 if version != page.version || page.version == "local" || !hasLoaded {
                     items = page.items; nextCursor = page.nextCursor; version = page.version
                 }
                 hasLoaded = true; lastRefreshAt = Date()
+                if let cacheKey { Self.cache[cacheKey] = CachedPage(items: page.items, nextCursor: page.nextCursor, version: page.version) }
             } else {
                 let existing = Set(items.map(\.id))
                 items.append(contentsOf: page.items.filter { !existing.contains($0.id) })
@@ -607,7 +621,10 @@ final class FriendPlanFeed: ObservableObject {
         } catch {
             guard requestID == ticket, epoch == currentEpoch, scope == library.accountScope, matches(library) else { return }
             if !(error is CancellationError), (error as? URLError)?.code != .cancelled {
-                if cursor == nil { items = []; nextCursor = nil; hasLoaded = false }
+                if cursor == nil {
+                    items = []; nextCursor = nil; hasLoaded = false
+                    if let cacheKey { Self.cache[cacheKey] = nil }
+                }
                 errorMessage = String(localized: "Couldn’t load shared plans. Try again.")
             }
         }

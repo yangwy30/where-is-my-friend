@@ -1,0 +1,210 @@
+{
+  "en": [
+    {
+      "id": "01-friends",
+      "title": [
+        "Where are your",
+        "friends today?"
+      ],
+      "sub": "Shared cities, never exact locations.",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/en/01-friends.png"
+    },
+    {
+      "id": "02-together-soon",
+      "title": [
+        "Same city.",
+        "Same dates."
+      ],
+      "sub": "See when your travel plans overlap.",
+      "tone": "mint",
+      "crop": 0,
+      "sourceRect": {
+        "left": 60,
+        "top": 223,
+        "width": 1086,
+        "height": 1500
+      },
+      "frameWidth": 1180,
+      "frameY": 740,
+      "frameHeight": 1630,
+      "radius": 84,
+      "raw": "../2026-10-11/raw/en/03-together-soon.png"
+    },
+    {
+      "id": "03-arrivals",
+      "title": [
+        "Different cities.",
+        "One destination."
+      ],
+      "sub": "Everyone’s flights, on one map.",
+      "tone": "blue",
+      "crop": 0,
+      "sourceRect": {
+        "left": 0,
+        "top": 223,
+        "width": 1206,
+        "height": 2205
+      },
+      "frameWidth": 1110,
+      "frameY": 650,
+      "frameHeight": 2030,
+      "radius": 62,
+      "raw": "../2026-10-11/raw/en/06-arrivals.png"
+    },
+    {
+      "id": "04-friend-plans",
+      "title": [
+        "Where friends",
+        "are headed next."
+      ],
+      "sub": "Browse the plans friends share with you.",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/en/02-friend-plans.png"
+    },
+    {
+      "id": "05-widgets",
+      "title": [
+        "Friends, one",
+        "glance away."
+      ],
+      "sub": "Friends on your Home Screen.",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-09-25/raw/en/08-widgets.png",
+      "compositionSVG": "compositions/en-widgets.svg"
+    },
+    {
+      "id": "06-shared-trips",
+      "title": [
+        "Group trip?",
+        "All in one place."
+      ],
+      "sub": "Invite friends. Each adds their own flights.",
+      "tone": "mint",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/en/05-shared-trips.png"
+    },
+    {
+      "id": "07-flight-details",
+      "title": [
+        "Who’s landed,",
+        "who’s en route."
+      ],
+      "sub": "Arrival times and status for the group.",
+      "tone": "cream",
+      "crop": 150,
+      "frameHeight": 1960,
+      "frameY": 650,
+      "frameWidth": 1110,
+      "radius": 62,
+      "raw": "../2026-10-11/raw/en/07-flight-details.png"
+    }
+  ],
+  "zh-Hans": [
+    {
+      "id": "01-friends",
+      "title": [
+        "朋友们，",
+        "现在都在哪？"
+      ],
+      "sub": "只分享所在城市，不显示精确位置。",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/zh-Hans/01-friends.png"
+    },
+    {
+      "id": "02-together-soon",
+      "title": [
+        "行程重叠，",
+        "约上见一面"
+      ],
+      "sub": "你们在同一座城市的日子，提前发现。",
+      "tone": "mint",
+      "crop": 0,
+      "sourceRect": {
+        "left": 60,
+        "top": 223,
+        "width": 1086,
+        "height": 1500
+      },
+      "frameWidth": 1180,
+      "frameY": 740,
+      "frameHeight": 1630,
+      "radius": 84,
+      "raw": "../2026-10-11/raw/zh-Hans/03-together-soon.png"
+    },
+    {
+      "id": "03-arrivals",
+      "title": [
+        "从不同城市，",
+        "飞向同一站"
+      ],
+      "sub": "把大家的航线放在同一张地图上。",
+      "tone": "blue",
+      "crop": 0,
+      "sourceRect": {
+        "left": 0,
+        "top": 223,
+        "width": 1206,
+        "height": 2205
+      },
+      "frameWidth": 1110,
+      "frameY": 650,
+      "frameHeight": 2030,
+      "radius": 62,
+      "raw": "../2026-10-11/raw/zh-Hans/06-arrivals.png"
+    },
+    {
+      "id": "04-friend-plans",
+      "title": [
+        "朋友的下一站，",
+        "提前知道"
+      ],
+      "sub": "看看朋友分享给你的出行城市与日期。",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/zh-Hans/02-friend-plans.png"
+    },
+    {
+      "id": "05-widgets",
+      "title": [
+        "把朋友，",
+        "放在主屏幕"
+      ],
+      "sub": "在主屏幕上，一眼看到朋友。",
+      "tone": "cream",
+      "crop": 150,
+      "raw": "../2026-09-25/raw/zh-Hans/08-widgets.png",
+      "compositionSVG": "compositions/zh-Hans-widgets.svg"
+    },
+    {
+      "id": "06-shared-trips",
+      "title": [
+        "一起出发，",
+        "安排都在一处"
+      ],
+      "sub": "邀请朋友加入，各自添加航班。",
+      "tone": "mint",
+      "crop": 150,
+      "raw": "../2026-10-11/raw/zh-Hans/05-shared-trips.png"
+    },
+    {
+      "id": "07-flight-details",
+      "title": [
+        "谁已落地，",
+        "谁还在路上"
+      ],
+      "sub": "大家的抵达时间与航班状态，一起看清。",
+      "tone": "cream",
+      "crop": 150,
+      "frameHeight": 1960,
+      "frameY": 650,
+      "frameWidth": 1110,
+      "radius": 62,
+      "raw": "../2026-10-11/raw/zh-Hans/07-flight-details.png"
+    }
+  ]
+}

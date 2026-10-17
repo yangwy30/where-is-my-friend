@@ -10,6 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const setName = process.argv.find(arg => arg.startsWith('--set='))?.slice(6) ?? '2026-09-25';
 if (!/^\d{4}-\d{2}-\d{2}$/.test(setName)) throw new Error('Expected --set=YYYY-MM-DD');
 const out = path.join(root, 'docs/app_store_screenshots', setName);
+const showPager = !process.argv.includes('--no-pager');
 const copy = JSON.parse(fs.readFileSync(path.join(out, 'copy.json'), 'utf8'));
 const esc = value => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 const palettes = {cream:['#F8F7EF','#E5F1E5'], mint:['#E7F2E9','#F5F7ED'], blue:['#EDF2F2','#E1EEE8']};
@@ -38,7 +39,7 @@ for (const [locale, specs] of Object.entries(copy)) {
       <rect width="1290" height="2796" fill="url(#bg)"/>
       <g font-family="${font}, sans-serif" fill="#123D2D">
       <text x="94" y="100" font-size="25" font-weight="600" letter-spacing="5">ACROSS US</text>
-      <text x="1196" y="100" text-anchor="end" font-size="23" fill="#6C8273" letter-spacing="2">${String(index+1).padStart(2,'0')} / ${String(specs.length).padStart(2,'0')}</text>
+      ${showPager ? `<text x="1196" y="100" text-anchor="end" font-size="23" fill="#6C8273" letter-spacing="2">${String(index+1).padStart(2,'0')} / ${String(specs.length).padStart(2,'0')}</text>` : ''}
       ${title}<text x="94" y="523" font-size="48" fill="#456453">${esc(s.sub)}</text>
       ${s.eyebrow ? `<text x="94" y="665" font-size="30" font-weight="600" fill="#456453">${esc(s.eyebrow)}</text>` : ''}</g>
       <rect x="${frameX+6}" y="${frameY+32}" width="${frameWidth-12}" height="${frameHeight-20}" rx="${radius}" fill="#163D29" opacity=".11" filter="url(#shadow)"/>

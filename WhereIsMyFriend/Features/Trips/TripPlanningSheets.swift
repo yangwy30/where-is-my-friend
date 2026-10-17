@@ -82,6 +82,16 @@ struct TripReminderButton: View {
     let trip: TripPlan
     let person: TripParticipant
     @State private var message: String?
+    @State private var offersMessage = false
+    @State private var sharingMessage = false
+
+    private var firstName: String { person.name.split(separator: " ").first.map(String.init) ?? person.name }
+
+    /// Push only reaches people who allowed notifications, which most accounts never
+    /// had a chance to do. A message from the app they already use always arrives.
+    private var nudgeText: String {
+        String(format: String(localized: "Could you add your flight for “%@” in Across Us? Then we can all see when everyone arrives."), trip.name)
+    }
 
     private var recentlyReminded: Bool {
         (library.remindedUntil[library.reminderKey(tripID: trip.id, participantID: person.id)] ?? .distantPast) > Date()
@@ -92,7 +102,7 @@ struct TripReminderButton: View {
             Task {
                 let result = await library.remind(person, tripID: trip.id)
                 if result?.status == "unavailable" {
-                    message = String(localized: "A reminder isn’t available right now. They may have added a flight or may not be receiving reminders.")
+                    offersMessage = true
                 } else if result == nil {
                     message = library.errorMessage ?? String(localized: "Couldn’t send the reminder. Please try again.")
                     library.errorMessage = nil
@@ -111,7 +121,27 @@ struct TripReminderButton: View {
         .alert("Flight reminder", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(message ?? "") }
+        .alert("Send a message instead?", isPresented: $offersMessage) {
+            Button("Send message") { sharingMessage = true }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Across Us can’t remind \(firstName) right now. You can ask them in a message instead.")
+        }
+        .sheet(isPresented: $sharingMessage) {
+            ActivityShareSheet(items: [nudgeText])
+                .presentationDetents([.medium, .large])
+                .ignoresSafeArea()
+        }
     }
+}
+
+/// The system share sheet for a fixed message; `ShareLink` can't be opened from an alert.
+private struct ActivityShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 
 struct TripPlanningDraftState: Equatable {

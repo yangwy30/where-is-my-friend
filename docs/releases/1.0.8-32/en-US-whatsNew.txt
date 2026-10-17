@@ -1,0 +1,7 @@
+• See who’s in your city at a glance. Tap “here too” to see everyone with you.
+• Together soon now shows the days you and a friend overlap on a simple timeline.
+• Invite links are now acrossus.app links that show who invited you, and open the app when it’s installed.
+• Your city now updates reliably while the app is open, and Friends shows when an automatic city check is running.
+• Turn on notifications during setup or from the Friends screen to hear when a friend is in your city and get trip reminders.
+• If a trip reminder can’t reach a friend, send them a message instead.
+• Refreshed city emblems, one visual style across Trips and You, and easier-to-read return flights.

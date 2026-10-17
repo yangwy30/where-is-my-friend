@@ -1,6 +1,31 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ and %@ are here too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ 和 %2$@ 也在这里"}}}},
+    "Here with you" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和你同城"}}}},
+    "You’re there too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你也会去"}}}},
+    "Shared days %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "共同停留：%@"}}}},
+    "with %@ · %lld days together" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和 %1$@ · 共同停留 %2$lld 天"}}}},
+    "Dismiss" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "关闭"}}}},
+    "Turn on notifications" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开通知"}}}},
+    "Turn on" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "打开"}}}},
+    "Hear when a friend is in your city, and get trip reminders from your group." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "朋友来到你所在的城市时收到通知，也能收到同行朋友的旅行提醒。"}}}},
+    "Send a message instead?" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "改为发消息提醒？"}}}},
+    "Send message" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "发消息"}}}},
+    "Across Us can’t remind %@ right now. You can ask them in a message instead." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "Across Us 暂时无法提醒 %@。你可以发条消息问问 TA。"}}}},
+    "Could you add your flight for “%@” in Across Us? Then we can all see when everyone arrives." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "可以在 Across Us 里填一下「%@」的航班吗？这样大家都能看到每个人什么时候到。"}}}},
+    "Updating your city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在更新你的城市…"}}}},
+    "Detecting current city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在检测当前城市…"}}}},
+    "Detecting your city…" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正在检测你的城市…"}}}},
+    "Refresh location" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "刷新定位"}}}},
+    "Departing %@ time" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%@ 当地出发时间"}}}},
+    "Local departure times" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "出发地当地时间"}}}},
+    "departs %@, %@ %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ %2$@ %3$@ 出发"}}}},
+    "arrives %@, %@ %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ %2$@ %3$@ 抵达"}}}},
+    "date unconfirmed" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "日期未确认"}}}},
+    "Favorite. They’ll appear first on Friends." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "已收藏，TA 会排在朋友页最前面。"}}}},
+    "Removed from favorites." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "已取消收藏。"}}}},
+    "You and %@ are now friends." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你和 %@ 已成为好友。"}}}},
     "City sharing is off on this device" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "本机已关闭城市共享"}}}},
     "Last known status · checked %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "最近已知状态 · 检查于 %@"}}}},
     "Route not found in latest check · last verified %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "最近查询未找到航线 · 上次验证 %@"}}}},
@@ -130,6 +155,7 @@
     "Clear flight number" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "清除航班号"}}}},
     "Add by username" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "通过用户名添加"}}}},
     "Invite your first friend" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请第一位朋友"}}}},
+    "Join me on Across Us" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "来 Across Us 加我吧"}}}},
     "Invite someone you know to share cities and find time together." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请认识的朋友，分享所在城市，发现相聚的机会。"}}}},
     "Invitation withdrawn." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "邀请已撤回。"}}}},
     "%@ will no longer be able to accept this invitation." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%@将无法再接受这份邀请。"}}}},
@@ -3845,6 +3871,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要添加 @%@ 吗？"
+          }
+        }
+      }
+    },
+    "This is your invite link" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这是你自己的邀请链接"
+          }
+        }
+      }
+    },
+    "Share it with friends so they can send you a friend request." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把它分享给朋友，对方就能向你发送好友请求。"
           }
         }
       }

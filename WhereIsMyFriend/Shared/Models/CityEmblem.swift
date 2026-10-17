@@ -61,8 +61,16 @@ public struct CityEmblem: Hashable, Sendable {
         }
 
         let country = countryCode?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let areaKey = CityIdentity.presencePart(administrativeArea ?? "")
+        let normArea = (CityRegionCatalog.bundled.administrativeAliases?[country ?? "US"]?[areaKey] ?? areaKey).uppercased()
         func accepts(_ match: CityEmblem) -> Bool {
-            country == nil || country == "" || country == match.countryCode
+            guard country == nil || country == "" || country == match.countryCode else { return false }
+            if match.countryCode == "US", !normArea.isEmpty,
+               let allowedStates = registeredUSStates[match.cityID],
+               !allowedStates.contains(normArea) {
+                return false
+            }
+            return true
         }
         if let match = registeredCities[normalized], accepts(match) {
             return match
@@ -361,6 +369,77 @@ public struct CityEmblem: Hashable, Sendable {
         "ox": registeredCities["oxford"]!,
         "cam": registeredCities["cambridge"]!,
         "mcr": registeredCities["manchester"]!
+    ]
+
+    private static let registeredUSStates: [String: Set<String>] = [
+        "new_york": ["NY"],
+        "san_francisco": ["CA"],
+        "los_angeles": ["CA"],
+        "chicago": ["IL"],
+        "seattle": ["WA"],
+        "boston": ["MA"],
+        "miami": ["FL"],
+        "austin": ["TX"],
+        "las_vegas": ["NV"],
+        "washington": ["DC", "MD", "VA"],
+        "honolulu": ["HI"],
+        "houston": ["TX"],
+        "philadelphia": ["PA"],
+        "phoenix": ["AZ"],
+        "san_antonio": ["TX"],
+        "san_diego": ["CA"],
+        "dallas": ["TX"],
+        "denver": ["CO"],
+        "atlanta": ["GA"],
+        "nashville": ["TN"],
+        "new_orleans": ["LA"],
+        "portland": ["OR"],
+        "st_louis": ["MO", "IL"],
+        "minneapolis": ["MN"],
+        "detroit": ["MI"],
+        "pittsburgh": ["PA"],
+        "tampa": ["FL"],
+        "orlando": ["FL"],
+        "charlotte": ["NC"],
+        "salt_lake_city": ["UT"],
+        "baltimore": ["MD"],
+        "kansas_city": ["MO", "KS"],
+        "cleveland": ["OH"],
+        "indianapolis": ["IN"],
+        "columbus": ["OH"],
+        "milwaukee": ["WI"],
+        "cincinnati": ["OH"],
+        "san_jose": ["CA"],
+        "raleigh": ["NC"],
+        "louisville": ["KY"],
+        "memphis": ["TN"],
+        "oklahoma_city": ["OK"],
+        "albuquerque": ["NM"],
+        "tucson": ["AZ"],
+        "el_paso": ["TX"],
+        "anchorage": ["AK"],
+        "sacramento": ["CA"],
+        "providence": ["RI"],
+        "berkeley": ["CA"],
+        "palo_alto": ["CA"],
+        "mountain_view": ["CA"],
+        "cupertino": ["CA"],
+        "sunnyvale": ["CA"],
+        "santa_barbara": ["CA"],
+        "irvine": ["CA"],
+        "boulder": ["CO"],
+        "ann_arbor": ["MI"],
+        "madison": ["WI"],
+        "durham": ["NC"],
+        "chapel_hill": ["NC"],
+        "charlottesville": ["VA"],
+        "ithaca": ["NY"],
+        "new_haven": ["CT"],
+        "princeton": ["NJ"],
+        "savannah": ["GA"],
+        "charleston": ["SC"],
+        "asheville": ["NC"],
+        "boise": ["ID"]
     ]
 }
 

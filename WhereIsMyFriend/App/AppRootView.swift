@@ -14,6 +14,7 @@ struct AppRootView: View {
     @StateObject private var locationReminders = LocationPermissionReminderStore()
     @StateObject private var appearanceController = WIFAppearanceController()
     @StateObject private var incomingInviteDraft = FriendInvitationDraft()
+    @StateObject private var toastWindow = ToastWindowHost()
 
     init(runtime: CityUpdateRuntime) {
         self.runtime = runtime
@@ -136,20 +137,14 @@ struct AppRootView: View {
             } else if store.snapshot.isAuthenticated, scenePhase == .active, let overlap = store.upcomingBanner {
                 UpcomingAlertBanner(overlap: overlap)
                     .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
-            } else if let toast = store.toast {
-                Label(toast.message, systemImage: toast.systemImage)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 11)
-                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.20), in: Capsule())
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .accessibilityIdentifier("successToast")
             }
         }
-        .animation(.easeInOut(duration: 0.22), value: store.toast)
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active { toastWindow.attach(store: store, appearance: appearanceController.appearance) }
+        }
+        .onChange(of: appearanceController.appearance) { _, appearance in
+            toastWindow.attach(store: store, appearance: appearance)
+        }
         .animation(reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.84), value: store.upcomingBanner?.id)
         .animation(reduceMotion ? nil : .spring(response: 0.45, dampingFraction: 0.84),
                    value: store.sameCityBannerEventID)
@@ -214,52 +209,78 @@ private struct IncomingInviteView: View {
     let invite: PendingInvite
     @ObservedObject var draft: FriendInvitationDraft
 
+    /// Opening your own link (for example, testing it after sharing) must not offer a request to yourself.
+    private var isOwnLink: Bool {
+        invite.username.caseInsensitiveCompare(store.snapshot.currentUser.username) == .orderedSame
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    Image(systemName: "link.badge.plus")
-                        .font(.system(size: 58))
-                        .foregroundStyle(WIFTheme.fresh)
-                    Text("Connect with @\(invite.username)?")
-                        .font(.title2.bold())
-                        .multilineTextAlignment(.center)
-                    Text("Send a friend request to connect.")
-                        .foregroundStyle(WIFTheme.secondaryText)
-                        .multilineTextAlignment(.center)
-                    Button {
-                        draft.inviteError = nil
-                        Task {
-                            await store.acceptPendingInvite(onFailure: { message in
-                                guard store.snapshot.isAuthenticated, store.pendingInvite == invite else { return }
-                                draft.inviteError = message
-                            })
-                            if store.pendingInvite == nil { dismiss() }
-                        }
-                    } label: {
-                        if store.isSendingFriendRequest {
-                            ProgressView().frame(maxWidth: .infinity)
-                        } else {
-                            Text("Send friend request").foregroundStyle(WIFTheme.primaryText)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                        }
-                    }
-                    .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
-                    .disabled(store.isSendingFriendRequest)
-                    .accessibilityIdentifier("acceptIncomingInvite")
-                    if let inviteError = draft.inviteError {
-                        Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                    if isOwnLink {
+                        Image(systemName: "person.crop.circle.badge.checkmark")
+                            .font(.system(size: 58))
+                            .foregroundStyle(WIFTheme.fresh)
+                        Text("This is your invite link")
+                            .font(.title2.bold())
                             .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier("incomingInviteError")
+                        Text("Share it with friends so they can send you a friend request.")
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            store.discardPendingInvite()
+                            dismiss()
+                        } label: {
+                            Text("Done").foregroundStyle(WIFTheme.primaryText)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                        }
+                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                        .accessibilityIdentifier("dismissOwnInvite")
+                    } else {
+                        Image(systemName: "link.badge.plus")
+                            .font(.system(size: 58))
+                            .foregroundStyle(WIFTheme.fresh)
+                        Text("Connect with @\(invite.username)?")
+                            .font(.title2.bold())
+                            .multilineTextAlignment(.center)
+                        Text("Send a friend request to connect.")
+                            .foregroundStyle(WIFTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            draft.inviteError = nil
+                            Task {
+                                await store.acceptPendingInvite(onFailure: { message in
+                                    guard store.snapshot.isAuthenticated, store.pendingInvite == invite else { return }
+                                    draft.inviteError = message
+                                })
+                                if store.pendingInvite == nil { dismiss() }
+                            }
+                        } label: {
+                            if store.isSendingFriendRequest {
+                                ProgressView().frame(maxWidth: .infinity)
+                            } else {
+                                Text("Send friend request").foregroundStyle(WIFTheme.primaryText)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                            }
+                        }
+                        .wifGlassButton(tint: WIFTheme.fresh.opacity(0.28), prominent: true)
+                        .disabled(store.isSendingFriendRequest)
+                        .accessibilityIdentifier("acceptIncomingInvite")
+                        if let inviteError = draft.inviteError {
+                            Text(inviteError).font(.subheadline).foregroundStyle(WIFTheme.destructive)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityIdentifier("incomingInviteError")
+                        }
+                        Button("Not now", role: .cancel) {
+                            store.discardPendingInvite()
+                            dismiss()
+                        }
+                        .disabled(store.isSendingFriendRequest)
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("dismissIncomingInvite")
                     }
-                    Button("Not now", role: .cancel) {
-                        store.discardPendingInvite()
-                        dismiss()
-                    }
-                    .disabled(store.isSendingFriendRequest)
-                    .frame(minHeight: 44)
-                    .accessibilityIdentifier("dismissIncomingInvite")
                 }
                 .padding(28)
                 .frame(maxWidth: .infinity)
@@ -270,6 +291,66 @@ private struct IncomingInviteView: View {
         }
         .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.medium, .large])
         .interactiveDismissDisabled(store.isSendingFriendRequest)
+    }
+}
+
+/// Hosts the success toast in its own pass-through window above sheets. As a root
+/// overlay it sat underneath any open sheet, so confirmations for actions taken in
+/// Add friends or the editors were never seen.
+@MainActor
+final class ToastWindowHost: ObservableObject {
+    private var window: UIWindow?
+
+    func attach(store: AppStore, appearance: WIFAppearance) {
+        let style: UIUserInterfaceStyle = switch appearance.colorScheme {
+        case .light: .light
+        case .dark: .dark
+        default: .unspecified
+        }
+        if let window {
+            window.overrideUserInterfaceStyle = style
+            return
+        }
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) else { return }
+        let host = UIHostingController(rootView: ToastOverlay().environmentObject(store))
+        host.view.backgroundColor = .clear
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = host
+        window.windowLevel = .normal + 1
+        window.isUserInteractionEnabled = false
+        window.overrideUserInterfaceStyle = style
+        window.isHidden = false
+        self.window = window
+    }
+}
+
+private struct ToastOverlay: View {
+    @EnvironmentObject private var store: AppStore
+
+    var body: some View {
+        VStack {
+            if let toast = store.toast {
+                Label(toast.message, systemImage: toast.systemImage)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 11)
+                    .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.20), in: Capsule())
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .accessibilityIdentifier("successToast")
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .animation(.easeInOut(duration: 0.22), value: store.toast)
+        .sensoryFeedback(.success, trigger: store.toast?.id) { _, id in id != nil }
+        .onChange(of: store.toast?.id) { _, id in
+            guard id != nil, let message = store.toast?.message else { return }
+            UIAccessibility.post(notification: .announcement, argument: message)
+        }
     }
 }
 
