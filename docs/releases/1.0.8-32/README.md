@@ -73,3 +73,17 @@ The user confirmed build 35 and asked to submit it.
 Status: **Waiting for Review**. [Submission 9aa4ff6b-fa4d-484b-aafd-eec2abb1cc55](https://appstoreconnect.apple.com/apps/6807634842/distribution/reviewsubmissions/details/9aa4ff6b-fa4d-484b-aafd-eec2abb1cc55).
 
 After approval, merge `ui/1.0.8-combined` into `main`. Pushing `main` redeploys the website, which already matches.
+
+## Build 36 — October 16, 2026
+
+A friend couldn't sign in. Sign in with Apple succeeded and the server returned her data, then the app signed her back out with "The data couldn't be read because it isn't in the correct format." Logs showed her phone was iOS 18.6 (`Darwin/24.6.0`) on the App Store build 1.0.6 (28).
+
+Cause: the app decoded server dates with `JSONDecoder`'s `.iso8601` strategy. Postgres timestamps carry microseconds (`2026-10-16T23:34:29.852301+00:00`). iOS 26 and later accept them, but iOS 18 rejects fractional seconds, so every response failed to decode there. All of our test phones run iOS 26 or 27, so we never saw it. It affects every iOS 18 user on every build up to 35.
+
+Fix (2f532fe): server dates are parsed with fractional seconds first and whole seconds as a fallback. All 266 unit tests pass, including new tests for both forms and for a snapshot with microseconds. This Xcode can't download an iOS 18 simulator, so the fix hasn't been run on iOS 18 itself. The legacy parser's behavior was checked on macOS: it fails without the fix and succeeds with it.
+
+Build 36 comes from tag `v1.0.8-36` (2551959), signed the same way as build 35, and was uploaded at 17:33 PDT.
+
+Build 35 was removed from review (Cancel Submission). Build 36 replaced it on the same 1.0.8 version, with the same screenshots, What's New and review notes, and was submitted at 17:37 PDT. Status: **Waiting for Review**.
+
+A server-side workaround that sends whole-second timestamps, so 1.0.6 on iOS 18 can sign in before 1.0.8 is released, is on branch `fix/ios18-server-dates` (6334606). It isn't deployed. Deployed functions were checked identical to `main` first, so deploying would change only this.
