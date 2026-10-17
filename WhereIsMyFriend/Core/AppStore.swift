@@ -259,9 +259,23 @@ final class AppStore: ObservableObject {
         }
     }
 
-    func signInWithApple(_ payload: AppleSignInPayload) async {
-        let signedIn = await perform(successMessage: nil) {
-            try await self.repository.signInWithApple(payload)
+    /// Returns nil when the code was sent, otherwise a message for the sign-in screen.
+    func sendEmailSignInCode(to email: String) async -> String? {
+        do {
+            try await repository.sendEmailSignInCode(to: email)
+            return nil
+        } catch is CancellationError {
+            return String(localized: "Please try again.")
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    /// `onFailure` keeps the error on the screen that started the sign-in
+    /// (for example, a mistyped email code) instead of a global notice.
+    func signIn(_ credential: SignInCredential, onFailure: ((String) -> Void)? = nil) async {
+        let signedIn = await perform(successMessage: nil, onFailure: onFailure) {
+            try await self.repository.signIn(credential)
         }
         if signedIn { await preparePushRegistrationIfAuthorized() }
     }

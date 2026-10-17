@@ -1788,6 +1788,64 @@ final class FriendPresenceTests: XCTestCase {
         )
     }
 
+    func testEmailSignInInputNormalizesAddressesAndCodes() {
+        XCTAssertEqual(EmailSignInInput.normalizedEmail("  Mia@Example.COM \n"), "mia@example.com")
+        XCTAssertNil(EmailSignInInput.normalizedEmail("mia@example"))
+        XCTAssertNil(EmailSignInInput.normalizedEmail("mia example@x.com"))
+        XCTAssertNil(EmailSignInInput.normalizedEmail("@example.com"))
+        XCTAssertNil(EmailSignInInput.normalizedEmail("mia@@example.com"))
+        XCTAssertNil(EmailSignInInput.normalizedEmail("mia@.com"))
+        XCTAssertEqual(EmailSignInInput.normalizedCode(" 12 34-56 "), "123456")
+        XCTAssertEqual(EmailSignInInput.normalizedCode("١٢٣4567890123"), "4567890123")
+    }
+
+    func testGoogleSignInConfigurationDerivesTheReversedRedirect() throws {
+        let configuration = try XCTUnwrap(GoogleSignInConfiguration.validated(clientID: " 123-abc.apps.googleusercontent.com "))
+        XCTAssertEqual(configuration.callbackScheme, "com.googleusercontent.apps.123-abc")
+        XCTAssertEqual(configuration.redirectURI, "com.googleusercontent.apps.123-abc:/oauth2redirect")
+        XCTAssertNil(GoogleSignInConfiguration.validated(clientID: ""))
+        XCTAssertNil(GoogleSignInConfiguration.validated(clientID: ".apps.googleusercontent.com"))
+        XCTAssertNil(GoogleSignInConfiguration.validated(clientID: "a/b.apps.googleusercontent.com"))
+
+        let url = configuration.authorizationURL(state: "s", codeChallenge: "c", hashedNonce: "n")
+        let items = Dictionary(uniqueKeysWithValues: (URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []).map { ($0.name, $0.value ?? "") })
+        XCTAssertEqual(items["client_id"], configuration.clientID)
+        XCTAssertEqual(items["code_challenge_method"], "S256")
+        XCTAssertEqual(items["nonce"], "n")
+        XCTAssertEqual(items["scope"], "openid email profile")
+    }
+
+    func testGoogleSignInProtocolPKCEAndCallbackParsing() throws {
+        // RFC 7636 appendix B.
+        XCTAssertEqual(
+            GoogleSignInProtocol.codeChallenge(for: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"),
+            "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+        )
+        let callback = try XCTUnwrap(URL(string: "com.googleusercontent.apps.1:/oauth2redirect?state=abc&code=4/xyz"))
+        XCTAssertEqual(try GoogleSignInProtocol.authorizationCode(from: callback, expectedState: "abc"), "4/xyz")
+        XCTAssertThrowsError(try GoogleSignInProtocol.authorizationCode(from: callback, expectedState: "other"))
+        let denied = try XCTUnwrap(URL(string: "com.googleusercontent.apps.1:/oauth2redirect?state=abc&error=access_denied"))
+        XCTAssertNil(try GoogleSignInProtocol.authorizationCode(from: denied, expectedState: "abc"))
+        let failed = try XCTUnwrap(URL(string: "com.googleusercontent.apps.1:/oauth2redirect?state=abc&error=invalid_client"))
+        XCTAssertThrowsError(try GoogleSignInProtocol.authorizationCode(from: failed, expectedState: "abc")) {
+            XCTAssertEqual($0 as? GoogleSignInError, .denied("invalid_client"))
+        }
+    }
+
+    func testGoogleIdentityTokenNameIsOnlyAProfileDefault() {
+        func token(_ claims: String) -> String {
+            "e30." + Data(claims.utf8).base64URLEncodedString() + ".sig"
+        }
+        XCTAssertEqual(GoogleSignInProtocol.displayName(fromIdentityToken: token(#"{"name":" Mia Chen ","email":"m@x.com"}"#)), "Mia Chen")
+        XCTAssertNil(GoogleSignInProtocol.displayName(fromIdentityToken: token(#"{"email":"m@x.com"}"#)))
+        XCTAssertNil(GoogleSignInProtocol.displayName(fromIdentityToken: "not-a-jwt"))
+        XCTAssertNil(SignInCredential.emailCode(email: "m@x.com", code: "123456").displayName)
+        XCTAssertEqual(
+            SignInCredential.google(GoogleSignInPayload(identityToken: "t", accessToken: nil, nonce: "n", displayName: "Mia")).displayName,
+            "Mia"
+        )
+    }
+
     func testCountryCodeBuildsFlag() {
         XCTAssertEqual(makeFriend(countryCode: "US", updatedAt: now).countryFlag, "🇺🇸")
         XCTAssertEqual(makeFriend(countryCode: nil, updatedAt: now).countryFlag, "")
@@ -2930,7 +2988,8 @@ private actor SlowTestRepository: AppRepository {
     func respondedRequestIDs() -> [UUID] { responses }
     func snapshotLoadCount() -> Int { loadCount }
     func signInDemo() async throws -> AppSnapshot { snapshot }
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { snapshot }
+    func sendEmailSignInCode(to email: String) async throws {}
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot { snapshot }
     func signOut() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }
     private var deletionError: RepositoryError?
     private var deletionDelay: Duration = .zero
@@ -3063,7 +3122,8 @@ private final class InMemoryTokenStore: RemoteAuthenticationProviding, @unchecke
         return token
     }
 
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> String {
+    func sendEmailCode(to email: String) async throws {}
+    func signIn(_ credential: SignInCredential) async throws -> String {
         guard let token = load() else { throw RepositoryError.notAuthenticated }
         return token
     }

@@ -287,13 +287,17 @@ actor LocalDemoRepository: AppRepository {
         return commit()
     }
 
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot {
+    func sendEmailSignInCode(to email: String) async throws {}
+
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot {
         if snapshot.friends.isEmpty {
             snapshot = DemoData.initialSnapshot()
         }
         snapshot.isAuthenticated = true
-        snapshot.currentUser.appleUserID = payload.appleUserID
-        if let displayName = payload.displayName, !displayName.isEmpty {
+        if case .apple(let payload) = credential {
+            snapshot.currentUser.appleUserID = payload.appleUserID
+        }
+        if let displayName = credential.displayName, !displayName.isEmpty {
             snapshot.currentUser.displayName = displayName
         }
         return commit()

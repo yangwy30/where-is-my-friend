@@ -719,7 +719,8 @@ private actor CoreAuditGatedRepository: AppRepository {
     }
     func signOut() async throws -> AppSnapshot { generation += 1; snapshot = DemoData.signedOutSnapshot(); return snapshot }
     func signInDemo() async throws -> AppSnapshot { snapshot }
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { snapshot }
+    func sendEmailSignInCode(to email: String) async throws {}
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot { snapshot }
     func deleteAccount() async throws -> AppSnapshot { try await signOut() }
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot { snapshot }
     func sendFriendRequest(username: String) async throws -> AppSnapshot {
@@ -758,7 +759,8 @@ private actor CoreAuditAuthentication: RemoteAuthenticationProviding {
         guard !signedOut else { throw RepositoryError.sessionExpired }
         return "test-token"
     }
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> String { "test-token" }
+    func sendEmailCode(to email: String) async throws {}
+    func signIn(_ credential: SignInCredential) async throws -> String { "test-token" }
     func refreshAccessToken() async throws -> String { throw RepositoryError.sessionExpired }
     func signOut() async throws { signedOut = true }
 }

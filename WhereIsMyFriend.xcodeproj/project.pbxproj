@@ -49,6 +49,8 @@
 		400000000000000000000034 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000039 /* AppStore.swift */; };
 		400000000000000000000035 /* PlatformServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000040 /* PlatformServices.swift */; };
 		400000000000000000000036 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000041 /* AuthenticationView.swift */; };
+		400000000000000000000090 /* EmailCodeSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000090 /* EmailCodeSignInView.swift */; };
+		400000000000000000000091 /* GoogleSignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000091 /* GoogleSignIn.swift */; };
 		400000000000000000000037 /* NotificationHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000042 /* NotificationHistoryView.swift */; };
 		400000000000000000000038 /* DemoLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000043 /* DemoLabView.swift */; };
 		400000000000000000000039 /* AppDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000035 /* AppDomain.swift */; };
@@ -162,6 +164,8 @@
 		300000000000000000000039 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		300000000000000000000040 /* PlatformServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformServices.swift; sourceTree = "<group>"; };
 		300000000000000000000041 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		300000000000000000000090 /* EmailCodeSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailCodeSignInView.swift; sourceTree = "<group>"; };
+		300000000000000000000091 /* GoogleSignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleSignIn.swift; sourceTree = "<group>"; };
 		300000000000000000000042 /* NotificationHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHistoryView.swift; sourceTree = "<group>"; };
 		300000000000000000000043 /* DemoLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLabView.swift; sourceTree = "<group>"; };
 		300000000000000000000044 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -304,7 +308,7 @@
 		200000000000000000000018 /* WhereIsMyFriendTests */ = {isa = PBXGroup; children = (300000000000000000000032 /* FriendPresenceTests.swift */, 300000000000000000000054 /* TripFlightLookupTests.swift */, A01010110000000000000001 /* CoreAuditRegressionTests.swift */, A01010110000000000000002 /* TravelAuditRegressionTests.swift */, A01010110000000000000003 /* WidgetAuditRegressionTests.swift */, A01010110000000000000004 /* SameCityHeaderRegressionTests.swift */, ); path = WhereIsMyFriendTests; sourceTree = "<group>"; };
 		200000000000000000000019 /* WhereIsMyFriendUITests */ = {isa = PBXGroup; children = (300000000000000000000033 /* PrototypeUITests.swift */, ); path = WhereIsMyFriendUITests; sourceTree = "<group>"; };
 		200000000000000000000020 /* docs */ = {isa = PBXGroup; children = (300000000000000000000007 /* DESIGN_SPEC.md */, ); path = docs; sourceTree = "<group>"; };
-		200000000000000000000021 /* Auth */ = {isa = PBXGroup; children = (300000000000000000000041 /* AuthenticationView.swift */, ); path = Auth; sourceTree = "<group>"; };
+		200000000000000000000021 /* Auth */ = {isa = PBXGroup; children = (300000000000000000000041 /* AuthenticationView.swift */, 300000000000000000000090 /* EmailCodeSignInView.swift */, 300000000000000000000091 /* GoogleSignIn.swift */, ); path = Auth; sourceTree = "<group>"; };
 		200000000000000000000022 /* Events */ = {isa = PBXGroup; children = (300000000000000000000042 /* NotificationHistoryView.swift */, ); path = Events; sourceTree = "<group>"; };
 		200000000000000000000023 /* Core */ = {isa = PBXGroup; children = (300000000000000000000036 /* AppRepository.swift */, 300000000000000000000037 /* LocalDemoRepository.swift */, 300000000000000000000038 /* RemoteAppRepository.swift */, 300000000000000000000039 /* AppStore.swift */, 300000000000000000000040 /* PlatformServices.swift */, 300000000000000000000046 /* ClientReliability.swift */, ); path = Core; sourceTree = "<group>"; };
 /* End PBXGroup section */
@@ -431,6 +435,8 @@
 				A71600000000000000000001 /* TravelDateRangePicker.swift in Sources */,
 				400000000000000000000035 /* PlatformServices.swift in Sources */,
 				400000000000000000000036 /* AuthenticationView.swift in Sources */,
+				400000000000000000000090 /* EmailCodeSignInView.swift in Sources */,
+				400000000000000000000091 /* GoogleSignIn.swift in Sources */,
 				400000000000000000000037 /* NotificationHistoryView.swift in Sources */,
 				400000000000000000000038 /* DemoLabView.swift in Sources */,
 				400000000000000000000042 /* ClientReliability.swift in Sources */,
@@ -575,6 +581,7 @@
 			WIF_API_BASE_URL = "https://cdhpaujazbuppbxyhjxq.supabase.co/functions/v1/api";
 			WIF_APS_ENVIRONMENT = production;
 			WIF_DISPLAY_NAME = "Across Us";
+			WIF_GOOGLE_IOS_CLIENT_ID = "891897795730-7v247tvol6u60hi1bfaarr85cf91gg74.apps.googleusercontent.com";
 			WIF_INVITE_BASE_URL = "https://acrossus.app";
 			WIF_INVITE_HOST = acrossus.app;
 			WIF_PRIVACY_POLICY_URL = "https://acrossus.app/privacy/";

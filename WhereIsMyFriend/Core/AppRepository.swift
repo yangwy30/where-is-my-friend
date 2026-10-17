@@ -26,6 +26,29 @@ struct AppleSignInPayload: Codable, Sendable {
     let displayName: String?
 }
 
+struct GoogleSignInPayload: Codable, Sendable {
+    let identityToken: String
+    let accessToken: String?
+    let nonce: String
+    let displayName: String?
+}
+
+/// A verified sign-in proof. Every case is exchanged for the same Supabase Auth
+/// session, so the app profile and bootstrap path do not depend on the provider.
+enum SignInCredential: Sendable {
+    case apple(AppleSignInPayload)
+    case google(GoogleSignInPayload)
+    case emailCode(email: String, code: String)
+
+    var displayName: String? {
+        switch self {
+        case .apple(let payload): payload.displayName
+        case .google(let payload): payload.displayName
+        case .emailCode: nil
+        }
+    }
+}
+
 enum RepositoryError: LocalizedError, Equatable {
     case notAuthenticated
     case userNotFound
@@ -89,7 +112,8 @@ protocol AppRepository: Sendable {
 
     func loadSnapshot() async throws -> AppSnapshot
     func signInDemo() async throws -> AppSnapshot
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot
+    func sendEmailSignInCode(to email: String) async throws
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot
     func signOut() async throws -> AppSnapshot
     func deleteAccount() async throws -> AppSnapshot
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot
@@ -183,7 +207,8 @@ actor UnavailableAppRepository: AppRepository {
     private func unavailable() throws -> Never { throw RepositoryError.serverNotConfigured }
     func loadSnapshot() async throws -> AppSnapshot { try unavailable() }
     func signInDemo() async throws -> AppSnapshot { try unavailable() }
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { try unavailable() }
+    func sendEmailSignInCode(to email: String) async throws { try unavailable() }
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot { try unavailable() }
     func signOut() async throws -> AppSnapshot { try unavailable() }
     func deleteAccount() async throws -> AppSnapshot { try unavailable() }
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot { try unavailable() }

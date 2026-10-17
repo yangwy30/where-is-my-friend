@@ -79,6 +79,8 @@
 	<string>$(WIF_ALLOWS_LOCAL_DEMO)</string>
 	<key>WIFAPSEnvironment</key>
 	<string>$(WIF_APS_ENVIRONMENT)</string>
+	<key>WIFGoogleClientID</key>
+	<string>$(WIF_GOOGLE_IOS_CLIENT_ID)</string>
 	<key>WIFInviteBaseURL</key>
 	<string>$(WIF_INVITE_BASE_URL)</string>
 	<key>WIFPrivacyPolicyURL</key>

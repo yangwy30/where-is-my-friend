@@ -215,6 +215,31 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertGreaterThanOrEqual(signIn.frame.minY, 0)
     }
 
+    func testEmailCodeSignInFlow() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testSignedOut", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        let emailOption = app.buttons["emailSignInButton"]
+        XCTAssertTrue(emailOption.waitForExistence(timeout: 8))
+        emailOption.tap()
+
+        let address = app.textFields["emailSignInAddressField"]
+        XCTAssertTrue(address.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["emailSignInSendButton"].isEnabled)
+        address.typeText("Mia@Example.com")
+        capture("AUTH-email-address-zh")
+        app.buttons["emailSignInSendButton"].tap()
+
+        let code = app.textFields["emailSignInCodeField"]
+        XCTAssertTrue(code.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["验证码已发送至 mia@example.com。"].exists)
+        capture("AUTH-email-code-zh")
+        code.typeText("123456")
+
+        XCTAssertTrue(app.buttons["appleSignInButton"].waitForNonExistence(timeout: 8))
+    }
+
     func testAuditSharingControlsComeFirstAtLargestText() {
         continueAfterFailure = false
         let app = waveTwoApp(language: "zh-Hans", locale: "zh_CN", extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])

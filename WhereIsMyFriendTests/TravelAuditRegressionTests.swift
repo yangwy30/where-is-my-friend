@@ -219,7 +219,8 @@ private actor TravelAuditRepository: AppRepository {
 
     func loadSnapshot() async throws -> AppSnapshot { DemoData.initialSnapshot() }
     func signInDemo() async throws -> AppSnapshot { try await loadSnapshot() }
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot { try await loadSnapshot() }
+    func sendEmailSignInCode(to email: String) async throws {}
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot { try await loadSnapshot() }
     func signOut() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }
     func deleteAccount() async throws -> AppSnapshot { DemoData.signedOutSnapshot() }
     func updateProfile(_ update: ProfileUpdate) async throws -> AppSnapshot { try await loadSnapshot() }
