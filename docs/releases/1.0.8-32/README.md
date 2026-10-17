@@ -89,3 +89,9 @@ Build 35 was removed from review (Cancel Submission). Build 36 replaced it on th
 A server-side workaround sends whole-second timestamps, so 1.0.6 on iOS 18 can sign in before 1.0.8 is released. It's on branch `fix/ios18-server-dates` (6334606, pushed, not merged), and all 149 server tests pass.
 
 The user approved the deploy, and the `api` function went to production at 00:46 UTC on October 17 (17:46 PDT), as version 30. Before the deploy, the live functions were identical to `main`. After it, the downloaded source matched the branch file for file, and `verify_jwt` is still on. Merge the branch into `main` so the repo matches production.
+
+## Released — October 17, 2026
+
+App Review approved 1.0.8 (36), and it's Ready for Distribution (automatic release). `ui/1.0.8-combined` and `fix/ios18-server-dates` were merged into `main` (one `.gitignore` conflict, both entries kept). On the merged tree, all 149 server tests and the unit tests pass. The merge doesn't change `site/` or `functions/`, so the website redeploy on push serves the same pages.
+
+Remove the server's whole-second workaround only once no supported build decodes dates with `.iso8601`, which means once nobody runs 1.0.6 or 1.0.7 on iOS 18.
