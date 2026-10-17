@@ -86,4 +86,6 @@ Build 36 comes from tag `v1.0.8-36` (2551959), signed the same way as build 35, 
 
 Build 35 was removed from review (Cancel Submission). Build 36 replaced it on the same 1.0.8 version, with the same screenshots, What's New and review notes, and was submitted at 17:37 PDT. Status: **Waiting for Review**.
 
-A server-side workaround that sends whole-second timestamps, so 1.0.6 on iOS 18 can sign in before 1.0.8 is released, is on branch `fix/ios18-server-dates` (6334606). It isn't deployed. Deployed functions were checked identical to `main` first, so deploying would change only this.
+A server-side workaround sends whole-second timestamps, so 1.0.6 on iOS 18 can sign in before 1.0.8 is released. It's on branch `fix/ios18-server-dates` (6334606, pushed, not merged), and all 149 server tests pass.
+
+The user approved the deploy, and the `api` function went to production at 00:46 UTC on October 17 (17:46 PDT), as version 30. Before the deploy, the live functions were identical to `main`. After it, the downloaded source matched the branch file for file, and `verify_jwt` is still on. Merge the branch into `main` so the repo matches production.
