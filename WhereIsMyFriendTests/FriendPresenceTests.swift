@@ -3923,3 +3923,35 @@ final class ClientDiagnosticTests: XCTestCase {
         await fulfillment(of: [reported], timeout: 0.2)
     }
 }
+
+final class ServerDateDecodingTests: XCTestCase {
+    func testServerDatesParseWithAndWithoutFractionalSeconds() {
+        let expected = Date(timeIntervalSince1970: 1_792_193_669)
+        for value in ["2026-10-16T23:34:29+00:00", "2026-10-16T23:34:29Z"] {
+            XCTAssertEqual(ServerDate.parse(value), expected, value)
+        }
+        for value in ["2026-10-16T23:34:29.852301+00:00", "2026-10-16T23:34:29.85230+00:00",
+                      "2026-10-16T23:34:29.85+00:00", "2026-10-16T23:34:29.8Z"] {
+            let parsed = ServerDate.parse(value)
+            XCTAssertNotNil(parsed, value)
+            XCTAssertEqual(parsed?.timeIntervalSince1970 ?? 0, expected.timeIntervalSince1970, accuracy: 1, value)
+        }
+        XCTAssertNil(ServerDate.parse("2026-10-16 23:34:29"))
+    }
+
+    func testSnapshotWithPostgresMicrosecondsDecodes() throws {
+        // The bootstrap response that iOS 18 couldn't read: every timestamp carries microseconds.
+        let json = """
+        {"schemaVersion":2,"isAuthenticated":true,
+         "currentUser":{"id":"684bffbb-72da-4276-83a2-ec236972787f","displayName":"Test","username":"friend_test","appleUserID":null,"avatarPalette":3},
+         "currentPresence":{"city":null,"countryCode":null,"administrativeArea":null,"updatedAt":null,"source":"manual"},
+         "sharingPreferences":{"citySharingEnabled":true,"backgroundUpdatesEnabled":false,"notificationPreviewEnabled":true},
+         "friends":[],"friendRequests":[],"friendPreferences":[],"colocationEvents":[],"colocationSessions":[],"blockedPeople":[],
+         "lastSyncedAt":"2026-10-16T23:34:29.852301+00:00","syncState":"synced"}
+        """
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = ServerDate.decodingStrategy
+        let snapshot = try decoder.decode(AppSnapshot.self, from: Data(json.utf8))
+        XCTAssertEqual(snapshot.lastSyncedAt?.timeIntervalSince1970 ?? 0, 1_792_193_669.852, accuracy: 0.01)
+    }
+}

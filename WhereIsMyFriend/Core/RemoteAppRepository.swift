@@ -908,6 +908,36 @@ private final class DiagnosticSessionDelegate: NSObject, URLSessionTaskDelegate,
     }
 }
 
+/// Server timestamps come from Postgres with microseconds ("2026-10-16T23:34:29.852301+00:00").
+/// `.iso8601` accepts them on iOS 26 and later, but iOS 18 rejects fractional seconds, so every
+/// response failed to decode there and sign-in signed itself out. Accept both forms explicitly.
+enum ServerDate {
+    // ISO8601DateFormatter is thread-safe; these are configured once and never mutated.
+    nonisolated(unsafe) private static let fractional: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+    nonisolated(unsafe) private static let whole: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+
+    static func parse(_ value: String) -> Date? {
+        fractional.date(from: value) ?? whole.date(from: value)
+    }
+
+    static let decodingStrategy = JSONDecoder.DateDecodingStrategy.custom { decoder in
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        guard let date = parse(value) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Expected an ISO 8601 date, got \(value)")
+        }
+        return date
+    }
+}
+
 actor RESTClient {
     private let baseURL: URL
     private let publishableKey: String
@@ -935,7 +965,7 @@ actor RESTClient {
         encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = ServerDate.decodingStrategy
     }
 
     func request<Response: Decodable, Body: Encodable>(
