@@ -386,13 +386,17 @@ struct ProfileView: View {
     }
 }
 
-/// Everything Across Us needs from iOS, in one place. It stays until every item is on,
-/// so a dismissed home reminder never leaves someone without a way back.
+/// Everything Across Us needs from iOS, in one place. It returns each day until every
+/// item is on, so a dismissed home reminder never leaves someone without a way back.
 private struct SetupChecklistCard: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var locationService: CityLocationService
     @ObservedObject var notificationService: LocalNotificationService
     @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
+    /// Re-read on appear and on return to the app, so a closed card comes back the next day.
+    @State private var isHiddenToday = false
+    private let dismissal = SetupChecklistDismissal()
 
     private struct Item: Identifiable {
         let id: String
@@ -405,15 +409,25 @@ private struct SetupChecklistCard: View {
     }
 
     var body: some View {
-        if store.snapshot.isAuthenticated, items.contains(where: { !$0.isDone }) {
+        Group {
+        if store.snapshot.isAuthenticated, !isHiddenToday, items.contains(where: { !$0.isDone }) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline) {
                     Text("Finish setting up").font(.headline).foregroundStyle(WIFTheme.primaryText)
                     Spacer()
                     Text("\(items.filter(\.isDone).count) of \(items.count) on")
                         .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                    Button(action: hideForToday) {
+                        Image(systemName: "xmark")
+                            .font(.footnote.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                            .frame(width: 44, height: 44).contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.trailing, -12)
+                    .accessibilityLabel("Hide until tomorrow")
+                    .accessibilityIdentifier("setupChecklistClose")
                 }
-                .padding(.bottom, 6)
+                .padding(.top, -10)
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 52) }
                     row(item)
@@ -425,7 +439,20 @@ private struct SetupChecklistCard: View {
             .padding(.bottom, 36)
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("setupChecklist")
+            .transition(.opacity)
         }
+        }
+        .onAppear(perform: refreshVisibility)
+        .onChange(of: scenePhase) { _, phase in if phase == .active { refreshVisibility() } }
+    }
+
+    private func refreshVisibility() {
+        isHiddenToday = dismissal.isHidden(for: store.snapshot.currentUser.id)
+    }
+
+    private func hideForToday() {
+        dismissal.dismiss(for: store.snapshot.currentUser.id)
+        withAnimation(.easeOut(duration: 0.2)) { isHiddenToday = true }
     }
 
     private func row(_ item: Item) -> some View {

@@ -3955,3 +3955,23 @@ final class ServerDateDecodingTests: XCTestCase {
         XCTAssertEqual(snapshot.lastSyncedAt?.timeIntervalSince1970 ?? 0, 1_792_193_669.852, accuracy: 0.01)
     }
 }
+
+final class SetupChecklistDismissalTests: XCTestCase {
+    func testClosingHidesTheChecklistForTheRestOfTheDayOnly() throws {
+        let suite = "setup-checklist-tests-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "America/Los_Angeles"))
+        let dismissal = SetupChecklistDismissal(defaults: defaults, calendar: calendar)
+        let owner = UUID(), other = UUID()
+        let morning = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 10, day: 17, hour: 9)))
+
+        XCTAssertFalse(dismissal.isHidden(for: owner, at: morning))
+        dismissal.dismiss(for: owner, at: morning)
+        XCTAssertTrue(dismissal.isHidden(for: owner, at: morning.addingTimeInterval(14 * 3600)), "Still hidden at 11 PM")
+        XCTAssertFalse(dismissal.isHidden(for: owner, at: morning.addingTimeInterval(15 * 3600 + 60)), "Back after midnight")
+        XCTAssertFalse(dismissal.isHidden(for: other, at: morning), "Another account on this phone still sees it")
+    }
+}
+

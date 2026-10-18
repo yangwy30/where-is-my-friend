@@ -64,6 +64,29 @@ struct LocationPermissionReminderState: Codable, Equatable {
     }
 }
 
+/// The You tab's "Finish setting up" card. Closing it hides it for the rest of that
+/// calendar day; it comes back the next day until every item is on.
+struct SetupChecklistDismissal {
+    private let defaults: UserDefaults
+    private let calendar: Calendar
+
+    init(defaults: UserDefaults = .standard, calendar: Calendar = .current) {
+        self.defaults = defaults
+        self.calendar = calendar
+    }
+
+    func isHidden(for ownerID: UUID, at now: Date = Date()) -> Bool {
+        guard let dismissedAt = defaults.object(forKey: key(for: ownerID)) as? Date else { return false }
+        return calendar.isDate(dismissedAt, inSameDayAs: now)
+    }
+
+    func dismiss(for ownerID: UUID, at now: Date = Date()) {
+        defaults.set(now, forKey: key(for: ownerID))
+    }
+
+    private func key(for ownerID: UUID) -> String { "setup-checklist.dismissed.v1.\(ownerID.uuidString)" }
+}
+
 enum LocationPermissionReminderPolicy {
     enum Action: Equatable { case requestPermission, openSettings, none }
 

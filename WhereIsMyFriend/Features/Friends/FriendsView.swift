@@ -248,9 +248,11 @@ struct FriendsView: View {
 
     private var locationReminderCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(locationReminderTitle)
+            Text("Keep your city up to date")
                 .font(.headline).foregroundStyle(WIFTheme.primaryText)
-            Text(locationReminderDetail)
+            Text(locationService.authorizationStatus == .authorizedWhenInUse
+                 ? "Choose Always to spot same-city friends while the app is closed."
+                 : "Turn on location to spot friends in the same city.")
                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             if dynamicTypeSize.isAccessibilitySize {
@@ -265,24 +267,6 @@ struct FriendsView: View {
                            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("locationReminderCard")
-    }
-
-    /// A friend in your city right now is the clearest reason to choose Always.
-    /// The capsule above already names them, so the card only says what Always adds.
-    private var locationReminderTitle: String {
-        if locationService.authorizationStatus == .authorizedWhenInUse, !sameCityFriends.isEmpty {
-            return String(localized: "Next time, hear it right away")
-        }
-        return String(localized: "Keep your city up to date")
-    }
-
-    private var locationReminderDetail: String {
-        if locationService.authorizationStatus == .authorizedWhenInUse {
-            return sameCityFriends.isEmpty
-                ? String(localized: "Choose Always to spot same-city friends while the app is closed.")
-                : String(localized: "Choose Always and Across Us tells you the moment a friend lands in your city, even with the app closed.")
-        }
-        return String(localized: "Turn on location to spot friends in the same city.")
     }
 
     @ViewBuilder
