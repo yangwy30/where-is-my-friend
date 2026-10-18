@@ -92,7 +92,7 @@ struct FriendsView: View {
 
                 if !friends.isEmpty {
                     worldSectionHeader
-                        .padding(.top, 22)
+                        .padding(.top, 16)
                         .padding(.bottom, 9)
                         .padding(.leading, 3)
                 }
@@ -248,11 +248,9 @@ struct FriendsView: View {
 
     private var locationReminderCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Keep your city up to date")
+            Text(locationReminderTitle)
                 .font(.headline).foregroundStyle(WIFTheme.primaryText)
-            Text(locationService.authorizationStatus == .authorizedWhenInUse
-                 ? "Choose Always to spot same-city friends while the app is closed."
-                 : "Turn on location to spot friends in the same city.")
+            Text(locationReminderDetail)
                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
             if dynamicTypeSize.isAccessibilitySize {
@@ -267,6 +265,24 @@ struct FriendsView: View {
                            in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("locationReminderCard")
+    }
+
+    /// A friend in your city right now is the clearest reason to choose Always.
+    /// The capsule above already names them, so the card only says what Always adds.
+    private var locationReminderTitle: String {
+        if locationService.authorizationStatus == .authorizedWhenInUse, !sameCityFriends.isEmpty {
+            return String(localized: "Next time, hear it right away")
+        }
+        return String(localized: "Keep your city up to date")
+    }
+
+    private var locationReminderDetail: String {
+        if locationService.authorizationStatus == .authorizedWhenInUse {
+            return sameCityFriends.isEmpty
+                ? String(localized: "Choose Always to spot same-city friends while the app is closed.")
+                : String(localized: "Choose Always and Across Us tells you the moment a friend lands in your city, even with the app closed.")
+        }
+        return String(localized: "Turn on location to spot friends in the same city.")
     }
 
     @ViewBuilder
@@ -464,8 +480,10 @@ struct FriendsView: View {
         .overlay(Capsule().strokeBorder(WIFTheme.border, lineWidth: 0.5))
         // The capsule stays compact. Its tap target reaches 44 pt by growing down only:
         // growing upward put it close enough to the city line that taps there opened a friend.
+        // The extra tap area overlaps the gap below instead of adding to it.
         .padding(.bottom, 12)
         .contentShape(Rectangle())
+        .padding(.bottom, -12)
     }
 
     private var cityStatus: some View {

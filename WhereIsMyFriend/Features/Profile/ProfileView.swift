@@ -29,6 +29,8 @@ struct ProfileView: View {
                 profileHeader
                     .padding(.bottom, 42)
 
+                SetupChecklistCard(notificationService: store.notificationService)
+
                 profileSection("Sharing & City") {
                     Button(action: onOpenCitySharing) {
                         profileMenuRow(
@@ -381,6 +383,129 @@ struct ProfileView: View {
         Divider()
             .overlay(WIFTheme.border)
             .padding(.vertical, 36)
+    }
+}
+
+/// Everything Across Us needs from iOS, in one place. It stays until every item is on,
+/// so a dismissed home reminder never leaves someone without a way back.
+private struct SetupChecklistCard: View {
+    @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var locationService: CityLocationService
+    @ObservedObject var notificationService: LocalNotificationService
+    @Environment(\.openURL) private var openURL
+
+    private struct Item: Identifiable {
+        let id: String
+        let symbol: String
+        let title: LocalizedStringKey
+        let detail: LocalizedStringKey
+        let isDone: Bool
+        let action: LocalizedStringKey
+        let perform: () -> Void
+    }
+
+    var body: some View {
+        if store.snapshot.isAuthenticated, items.contains(where: { !$0.isDone }) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Finish setting up").font(.headline).foregroundStyle(WIFTheme.primaryText)
+                    Spacer()
+                    Text("\(items.filter(\.isDone).count) of \(items.count) on")
+                        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                }
+                .padding(.bottom, 6)
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 52) }
+                    row(item)
+                }
+            }
+            .padding(.horizontal, 18).padding(.top, 16).padding(.bottom, 8)
+            .wifContentSurface(tint: WIFTheme.fresh.opacity(0.05),
+                               in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
+            .padding(.bottom, 36)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("setupChecklist")
+        }
+    }
+
+    private func row(_ item: Item) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            Image(systemName: item.symbol)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(WIFTheme.fresh)
+                .frame(width: 38, height: 38)
+                .background(WIFTheme.fresh.opacity(0.10), in: Circle())
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.title).font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                Text(item.detail).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            if item.isDone {
+                Image(systemName: "checkmark")
+                    .font(.subheadline.weight(.bold)).foregroundStyle(WIFTheme.fresh)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityLabel("On")
+            } else {
+                Button(action: item.perform) {
+                    Text(item.action)
+                        .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.onFresh)
+                        .padding(.horizontal, 14).frame(minHeight: 34)
+                        .background(WIFTheme.fresh, in: Capsule())
+                        .frame(minHeight: 44).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("setupChecklist-\(item.id)")
+            }
+        }
+        .padding(.vertical, 10)
+    }
+
+    private var items: [Item] {
+        var items: [Item] = []
+        if store.snapshot.sharingPreferences.citySharingEnabled {
+            let status = locationService.authorizationStatus
+            items.append(Item(
+                id: "location", symbol: "location.fill", title: "Location: Always",
+                detail: "Know the moment a friend lands, even with the app closed.",
+                isDone: status == .authorizedAlways,
+                action: "Turn on",
+                perform: { turnOnLocation(status) }))
+        }
+        items.append(Item(
+            id: "notifications", symbol: "bell.fill", title: "Notifications",
+            detail: "Same-city moments and trip reminders.",
+            isDone: notificationService.allowsNotifications,
+            action: "Turn on",
+            perform: turnOnNotifications))
+        return items
+    }
+
+    private func turnOnLocation(_ status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            locationService.requestForegroundCity()
+        case .authorizedWhenInUse:
+            Task {
+                // Background updates must be on before iOS offers Always in Settings.
+                if !store.snapshot.sharingPreferences.backgroundUpdatesEnabled {
+                    var preferences = store.snapshot.sharingPreferences
+                    preferences.backgroundUpdatesEnabled = true
+                    guard await store.setSharingPreferences(preferences) else { return }
+                }
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+        default:
+            if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+        }
+    }
+
+    private func turnOnNotifications() {
+        if notificationService.authorizationStatus == .notDetermined {
+            Task { await store.requestNotificationAuthorization() }
+        } else if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+            openURL(url)
+        }
     }
 }
 
