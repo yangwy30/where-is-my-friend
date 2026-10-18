@@ -69,10 +69,18 @@ struct LocationPermissionReminderState: Codable, Equatable {
 struct SetupChecklistDismissal {
     private let defaults: UserDefaults
     private let calendar: Calendar
+    private let keyPrefix: String
 
     init(defaults: UserDefaults = .standard, calendar: Calendar = .current) {
         self.defaults = defaults
         self.calendar = calendar
+        var prefix = "setup-checklist.dismissed.v1"
+        #if DEBUG
+        if let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("-setupChecklistNamespace=") }) {
+            prefix = "setup-checklist.dismissed.test.\(argument.dropFirst("-setupChecklistNamespace=".count))"
+        }
+        #endif
+        keyPrefix = prefix
     }
 
     func isHidden(for ownerID: UUID, at now: Date = Date()) -> Bool {
@@ -84,7 +92,7 @@ struct SetupChecklistDismissal {
         defaults.set(now, forKey: key(for: ownerID))
     }
 
-    private func key(for ownerID: UUID) -> String { "setup-checklist.dismissed.v1.\(ownerID.uuidString)" }
+    private func key(for ownerID: UUID) -> String { "\(keyPrefix).\(ownerID.uuidString)" }
 }
 
 enum LocationPermissionReminderPolicy {

@@ -410,7 +410,7 @@ private struct SetupChecklistCard: View {
 
     var body: some View {
         Group {
-        if store.snapshot.isAuthenticated, !isHiddenToday, items.contains(where: { !$0.isDone }) {
+        if isLiveAccount, store.snapshot.isAuthenticated, !isHiddenToday, items.contains(where: { !$0.isDone }) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline) {
                     Text("Finish setting up").font(.headline).foregroundStyle(WIFTheme.primaryText)
@@ -444,6 +444,15 @@ private struct SetupChecklistCard: View {
         }
         .onAppear(perform: refreshVisibility)
         .onChange(of: scenePhase) { _, phase in if phase == .active { refreshVisibility() } }
+    }
+
+    /// Demo data has no real permissions to finish, like the home reminders.
+    private var isLiveAccount: Bool {
+        var isLive = store.repositoryMode == .remote
+        #if DEBUG
+        isLive = isLive || ProcessInfo.processInfo.arguments.contains("-testSetupChecklist")
+        #endif
+        return isLive
     }
 
     private func refreshVisibility() {
