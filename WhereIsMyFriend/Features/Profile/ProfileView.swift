@@ -175,14 +175,18 @@ struct ProfileView: View {
 
                 Spacer(minLength: 8)
 
-                Button("Edit") {
+                Button {
                     store.clearProfileSaveError()
                     profileDraft = ProfileEditorDraft(displayName: store.snapshot.currentUser.displayName,
                         username: store.snapshot.currentUser.username)
+                } label: {
+                    // The frame belongs on the label so the whole 44 pt area is tappable.
+                    Text("Edit")
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .font(.body)
                 .foregroundStyle(WIFTheme.fresh)
-                .frame(minWidth: 44, minHeight: 44)
                 .accessibilityLabel("Edit profile")
                 .accessibilityIdentifier("editProfileButton")
             }

@@ -76,6 +76,8 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
         XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
         capture("AUDIT-header-three-sheet-en")
+        // iOS 26 ignores taps while the sheet is still presenting.
+        Thread.sleep(forTimeInterval: 1)
         friend.tap()
         XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
     }
@@ -546,20 +548,31 @@ final class PrototypeUITests: XCTestCase {
         let field = app.textFields["friendUsernameField"]
         XCTAssertTrue(field.waitForExistence(timeout: 5)); field.tap(); field.typeText("leo\n")
         let withdrawal = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "withdrawFriendRequest-")).firstMatch
-        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        // Asking a missing element for hittability is an error on iOS 26, so wait for it first.
         XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        // A tap while the list is still decelerating only stops the scroll.
+        Thread.sleep(forTimeInterval: 1)
         let oldID = withdrawal.identifier
         withdrawal.tap()
         XCTAssertTrue(app.alerts["Withdraw invitation?"].waitForExistence(timeout: 3))
         capture("W2-F11-withdraw-confirmation")
         app.alerts.buttons["Keep invitation"].tap()
+        // iOS 26 ignores taps while an alert or sheet is still animating in or out.
+        XCTAssertTrue(app.alerts.firstMatch.waitForNonExistence(timeout: 3))
+        Thread.sleep(forTimeInterval: 1)
         XCTAssertTrue(app.buttons[oldID].exists)
-        app.buttons[oldID].tap(); app.alerts.buttons["Withdraw invitation"].tap()
+        app.buttons[oldID].tap()
+        let confirm = app.alerts.buttons["Withdraw invitation"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 3))
+        Thread.sleep(forTimeInterval: 1)
+        confirm.tap()
         XCTAssertTrue(app.buttons[oldID].waitForNonExistence(timeout: 5))
         for _ in 0..<7 where !field.isHittable { app.scrollViews["addFriendScreen"].swipeDown() }
+        Thread.sleep(forTimeInterval: 1)
         field.tap(); field.typeText("leo\n")
-        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
         XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
         XCTAssertNotEqual(withdrawal.identifier, oldID)
         capture("W2-F11-invite-again")
     }
@@ -2233,7 +2246,8 @@ final class PrototypeUITests: XCTestCase {
         username.replaceText(with: "new_username")
         app.buttons["saveProfileButton"].tap()
         XCTAssertTrue(app.staticTexts["New Name"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.staticTexts["@new_username"].exists)
+        // The redesigned header shows the handle and city on one line ("@name · City").
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "@new_username")).firstMatch.exists)
 
         let privacySettings = app.buttons["widgetPrivacySettingsLink"]
         if !privacySettings.isHittable {

@@ -3397,6 +3397,19 @@ final class UIReviewWaveTwoTests: XCTestCase {
         XCTAssertEqual(SharedAppearancePreference.appearance.colorScheme, .light)
     }
 
+    @MainActor
+    func testStoreWithdrawRemovesThePendingInvitation() async throws {
+        var initial = DemoData.initialSnapshot(); initial.isAuthenticated = true
+        let store = AppStore(repository: LocalDemoRepository(snapshot: initial, persistsChanges: false))
+        await store.refresh()
+        let sent = await store.sendFriendRequest(username: "leo")
+        XCTAssertTrue(sent)
+        let request = try XCTUnwrap(store.snapshot.outgoingRequests.first)
+        let withdrawn = await store.cancelFriendRequest(id: request.id)
+        XCTAssertTrue(withdrawn)
+        XCTAssertFalse(store.snapshot.outgoingRequests.contains { $0.id == request.id })
+    }
+
     func testDemoOutgoingInvitationCanBeWithdrawnAndSentAgain() async throws {
         var initial = DemoData.initialSnapshot(); initial.isAuthenticated = true
         let repository = LocalDemoRepository(snapshot: initial, persistsChanges: false)
