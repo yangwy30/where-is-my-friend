@@ -76,10 +76,16 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
         XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
         capture("AUDIT-header-three-sheet-en")
-        // iOS 26 ignores taps while the sheet is still presenting.
+        // On iOS 26 simulators a synthesized tap in this resizable, scrolling sheet
+        // often doesn't register, though a finger does (checked by hand on 2026-10-18).
+        // Press like a finger and retry rather than report a false failure.
         Thread.sleep(forTimeInterval: 1)
-        friend.tap()
-        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+        var opened = false
+        for _ in 0..<3 where !opened {
+            friend.press(forDuration: 0.2)
+            opened = app.navigationBars["Mia"].waitForExistence(timeout: 2)
+        }
+        XCTAssertTrue(opened)
     }
 
     func testAuditIntegratedHeaderInDarkMode() throws {
