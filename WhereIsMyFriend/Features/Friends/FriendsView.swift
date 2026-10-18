@@ -92,7 +92,7 @@ struct FriendsView: View {
 
                 if !friends.isEmpty {
                     worldSectionHeader
-                        .padding(.top, 22)
+                        .padding(.top, 16)
                         .padding(.bottom, 9)
                         .padding(.leading, 3)
                 }
@@ -464,8 +464,10 @@ struct FriendsView: View {
         .overlay(Capsule().strokeBorder(WIFTheme.border, lineWidth: 0.5))
         // The capsule stays compact. Its tap target reaches 44 pt by growing down only:
         // growing upward put it close enough to the city line that taps there opened a friend.
+        // The extra tap area overlaps the gap below instead of adding to it.
         .padding(.bottom, 12)
         .contentShape(Rectangle())
+        .padding(.bottom, -12)
     }
 
     private var cityStatus: some View {

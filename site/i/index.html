@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#A6E677">
+<meta name="robots" content="noindex">
+<title>You’re invited to Across Us</title>
+<meta name="description" content="See each other’s cities, find the dates you’ll overlap, and plan trips together.">
+<meta property="og:title" content="You’re invited to Across Us">
+<meta property="og:description" content="See each other’s cities, find the dates you’ll overlap, and plan trips together.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://acrossus.app/">
+<meta property="og:image" content="https://acrossus.app/assets/product/social-preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/app_icon.png" type="image/png">
+<link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body class="invite-page">
+<header class="wrap nav"><a class="wordmark" href="/" aria-label="Across Us home">across us</a></header>
+<main class="wrap invite">
+ <img class="invite-icon" src="/assets/app_icon.png" width="88" height="88" alt="">
+ <h1 class="display"><span data-invite-name>A friend</span> <span class="muted">invited you to Across&nbsp;Us.</span></h1>
+ <p class="invite-sub">See each other’s cities, find the dates you’ll overlap, and plan trips together.</p>
+ <div class="invite-actions">
+  <a class="pill pill-dark pill-lg" data-open-app href="whereismyfriend://">Open in Across Us</a>
+  <a class="pill pill-light pill-lg" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=invite_link_202610&amp;mt=8">Get the app</a>
+ </div>
+ <p class="invite-note">Free on the App Store for iPhone.</p>
+ <div class="emblems" aria-hidden="true"><img src="/assets/emblems/tokyo.png" alt=""><img src="/assets/emblems/paris.png" alt=""><img src="/assets/emblems/new_york.png" alt=""><img src="/assets/emblems/london.png" alt=""><img src="/assets/emblems/sydney.png" alt=""></div>
+</main>
+<script>
+(() => {
+ const match = location.pathname.match(/^\/(?:i|invite)\/([^/]+)\/?$/);
+ let name = match ? match[1] : new URLSearchParams(location.search).get('u') || '';
+ try { name = decodeURIComponent(name); } catch { name = ''; }
+ name = name.trim().replace(/^@+/, '').toLowerCase();
+ if (!/^[a-z0-9_]{3,20}$/.test(name)) return;
+ document.querySelector('[data-invite-name]').textContent = '@' + name;
+ document.querySelector('[data-open-app]').href = 'whereismyfriend://invite/' + name;
+ document.title = '@' + name + ' invited you to Across Us';
+})();
+</script>
+</body>
+</html>

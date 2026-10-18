@@ -1223,6 +1223,36 @@ final class PrototypeUITests: XCTestCase {
         app.resetAuthorizationStatus(for: .location)
     }
 
+    func testSetupChecklistClosesForTheRestOfTheDayInChinese() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testSetupChecklist",
+                               "-setupChecklistNamespace=\(UUID().uuidString)",
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 10))
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        let checklist = app.otherElements["setupChecklist"]
+        XCTAssertTrue(checklist.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["完成设置"].exists)
+        XCTAssertTrue(app.staticTexts["位置：始终"].exists)
+        XCTAssertTrue(app.buttons["setupChecklist-location"].exists)
+        capture("Setup checklist Chinese")
+        app.buttons["setupChecklistClose"].tap()
+        XCTAssertTrue(checklist.waitForNonExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["profileCitySharingButton"].exists)
+
+        // Relaunching the same day keeps it closed.
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 10))
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        XCTAssertTrue(app.buttons["profileCitySharingButton"].waitForExistence(timeout: 5))
+        XCTAssertFalse(checklist.exists)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
     private func locationReminderArguments() -> [String] {
         ["-skipOnboarding", "-resetDemoData", "-testLocationReminder",
          "-locationReminderNamespace=\(UUID().uuidString)",
