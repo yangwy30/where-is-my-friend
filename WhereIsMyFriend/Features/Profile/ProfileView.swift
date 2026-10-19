@@ -7,9 +7,9 @@ import WidgetKit
 struct ProfileView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var appearanceController: WIFAppearanceController
+    @EnvironmentObject private var travelPlans: TravelPlanLibrary
     let onReplayOnboarding: () -> Void
     let onOpenCitySharing: () -> Void
-    @State private var showsDeleteConfirmation = false
     @State private var showsSignOutConfirmation = false
     @State private var profileDraft: ProfileEditorDraft?
     @State private var showsAppearanceSettings = false
@@ -25,182 +25,115 @@ struct ProfileView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 profileHeader
-                    .padding(.bottom, 42)
 
                 SetupChecklistCard(notificationService: store.notificationService)
 
-                profileSection("Sharing & City") {
+                ProfileSettingsGroup {
                     Button(action: onOpenCitySharing) {
-                        profileMenuRow(
-                            "City sharing",
-                            subtitle: citySharingSubtitle,
-                            symbol: "location.fill",
-                            color: WIFTheme.fresh
-                        )
+                        ProfileSettingsRow("City sharing", symbol: "location.fill", value: citySharingValue)
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("profileCitySharingButton")
 
-                    menuDivider
+                    ProfileSettingsDivider()
+
+                    NavigationLink { TravelPlansView() } label: {
+                        ProfileSettingsRow("My travel plans", symbol: "calendar", value: countValue(upcomingPlanCount))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("travelPlansLink")
+
+                    ProfileSettingsDivider()
 
                     NavigationLink {
                         NotificationHistoryView()
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
-                        profileMenuRow(
-                            "Same-city moments",
-                            subtitle: sameCityMomentsSubtitle,
-                            symbol: "clock.arrow.circlepath",
-                            color: WIFTheme.fresh
-                        )
+                        ProfileSettingsRow("Same-city moments", symbol: "clock.arrow.circlepath",
+                                           value: countValue(store.snapshot.colocationEvents.count))
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("sameCityMomentsLink")
-
-                    menuDivider
-                    NavigationLink { TravelPlansView() } label: {
-                        profileMenuRow("My travel plans", subtitle: "Tell friends where you’ll be, and when.",
-                                       symbol: "calendar", color: WIFTheme.fresh)
-                    }.buttonStyle(.plain).accessibilityIdentifier("travelPlansLink")
                 }
+                .padding(.top, 28)
 
-                sectionDivider
-
-                profileSection("Preferences") {
+                ProfileSettingsGroup {
                     NavigationLink {
                         NotificationSettingsView(notificationService: store.notificationService)
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
-                        profileMenuRow(
-                            "Notifications",
-                            subtitle: "Same-city alerts and sound",
-                            symbol: "bell.fill",
-                            color: .orange
-                        )
+                        ProfileSettingsRow("Notifications", symbol: "bell")
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("notificationSettingsLink")
 
-                    menuDivider
+                    ProfileSettingsDivider()
 
                     NavigationLink {
                         WidgetPrivacyView()
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
-                        profileMenuRow(
-                            "Widget & Lock Screen",
-                            subtitle: "Choose what appears at a glance",
-                            symbol: "rectangle.3.group.fill",
-                            color: .indigo
-                        )
+                        ProfileSettingsRow("Widgets", symbol: "rectangle.3.group")
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("widgetPrivacySettingsLink")
 
-                    menuDivider
+                    ProfileSettingsDivider()
 
                     Button {
                         showsAppearanceSettings = true
                     } label: {
-                        profileMenuRow(
-                            "Appearance",
-                            subtitle: appearance.title,
-                            symbol: "circle.lefthalf.filled",
-                            color: WIFTheme.fresh
-                        )
+                        ProfileSettingsRow("Appearance", symbol: "circle.lefthalf.filled", value: Text(appearance.title))
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("appearanceSettingsButton")
                 }
+                .padding(.top, 20)
 
-                sectionDivider
-
-                profileSection("Privacy & Account") {
+                ProfileSettingsGroup {
                     NavigationLink {
-                        BlockedPeopleView()
+                        PrivacySettingsView()
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
-                        profileMenuRow(
-                            "Blocked people",
-                            subtitle: blockedPeopleSubtitle,
-                            symbol: "person.slash.fill",
-                            color: .secondary
-                        )
+                        ProfileSettingsRow("Privacy", symbol: "hand.raised")
                     }
                     .buttonStyle(.plain)
-
-                    menuDivider
-
-                    NavigationLink {
-                        PrivacyDataView()
-                            .toolbar(.visible, for: .navigationBar)
-                    } label: {
-                        profileMenuRow(
-                            "Privacy & data",
-                            subtitle: "What you share and save",
-                            symbol: "hand.raised.fill",
-                            color: .blue
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("privacyDataLink")
-
-                    menuDivider
-
-                    Button {
-                        showsSignOutConfirmation = true
-                    } label: {
-                        profileMenuRow(
-                            "Sign out",
-                            subtitle: nil,
-                            symbol: "rectangle.portrait.and.arrow.right",
-                            color: .secondary,
-                            showsDisclosure: false
-                        )
-                    }
-                    .buttonStyle(.plain)
-
-                    menuDivider
-
-                    Button(role: .destructive) {
-                        showsDeleteConfirmation = true
-                    } label: {
-                        profileMenuRow(
-                            store.isDeletingAccount ? "Deleting account…" : "Delete account",
-                            subtitle: nil,
-                            symbol: "trash.fill",
-                            color: WIFTheme.destructive,
-                            showsDisclosure: false,
-                            isDestructive: true
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(store.isDeletingAccount)
+                    .accessibilityIdentifier("privacySettingsLink")
                 }
+                .padding(.top, 20)
 
                 if store.repositoryMode == .localDemo {
-                    sectionDivider
-
-                    profileSection("Development") {
+                    ProfileSettingsGroup {
                         NavigationLink {
                             DeveloperToolsView(isShowingOnboarding: $isShowingOnboarding)
                                 .toolbar(.visible, for: .navigationBar)
                         } label: {
-                            profileMenuRow(
-                                "Developer Lab & Tools",
-                                subtitle: "Demo Lab, Emblem Gallery, Widget Studio",
-                                symbol: "testtube.2",
-                                color: .purple
-                            )
+                            ProfileSettingsRow("Developer Lab & Tools", symbol: "testtube.2")
                         }
                         .buttonStyle(.plain)
                     }
+                    .padding(.top, 20)
                 }
+
+                VStack(spacing: 6) {
+                    Button("Sign out") { showsSignOutConfirmation = true }
+                        .font(.body)
+                        .foregroundStyle(WIFTheme.fresh)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .accessibilityIdentifier("signOutButton")
+
+                    Text(versionText)
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 26)
             }
             .padding(.horizontal, WIFTheme.screenInset)
-            .padding(.top, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 40)
         }
         .scrollIndicators(.hidden)
         .wifAmbientBackground()
@@ -228,6 +161,193 @@ struct ProfileView: View {
         } message: {
             Text("Cached friend data will be removed from the App and Widget.")
         }
+    }
+
+    /// Your own city emblem stands in for an avatar: it's the same one friends see on their cards.
+    private var profileHeader: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top) {
+                let presence = store.snapshot.currentPresence
+                CityEmblemView(city: store.currentCity, countryCode: presence.countryCode,
+                               administrativeArea: presence.administrativeArea, size: 96)
+                    .padding(.leading, -6)
+                    .accessibilityHidden(true)
+
+                Spacer(minLength: 8)
+
+                Button("Edit") {
+                    store.clearProfileSaveError()
+                    profileDraft = ProfileEditorDraft(displayName: store.snapshot.currentUser.displayName,
+                        username: store.snapshot.currentUser.username)
+                }
+                .font(.body)
+                .foregroundStyle(WIFTheme.fresh)
+                .frame(minWidth: 44, minHeight: 44)
+                .accessibilityLabel("Edit profile")
+                .accessibilityIdentifier("editProfileButton")
+            }
+
+            Text(store.snapshot.currentUser.displayName)
+                .font(.system(.title, design: .rounded, weight: .bold))
+                .foregroundStyle(WIFTheme.primaryText)
+                .lineLimit(2)
+                .minimumScaleFactor(0.72)
+                .padding(.top, 8)
+
+            Text(profileSubtitle)
+                .font(.subheadline)
+                .foregroundStyle(WIFTheme.secondaryText)
+                .lineLimit(1)
+                .padding(.top, 4)
+        }
+    }
+
+    private var appearance: WIFAppearance {
+        appearanceController.appearance
+    }
+
+    private var profileSubtitle: String {
+        let handle = "@\(store.snapshot.currentUser.username)"
+        guard store.currentCity != nil else { return handle }
+        return "\(handle) · \(store.snapshot.currentPresence.cityDisplay)"
+    }
+
+    private var citySharingValue: Text? {
+        if !store.snapshot.sharingPreferences.citySharingEnabled { return Text("Paused") }
+        return store.currentCity.map { Text(verbatim: $0) }
+    }
+
+    private var upcomingPlanCount: Int {
+        travelPlans.plans.filter { !$0.isPast() }.count
+    }
+
+    /// Counts only earn a value when there is something to count; zero stays quiet.
+    private func countValue(_ count: Int) -> Text? {
+        count > 0 ? Text(count, format: .number) : nil
+    }
+
+    private var versionText: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "–"
+        let build = info?["CFBundleVersion"] as? String ?? "–"
+        return String(localized: "Version \(version) (\(build))")
+    }
+}
+
+/// One rounded card of settings rows, the grouping used across the You tab.
+private struct ProfileSettingsGroup<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(spacing: 0) { content }
+            .padding(.horizontal, 16)
+            .wifContentSurface(in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+}
+
+/// A settings row: a plain accent icon, a title, and the current state on the trailing edge.
+/// Rows describe themselves through their state, so there is no subtitle.
+private struct ProfileSettingsRow: View {
+    let title: LocalizedStringKey
+    let symbol: String
+    var value: Text?
+    var showsDisclosure = true
+
+    init(_ title: LocalizedStringKey, symbol: String, value: Text? = nil, showsDisclosure: Bool = true) {
+        self.title = title
+        self.symbol = symbol
+        self.value = value
+        self.showsDisclosure = showsDisclosure
+    }
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: symbol)
+                .font(.body.weight(.medium))
+                .foregroundStyle(WIFTheme.fresh)
+                .frame(width: 24)
+
+            Text(title)
+                .font(.body)
+                .foregroundStyle(WIFTheme.primaryText)
+
+            Spacer(minLength: 8)
+
+            if let value {
+                value
+                    .font(.body)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(1)
+            }
+
+            if showsDisclosure {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(WIFTheme.secondaryText.opacity(0.55))
+            }
+        }
+        .frame(minHeight: 52)
+        .contentShape(Rectangle())
+    }
+}
+
+private struct ProfileSettingsDivider: View {
+    var body: some View {
+        Divider()
+            .overlay(WIFTheme.border)
+            .padding(.leading, 38)
+    }
+}
+
+/// Blocking, the data summary and account deletion: rarely visited, so they sit one level down.
+private struct PrivacySettingsView: View {
+    @EnvironmentObject private var store: AppStore
+    @State private var showsDeleteConfirmation = false
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ProfileSettingsGroup {
+                    NavigationLink {
+                        BlockedPeopleView()
+                    } label: {
+                        ProfileSettingsRow("Blocked people", symbol: "person.slash", value: blockedValue)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("blockedPeopleLink")
+
+                    ProfileSettingsDivider()
+
+                    NavigationLink {
+                        PrivacyDataView()
+                    } label: {
+                        ProfileSettingsRow("Privacy & data", symbol: "lock")
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("privacyDataLink")
+                }
+
+                Button(role: .destructive) {
+                    showsDeleteConfirmation = true
+                } label: {
+                    Text(store.isDeletingAccount ? "Deleting account…" : "Delete account")
+                        .font(.body)
+                        .foregroundStyle(WIFTheme.destructive)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .disabled(store.isDeletingAccount)
+                .padding(.top, 32)
+            }
+            .padding(WIFTheme.screenInset)
+        }
+        .scrollIndicators(.hidden)
+        .wifAmbientBackground()
+        .navigationTitle("Privacy")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .accessibilityIdentifier("privacySettingsScreen")
         .confirmationDialog("Delete your account?", isPresented: $showsDeleteConfirmation, titleVisibility: .visible) {
             Button("Delete account", role: .destructive) { Task { await store.deleteAccount() } }
                 .disabled(store.isDeletingAccount)
@@ -239,150 +359,9 @@ struct ProfileView: View {
         }
     }
 
-    private var profileHeader: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .top, spacing: 18) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(store.snapshot.currentUser.displayName)
-                        .font(.system(.largeTitle, design: .rounded, weight: .bold))
-                        .foregroundStyle(WIFTheme.primaryText)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.72)
-
-                    Text("@\(store.snapshot.currentUser.username)")
-                        .font(.headline)
-                        .foregroundStyle(WIFTheme.fresh)
-                        .lineLimit(1)
-                        .textSelection(.enabled)
-                }
-
-                Spacer(minLength: 8)
-
-                Button {
-                    store.clearProfileSaveError()
-                    profileDraft = ProfileEditorDraft(displayName: store.snapshot.currentUser.displayName,
-                        username: store.snapshot.currentUser.username)
-                } label: {
-                    Image(systemName: "pencil")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(WIFTheme.fresh)
-                        .frame(width: 46, height: 46)
-                        .contentShape(Circle())
-                }
-                .buttonStyle(.plain)
-                .wifGlassSurface(tint: WIFTheme.fresh.opacity(0.14), interactive: true, in: Circle())
-                .accessibilityLabel("Edit profile")
-                .accessibilityIdentifier("editProfileButton")
-            }
-
-            HStack(spacing: 4) {
-                // Your own city gets the same emblem friends see on their cards.
-                if let city = store.currentCity {
-                    let presence = store.snapshot.currentPresence
-                    CityEmblemView(city: city, countryCode: presence.countryCode,
-                                   administrativeArea: presence.administrativeArea, size: 56)
-                        .accessibilityHidden(true)
-                }
-                Text(profilePresenceText)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WIFTheme.secondaryText)
-            }
-        }
-    }
-
-    private var appearance: WIFAppearance {
-        appearanceController.appearance
-    }
-
-    private var profilePresenceText: String {
-        guard store.currentCity != nil else { return "No shared city" }
-        return store.snapshot.currentPresence.cityDisplay
-    }
-
-    private var citySharingSubtitle: LocalizedStringKey {
-        if !store.snapshot.sharingPreferences.citySharingEnabled {
-            return "Sharing is paused"
-        }
-        if let currentCity = store.currentCity {
-            return "\(currentCity)"
-        }
-        return "Choose who can see your current city"
-    }
-
-    private var sameCityMomentsSubtitle: LocalizedStringKey {
-        store.snapshot.colocationEvents.isEmpty
-            ? "Timeline of times you shared a city"
-            : "\(store.snapshot.colocationEvents.count) moments recorded"
-    }
-
-    private var blockedPeopleSubtitle: LocalizedStringKey {
-        store.snapshot.blockedUserIDs.isEmpty ? "No blocked people" : "\(store.snapshot.blockedUserIDs.count) blocked"
-    }
-
-    @ViewBuilder
-    private func profileSection<Content: View>(
-        _ title: LocalizedStringKey,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(title)
-                .font(.title2.bold())
-                .foregroundStyle(.primary)
-
-            VStack(spacing: 0, content: content)
-        }
-    }
-
-    private func profileMenuRow(
-        _ title: LocalizedStringKey,
-        subtitle: LocalizedStringKey?,
-        symbol: String,
-        color _: Color,
-        showsDisclosure: Bool = true,
-        isDestructive: Bool = false
-    ) -> some View {
-        HStack(spacing: 16) {
-            Image(systemName: symbol)
-                .font(.headline)
-                .foregroundStyle(isDestructive ? WIFTheme.destructive : WIFTheme.fresh)
-                .frame(width: 48, height: 48)
-                .background(WIFTheme.fresh.opacity(0.10), in: Circle())
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(isDestructive ? WIFTheme.destructive : .primary)
-
-                if let subtitle {
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
-                }
-            }
-
-            Spacer(minLength: 8)
-
-            if showsDisclosure {
-                Image(systemName: "chevron.right")
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .frame(minHeight: 76)
-        .contentShape(Rectangle())
-    }
-
-    private var menuDivider: some View {
-        Divider()
-            .overlay(WIFTheme.border)
-            .padding(.leading, 64)
-    }
-
-    private var sectionDivider: some View {
-        Divider()
-            .overlay(WIFTheme.border)
-            .padding(.vertical, 36)
+    private var blockedValue: Text? {
+        let count = store.snapshot.blockedUserIDs.count
+        return count > 0 ? Text(count, format: .number) : nil
     }
 }
 

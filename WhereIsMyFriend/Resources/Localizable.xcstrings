@@ -7,6 +7,7 @@
     "Hide until tomorrow" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "今天不再显示"}}}},
     "Same-city moments and trip reminders." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "同城时刻和行程提醒。"}}}},
     "Know the moment a friend lands, even with the app closed." : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "好友一到你的城市就告诉你，不打开 App 也可以。"}}}},
+    "Version %@ (%@)" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "版本 %1$@ (%2$@)"}}}},
     "%@ and %@ are here too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ 和 %2$@ 也在这里"}}}},
     "Here with you" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "和你同城"}}}},
     "You’re there too" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "你也会去"}}}},
