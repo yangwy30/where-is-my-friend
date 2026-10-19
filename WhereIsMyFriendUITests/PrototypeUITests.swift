@@ -76,16 +76,11 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
         XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
         capture("AUDIT-header-three-sheet-en")
-        // On iOS 26 simulators a synthesized tap in this resizable, scrolling sheet
-        // often doesn't register, though a finger does (checked by hand on 2026-10-18).
-        // Press like a finger and retry rather than report a false failure.
+        // A scroll view waits briefly to tell a tap from a drag, so an instant synthesized
+        // tap is dropped; press about as long as a finger does.
         Thread.sleep(forTimeInterval: 1)
-        var opened = false
-        for _ in 0..<3 where !opened {
-            friend.press(forDuration: 0.2)
-            opened = app.navigationBars["Mia"].waitForExistence(timeout: 2)
-        }
-        XCTAssertTrue(opened)
+        friend.press(forDuration: 0.15)
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
     }
 
     func testAuditIntegratedHeaderInDarkMode() throws {
@@ -1043,7 +1038,7 @@ final class PrototypeUITests: XCTestCase {
         capture("F07-no-current-session")
     }
 
-    func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensFriend() {
+    func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensCard() {
         continueAfterFailure = false
         for (language, locale, prefix, summary) in [
             ("en", "en_US", "You’re in ", "Mia is here too"),
@@ -1064,8 +1059,16 @@ final class PrototypeUITests: XCTestCase {
             XCTAssertEqual(sameCity.label, summary)
             capture("F01-home-\(language)")
             sameCity.tap()
-            XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
+            // Even one friend opens the same-city card first.
+            let row = app.buttons["sameCityFriend-mia"]
+            XCTAssertTrue(row.waitForExistence(timeout: 4))
             XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
+            capture("F01-same-city-card-\(language)")
+            // Picking a friend closes the card and opens them on the Friends stack.
+            Thread.sleep(forTimeInterval: 1)
+            row.press(forDuration: 0.15)
+            XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+            XCTAssertFalse(row.exists)
             capture("F01-same-city-friend-\(language)")
             app.navigationBars["Mia"].buttons.element(boundBy: 0).tap()
             XCTAssertTrue(sameCity.waitForExistence(timeout: 4))
@@ -3060,8 +3063,9 @@ final class PrototypeUITests: XCTestCase {
     private func openCitySharingFromProfile(in app: XCUIApplication) {
         selectAppTab(2, in: app)
         let sharing = app.buttons["profileCitySharingButton"]
-        for _ in 0..<5 where !sharing.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
+        // Wait for the You tab before scrolling it; querying a missing view fails on iOS 26.
         XCTAssertTrue(sharing.waitForExistence(timeout: 4))
+        for _ in 0..<5 where !sharing.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
         sharing.tap()
         XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 4))
     }

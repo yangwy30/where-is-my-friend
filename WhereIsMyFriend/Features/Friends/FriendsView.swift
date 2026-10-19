@@ -11,6 +11,9 @@ struct FriendsView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var isAddingFriend = false
     @State private var showsSameCityFriends = false
+    /// The friend picked in the same-city card; opened once the card has closed.
+    @State private var sameCityChoice: FriendPresence?
+    @State private var openedFriend: FriendPresence?
     @StateObject private var invitationDraft = FriendInvitationDraft()
     @State private var isScreenVisible = false
     @State private var isHeaderCollapsed = false
@@ -160,8 +163,22 @@ struct FriendsView: View {
         .navigationDestination(for: FriendPresence.self) { friend in
             FriendDetailView(friend: friend)
         }
-        .sheet(isPresented: $showsSameCityFriends) {
-            SameCityFriendsSheet(friends: sameCityFriends, presence: store.snapshot.currentPresence, referenceDate: referenceDate)
+        .navigationDestination(item: $openedFriend) { friend in
+            FriendDetailView(friend: friend)
+        }
+        .sheet(isPresented: $showsSameCityFriends, onDismiss: {
+            // Push on the Friends stack after the card closes. A stack inside the card
+            // dropped taps and could lock up on iOS 26.
+            if let friend = sameCityChoice {
+                sameCityChoice = nil
+                openedFriend = friend
+            }
+        }) {
+            SameCityFriendsSheet(friends: sameCityFriends, presence: store.snapshot.currentPresence,
+                                 referenceDate: referenceDate) { friend in
+                sameCityChoice = friend
+                showsSameCityFriends = false
+            }
         }
         .sheet(isPresented: $isAddingFriend) {
             AddFriendView(draft: invitationDraft)
@@ -475,14 +492,10 @@ struct FriendsView: View {
             Text(cityStatusText)
                 .font(.subheadline)
                 .accessibilityIdentifier("homeCityStatus")
-            if let friend = sameCityFriends.first {
-                Group {
-                    if sameCityFriends.count == 1 {
-                        NavigationLink(value: friend) { sameCityChip }
-                    } else {
-                        Button { showsSameCityFriends = true } label: { sameCityChip }
-                    }
-                }
+            if !sameCityFriends.isEmpty {
+                // Even one friend opens the same-city card, so the city and its people
+                // always appear together before you pick someone.
+                Button { showsSameCityFriends = true } label: { sameCityChip }
                 .buttonStyle(.plain)
                 .padding(.top, 6)
                 .accessibilityIdentifier("sameCitySummaryTitle")
@@ -772,6 +785,7 @@ private struct SameCityFriendsSheet: View {
     let friends: [FriendPresence]
     let presence: CurrentUserPresence
     let referenceDate: Date
+    let onSelect: (FriendPresence) -> Void
 
     var body: some View {
         NavigationStack {
@@ -785,7 +799,7 @@ private struct SameCityFriendsSheet: View {
                             Text(presence.city ?? "")
                                 .font(.system(size: 38, weight: .regular, design: .serif)).tracking(-0.8)
                                 .lineLimit(1).minimumScaleFactor(0.7)
-                            Text("\(friends.count) friends")
+                            (friends.count == 1 ? Text("1 friend") : Text("\(friends.count) friends"))
                                 .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
                         }
                         Spacer(minLength: 0)
@@ -796,7 +810,7 @@ private struct SameCityFriendsSheet: View {
                     VStack(spacing: 0) {
                         ForEach(Array(friends.enumerated()), id: \.element.id) { index, friend in
                             if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 70) }
-                            NavigationLink(value: friend) {
+                            Button { onSelect(friend) } label: {
                                 HStack(spacing: 14) {
                                     FriendAvatarView(friend: friend, size: 40)
                                     VStack(alignment: .leading, spacing: 3) {
@@ -822,9 +836,10 @@ private struct SameCityFriendsSheet: View {
             }
             .wifAmbientBackground()
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: FriendPresence.self) { FriendDetailView(friend: $0) }
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }.accessibilityIdentifier("sameCitySheetDone")
+                }
             }
         }
         .presentationDetents([.medium, .large])
