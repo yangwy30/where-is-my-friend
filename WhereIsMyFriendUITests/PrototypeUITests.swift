@@ -694,25 +694,26 @@ final class PrototypeUITests: XCTestCase {
         let history = app.buttons["sameCityMomentsLink"]
         for _ in 0..<6 where !history.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         history.tap()
-        let friend = app.staticTexts["activeStayFriend-10000000-0000-0000-0000-000000000001"]
+        let friend = app.staticTexts["momentsFriendName-10000000-0000-0000-0000-000000000001"]
         XCTAssertTrue(friend.waitForExistence(timeout: 5))
         for _ in 0..<5 where !friend.isHittable { app.scrollViews["notificationHistoryScreen"].swipeUp() }
         XCTAssertTrue(friend.label.contains("Alexandra Catherine Montgomery-Williams"))
         XCTAssertGreaterThan(friend.frame.height, 60)
         XCTAssertLessThanOrEqual(friend.frame.maxX, app.frame.maxX)
         capture("W2-F26-long-history")
-        try auditRelevantControls(app, prefixes: ["activeStayFriend-", "activeStayCity-", "sameCityDuration-"], name: "F26-history-text")
+        try auditRelevantControls(app, prefixes: ["momentsFriendName-", "momentsStatus-", "momentsDays-"], name: "F26-history-text")
     }
 
-    func testSameCityHistoryUpdatesWhileScreenRemainsOpen() {
+    func testSameCityHistoryShowsOngoingStayAsTheNewestTrip() {
         continueAfterFailure = false
         let app = historyApp(extra: "-testHistoryRevisit", language: "en", locale: "en_US", additional: ["-testHistoryClock"])
-        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-        XCTAssertTrue(duration.waitForExistence(timeout: 5))
-        XCTAssertTrue(duration.label.contains("1 minute"), duration.label)
-        let update = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "2 minutes"), object: duration)
-        XCTAssertEqual(XCTWaiter.wait(for: [update], timeout: 75), .completed)
-        capture("W2-F26-live-time-update")
+        let mia = app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(mia.waitForExistence(timeout: 5)); mia.tap()
+        XCTAssertTrue(app.scrollViews["friendMomentsScreen"].waitForExistence(timeout: 5))
+        let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+        XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(trips.element(boundBy: 0).label.contains("Since"), trips.element(boundBy: 0).label)
+        capture("W2-F26-ongoing-stay")
     }
 
     func testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative() {
@@ -1016,26 +1017,56 @@ final class PrototypeUITests: XCTestCase {
 
     func testSameCityHistoryKeepsPreviousVisitSeparateFromCurrentStay() {
         continueAfterFailure = false
-        for (language, locale, unit) in [("en", "en_US", "1 hour"), ("zh-Hans", "zh_CN", "1小时")] {
+        for (language, locale, here) in [("en", "en_US", "with you now"), ("zh-Hans", "zh_CN", "正和你一起在")] {
             let app = historyApp(extra: "-testHistoryRevisit", language: language, locale: locale)
-            let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-            XCTAssertTrue(duration.waitForExistence(timeout: 5))
-            XCTAssertTrue(duration.label.replacingOccurrences(of: " ", with: "").contains(unit.replacingOccurrences(of: " ", with: "")), duration.label)
-            XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
-            XCTAssertFalse(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000002"].exists)
+            let status = app.staticTexts["momentsStatus-10000000-0000-0000-0000-000000000001"]
+            XCTAssertTrue(status.waitForExistence(timeout: 5))
+            XCTAssertTrue(status.label.contains(here), status.label)
+            app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"].tap()
+            let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+            XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+            XCTAssertEqual(trips.count, 2)
             capture("F07-repeated-visit-\(language)")
             app.terminate()
         }
     }
 
-    func testSameCityHistoryWithoutSessionShowsRecentMatchInsteadOfDuration() {
+    func testSameCityHistoryWithoutSessionStillShowsFriendHereNow() {
         continueAfterFailure = false
         let app = historyApp(extra: "-testHistoryMissingSession", language: "en", locale: "en_US")
-        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-        XCTAssertTrue(duration.waitForExistence(timeout: 5))
-        XCTAssertEqual(duration.label, "Recent city match")
-        XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
+        let status = app.staticTexts["momentsStatus-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(status.waitForExistence(timeout: 5))
+        XCTAssertTrue(status.label.contains("with you now"), status.label)
+        app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"].tap()
+        let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+        XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertEqual(trips.count, 1)
         capture("F07-no-current-session")
+    }
+
+    func testSameCityMomentsGroupTripsByFriend() {
+        continueAfterFailure = false
+        for (language, locale, style) in [("en", "en_US", "Light"), ("en", "en_US", "Dark"), ("zh-Hans", "zh_CN", "Light")] {
+            let app = historyApp(extra: "-previewMomentsHistory", language: language, locale: locale,
+                                 additional: ["-AppleInterfaceStyle", style])
+            let david = app.buttons["momentsFriend-10000000-0000-0000-0000-000000000004"]
+            XCTAssertTrue(david.waitForExistence(timeout: 5))
+            // A half-hour match is a blip, not a moment.
+            XCTAssertFalse(app.buttons["momentsFriend-10000000-0000-0000-0000-000000000005"].exists)
+            capture("moments-list-\(language)-\(style)")
+            david.tap()
+            let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+            XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+            XCTAssertEqual(trips.count, 1)
+            if language == "en" {
+                let label = trips.element(boundBy: 0).label
+                XCTAssertTrue(label.contains("Los Angeles to San Francisco"), label)
+                XCTAssertTrue(label.contains("Via Santa Barbara"), label)
+                XCTAssertFalse(label.contains("San Luis Obispo"), label)
+            }
+            capture("moments-roadtrip-\(language)-\(style)")
+            app.terminate()
+        }
     }
 
     func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensCard() {
