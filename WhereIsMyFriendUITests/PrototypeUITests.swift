@@ -1970,7 +1970,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
     }
 
-    func testSameCityChipOpensOneFriendOrTheFriendList() {
+    func testSameCityChipOpensTheCardForOneFriendOrMany() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
@@ -1980,8 +1980,13 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(chip.waitForExistence(timeout: 5))
         XCTAssertEqual(chip.label, "Mia is here too")
         chip.tap()
-        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
-        XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
+        // Even one friend opens the same-city card first; picking them closes it.
+        let row = app.buttons["sameCityFriend-mia"]
+        XCTAssertTrue(row.waitForExistence(timeout: 4))
+        Thread.sleep(forTimeInterval: 1)
+        row.press(forDuration: 0.15)
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+        XCTAssertFalse(row.exists)
         app.terminate()
 
         app.launchArguments += ["-previewSameCityCount", "3"]
