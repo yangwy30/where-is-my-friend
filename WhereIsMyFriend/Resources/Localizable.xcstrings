@@ -1,6 +1,18 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "In %@ with you now" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "正和你一起在%@"}}}},
+    "Last together %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "上次同城 %@"}}}},
+    "%lld days together" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "同城 %lld 天"}}}},
+    "1 day together" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "同城 1 天"}}}},
+    "day" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "天"}}}},
+    "days" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "天"}}}},
+    "1 day" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "1 天"}}}},
+    "%lld days" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%lld 天"}}}},
+    "1 city" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "1 个城市"}}}},
+    "With %@ in %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ · %2$@"}}}},
+    "%@ to %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "%1$@ 到 %2$@"}}}},
+    "Via %@" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "途经 %@"}}}},
     "Finish setting up" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "完成设置"}}}},
     "%lld of %lld on" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "已开启 %1$lld/%2$lld"}}}},
     "Location: Always" : {"localizations": {"zh-Hans": {"stringUnit": {"state": "translated", "value": "位置：始终"}}}},

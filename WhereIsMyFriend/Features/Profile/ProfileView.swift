@@ -52,7 +52,7 @@ struct ProfileView: View {
                             .toolbar(.visible, for: .navigationBar)
                     } label: {
                         ProfileSettingsRow("Same-city moments", symbol: "clock.arrow.circlepath",
-                                           value: countValue(store.snapshot.colocationEvents.count))
+                                           value: momentsValue)
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("sameCityMomentsLink")
@@ -222,6 +222,11 @@ struct ProfileView: View {
     }
 
     /// Counts only earn a value when there is something to count; zero stays quiet.
+    private var momentsValue: Text? {
+        let days = SameCityMomentsPolicy.summary(in: store.snapshot).days
+        return days > 0 ? Text(SameCityMomentsText.dayCount(days)) : nil
+    }
+
     private func countValue(_ count: Int) -> Text? {
         count > 0 ? Text(count, format: .number) : nil
     }

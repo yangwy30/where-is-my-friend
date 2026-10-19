@@ -145,6 +145,93 @@ final class ColocationHistoryPolicyTests: XCTestCase {
 }
 
 @MainActor
+final class SameCityMomentsPolicyTests: XCTestCase {
+    private let now = Date()
+    private let hour: TimeInterval = 3600
+
+    private func key(_ city: String, _ region: String = "CA") -> String {
+        CityIdentity.presenceKey(city: city, countryCode: "US", administrativeArea: region)!
+    }
+
+    private func stay(_ friend: UUID, _ city: String, from start: TimeInterval, to end: TimeInterval?) -> ColocationSession {
+        ColocationSession(id: UUID(), friendID: friend, cityKey: key(city), enteredAt: now.addingTimeInterval(start),
+                          leftAt: end.map { now.addingTimeInterval($0) }, cityName: city)
+    }
+
+    private func snapshot(_ sessions: (UUID) -> [ColocationSession]) -> (AppSnapshot, UUID) {
+        var snapshot = DemoData.initialSnapshot(now: now)
+        snapshot.friends = [snapshot.friends[0]]
+        snapshot.friends[0].city = "Boston"; snapshot.friends[0].administrativeArea = "MA"
+        snapshot.colocationEvents = []
+        snapshot.colocationSessions = sessions(snapshot.friends[0].id)
+        return (snapshot, snapshot.friends[0].id)
+    }
+
+    func testRoadTripBecomesOneTripNamedByLongStops() throws {
+        let (snapshot, _) = snapshot { friend in [
+            stay(friend, "Los Angeles", from: -100 * hour, to: -80 * hour),
+            stay(friend, "San Luis Obispo", from: -79 * hour, to: -78.5 * hour),
+            stay(friend, "Santa Barbara", from: -78 * hour, to: -75 * hour),
+            stay(friend, "San Francisco", from: -74 * hour, to: -50 * hour)
+        ] }
+        let history = try XCTUnwrap(SameCityMomentsPolicy.summary(in: snapshot, at: now).friends.first)
+        XCTAssertEqual(history.trips.count, 1)
+        XCTAssertEqual(history.trips[0].stops.map(\.name), ["Los Angeles", "Santa Barbara", "San Francisco"])
+        XCTAssertFalse(history.isHereNow)
+    }
+
+    func testLongGapStartsANewTripAndBlipsAreLeftOut() throws {
+        let (snapshot, _) = snapshot { friend in [
+            stay(friend, "Los Angeles", from: -100 * hour, to: -90 * hour),
+            stay(friend, "Los Angeles", from: -80 * hour, to: -70 * hour),
+            stay(friend, "Fresno", from: -20 * hour, to: -19.5 * hour)
+        ] }
+        let summary = SameCityMomentsPolicy.summary(in: snapshot, at: now)
+        let history = try XCTUnwrap(summary.friends.first)
+        XCTAssertEqual(history.trips.count, 2)
+        XCTAssertEqual(summary.cityCount, 1)
+        XCTAssertEqual(history.cities.first?.trips, 2)
+    }
+
+    func testDaysCountCalendarDaysAcrossFriendsOnce() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let noon = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: now)!
+        let (base, friend) = snapshot { _ in [] }
+        var snapshot = base
+        snapshot.colocationSessions = [
+            ColocationSession(id: UUID(), friendID: friend, cityKey: key("Austin", "TX"),
+                              enteredAt: noon.addingTimeInterval(-50 * hour), leftAt: noon.addingTimeInterval(-26 * hour))
+        ]
+        let summary = SameCityMomentsPolicy.summary(in: snapshot, at: now, calendar: calendar)
+        XCTAssertEqual(summary.days, 2)
+        XCTAssertEqual(summary.friends.first?.trips.first?.stops.first?.name, "Austin")
+    }
+
+    func testOnlyTheFirstCityOfATripAlerts() {
+        var snapshot = DemoData.initialSnapshot(now: now)
+        snapshot.friends = [snapshot.friends[0]]
+        snapshot.colocationEvents = []; snapshot.colocationSessions = []
+        func move(to city: String, at time: Date) {
+            snapshot.currentPresence = CurrentUserPresence(administrativeArea: "CA", city: city, countryCode: "US",
+                                                           updatedAt: time, source: .foregroundLocation)
+            snapshot.friends[0].city = city; snapshot.friends[0].countryCode = "US"
+            snapshot.friends[0].administrativeArea = "CA"; snapshot.friends[0].updatedAt = time
+            ColocationEvaluator.evaluate(snapshot: &snapshot, now: time)
+        }
+        move(to: "Los Angeles", at: now)
+        move(to: "Santa Barbara", at: now.addingTimeInterval(3 * hour))
+        move(to: "San Francisco", at: now.addingTimeInterval(6 * hour))
+        XCTAssertEqual(snapshot.colocationEvents.map(\.city), ["Los Angeles"])
+        XCTAssertEqual(snapshot.colocationSessions.count, 3)
+        // Apart for longer than a trip gap, then together again: that is news.
+        snapshot.friends[0].city = "Seattle"; snapshot.friends[0].administrativeArea = "WA"
+        ColocationEvaluator.evaluate(snapshot: &snapshot, now: now.addingTimeInterval(7 * hour))
+        move(to: "San Diego", at: now.addingTimeInterval(20 * hour))
+        XCTAssertEqual(snapshot.colocationEvents.first?.city, "San Diego")
+    }
+}
+
 final class AppAccentContrastTests: XCTestCase {
     func testAccentForegroundsMeetTextContrastInBothAppearances() {
         for appearance in [UIUserInterfaceStyle.light, .dark] {

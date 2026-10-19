@@ -249,6 +249,8 @@ struct ColocationSession: Identifiable, Codable, Hashable, Sendable {
     let cityKey: String
     var enteredAt: Date
     var leftAt: Date?
+    /// Display name sent by the server; older payloads leave it out.
+    var cityName: String? = nil
 
     var isActive: Bool { leftAt == nil }
 }
@@ -274,6 +276,152 @@ enum ColocationHistoryPolicy {
                 }
             return !belongsToCurrentStay
         }
+    }
+}
+
+/// Same-city history told per friend. Back-to-back stays merge into one trip even when
+/// the city changes (a road trip), and short pass-throughs don't name the trip.
+enum SameCityMomentsPolicy {
+    /// Stays closer together than this belong to the same trip; matches the alert cooldown.
+    static let tripGap: TimeInterval = 6 * 60 * 60
+    /// Shorter matches are usually a city-boundary blip, not time spent together.
+    static let minimumTrip: TimeInterval = 60 * 60
+    /// A city names the trip only after this long there together.
+    static let namedStop: TimeInterval = 2 * 60 * 60
+
+    struct Stop: Hashable {
+        let cityKey: String
+        let name: String
+        let countryCode: String?
+        let region: String?
+        var duration: TimeInterval
+    }
+
+    struct Trip: Identifiable, Hashable {
+        let id: UUID
+        let start: Date
+        let end: Date
+        let isActive: Bool
+        /// The cities that name the trip, in the order you reached them.
+        let stops: [Stop]
+        let days: Set<Date>
+    }
+
+    struct FriendHistory: Identifiable {
+        let friend: FriendPresence
+        /// Newest first.
+        let trips: [Trip]
+        let days: Set<Date>
+        let isHereNow: Bool
+        let currentCity: String?
+
+        var id: UUID { friend.id }
+        var lastTogether: Date? { trips.first?.end }
+        /// Each city once, newest first, with how many trips included it.
+        var cities: [(stop: Stop, trips: Int)] {
+            var order: [String] = []
+            var found: [String: (stop: Stop, trips: Int)] = [:]
+            for stop in trips.flatMap(\.stops) {
+                if let hit = found[stop.cityKey] { found[stop.cityKey] = (hit.stop, hit.trips + 1) }
+                else { order.append(stop.cityKey); found[stop.cityKey] = (stop, 1) }
+            }
+            return order.compactMap { found[$0] }
+        }
+    }
+
+    struct Summary {
+        let friends: [FriendHistory]
+        let days: Int
+        let cityCount: Int
+    }
+
+    static func summary(in snapshot: AppSnapshot, at now: Date = Date(), calendar: Calendar = .current) -> Summary {
+        let blocked = Set(snapshot.blockedUserIDs)
+        let here = Dictionary(uniqueKeysWithValues: SameCityPresencePolicy.currentFriends(in: snapshot, at: now).map { ($0.id, $0) })
+        let names = cityNames(in: snapshot)
+        let friends = snapshot.friends.filter { !blocked.contains($0.id) }.compactMap { friend -> FriendHistory? in
+            let sessions = snapshot.colocationSessions
+                .filter { $0.friendID == friend.id && $0.enteredAt <= now }
+                .sorted { $0.enteredAt < $1.enteredAt }
+            let isHere = here[friend.id] != nil
+            let trips = trips(from: sessions, names: names, isHere: isHere, friend: friend,
+                              presence: snapshot.currentPresence, now: now, calendar: calendar)
+            guard !trips.isEmpty || isHere else { return nil }
+            return FriendHistory(friend: friend, trips: trips, days: trips.reduce(into: Set()) { $0.formUnion($1.days) },
+                                 isHereNow: isHere, currentCity: isHere ? snapshot.currentPresence.city : nil)
+        }.sorted { lhs, rhs in
+            if lhs.isHereNow != rhs.isHereNow { return lhs.isHereNow }
+            return (lhs.lastTogether ?? .distantPast) > (rhs.lastTogether ?? .distantPast)
+        }
+        let days = friends.reduce(into: Set<Date>()) { $0.formUnion($1.days) }
+        let cities = Set(friends.flatMap { $0.trips.flatMap { $0.stops.map(\.cityKey) } })
+        return Summary(friends: friends, days: days.count, cityCount: cities.count)
+    }
+
+    private static func trips(from sessions: [ColocationSession], names: [String: String], isHere: Bool,
+                              friend: FriendPresence, presence: CurrentUserPresence,
+                              now: Date, calendar: Calendar) -> [Trip] {
+        // An open stay that no longer matches has no recorded exit; end it at the last update either side sent.
+        let staleEnd = [presence.updatedAt, friend.updatedAt].compactMap { $0 }.min()
+        var groups: [[(session: ColocationSession, end: Date)]] = []
+        for session in sessions {
+            let end = max(session.enteredAt, min(now, session.leftAt ?? (isHere ? now : staleEnd ?? session.enteredAt)))
+            if let last = groups.last?.map(\.end).max(), session.enteredAt.timeIntervalSince(last) <= tripGap {
+                groups[groups.count - 1].append((session, end))
+            } else {
+                groups.append([(session, end)])
+            }
+        }
+        return Array(groups.compactMap { group -> Trip? in
+            guard let first = group.first, let end = group.map(\.end).max() else { return nil }
+            let isActive = isHere && group.contains { $0.session.isActive }
+            guard isActive || end.timeIntervalSince(first.session.enteredAt) >= minimumTrip else { return nil }
+            var stops: [Stop] = []
+            for item in group {
+                let duration = item.end.timeIntervalSince(item.session.enteredAt)
+                if let index = stops.firstIndex(where: { $0.cityKey == item.session.cityKey }) {
+                    stops[index].duration += duration
+                } else {
+                    stops.append(stop(for: item.session, duration: duration, names: names))
+                }
+            }
+            let named = stops.filter { $0.duration >= namedStop }
+            let longest = stops.max { $0.duration < $1.duration }.map { [$0] } ?? []
+            return Trip(id: first.session.id, start: first.session.enteredAt, end: end, isActive: isActive,
+                        stops: named.isEmpty ? longest : named,
+                        days: days(from: first.session.enteredAt, to: end, calendar: calendar))
+        }.reversed())
+    }
+
+    private static func days(from start: Date, to end: Date, calendar: Calendar) -> Set<Date> {
+        var days = Set<Date>()
+        var day = calendar.startOfDay(for: start)
+        while day <= end {
+            days.insert(day)
+            guard let next = calendar.date(byAdding: .day, value: 1, to: day) else { break }
+            day = next
+        }
+        return days
+    }
+
+    /// Keys look like `v2|US|ca|losangeles`; the readable name comes from the server or a matching event.
+    private static func stop(for session: ColocationSession, duration: TimeInterval, names: [String: String]) -> Stop {
+        let parts = session.cityKey.split(separator: "|", omittingEmptySubsequences: false).map(String.init)
+        let fallback = parts.count == 4 ? parts[3].capitalized : session.cityKey
+        return Stop(cityKey: session.cityKey, name: session.cityName ?? names[session.cityKey] ?? fallback,
+                    countryCode: parts.count == 4 ? parts[1] : nil, region: parts.count == 4 ? parts[2] : nil,
+                    duration: duration)
+    }
+
+    private static func cityNames(in snapshot: AppSnapshot) -> [String: String] {
+        var names: [String: String] = [:]
+        for event in snapshot.colocationEvents { if let key = event.cityKey { names[key] = event.city } }
+        let presence = snapshot.currentPresence
+        if let city = presence.city, let key = CityIdentity.presenceKey(city: city, countryCode: presence.countryCode,
+                                                                         administrativeArea: presence.administrativeArea) {
+            names[key] = CityIdentity.canonicalCity(city)
+        }
+        return names
     }
 }
 
@@ -723,15 +871,21 @@ enum ColocationEvaluator {
                 .max()
             if let lastExit, now.timeIntervalSince(lastExit) < cooldown { continue }
 
+            // Arriving together in the next city of a trip is not news; only the first city alerts.
+            let continuesTrip = snapshot.colocationSessions.contains {
+                $0.friendID == friend.id && $0.cityKey != cityKey
+                    && $0.leftAt.map { now.timeIntervalSince($0) <= SameCityMomentsPolicy.tripGap } == true
+            }
             let session = ColocationSession(
                 id: UUID(),
                 friendID: friend.id,
                 cityKey: cityKey,
                 enteredAt: now,
-                leftAt: nil
+                leftAt: nil,
+                cityName: CityIdentity.canonicalCity(currentCity)
             )
             snapshot.colocationSessions.append(session)
-            if snapshot.preference(for: friend.id).sameCityAlertEnabled {
+            if snapshot.preference(for: friend.id).sameCityAlertEnabled && !continuesTrip {
                 enteredFriends.append(friend)
                 enteredSessionIDs.append(session.id)
             }
@@ -739,7 +893,7 @@ enum ColocationEvaluator {
 
         snapshot.colocationSessions.removeAll { session in
             guard let leftAt = session.leftAt else { return false }
-            return now.timeIntervalSince(leftAt) > 30 * 24 * 60 * 60
+            return now.timeIntervalSince(leftAt) > 400 * 24 * 60 * 60
         }
 
         guard !enteredFriends.isEmpty else { return }

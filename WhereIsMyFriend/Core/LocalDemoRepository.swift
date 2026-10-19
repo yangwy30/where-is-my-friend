@@ -68,6 +68,10 @@ actor LocalDemoRepository: AppRepository {
                     createdAt: start, wasNotified: true))
             }
         }
+        if ProcessInfo.processInfo.arguments.contains("-previewMomentsHistory") {
+            self.snapshot.colocationSessions = Self.previewMomentsSessions(friends: self.snapshot.friends)
+            if persistsChanges { SharedAppStateStore.save(self.snapshot, origin: storageScope) }
+        }
         if ProcessInfo.processInfo.arguments.contains("-testOverlapCity") {
             TravelCityHistory.remember(TravelCity.examples[0], origin: storageScope, ownerID: self.snapshot.currentUser.id)
         }
@@ -592,3 +596,31 @@ actor LocalDemoRepository: AppRepository {
         return snapshot
     }
 }
+
+#if DEBUG
+extension LocalDemoRepository {
+    /// Several months of stays for screenshots: an ongoing stay, single-city trips, a road trip
+    /// with a short pass-through, and a half-hour blip that history should leave out.
+    static func previewMomentsSessions(friends: [FriendPresence], now: Date = Date()) -> [ColocationSession] {
+        func id(_ username: String) -> UUID? { friends.first { $0.username == username }?.id }
+        let day: TimeInterval = 86400, hour: TimeInterval = 3600
+        let plan: [(String, String, String, String, TimeInterval, TimeInterval?)] = [
+            ("mia", "New York", "US", "NY", -2 * day, nil),
+            ("mia", "New York", "US", "NY", -131 * day, -130.6 * day),
+            ("lin", "Tokyo", "JP", "Tokyo", -36 * day, -32 * day),
+            ("david", "Los Angeles", "US", "CA", -65 * day, -64 * day),
+            ("david", "Santa Barbara", "US", "CA", -64 * day + 1 * hour, -64 * day + 4 * hour),
+            ("david", "San Luis Obispo", "US", "CA", -64 * day + 5 * hour, -64 * day + 5.6 * hour),
+            ("david", "San Francisco", "US", "CA", -64 * day + 7 * hour, -61.5 * day),
+            ("chloe", "Paris", "FR", "Ile-de-France", -91 * day, -89.5 * day),
+            ("alex", "London", "GB", "England", -20 * day, -20 * day + 0.5 * hour)
+        ]
+        return plan.compactMap { username, city, country, region, start, end in
+            guard let friendID = id(username),
+                  let key = CityIdentity.presenceKey(city: city, countryCode: country, administrativeArea: region) else { return nil }
+            return ColocationSession(id: UUID(), friendID: friendID, cityKey: key, enteredAt: now.addingTimeInterval(start),
+                                     leftAt: end.map { now.addingTimeInterval($0) }, cityName: city)
+        }
+    }
+}
+#endif
