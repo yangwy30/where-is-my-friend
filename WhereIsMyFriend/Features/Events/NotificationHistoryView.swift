@@ -271,3 +271,241 @@ struct NotificationHistoryView: View {
     }
     .environmentObject(AppStore())
 }
+
+// MARK: - Option B mock (by friend). Static data; launched with -previewMomentsByFriend.
+
+struct MomentsMockTrip: Identifiable, Hashable {
+    let id = UUID()
+    let cities: [(name: String, country: String, region: String)]
+    let dates: String
+    let days: Int
+    var isNow = false
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
+}
+
+struct MomentsMockFriend: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let initials: String
+    let trips: [MomentsMockTrip]
+    var lastTogether = ""
+
+    var days: Int { trips.map(\.days).reduce(0, +) }
+    var isNow: Bool { trips.first?.isNow == true }
+    var cityCounts: [(name: String, country: String, region: String, count: Int)] {
+        var order: [String] = []
+        var found: [String: (String, String, String, Int)] = [:]
+        for city in trips.flatMap(\.cities) {
+            if let hit = found[city.name] { found[city.name] = (hit.0, hit.1, hit.2, hit.3 + 1) }
+            else { order.append(city.name); found[city.name] = (city.name, city.country, city.region, 1) }
+        }
+        return order.compactMap { found[$0] }.map { (name: $0.0, country: $0.1, region: $0.2, count: $0.3) }
+    }
+
+    static let all: [MomentsMockFriend] = [
+        MomentsMockFriend(id: "mia", name: "Mia Chen", initials: "MC", trips: [
+            MomentsMockTrip(cities: [("Boston", "US", "MA")], dates: "Since Oct 16", days: 3, isNow: true),
+            MomentsMockTrip(cities: [("New York", "US", "NY")], dates: "Sep 2 – 3", days: 2),
+            MomentsMockTrip(cities: [("Boston", "US", "MA")], dates: "Jun 8", days: 1)
+        ]),
+        MomentsMockFriend(id: "owen", name: "Owen Park", initials: "OP", trips: [
+            MomentsMockTrip(cities: [("Tokyo", "JP", "Tokyo")], dates: "Sep 12 – 16", days: 5),
+            MomentsMockTrip(cities: [("Los Angeles", "US", "CA"), ("Santa Barbara", "US", "CA"),
+                                     ("San Francisco", "US", "CA")], dates: "Aug 14 – 17", days: 4)
+        ], lastTogether: "Sep 16"),
+        MomentsMockFriend(id: "zoe", name: "Zoe Liang", initials: "ZL", trips: [
+            MomentsMockTrip(cities: [("Shanghai", "CN", "Shanghai")], dates: "Jul 20", days: 1)
+        ], lastTogether: "Jul 20")
+    ]
+}
+
+private struct MomentsMockAvatar: View {
+    let friend: MomentsMockFriend
+    let size: CGFloat
+
+    var body: some View {
+        Circle()
+            .fill(WIFPersonPalette.fill(for: friend.name).gradient)
+            .frame(width: size, height: size)
+            .overlay {
+                Text(friend.initials)
+                    .font(.system(size: size * 0.34, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+            }
+    }
+}
+
+struct MomentsByFriendMockView: View {
+    private let friends = MomentsMockFriend.all
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("16 days together")
+                        .font(.system(size: 34, weight: .semibold))
+                        .tracking(-0.8)
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text("With 3 friends in 7 cities this year")
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                .padding(.horizontal, 4)
+                .padding(.bottom, 10)
+
+                ForEach(friends) { friend in
+                    NavigationLink(value: friend) { card(friend) }
+                        .buttonStyle(.plain)
+                }
+            }
+            .padding(WIFTheme.screenInset)
+        }
+        .scrollIndicators(.hidden)
+        .wifAmbientBackground()
+        .navigationTitle("Same-city moments")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func card(_ friend: MomentsMockFriend) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 14) {
+                MomentsMockAvatar(friend: friend, size: 48)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(friend.name)
+                        .font(.headline)
+                        .foregroundStyle(WIFTheme.primaryText)
+                    if friend.isNow, let city = friend.trips.first?.cities.first?.name {
+                        HStack(spacing: 6) {
+                            Circle().fill(WIFTheme.fresh).frame(width: 7, height: 7)
+                            Text("In \(city) with you now")
+                        }
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(WIFTheme.fresh)
+                    } else {
+                        Text("Last together \(friend.lastTogether)")
+                            .font(.subheadline)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                }
+                Spacer(minLength: 8)
+                VStack(alignment: .trailing, spacing: 0) {
+                    Text("\(friend.days)")
+                        .font(.system(size: 24, weight: .semibold, design: .rounded))
+                        .foregroundStyle(WIFTheme.primaryText)
+                    Text(friend.days == 1 ? "day" : "days")
+                        .font(.caption)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+            }
+
+            HStack(spacing: 10) {
+                HStack(spacing: -10) {
+                    ForEach(Array(friend.cityCounts.prefix(4).enumerated()), id: \.offset) { _, city in
+                        CityEmblemView(city: city.name, countryCode: city.country, administrativeArea: city.region, size: 38)
+                    }
+                }
+                Text(friend.cityCounts.count > 2 ? "\(friend.cityCounts.count) cities"
+                     : friend.cityCounts.map { $0.count > 1 ? "\($0.name) ×\($0.count)" : $0.name }
+                    .formatted(.list(type: .and)))
+                    .font(.footnote)
+                    .foregroundStyle(WIFTheme.secondaryText)
+                    .lineLimit(2)
+                Spacer(minLength: 0)
+            }
+            .padding(.leading, 2)
+        }
+        .wifSettingsGlassCard(tint: friend.isNow ? WIFTheme.fresh.opacity(0.10) : WIFTheme.surface.opacity(0.08))
+    }
+}
+
+struct MomentsFriendMockDetailView: View {
+    let friend: MomentsMockFriend
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 16) {
+                    MomentsMockAvatar(friend: friend, size: 64)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(friend.name)
+                            .font(.system(size: 28, weight: .semibold))
+                            .tracking(-0.6)
+                            .foregroundStyle(WIFTheme.primaryText)
+                        Text("\(friend.days) days together in \(friend.cityCounts.count) cities")
+                            .font(.subheadline)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                }
+                .padding(.horizontal, 4)
+                .padding(.bottom, 10)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(friend.trips.enumerated()), id: \.element.id) { index, trip in
+                        if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 74) }
+                        row(trip)
+                    }
+                }
+                .wifSettingsGlassCard()
+            }
+            .padding(WIFTheme.screenInset)
+        }
+        .scrollIndicators(.hidden)
+        .wifAmbientBackground()
+        .navigationTitle("Same-city moments")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func row(_ trip: MomentsMockTrip) -> some View {
+        HStack(spacing: 14) {
+            ZStack {
+                ForEach(Array(trip.cities.prefix(3).enumerated().reversed()), id: \.offset) { index, city in
+                    CityEmblemView(city: city.name, countryCode: city.country, administrativeArea: city.region,
+                                   size: trip.cities.count > 1 ? 40 : 58)
+                        .offset(x: trip.cities.count > 1 ? CGFloat(index) * 9 - 9 : 0,
+                                y: trip.cities.count > 1 ? CGFloat(index) * -6 + 6 : 0)
+                }
+            }
+            .frame(width: 60, height: 60)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(trip.cities.count > 1
+                     ? "\(trip.cities.first!.name) to \(trip.cities.last!.name)"
+                     : trip.cities[0].name)
+                    .font(.headline)
+                    .foregroundStyle(WIFTheme.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                if trip.cities.count > 1 {
+                    Text("Road trip · via \(trip.cities.dropFirst().dropLast().map(\.name).formatted(.list(type: .and)))")
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                }
+                Text(trip.dates)
+                    .font(.subheadline)
+                    .foregroundStyle(trip.isNow ? WIFTheme.fresh : WIFTheme.secondaryText)
+            }
+            Spacer(minLength: 8)
+            Text(trip.days == 1 ? "1 day" : "\(trip.days) days")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(WIFTheme.fresh)
+        }
+        .padding(.vertical, 10)
+    }
+}
+
+struct MomentsMockRoot: View {
+    @State private var path: [MomentsMockFriend] = {
+        guard let argument = ProcessInfo.processInfo.arguments.first(where: { $0.hasPrefix("-previewMomentsFriend=") }),
+              let friend = MomentsMockFriend.all.first(where: { $0.id == argument.split(separator: "=").last.map(String.init) })
+        else { return [] }
+        return [friend]
+    }()
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            MomentsByFriendMockView()
+                .navigationDestination(for: MomentsMockFriend.self) { MomentsFriendMockDetailView(friend: $0) }
+        }
+    }
+}

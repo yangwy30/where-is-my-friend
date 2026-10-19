@@ -45,7 +45,9 @@ struct AppRootView: View {
 
     var body: some View {
         Group {
-            if previewsWidgets {
+            if ProcessInfo.processInfo.arguments.contains("-previewMomentsByFriend") {
+                MomentsMockRoot()
+            } else if previewsWidgets {
                 HomeScreenWidgetMarketingView()
             } else if previewsOnboarding {
                 OnboardingView(initialStep: onboardingPreviewStep, onComplete: {})
