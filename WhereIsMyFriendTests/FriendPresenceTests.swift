@@ -180,10 +180,26 @@ final class SameCityMomentsPolicyTests: XCTestCase {
         XCTAssertFalse(history.isHereNow)
     }
 
-    func testLongGapStartsANewTripAndBlipsAreLeftOut() throws {
+    func testSameCityStaysWithinAWeekReadAsOnePeriod() throws {
+        let day: TimeInterval = 24 * hour
         let (snapshot, _) = snapshot { friend in [
-            stay(friend, "Los Angeles", from: -100 * hour, to: -90 * hour),
-            stay(friend, "Los Angeles", from: -80 * hour, to: -70 * hour),
+            stay(friend, "Los Angeles", from: -12 * day, to: -11.5 * day),
+            stay(friend, "Los Angeles", from: -9 * day, to: -8.5 * day),
+            stay(friend, "Los Angeles", from: -3 * day, to: -2.5 * day)
+        ] }
+        let history = try XCTUnwrap(SameCityMomentsPolicy.summary(in: snapshot, at: now).friends.first)
+        XCTAssertEqual(history.trips.count, 1)
+        XCTAssertEqual(history.trips[0].start, now.addingTimeInterval(-12 * day))
+        XCTAssertEqual(history.trips[0].end, now.addingTimeInterval(-2.5 * day))
+        // Days count only time together, not the gaps in between.
+        XCTAssertLessThanOrEqual(history.days.count, 6)
+    }
+
+    func testLongGapStartsANewTripAndBlipsAreLeftOut() throws {
+        let day: TimeInterval = 24 * hour
+        let (snapshot, _) = snapshot { friend in [
+            stay(friend, "Los Angeles", from: -30 * day, to: -29 * day),
+            stay(friend, "Los Angeles", from: -20 * day, to: -19 * day),
             stay(friend, "Fresno", from: -20 * hour, to: -19.5 * hour)
         ] }
         let summary = SameCityMomentsPolicy.summary(in: snapshot, at: now)

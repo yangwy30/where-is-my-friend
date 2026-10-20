@@ -282,8 +282,11 @@ enum ColocationHistoryPolicy {
 /// Same-city history told per friend. Back-to-back stays merge into one trip even when
 /// the city changes (a road trip), and short pass-throughs don't name the trip.
 enum SameCityMomentsPolicy {
-    /// Stays closer together than this belong to the same trip; matches the alert cooldown.
+    /// Stays in different cities closer together than this are one trip (a road trip); matches the alert cooldown.
     static let tripGap: TimeInterval = 6 * 60 * 60
+    /// Stays in the same city closer together than this are one period: friends who live nearby
+    /// drop in and out of a match daily, and that history should read as one stretch, not a log.
+    static let sameCityGap: TimeInterval = 7 * 24 * 60 * 60
     /// Shorter matches are usually a city-boundary blip, not time spent together.
     static let minimumTrip: TimeInterval = 60 * 60
     /// A city names the trip only after this long there together.
@@ -366,7 +369,9 @@ enum SameCityMomentsPolicy {
         var groups: [[(session: ColocationSession, end: Date)]] = []
         for session in sessions {
             let end = max(session.enteredAt, min(now, session.leftAt ?? (isHere ? now : staleEnd ?? session.enteredAt)))
-            if let last = groups.last?.map(\.end).max(), session.enteredAt.timeIntervalSince(last) <= tripGap {
+            if let group = groups.last, let last = group.map(\.end).max(),
+               session.enteredAt.timeIntervalSince(last)
+                   <= (group.last?.session.cityKey == session.cityKey ? sameCityGap : tripGap) {
                 groups[groups.count - 1].append((session, end))
             } else {
                 groups.append([(session, end)])
@@ -389,7 +394,7 @@ enum SameCityMomentsPolicy {
             let longest = stops.max { $0.duration < $1.duration }.map { [$0] } ?? []
             return Trip(id: first.session.id, start: first.session.enteredAt, end: end, isActive: isActive,
                         stops: named.isEmpty ? longest : named,
-                        days: days(from: first.session.enteredAt, to: end, calendar: calendar))
+                        days: group.reduce(into: Set()) { $0.formUnion(days(from: $1.session.enteredAt, to: $1.end, calendar: calendar)) })
         }.reversed())
     }
 

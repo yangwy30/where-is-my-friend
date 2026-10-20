@@ -52,12 +52,12 @@ actor LocalDemoRepository: AppRepository {
             self.snapshot.friends = [friend]
             self.snapshot.colocationSessions = [
                 ColocationSession(id: UUID(), friendID: friend.id, cityKey: key,
-                    enteredAt: now.addingTimeInterval(-7 * 86400), leftAt: now.addingTimeInterval(-6 * 86400))
+                    enteredAt: now.addingTimeInterval(-10 * 86400), leftAt: now.addingTimeInterval(-9 * 86400))
             ]
             self.snapshot.colocationEvents = [ColocationEvent(cityKey: key,
                 id: UUID(uuidString: "07000000-0000-4000-8000-000000000001")!, deduplicationKey: "history-previous-visit",
                 city: city, friendIDs: [friend.id], friendNames: [friend.displayName],
-                createdAt: now.addingTimeInterval(-7 * 86400), wasNotified: true)]
+                createdAt: now.addingTimeInterval(-10 * 86400), wasNotified: true)]
             if ProcessInfo.processInfo.arguments.contains("-testHistoryRevisit") {
                 let start = now.addingTimeInterval(ProcessInfo.processInfo.arguments.contains("-testHistoryClock") ? -70 : -3600)
                 self.snapshot.colocationSessions.append(ColocationSession(id: UUID(), friendID: friend.id, cityKey: key,
@@ -610,6 +610,8 @@ extension LocalDemoRepository {
         let day: TimeInterval = 86400, hour: TimeInterval = 3600
         let plan: [(String, String, String, String, TimeInterval, TimeInterval?)] = [
             ("mia", "New York", "US", "NY", -2 * day, nil),
+            ("mia", "New York", "US", "NY", -6 * day, -5.6 * day),
+            ("mia", "New York", "US", "NY", -11 * day, -10.4 * day),
             ("mia", "New York", "US", "NY", -131 * day, -130.6 * day),
             ("lin", "Tokyo", "JP", "Tokyo", -36 * day, -32 * day),
             ("david", "Los Angeles", "US", "CA", -65 * day, -64 * day),
