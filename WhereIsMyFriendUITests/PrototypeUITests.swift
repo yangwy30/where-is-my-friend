@@ -1044,6 +1044,37 @@ final class PrototypeUITests: XCTestCase {
         capture("F07-no-current-session")
     }
 
+    /// Walks the trip globe for review and screen recording: landings, one traveler's legs, then departures.
+    func testTripGlobeWalkthrough() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-seedTripExamples", "-previewKauaiTrip", "-previewTrips",
+                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        let card = app.buttons["tripCard-example-kauai"]
+        XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 8))
+        for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+        XCTAssertTrue(card.isHittable)
+        card.press(forDuration: 0.15)
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 6)
+        capture("trip-globe-arrive")
+        let ruisi = app.buttons["flightCard-kauai-ruisi-out"]
+        XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
+        ruisi.press(forDuration: 0.15)
+        XCTAssertEqual(ruisi.value as? String, "Details expanded")
+        XCTAssertTrue(app.staticTexts["United Airlines"].waitForExistence(timeout: 3))
+        Thread.sleep(forTimeInterval: 3)
+        capture("trip-globe-selected")
+        ruisi.press(forDuration: 0.15)
+        app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
+        Thread.sleep(forTimeInterval: 6)
+        capture("trip-globe-depart")
+        app.segmentedControls["tripDirectionPicker"].buttons["Arrive"].tap()
+        Thread.sleep(forTimeInterval: 4)
+    }
+
     func testSameCityMomentsGroupTripsByFriend() {
         continueAfterFailure = false
         for (language, locale, style) in [("en", "en_US", "Light"), ("en", "en_US", "Dark"), ("zh-Hans", "zh_CN", "Light")] {
@@ -2488,17 +2519,11 @@ final class PrototypeUITests: XCTestCase {
     }
 
     private func captureMarketingFlightMap(_ app: XCUIApplication, language: String) {
-        let expand = app.buttons["expandTripMapButton"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 5))
-        for _ in 0..<4 {
-            if expand.isHittable { break }
-            app.scrollViews["fullTripArrivalBoard"].swipeUp()
-        }
-        expand.tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["mapTraveler-all"].exists)
-        // Let MapKit finish loading tiles and the entry route reveal before capture.
-        sleep(4)
+        let board = app.scrollViews["fullTripArrivalBoard"]
+        XCTAssertTrue(board.waitForExistence(timeout: 5))
+        for _ in 0..<4 where !app.segmentedControls["tripDirectionPicker"].isHittable { board.swipeDown() }
+        // Let every route draw in and land on the globe before capture.
+        sleep(6)
         capture("\(language)-06-arrivals")
     }
 
@@ -2747,7 +2772,7 @@ final class PrototypeUITests: XCTestCase {
         discardChangesIfOffered(in: app)
 
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["flightCard-mia-out"].waitForExistence(timeout: 5))
         capture("Trip board")
 
         let miaFlight = app.buttons["flightCard-mia-out"]
@@ -2762,29 +2787,12 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertEqual(miaFlight.value as? String, "Details collapsed")
 
         for _ in 0..<4 {
-            if app.buttons["expandTripMapButton"].isHittable { break }
-            scroll.swipeUp()
-        }
-        app.buttons["expandTripMapButton"].tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 4))
-        let immersive = app.otherElements["immersiveTripMap"]
-        immersive.buttons["mapTraveler-mia-out"].tap()
-        XCTAssertEqual(immersive.buttons["mapTraveler-mia-out"].value as? String, "Selected")
-        capture("Immersive selected route")
-        app.buttons["resetTripMapButton"].tap()
-        XCTAssertEqual(immersive.buttons["mapTraveler-all"].value as? String, "Selected")
-        capture("Immersive all routes")
-        app.buttons["closeTripMapButton"].tap()
-
-        for _ in 0..<4 {
             if app.segmentedControls["tripDirectionPicker"].isHittable { break }
             scroll.swipeDown()
         }
-        app.segmentedControls["tripDirectionPicker"].buttons["Return"].tap()
-        // Return legs leave together from the trip airport, so the board reads in its departure time.
-        XCTAssertTrue(app.staticTexts["Departing Los Angeles time"].exists)
-        XCTAssertFalse(app.buttons["mapTraveler-mia-out"].exists)
-        XCTAssertTrue(app.buttons["flightCard-mia-in"].exists)
+        app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
+        XCTAssertFalse(app.buttons["flightCard-mia-out"].exists)
+        XCTAssertTrue(app.buttons["flightCard-mia-in"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "4 of 5 flights added")).firstMatch.exists)
         capture("Return routes")
     }
@@ -2822,10 +2830,10 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["tripNeedsHelpCard"].exists)
         capture("Awaiting friend flight compact status")
         app.scrollViews["fullTripArrivalBoard"].swipeUp()
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Unverified")).firstMatch.exists)
         let card = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "flightCard-")).firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 3))
         card.tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Unverified")).firstMatch.waitForExistence(timeout: 3))
         let edit = app.buttons["editMyTripFlightButton"]
         if !edit.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
         capture("Own flight actions")
@@ -2868,7 +2876,7 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 4))
         XCTAssertFalse(app.buttons["tripNeedsHelpCard"].exists)
-        XCTAssertTrue(app.staticTexts["Local arrival times"].exists)
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'flightCard-'")).firstMatch.exists)
         capture("Trip board with verified flight")
     }
 
@@ -2905,12 +2913,10 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["appearanceDoneButton"].tap()
         selectAppTab(1, in: app)
         app.buttons["tripCard-example-west"].tap()
-        XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        sleep(6)
         capture("Night Jade routes")
-        app.buttons["expandTripMapButton"].tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 4))
-        capture("Night Jade immersive map")
-        app.buttons["closeTripMapButton"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
         selectAppTab(2, in: app)
         if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         appearance.tap()
@@ -3007,7 +3013,7 @@ final class PrototypeUITests: XCTestCase {
         let app = tripsApp()
         XCTAssertTrue(app.buttons["tripCard-example-west"].waitForExistence(timeout: 8))
         app.buttons["tripCard-example-west"].tap()
-        XCTAssertTrue(app.staticTexts["Arrivals"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 4))
         let flightCard = app.buttons["flightCard-wang-out"]
         XCTAssertTrue(flightCard.waitForExistence(timeout: 4))
         flightCard.tap()
