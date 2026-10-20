@@ -272,9 +272,12 @@ struct TripGlobeHero: View {
             let flown = TripGlobeTimeline.ease(TripGlobeTimeline.clamp((elapsed - TripGlobeTimeline.fly(index)) / 2.3))
             if flown > 0, flown < 1, points[Int(Double(last) * flown)].1 { return points[Int(Double(last) * flown)].0 }
         }
+        // The hero runs under the navigation buttons, so a label starts where the route comes
+        // into clear view below them rather than at the screen's top edge.
         let indices = direction == .outbound ? Array(0...last) : Array((0...last).reversed())
-        guard let first = indices.first(where: { points[$0].1 }) else { return nil }
-        return CGPoint(x: points[first].0.x, y: points[first].0.y - 12)
+        guard let first = indices.first(where: { points[$0].1 && points[$0].0.y - 12 >= Self.labelTop })
+                ?? indices.first(where: { points[$0].1 }) else { return nil }
+        return CGPoint(x: points[first].0.x, y: max(Self.labelTop, points[first].0.y - 12))
     }
 
     private func hop(count: Int) -> CGFloat {
@@ -293,6 +296,9 @@ struct TripGlobeHero: View {
             }
         }
     }
+
+    /// Clear of the status bar and the glass navigation buttons that float over the hero.
+    static let labelTop: CGFloat = 118
 
     static let planePath: Path = {
         var p = Path()
