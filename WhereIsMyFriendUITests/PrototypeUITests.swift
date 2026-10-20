@@ -1073,9 +1073,11 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
         ruisi.press(forDuration: 0.15)
         XCTAssertEqual(ruisi.value as? String, "Details expanded")
-        XCTAssertTrue(app.staticTexts["United Airlines"].waitForExistence(timeout: 3))
-        Thread.sleep(forTimeInterval: 3)
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "UA 1612")).firstMatch.waitForExistence(timeout: 3))
+        app.scrollViews["fullTripArrivalBoard"].swipeUp()
+        Thread.sleep(forTimeInterval: 2)
         capture("\(prefix)-selected")
+        app.scrollViews["fullTripArrivalBoard"].swipeDown()
         ruisi.press(forDuration: 0.15)
         app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
         Thread.sleep(forTimeInterval: 6)
@@ -2523,7 +2525,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(flight.waitForExistence(timeout: 5))
         flight.tap()
         XCTAssertEqual(flight.value as? String, "Details expanded")
-        XCTAssertTrue(app.staticTexts["British Airways"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "British Airways")).firstMatch.waitForExistence(timeout: 3))
         capture("\(language)-07-flight-details")
     }
 
@@ -2836,7 +2838,8 @@ final class PrototypeUITests: XCTestCase {
         number.typeText("UA 353")
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 3))
-        XCTAssertFalse(app.buttons["tripNeedsHelpCard"].exists)
+        // Saving is asynchronous; the prompt leaves once the board shows the new flight.
+        XCTAssertTrue(app.buttons["tripNeedsHelpCard"].waitForNonExistence(timeout: 4))
         capture("Awaiting friend flight compact status")
         app.scrollViews["fullTripArrivalBoard"].swipeUp()
         let card = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "flightCard-")).firstMatch

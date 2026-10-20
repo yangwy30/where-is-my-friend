@@ -461,13 +461,38 @@ struct TripGlobeBoardRow: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("missingTraveler-\(traveler.id)")
             }
-            if isSelected, flight != nil {
-                ticket
-                    .padding(.leading, 46).padding(.bottom, 14)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+            if isSelected, let flight {
+                TripGlobeJourney(trip: trip, traveler: traveler, direction: direction)
+                    .padding(.top, 2)
+                    .padding(.bottom, isSelf && trip.cancelledAt == nil ? 4 : 16)
+                    .transition(.opacity)
+                if isSelf, trip.cancelledAt == nil {
+                    HStack(spacing: 22) {
+                        Button("Edit my flight", systemImage: "pencil") { onEditFlight(flight) }
+                            .foregroundStyle(WIFTheme.fresh)
+                            .accessibilityIdentifier("editMyTripFlightButton")
+                        Button("Delete", systemImage: "trash", role: .destructive) { onDeleteFlight(flight) }
+                            .foregroundStyle(WIFTheme.destructive)
+                            .accessibilityIdentifier("deleteMyTripFlightButton")
+                        Spacer(minLength: 0)
+                    }
+                    .font(.subheadline.weight(.medium)).buttonStyle(.plain)
+                    .padding(.leading, 46).padding(.top, 6).padding(.bottom, 16)
+                    .transition(.opacity)
+                }
             }
-            Divider().overlay(WIFTheme.border.opacity(0.6)).padding(.leading, 46)
+            if !isSelected {
+                Divider().overlay(WIFTheme.border.opacity(0.6)).padding(.leading, 46)
+            }
         }
+        .background {
+            if isSelected {
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(WIFTheme.freshSurface.opacity(0.32))
+                    .padding(.horizontal, -12)
+            }
+        }
+        .padding(.vertical, isSelected ? 4 : 0)
         .opacity(isDimmed ? 0.4 : 1)
     }
 
@@ -478,6 +503,13 @@ struct TripGlobeBoardRow: View {
         let from = direction == .outbound ? flight.origin : flight.destination
         return HStack(alignment: .center, spacing: 12) {
             TripGlobeAvatar(traveler: traveler, size: 34)
+                // When open, the trip's line grows straight down out of the avatar.
+                .overlay(alignment: .bottom) {
+                    if isSelected {
+                        Rectangle().fill(direction == .outbound ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.45))
+                            .frame(width: 2, height: 20).offset(y: 20)
+                    }
+                }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText).lineLimit(1)
                 Text("\(from) · \(flight.flightNumber)")
@@ -530,86 +562,188 @@ struct TripGlobeBoardRow: View {
         }
         .padding(.vertical, 12)
     }
+}
 
-    // MARK: Ticket
+/// One traveler's whole trip as a single line: the flight in, the stay, the flight home.
+/// The leg for the direction on screen is jade; the other one is quiet grey.
+struct TripGlobeJourney: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let trip: TripPlan
+    let traveler: TripGlobeTraveler
+    let direction: TripDirection
+    @State private var shown = false
 
-    private var ticket: some View {
+    private enum Rail { case solid(Color), dotted, none }
+    private enum Node { case ring(Color), dot(Color), open }
+
+    private func color(_ leg: TripDirection) -> Color { leg == direction ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.45) }
+    private func ink(_ leg: TripDirection) -> Color { leg == direction ? WIFTheme.primaryText : WIFTheme.secondaryText }
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            leg(String(localized: "Out"), traveler.outbound, legDirection: .outbound)
-            Rectangle().fill(WIFTheme.border.opacity(0.7)).frame(height: 1)
-                .mask(HStack(spacing: 4) { ForEach(0..<60, id: \.self) { _ in Rectangle().frame(width: 4) } })
-                .padding(.vertical, 12)
-            leg(String(localized: "Back"), traveler.inbound, legDirection: .inbound)
-            if isSelf, trip.cancelledAt == nil, let flight {
-                HStack(spacing: 18) {
-                    Button("Edit my flight", systemImage: "pencil") { onEditFlight(flight) }
-                        .accessibilityIdentifier("editMyTripFlightButton")
-                    Spacer(minLength: 0)
-                    Button("Delete", systemImage: "trash", role: .destructive) { onDeleteFlight(flight) }
-                        .foregroundStyle(WIFTheme.destructive)
-                        .accessibilityIdentifier("deleteMyTripFlightButton")
-                }
-                .font(.subheadline.weight(.medium)).buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
-                .padding(.top, 14)
+            let items = rows
+            ForEach(items.indices, id: \.self) { index in
+                items[index]
+                    .opacity(shown ? 1 : 0)
+                    .offset(y: shown ? 0 : -4)
+                    .animation(reduceMotion ? nil : .easeOut(duration: 0.3).delay(Double(index) * 0.06), value: shown)
             }
         }
-        .padding(14)
-        .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(WIFTheme.border.opacity(0.6), lineWidth: 1))
+        .onAppear { shown = true }
+    }
+
+    private var rows: [AnyView] {
+        var rows: [AnyView] = []
+        let destinationCity = trip.destination?.city ?? trip.destinationAirport
+        if let out = traveler.outbound {
+            rows.append(stop(code: out.origin, day: day(out.departureSortDate, airport: out.origin), time: out.departureTime,
+                             node: .ring(color(.outbound)), above: .solid(color(.outbound)), below: .solid(color(.outbound)), leg: .outbound))
+            rows.append(flight(out, leg: .outbound))
+            rows.append(stop(code: out.destination, day: arrivalDay(out), time: out.arrivalTime,
+                             node: .dot(color(.outbound)), above: .solid(color(.outbound)), below: .dotted, leg: .outbound))
+        } else {
+            rows.append(missing(String(localized: "No flight in yet"), above: .dotted, below: .dotted))
+        }
+        rows.append(stay(nights: nights, city: destinationCity))
+        if let back = traveler.inbound {
+            rows.append(stop(code: back.origin, day: day(back.departureSortDate, airport: back.origin), time: back.departureTime,
+                             node: .ring(color(.inbound)), above: .dotted, below: .solid(color(.inbound)), leg: .inbound))
+            rows.append(flight(back, leg: .inbound))
+            rows.append(stop(code: back.destination, day: arrivalDay(back), time: back.arrivalTime,
+                             node: .dot(color(.inbound)), above: .solid(color(.inbound)), below: .none, leg: .inbound))
+        } else {
+            rows.append(missing(String(localized: "No flight home yet"), above: .dotted, below: .none))
+        }
+        return rows
+    }
+
+    // MARK: Pieces
+
+    private func stop(code: String, day: String?, time: String, node: Node, above: Rail, below: Rail, leg: TripDirection) -> AnyView {
+        let city = AirportLocation.location(for: code)?.city
+        return AnyView(HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                line(above).frame(height: 10)
+                nodeView(node)
+                line(below).frame(maxHeight: .infinity)
+            }
+            .frame(width: 34)
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(code).font(.subheadline.weight(.semibold)).foregroundStyle(ink(leg))
+                    if let city, city != code { Text(city).font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1) }
+                }
+                if let day { Text(day).font(.footnote).foregroundStyle(WIFTheme.secondaryText) }
+            }
+            Spacer(minLength: 8)
+            Text(time).font(.subheadline.weight(.semibold)).monospacedDigit().foregroundStyle(ink(leg))
+        }
+        .padding(.bottom, 2)
+        .fixedSize(horizontal: false, vertical: true))
+    }
+
+    private func flight(_ flight: TripFlight, leg: TripDirection) -> AnyView {
+        var parts = ["\(flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")) \(flight.flightNumber)"]
+        if let duration = duration(flight) { parts.append(duration) }
+        if flight.terminal != "Not available", !flight.terminal.isEmpty { parts.append(flight.terminal) }
+        let flagged = [.delayed, .cancelled, .diverted, .unverified, .landed, .airborne, .boarding].contains(flight.status)
+        return AnyView(HStack(alignment: .center, spacing: 12) {
+            VStack(spacing: 3) {
+                line(.solid(color(leg))).frame(maxHeight: .infinity)
+                Image(systemName: "airplane").font(.system(size: 10, weight: .semibold))
+                    .rotationEffect(.degrees(90)).foregroundStyle(color(leg))
+                line(.solid(color(leg))).frame(maxHeight: .infinity)
+            }
+            .frame(width: 34)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(parts.joined(separator: " · ")).font(.footnote).foregroundStyle(WIFTheme.secondaryText)
+                if flagged { Text(flight.status.title).font(.footnote.weight(.medium)).foregroundStyle(flight.status.accent) }
+            }
+            .padding(.vertical, 10)
+            Spacer(minLength: 0)
+        }
+        .fixedSize(horizontal: false, vertical: true))
+    }
+
+    private func stay(nights: Int?, city: String) -> AnyView {
+        let text: String = {
+            guard let nights, nights > 0 else { return String(localized: "In \(city)") }
+            return nights == 1 ? String(localized: "1 night in \(city)") : String(localized: "\(nights) nights in \(city)")
+        }()
+        return AnyView(HStack(alignment: .center, spacing: 12) {
+            line(.dotted).frame(maxHeight: .infinity).frame(width: 34)
+            Text(text).font(.footnote.weight(.medium)).foregroundStyle(WIFTheme.secondaryText).padding(.vertical, 12)
+            Spacer(minLength: 0)
+        }
+        .fixedSize(horizontal: false, vertical: true))
+    }
+
+    private func missing(_ text: String, above: Rail, below: Rail) -> AnyView {
+        AnyView(HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                line(above).frame(height: 6)
+                nodeView(.open)
+                line(below).frame(maxHeight: .infinity)
+            }
+            .frame(width: 34)
+            Text(text).font(.subheadline).foregroundStyle(WIFTheme.caution)
+            Spacer(minLength: 0)
+        }
+        .padding(.bottom, 2)
+        .fixedSize(horizontal: false, vertical: true))
     }
 
     @ViewBuilder
-    private func leg(_ label: String, _ leg: TripFlight?, legDirection: TripDirection) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(label).font(.caption.weight(.semibold)).tracking(0.6).textCase(.uppercase)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                Spacer(minLength: 8)
-                if let leg {
-                    Text(leg.airline)
-                    Text("·")
-                    Text(leg.flightNumber)
-                }
-            }
-            .font(.caption).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
-            if let leg {
-                HStack(alignment: .center, spacing: 10) {
-                    endpoint(code: leg.origin, time: leg.departureTime, day: leg.departureDayLabel, alignment: .leading)
-                    HStack(spacing: 4) {
-                        Rectangle().fill(WIFTheme.border).frame(height: 1)
-                        Image(systemName: "airplane").font(.caption).foregroundStyle(WIFTheme.fresh)
-                        Rectangle().fill(WIFTheme.border).frame(height: 1)
-                    }
-                    .accessibilityHidden(true)
-                    endpoint(code: leg.destination, time: leg.arrivalTime, day: leg.arrivalDayLabel, alignment: .trailing)
-                }
-                HStack(spacing: 6) {
-                    Text(leg.status.title).foregroundStyle(leg.status.accent)
-                    if leg.terminal != "Not available" {
-                        Text("·")
-                        Text(leg.terminal)
-                    }
-                }
-                .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-            } else {
-                HStack {
-                    Text(legDirection == .outbound ? String(localized: "Not added yet") : String(localized: "No return flight yet"))
-                        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-                    Spacer(minLength: 8)
-                    if isSelf, trip.cancelledAt == nil, legDirection == direction {
-                        Button("Add", action: onAddFlight).font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
-                    }
-                }
-            }
+    private func line(_ rail: Rail) -> some View {
+        switch rail {
+        case .solid(let color): Rectangle().fill(color).frame(width: 2)
+        case .dotted:
+            Path { path in path.move(to: CGPoint(x: 1, y: 0)); path.addLine(to: CGPoint(x: 1, y: 400)) }
+                .stroke(WIFTheme.secondaryText.opacity(0.4), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.5, 5]))
+                .frame(width: 2).clipped()
+        case .none: Color.clear.frame(width: 2)
         }
     }
 
-    private func endpoint(code: String, time: String, day: String?, alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: 1) {
-            Text(code).font(.title3.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
-            Text(time).font(.subheadline.weight(.medium)).monospacedDigit().foregroundStyle(WIFTheme.primaryText)
-            if let day { Text(day).font(.caption).foregroundStyle(WIFTheme.secondaryText) }
+    @ViewBuilder
+    private func nodeView(_ node: Node) -> some View {
+        switch node {
+        case .ring(let color): Circle().strokeBorder(color, lineWidth: 2).frame(width: 11, height: 11)
+        case .dot(let color): Circle().fill(color).frame(width: 11, height: 11)
+        case .open: Circle().strokeBorder(WIFTheme.caution.opacity(0.7), style: StrokeStyle(lineWidth: 1.5, dash: [2, 2])).frame(width: 11, height: 11)
         }
-        .fixedSize()
+    }
+
+    // MARK: Values
+
+    private func day(_ date: Date, airport: String) -> String? {
+        guard date != .distantFuture, let zone = AirportLocation.location(for: airport)?.timeZone else { return nil }
+        var style = Date.FormatStyle.dateTime.weekday(.abbreviated).month(.abbreviated).day()
+        style.timeZone = zone
+        return date.formatted(style)
+    }
+
+    /// Only shown when the flight lands on a different local day than it left.
+    private func arrivalDay(_ flight: TripFlight) -> String? {
+        let arrival = day(flight.arrivalSortDate, airport: flight.destination)
+        return arrival == day(flight.departureSortDate, airport: flight.origin) ? nil : arrival
+    }
+
+    private func duration(_ flight: TripFlight) -> String? {
+        let seconds = flight.arrivalSortDate.timeIntervalSince(flight.departureSortDate)
+        guard flight.arrivalSortDate != .distantFuture, flight.departureSortDate != .distantFuture, seconds > 0, seconds < 40 * 3600 else { return nil }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: seconds)
+    }
+
+    private var nights: Int? {
+        guard let zone = trip.destination?.timeZone else { return nil }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = zone
+        let start = traveler.outbound.map(\.arrivalSortDate).flatMap { $0 == .distantFuture ? nil : $0 } ?? trip.startDay.pickerDate
+        let end = traveler.inbound.map(\.departureSortDate).flatMap { $0 == .distantFuture ? nil : $0 } ?? trip.endDay.pickerDate
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: calendar.startOfDay(for: end)).day
     }
 }
