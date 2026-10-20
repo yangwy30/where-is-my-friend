@@ -81,6 +81,7 @@ struct TripReminderButton: View {
     @ObservedObject var library: TripLibrary
     let trip: TripPlan
     let person: TripParticipant
+    var font: Font = .caption.weight(.semibold)
     @State private var message: String?
     @State private var offersMessage = false
     @State private var sharingMessage = false
@@ -110,7 +111,7 @@ struct TripReminderButton: View {
             }
         } label: {
             Label(recentlyReminded ? "Reminded" : "Remind", systemImage: recentlyReminded ? "checkmark" : "bell.badge")
-                .font(.caption.weight(.semibold))
+                .font(font)
                 .frame(minWidth: 44, minHeight: 44)
         }
         .buttonStyle(.borderless)

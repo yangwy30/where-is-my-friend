@@ -1046,10 +1046,19 @@ final class PrototypeUITests: XCTestCase {
 
     /// Walks the trip globe for review and screen recording: landings, one traveler's legs, then departures.
     func testTripGlobeWalkthrough() {
+        tripGlobeWalkthrough(extra: [], prefix: "trip-globe")
+    }
+
+    /// The same walk at a larger text size, where the board rows and ticket must not wrap or clip.
+    func testTripGlobeWalkthroughAtLargeText() {
+        tripGlobeWalkthrough(extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryXXL"], prefix: "trip-globe-xxl")
+    }
+
+    private func tripGlobeWalkthrough(extra: [String], prefix: String) {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-seedTripExamples", "-previewKauaiTrip", "-previewTrips",
-                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"] + extra
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
         let card = app.buttons["tripCard-example-kauai"]
@@ -1059,18 +1068,18 @@ final class PrototypeUITests: XCTestCase {
         card.press(forDuration: 0.15)
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 6)
-        capture("trip-globe-arrive")
+        capture("\(prefix)-arrive")
         let ruisi = app.buttons["flightCard-kauai-ruisi-out"]
         XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
         ruisi.press(forDuration: 0.15)
         XCTAssertEqual(ruisi.value as? String, "Details expanded")
         XCTAssertTrue(app.staticTexts["United Airlines"].waitForExistence(timeout: 3))
         Thread.sleep(forTimeInterval: 3)
-        capture("trip-globe-selected")
+        capture("\(prefix)-selected")
         ruisi.press(forDuration: 0.15)
         app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
         Thread.sleep(forTimeInterval: 6)
-        capture("trip-globe-depart")
+        capture("\(prefix)-depart")
         app.segmentedControls["tripDirectionPicker"].buttons["Arrive"].tap()
         Thread.sleep(forTimeInterval: 4)
     }

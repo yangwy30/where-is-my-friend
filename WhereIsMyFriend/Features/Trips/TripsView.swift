@@ -493,7 +493,7 @@ private struct FullTripArrivalBoard: View {
                         if let destination = trip.destination {
                             TripGlobeHero(destination: destination, travelers: travelers, direction: direction,
                                           elapsed: elapsed, selectedID: $selectedTravelerID)
-                                .frame(height: dynamicTypeSize.isAccessibilitySize ? 300 : 380)
+                                .frame(height: dynamicTypeSize.isAccessibilitySize ? 340 : 470)
                         } else {
                             Color.clear.frame(height: 110)
                         }
@@ -553,7 +553,7 @@ private struct FullTripArrivalBoard: View {
                         Text("\(trip.destinationName) · \(trip.destinationAirport)")
                         Text(" · \(trip.dateLabel)")
                     }
-                    .lineLimit(1).minimumScaleFactor(0.85)
+                    .lineLimit(2)
                     TimelineView(.periodic(from: .now, by: 60)) { context in
                         let summary = trip.arrivalOverview(direction: direction, at: context.date)
                         Text(summary.title)
@@ -611,18 +611,7 @@ private struct FullTripArrivalBoard: View {
 
     private func board(travelers: [TripGlobeTraveler]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 8) {
-                Text("Who").frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 30)
-                Text(direction == .outbound ? "From" : "To").frame(width: 38, alignment: .leading)
-                Text("Flight").frame(width: 60, alignment: .leading)
-                Text(direction == .outbound ? "Lands" : "Leaves").frame(width: 46, alignment: .trailing)
-                Text(direction == .outbound ? "Back" : "Out").frame(width: 42, alignment: .trailing)
-            }
-            .font(.system(size: 10.5, weight: .semibold)).tracking(0.6).textCase(.uppercase)
-            .foregroundStyle(WIFTheme.secondaryText.opacity(0.8))
-            .padding(.top, 14).padding(.bottom, 6)
-            .accessibilityHidden(true)
-            Divider().overlay(WIFTheme.border.opacity(0.6))
+            Divider().overlay(WIFTheme.border.opacity(0.6)).padding(.top, 10)
             ForEach(ordered(travelers)) { traveler in
                 TripGlobeBoardRow(library: library, trip: trip, traveler: traveler, direction: direction,
                                   isSelf: traveler.id == selfParticipant?.id,
