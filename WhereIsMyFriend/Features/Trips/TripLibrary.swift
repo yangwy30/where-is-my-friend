@@ -723,6 +723,7 @@ extension TripPlan {
                                     departureTime: dep, arrivalTime: arr, date: TripDay(value: day).pickerDate, terminal: terminal,
                                     status: .scheduled, direction: direction, arrivalDayOffset: offset, travelerID: person.id)
             flight.departureDay = day
+            flight.departureTerminal = terminal
             return flight
         }
         var trip = TripPlan(id: "example-kauai", name: "Kauai Thanksgiving", destinationAirport: "LIH",

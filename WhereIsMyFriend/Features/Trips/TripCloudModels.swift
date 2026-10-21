@@ -115,7 +115,8 @@ struct CloudTrip: Decodable, Sendable {
                 arrivalDayOffset: candidate.arrivalDayOffset, travelerID: flight.participant_id,
                 revision: flight.revision, candidateID: flight.candidate_id, verifiedAt: Self.timestamp(flight.verified_at),
                 trackingState: flight.tracking_state, scheduledDeparture: Self.timestamp(flight.departure.scheduledTime?.utc),
-                expectedArrival: Self.timestamp(flight.arrival.bestTime?.utc), departureDay: flight.date)
+                expectedArrival: Self.timestamp(flight.arrival.bestTime?.utc), departureDay: flight.date,
+                departureTerminal: candidate.departureTerminal, arrivalTerminal: candidate.arrivalTerminal)
         }
         return TripPlan(id: id, name: name, destinationAirport: destination_airport,
             startDay: TripDay(value: start_date), endDay: TripDay(value: end_date), participants: people,

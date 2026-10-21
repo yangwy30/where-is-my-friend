@@ -576,13 +576,12 @@ struct TripGlobeBoardRow: View {
     }
 }
 
-/// One flight as a boarding pass in the traveler's color: big airport codes, the terminal in
-/// the largest cell, and a stub with the date, duration and status. Out and Back flip it over.
+/// One flight as a boarding pass. Tabs above it pick Out or Back and say when each leaves;
+/// the pass reads left to right like the trip itself, each time under its airport with its zone,
+/// and the stub says plainly which airport's terminal it is.
 struct TripBoardingPass: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @ScaledMetric(relativeTo: .largeTitle) private var codeSize: CGFloat = 40
-    @ScaledMetric(relativeTo: .title) private var terminalSize: CGFloat = 32
+    @ScaledMetric(relativeTo: .largeTitle) private var codeSize: CGFloat = 38
     let trip: TripPlan
     let traveler: TripGlobeTraveler
     @Binding var leg: TripDirection
@@ -594,8 +593,8 @@ struct TripBoardingPass: View {
 
     /// The opened row's background; the pass's notches are cut in this color.
     static var wash: Color { WIFTheme.freshSurface.opacity(0.32) }
-    /// Every pass wears the app's jade, whoever it belongs to; a person's own color stays on their avatar,
-    /// so the screen keeps one signature color instead of a different band per traveler.
+    /// The selected tab wears the app's jade, whoever the traveler is; a person's own color
+    /// stays on their avatar, so the screen keeps one signature color.
     static let band = WIFPersonPalette.fills[0]
 
     private var shown: TripDirection { face ?? leg }
@@ -603,11 +602,14 @@ struct TripBoardingPass: View {
 
     var body: some View {
         VStack(spacing: 10) {
+            HStack(spacing: 6) {
+                tab(.outbound, String(localized: "Out"), id: "passLegOut")
+                tab(.inbound, String(localized: "Back"), id: "passLegBack")
+            }
             VStack(spacing: 0) {
-                band
                 if let flight {
-                    codes(flight)
-                    cells(flight)
+                    header(flight)
+                    route(flight)
                     perforation
                     stub(flight)
                 } else {
@@ -634,129 +636,84 @@ struct TripBoardingPass: View {
         }
     }
 
-    // MARK: Parts
+    // MARK: Tabs
 
-    private var band: some View {
-        HStack(spacing: 10) {
-            Text(bandTitle)
-                .font(.footnote.weight(.bold)).tracking(0.6)
-                .foregroundStyle(.white).lineLimit(1).minimumScaleFactor(0.8)
-            Spacer(minLength: 6)
-            HStack(spacing: 2) {
-                legButton(.outbound, String(localized: "Out"), id: "passLegOut")
-                legButton(.inbound, String(localized: "Back"), id: "passLegBack")
+    /// A tab names the leg and when it leaves, so switching also answers "when".
+    private func tab(_ value: TripDirection, _ title: String, id: String) -> some View {
+        let selected = leg == value
+        let when = traveler.flight(value).map { departureDay($0) } ?? String(localized: "Not booked")
+        return Button { leg = value } label: {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title).font(.caption2.weight(.bold)).tracking(0.8).textCase(.uppercase)
+                    .foregroundStyle(selected ? .white.opacity(0.85) : WIFTheme.secondaryText)
+                Text(when).font(.subheadline.weight(.semibold))
+                    .foregroundStyle(selected ? .white : (traveler.flight(value) == nil ? WIFTheme.secondaryText : WIFTheme.primaryText))
+                    .lineLimit(1).minimumScaleFactor(0.85)
             }
-            .padding(2)
-            .background(.white.opacity(0.18), in: Capsule())
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            .background(selected ? AnyShapeStyle(Self.band) : AnyShapeStyle(WIFTheme.primaryText.opacity(0.06)),
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
-        .padding(.leading, 16).padding(.trailing, 10).padding(.vertical, 10)
-        .background(Self.band)
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityIdentifier(id)
     }
 
-    private var bandTitle: String {
-        guard let flight else { return shown == .outbound ? String(localized: "Flight in") : String(localized: "Flight home") }
-        // "Southwest Airlines" + "WN 1289" reads as "SOUTHWEST 1289", as on a printed pass.
-        let airline = flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")
-        let parts = flight.flightNumber.split(separator: " ")
-        let number = parts.count == 2 && parts[0].allSatisfy(\.isLetter) == false ? flight.flightNumber
-            : (parts.count == 2 ? String(parts[1]) : flight.flightNumber)
-        return airline == "Not verified" ? flight.flightNumber : "\(airline) \(number)".uppercased()
-    }
+    // MARK: Pass
 
-    private func legButton(_ value: TripDirection, _ title: String, id: String) -> some View {
-        Button(title) { leg = value }
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(leg == value ? Self.band : .white)
-            .padding(.horizontal, 12).frame(minHeight: 30)
-            .background(leg == value ? AnyShapeStyle(.white) : AnyShapeStyle(.clear), in: Capsule())
-            .buttonStyle(.plain)
-            .accessibilityAddTraits(leg == value ? .isSelected : [])
-            .accessibilityIdentifier(id)
-    }
-
-    private func codes(_ flight: TripFlight) -> some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            endpoint(flight.origin, alignment: .leading)
-            Spacer(minLength: 4)
-            Image(systemName: "airplane").font(.title3).foregroundStyle(WIFTheme.fresh)
-                .padding(.bottom, 26).accessibilityHidden(true)
-            Spacer(minLength: 4)
-            endpoint(flight.destination, alignment: .trailing)
+    private func header(_ flight: TripFlight) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(flightName(flight)).font(.footnote.weight(.bold)).tracking(0.6).foregroundStyle(WIFTheme.primaryText)
+                .lineLimit(1)
+            Spacer(minLength: 8)
+            Text(flight.status.title).font(.footnote.weight(.medium)).foregroundStyle(statusColor(flight.status))
         }
         .padding(.horizontal, 18).padding(.top, 14)
     }
 
-    private func endpoint(_ code: String, alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: 0) {
+    private func route(_ flight: TripFlight) -> some View {
+        let unverified = flight.status == .unverified
+        return HStack(alignment: .bottom, spacing: 10) {
+            endpoint(code: flight.origin, time: unverified ? "—" : flight.departureTime,
+                     zone: unverified ? nil : flight.departureTimeZoneLabel, shift: nil, alignment: .leading)
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    Line().stroke(WIFTheme.border, style: StrokeStyle(lineWidth: 1.5, dash: [4, 4])).frame(height: 1.5)
+                    Image(systemName: "airplane").font(.subheadline).foregroundStyle(WIFTheme.fresh)
+                    Line().stroke(WIFTheme.border, style: StrokeStyle(lineWidth: 1.5, dash: [4, 4])).frame(height: 1.5)
+                }
+                Text(duration(flight) ?? " ").font(.caption).monospacedDigit().foregroundStyle(WIFTheme.secondaryText)
+            }
+            .padding(.bottom, 34)
+            .accessibilityElement(children: .combine)
+            endpoint(code: flight.destination, time: unverified ? "—" : flight.arrivalTime,
+                     zone: unverified ? nil : flight.arrivalTimeZoneLabel,
+                     shift: unverified || flight.arrivalDayOffset == 0 ? nil : "+\(flight.arrivalDayOffset)", alignment: .trailing)
+        }
+        .padding(.horizontal, 18).padding(.top, 8).padding(.bottom, 14)
+    }
+
+    private func endpoint(code: String, time: String, zone: String?, shift: String?, alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: 2) {
             Text(code)
                 .font(.system(size: codeSize, weight: .heavy)).tracking(-1)
                 .foregroundStyle(WIFTheme.primaryText).lineLimit(1).minimumScaleFactor(0.6)
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                Text(time).font(.title3.weight(.semibold)).monospacedDigit().foregroundStyle(WIFTheme.primaryText)
+                if let shift {
+                    Text(shift).font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                        .accessibilityLabel(String(localized: "next day"))
+                }
+                if let zone { Text(zone).font(.caption.weight(.medium)).foregroundStyle(WIFTheme.secondaryText) }
+            }
+            .lineLimit(1).fixedSize()
             if let city = AirportLocation.location(for: code)?.city {
                 Text(city).font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
             }
         }
-    }
-
-    private func cells(_ flight: TripFlight) -> some View {
-        let unverified = flight.status == .unverified
-        let items = [
-            cell(String(localized: "Departs"), unverified ? "—" : flight.departureTime),
-            cell(String(localized: "Lands"), unverified ? "—" : flight.arrivalTime,
-                 dayShift: unverified || flight.arrivalDayOffset == 0 ? nil : "+\(flight.arrivalDayOffset)")
-        ]
-        return ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 12) {
-                terminalCell(flight).frame(maxWidth: .infinity, alignment: .leading)
-                items[0].frame(maxWidth: .infinity, alignment: .leading)
-                items[1].frame(maxWidth: .infinity, alignment: .leading)
-            }
-            VStack(alignment: .leading, spacing: 10) {
-                terminalCell(flight)
-                HStack(alignment: .top, spacing: 12) { items[0]; Spacer(minLength: 8); items[1] }
-            }
-        }
-        .padding(.horizontal, 18).padding(.top, 14).padding(.bottom, 16)
-    }
-
-    private func label(_ text: String) -> some View {
-        Text(text).font(.caption2.weight(.bold)).tracking(0.8).textCase(.uppercase)
-            .foregroundStyle(WIFTheme.secondaryText)
-    }
-
-    /// A time cell; a landing on a later local day gets a small "+1".
-    private func cell(_ title: String, _ value: String, dayShift: String? = nil) -> AnyView {
-        AnyView(VStack(alignment: .leading, spacing: 2) {
-            label(title)
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(value).font(.title3.weight(.semibold)).monospacedDigit().foregroundStyle(WIFTheme.primaryText)
-                if let dayShift {
-                    Text(dayShift).font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
-                        .accessibilityLabel(String(localized: "next day"))
-                }
-            }
-            .lineLimit(1).fixedSize()
-        })
-    }
-
-    private func terminalCell(_ flight: TripFlight) -> some View {
-        let terminal = Self.terminal(flight.terminal)
-        return VStack(alignment: .leading, spacing: 2) {
-            label(String(localized: "Terminal"))
-            if terminal.count <= 3 {
-                Text(terminal).font(.system(size: terminalSize, weight: .bold)).foregroundStyle(WIFTheme.fresh)
-                    .lineLimit(1).fixedSize()
-            } else {
-                Text(terminal).font(.headline).foregroundStyle(WIFTheme.fresh).fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    /// "Terminal 2" reads as "2" in the cell; names like "Tom Bradley" stay whole.
-    static func terminal(_ raw: String) -> String {
-        let trimmed = raw.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty, trimmed != "Not available" else { return "—" }
-        if trimmed.lowercased().hasPrefix("terminal ") { return String(trimmed.dropFirst(9)) }
-        return trimmed
+        .layoutPriority(1)
     }
 
     private var perforation: some View {
@@ -783,14 +740,35 @@ struct TripBoardingPass: View {
         }
     }
 
+    /// Where to meet them: the arrival terminal when the flight data names one, otherwise
+    /// where they leave from. Older flights only know "a terminal", so they say no more than that.
     private func stub(_ flight: TripFlight) -> some View {
-        HStack(spacing: 6) {
-            if let day = departureDay(flight) { Text(day) }
-            Spacer(minLength: 8)
-            if let duration = duration(flight) { Text(duration).fontWeight(.semibold).foregroundStyle(WIFTheme.primaryText); Text("·") }
-            Text(flight.status.title).foregroundStyle(statusColor(flight.status))
+        let fact: (label: String, value: String)? = {
+            if let arrival = flight.arrivalTerminal {
+                let city = AirportLocation.location(for: flight.destination)?.city ?? flight.destination
+                return (String(localized: "Lands at"), "\(city) · \(arrival)")
+            }
+            if let departure = flight.departureTerminal {
+                let city = AirportLocation.location(for: flight.origin)?.city ?? flight.origin
+                return (String(localized: "Leaves from"), "\(city) · \(departure)")
+            }
+            let legacy = flight.terminal.trimmingCharacters(in: .whitespaces)
+            return legacy.isEmpty || legacy == "Not available" ? nil : (String(localized: "Terminal"), legacy)
+        }()
+        return HStack(alignment: .firstTextBaseline) {
+            if let fact {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(fact.label).font(.caption2.weight(.bold)).tracking(0.8).textCase(.uppercase)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                    Text(fact.value).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .accessibilityElement(children: .combine)
+            } else {
+                Text(String(localized: "Terminal not announced yet")).font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+            }
+            Spacer(minLength: 0)
         }
-        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1).minimumScaleFactor(0.8)
         .padding(.horizontal, 18).padding(.top, 4).padding(.bottom, 14)
     }
 
@@ -799,6 +777,14 @@ struct TripBoardingPass: View {
         case .scheduled, .unknown: WIFTheme.secondaryText
         default: status.accent
         }
+    }
+
+    private func flightName(_ flight: TripFlight) -> String {
+        // "Southwest Airlines" + "WN 1289" reads as "SOUTHWEST 1289", as on a printed pass.
+        let airline = flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")
+        let parts = flight.flightNumber.split(separator: " ")
+        let number = parts.count == 2 && parts[0].allSatisfy(\.isLetter) ? String(parts[1]) : flight.flightNumber
+        return airline == "Not verified" ? flight.flightNumber : "\(airline) \(number)".uppercased()
     }
 
     private var empty: some View {
@@ -811,9 +797,9 @@ struct TripBoardingPass: View {
             }
             if isSelf, trip.cancelledAt == nil {
                 Button(String(localized: "Add flight"), action: onAddFlight)
-                    .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.onFresh)
+                    .font(.subheadline.weight(.semibold)).foregroundStyle(.white)
                     .padding(.horizontal, 18).frame(minHeight: 40)
-                    .background(WIFTheme.fresh, in: Capsule())
+                    .background(Self.band, in: Capsule())
                     .buttonStyle(.plain).padding(.top, 4)
                     .accessibilityIdentifier("passAddFlightButton")
             }
@@ -848,7 +834,7 @@ struct TripBoardingPass: View {
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: calendar.startOfDay(for: end)).day
     }
 
-    private func departureDay(_ flight: TripFlight) -> String? {
+    private func departureDay(_ flight: TripFlight) -> String {
         guard flight.departureSortDate != .distantFuture, let zone = AirportLocation.location(for: flight.origin)?.timeZone else {
             return flight.calendarDay.label
         }

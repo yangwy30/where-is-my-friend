@@ -370,6 +370,8 @@ private struct TripDetailView: View {
                                                 travelerID: person.id)
                         }
                         flight.departureDay = TripDay(date).value
+                        flight.departureTerminal = candidate?.departureTerminal
+                        flight.arrivalTerminal = candidate?.arrivalTerminal
                         flight.revision = request.existing?.revision
                         return await library.saveFlight(flight, tripID: tripID, editing: request.existing != nil, candidateID: candidate?.id)
                     }
@@ -1766,6 +1768,10 @@ struct TripFlight: Identifiable, Codable {
     // Additive cache field. Old archives still decode; new data retains the departure
     // airport's calendar date instead of reinterpreting an instant in the device zone.
     var departureDay: String? = nil
+    /// Which airport a terminal belongs to. Older cached flights only have `terminal`,
+    /// which prefers the arrival terminal but doesn't say so.
+    var departureTerminal: String? = nil
+    var arrivalTerminal: String? = nil
     var calendarDay: TripDay { resolvedDepartureDay() }
 
     func resolvedDepartureDay(fallbackTimeZone: TimeZone = .current) -> TripDay {

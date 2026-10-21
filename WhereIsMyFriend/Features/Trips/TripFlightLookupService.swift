@@ -130,6 +130,15 @@ struct FlightCandidate: Identifiable, Codable, Sendable, Hashable {
         return FlightEndpoint.extractTime(from: raw)
     }
 
+    /// Each airport's terminal on its own; `terminalFormatted` blends them for older screens.
+    var departureTerminal: String? { Self.cleanTerminal(departure.terminal) }
+    var arrivalTerminal: String? { Self.cleanTerminal(arrival.terminal) }
+
+    static func cleanTerminal(_ raw: String?) -> String? {
+        guard let clean = raw?.trimmingCharacters(in: .whitespaces), !clean.isEmpty else { return nil }
+        return clean.localizedCaseInsensitiveContains("terminal") ? clean : "Terminal \(clean)"
+    }
+
     var terminalFormatted: String {
         if let term = arrival.terminal, !term.trimmingCharacters(in: .whitespaces).isEmpty {
             let clean = term.trimmingCharacters(in: .whitespaces)
