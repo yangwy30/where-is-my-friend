@@ -18,20 +18,20 @@
 <link rel="preload" href="assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/land-dots.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/home.css?v=20261021f">
+<link rel="stylesheet" href="assets/home.css?v=20261021h">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="hero" data-spotlight>
  <nav class="wrap nav" aria-label="Main navigation">
   <a class="wordmark" href="./" aria-label="Across Us home">across us</a>
-  <div class="nav-links"><a href="#friends">Friends</a><a href="#trips">Trips</a><a href="#privacy">Privacy</a><a class="pill pill-lime" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_nav_202610&amp;mt=8">Get the app</a></div>
+  <div class="nav-links"><a href="#friends">Friends</a><a href="#plans">Plans</a><a href="#trips">Trips</a><a href="#faq">FAQ</a><a class="pill pill-lime" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_nav_202610&amp;mt=8">Get the app</a></div>
  </nav>
  <div class="wrap hero-grid">
   <div class="hero-copy">
    <h1 class="display">See you <span>somewhere.</span></h1>
    <p>Friends’ cities, overlapping plans and group trips, in one quiet iPhone app. Catch each other wherever your paths cross.</p>
-   <div class="hero-actions"><a class="pill pill-lime pill-lg" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_hero_202610&amp;mt=8">Download on the App Store</a><span class="hero-note">Free for iPhone</span></div>
+   <div class="hero-actions"><a class="pill pill-lime pill-lg" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_hero_202610&amp;mt=8">Download on the App Store</a><span class="hero-note">Free. No ads, no subscription.</span></div>
   </div>
   <div class="globe-wrap">
    <div class="globe-stage">
@@ -71,37 +71,10 @@
  </div>
 </section>
 
-<section class="band band-canvas band-tight">
- <div class="wrap split split-flip">
-  <div class="copy reveal">
-   <h2 class="title">Same city. Same dates.</h2>
-   <p class="lede">Lin is in Tokyo from October 21 to 28. Drag your trip along the week and Together soon counts the days you overlap.</p>
-   <p class="aside">Drag the bar, or its ends.</p>
-  </div>
-  <div class="app-card overlap reveal" aria-label="Together soon">
-   <div class="overlap-top">
-    <span class="icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
-    <div><b>Together soon</b><span data-overlap-sub>1 upcoming overlap</span></div>
-   </div>
-   <div class="overlap-city">
-    <div><p class="serif">Tokyo</p><p class="overlap-days" aria-live="polite">with Lin · <span data-overlap-count>4 days together</span></p></div>
-    <img src="assets/emblems/tokyo.png" width="96" height="96" alt="">
-   </div>
-   <p class="app-label">October 2026</p>
-   <div class="cal" data-cal>
-    <div class="cal-days" data-days></div>
-    <div class="cal-track"><span class="track-name">Lin</span><div class="track" data-track="lin"><div class="bar bar-lin" data-bar="lin"></div></div></div>
-    <div class="cal-track"><span class="track-name">You</span><div class="track" data-track="you"><div class="bar bar-you" data-bar="you" tabindex="0" role="slider" aria-label="Your trip dates" aria-valuetext=""><span class="handle" data-handle="start"></span><span class="handle" data-handle="end"></span></div></div></div>
-   </div>
-  </div>
- </div>
-</section>
-
 <section class="band band-panel">
  <div class="wrap moments reveal" data-moments>
-  <p class="app-label center">Same-city moments</p>
   <h2 class="title center"><span data-count-to="22">22</span> days together.</h2>
-  <p class="lede center">With 4 friends in 6 cities. Across Us keeps the days you shared a city, friend by friend.</p>
+  <p class="lede center">Across Us keeps the days you and your friends shared a city: so far, 4 friends in 6 cities. Same-city moments, friend by friend.</p>
   <div class="moment-rows">
    <div class="moment" style="--days:9"><span class="avatar" style="--c:#9E7424">MC</span><div><b>Mia Chen</b><span class="live">In New York with you now</span></div><div class="moment-bar"><i></i></div><strong>9<small>days</small></strong></div>
    <div class="moment" style="--days:5"><span class="avatar" style="--c:#2F6F86">LZ</span><div><b>Lin Zhao</b><span>Last together Sep 18 · Tokyo</span></div><div class="moment-bar"><i></i></div><strong>5<small>days</small></strong></div>
@@ -111,9 +84,41 @@
  </div>
 </section>
 
+<section id="plans" class="band band-canvas">
+ <div class="wrap">
+  <div class="plans-copy reveal">
+   <h2 class="title">Where are you headed next?</h2>
+   <p class="lede">Add a city and dates to your travel plans, and choose which friends can see them. When a friend’s plan puts you in the same city on the same days, Together soon shows when you overlap.</p>
+  </div>
+  <div class="app-card planner reveal" data-planner>
+   <div class="planner-top">
+    <p class="planner-step">Your plan</p>
+    <div class="segmented segmented-city" role="radiogroup" aria-label="City in your plan" data-plan-city>
+     <button role="radio" aria-checked="true" data-city="Tokyo"><img src="assets/emblems/tokyo.png" alt="" width="26" height="26">Tokyo</button>
+     <button role="radio" aria-checked="false" data-city="Paris"><img src="assets/emblems/paris.png" alt="" width="26" height="26">Paris</button>
+     <button role="radio" aria-checked="false" data-city="London"><img src="assets/emblems/london.png" alt="" width="26" height="26">London</button>
+    </div>
+    <p class="planner-dates" data-plan-dates>Oct 24 – 27</p>
+   </div>
+   <div class="cal" data-cal>
+    <div class="cal-days" data-days></div>
+    <div class="cal-track"><span class="track-name"><b>You</b><small data-you-city-label>Tokyo</small></span><div class="track"><div class="bar bar-you" data-bar="you" tabindex="0" role="slider" aria-label="Your plan’s dates" aria-valuetext=""><span class="handle" data-handle="start"></span><span class="handle" data-handle="end"></span></div></div></div>
+    <p class="planner-step planner-step-inline">Friends’ travel plans</p>
+    <div data-friend-plans></div>
+   </div>
+   <div class="together" data-together aria-live="polite">
+    <img src="assets/emblems/tokyo.png" width="84" height="84" alt="" data-together-emblem>
+    <div><p class="together-label">Together soon</p><p class="serif" data-together-city>Tokyo</p><p class="together-text" data-together-text>with Lin · Oct 24 – 27 · 4 days together</p></div>
+    <a class="trip-link" href="#trips">Going together? Make it a Trip <span aria-hidden="true">↓</span></a>
+   </div>
+  </div>
+  <p class="aside center">Pick a city for your plan, then drag your dates.</p>
+ </div>
+</section>
+
 <section id="trips" class="trips" data-spotlight aria-labelledby="trips-title">
  <div class="wrap">
-  <h2 class="heading reveal" id="trips-title">Everyone lands together. <span>Each friend adds their own flights. Tap anyone for their boarding pass.</span></h2>
+  <h2 class="heading reveal" id="trips-title">Going together? Make it a Trip. <span>One destination, the friends who are coming, and everyone’s flights, each added by its traveler. Tap anyone for their boarding pass.</span></h2>
   <div class="trip-stage reveal">
    <div class="app-card board" aria-label="Kauai Thanksgiving arrivals">
     <div class="board-head">
@@ -183,11 +188,23 @@
  </div>
 </section>
 
+<section class="note-band" aria-labelledby="note-title">
+ <div class="wrap note reveal">
+  <h2 class="display" id="note-title">Free, and personal.</h2>
+  <div class="note-body">
+   <p>I built Across Us for me and my friends: scattered across cities, always trying to line up the next visit.</p>
+   <p>It’s entirely free. No subscription, no ads, nothing to unlock. Just a quieter way to keep up with each other, and to meet again.</p>
+   <p class="note-for">For me and my friends.<br><span>For you and yours.</span></p>
+   <p class="note-sign">Yang, who made Across Us</p>
+  </div>
+ </div>
+</section>
 <section id="faq" class="wrap faq-section" aria-labelledby="faq-title">
  <div class="faq-grid">
   <h2 class="heading" id="faq-title">Before you head out.</h2>
   <div class="faq">
-   <details open><summary>What’s a plan, and what’s a Trip?</summary><p>A plan is your future city and travel dates, shared with selected friends. A Trip is a shared journey with a destination, members and everyone’s flights.</p></details>
+   <details open><summary>Is Across Us free?</summary><p>Yes, entirely. Every feature is free: no subscription, no in-app purchases and no ads. It’s made for friends, for me and mine, and for you and yours.</p></details>
+   <details><summary>What’s a plan, and what’s a Trip?</summary><p>A plan is your future city and travel dates, shared with selected friends. A Trip is a shared journey with a destination, members and everyone’s flights.</p></details>
    <details><summary>What do friends see?</summary><p>Your shared city and its last update, plus the plans you choose to share with them. You can change who sees your updates, pause city sharing, or remove a friend.</p></details>
    <details><summary>Can I change plans or turn off reminders?</summary><p>Yes. Edit or delete personal plans, manage your own flights, and choose which trip reminders and alerts you want. Leaving a Trip also stops its alerts for you.</p></details>
    <details><summary>How current are the updates?</summary><p>Cities show the latest shared update. Notifications depend on your settings and device permissions. Flight information refreshes periodically; check final travel details with your airline.</p></details>
@@ -203,6 +220,6 @@
 </section>
 </main>
 <footer class="wrap footer"><p>© 2026 Across Us · Names and trips on this page are examples.</p><nav aria-label="Footer navigation"><a href="privacy/">Privacy Policy</a><a href="support/">Support</a></nav></footer>
-<script type="module" src="assets/home.js?v=20261021f"></script>
+<script type="module" src="assets/home.js?v=20261021h"></script>
 </body>
 </html>

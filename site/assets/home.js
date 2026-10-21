@@ -1,5 +1,5 @@
 // Homepage interactions. Each section is a small live version of an app screen, with example data.
-import {startGlobe, TRIPS} from './globe.js?v=20261021f';
+import {startGlobe, TRIPS} from './globe.js?v=20261021h';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -54,30 +54,62 @@ $('[data-here]').addEventListener('click', e => {
 grid.addEventListener('click', e => { const card = e.target.closest('.friend'); if (card) card.classList.toggle('flipped'); });
 renderFriends(false);
 
-// Together soon: drag your trip; overlapping days with Lin light up.
+// Travel plans: choose a city and drag your dates. A friend's plan counts only in the same city on the same days.
 const DAYS = Array.from({length: 14}, (_, i) => new Date(2026, 9, 18 + i));
-const lin = {s: 3, e: 10}, you = {s: 6, e: 9};
-const days = $('[data-days]'), youBar = $('[data-bar="you"]'), linBar = $('[data-bar="lin"]');
+const PLANS = [
+  {who: 'Lin', initials: 'LZ', color: '#2F6F86', city: 'Tokyo', s: 3, e: 10, label: 'Oct 21 – 28'},
+  {who: 'Chloe', initials: 'CM', color: '#50618F', city: 'Paris', s: 0, e: 5, label: 'Oct 16 – 23'},
+  {who: 'Hana', initials: 'HW', color: '#5E7434', city: 'Paris', s: 8, e: 12, label: 'Oct 26 – 30'},
+  {who: 'Mia', initials: 'MC', color: '#9E7424', city: 'London', s: 12, e: 13, label: 'Oct 30 – Nov 2'},
+];
+const EMBLEM = {Tokyo: 'tokyo', Paris: 'paris', London: 'london'};
+const you = {city: 'Tokyo', s: 6, e: 9};
+const days = $('[data-days]'), youBar = $('[data-bar="you"]'), plansEl = $('[data-friend-plans]'), together = $('[data-together]');
+const fmt = d => d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+const span = (s, e) => s === e ? fmt(DAYS[s]) : DAYS[s].getMonth() === DAYS[e].getMonth() ? `${fmt(DAYS[s])} – ${DAYS[e].getDate()}` : `${fmt(DAYS[s])} – ${fmt(DAYS[e])}`;
 days.innerHTML = '<span></span>' + DAYS.map(d => `<span class="wd">${'SMTWTFS'[d.getDay()]}</span>`).join('') + '<span></span>' + DAYS.map(d => `<span class="day">${d.getDate()}</span>`).join('');
-const cells = $$('.day', days), fmt = d => d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
-function place(bar, r) {
+plansEl.innerHTML = PLANS.map((p, i) => `<div class="cal-track friend-plan" data-plan="${i}"><span class="track-name"><b>${p.who}</b><small>${p.city}</small></span>
+  <div class="track"><div class="bar bar-friend" style="--c:${p.color}"><span>${p.label}</span></div></div></div>`).join('');
+const cells = $$('.day', days), rows = $$('[data-plan]', plansEl);
+function place(bar, s, e) {
   const track = bar.parentElement.getBoundingClientRect().width, gap = parseFloat(getComputedStyle(days).columnGap) || 4;
   const col = (track - gap * 13) / 14;
-  bar.style.left = `${r.s * (col + gap)}px`;
-  bar.style.width = `${(r.e - r.s + 1) * col + (r.e - r.s) * gap}px`;
+  bar.style.left = `${s * (col + gap)}px`;
+  bar.style.width = `${(e - s + 1) * col + (e - s) * gap}px`;
 }
-function renderOverlap() {
-  place(linBar, lin); place(youBar, you);
-  let n = 0;
-  cells.forEach((c, i) => {
-    const l = i >= lin.s && i <= lin.e, y = i >= you.s && i <= you.e;
-    c.classList.toggle('l', l); c.classList.toggle('y', y); c.classList.toggle('both', l && y); n += l && y;
+function renderPlans() {
+  place(youBar, you.s, you.e);
+  const shared = new Set(), friends = [];
+  PLANS.forEach((p, i) => {
+    place($('.bar', rows[i]), p.s, p.e);
+    const here = p.city === you.city, from = Math.max(p.s, you.s), to = Math.min(p.e, you.e);
+    rows[i].classList.toggle('other', !here);
+    rows[i].classList.toggle('match', here && from <= to);
+    if (here && from <= to) { for (let d = from; d <= to; d++) shared.add(d); friends.push({...p, from, to}); }
   });
-  $('[data-overlap-count]').textContent = n ? `${n} day${n > 1 ? 's' : ''} together` : 'no overlap yet';
-  $('.overlap-days').classList.toggle('none', !n);
-  $('[data-overlap-sub]').textContent = n ? '1 upcoming overlap' : 'Move your dates to meet up';
-  youBar.setAttribute('aria-valuetext', `${fmt(DAYS[you.s])} to ${fmt(DAYS[you.e])}`);
+  cells.forEach((c, i) => {
+    c.classList.toggle('y', i >= you.s && i <= you.e);
+    c.classList.toggle('l', PLANS.some(p => p.city === you.city && i >= p.s && i <= p.e));
+    c.classList.toggle('both', shared.has(i));
+  });
+  $('[data-plan-dates]').textContent = span(you.s, you.e);
+  $('[data-you-city-label]').textContent = you.city;
+  $('[data-together-city]').textContent = you.city;
+  $('[data-together-emblem]').src = `assets/emblems/${EMBLEM[you.city]}.png`;
+  const n = shared.size, names = friends.map(f => f.who), inCity = PLANS.filter(p => p.city === you.city);
+  together.classList.toggle('none', !n);
+  $('[data-together-text]').textContent = n
+    ? `with ${names.join(' and ')} · ${friends.length === 1 ? span(friends[0].from, friends[0].to) + ' · ' : ''}${n} day${n > 1 ? 's' : ''} together`
+    : inCity.length ? `No overlap yet. ${inCity.map(p => `${p.who} is there ${p.label}`).join('; ')}.` : 'No friends have shared plans here yet.';
+  youBar.setAttribute('aria-valuetext', `${you.city}, ${span(you.s, you.e)}`);
 }
+$('[data-plan-city]').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.dataset.city === you.city) return;
+  you.city = b.dataset.city;
+  $$('[data-plan-city] button').forEach(x => x.setAttribute('aria-checked', String(x === b)));
+  renderPlans();
+  if (!still) { together.classList.remove('bump'); void together.offsetWidth; together.classList.add('bump'); }
+});
 let dragging = null;
 youBar.addEventListener('pointerdown', e => {
   const col = youBar.parentElement.getBoundingClientRect().width / 14;
@@ -90,7 +122,7 @@ youBar.addEventListener('pointermove', e => {
   if (dragging.mode === 'move') { you.s = Math.max(0, Math.min(13 - len, dragging.s + d)); you.e = you.s + len; }
   if (dragging.mode === 'start') you.s = Math.max(0, Math.max(dragging.e - 9, Math.min(dragging.e, dragging.s + d)));
   if (dragging.mode === 'end') you.e = Math.min(13, Math.min(dragging.s + 9, Math.max(dragging.s, dragging.e + d)));
-  renderOverlap();
+  renderPlans();
 });
 const endDrag = () => { dragging = null; youBar.classList.remove('dragging'); };
 youBar.addEventListener('pointerup', endDrag); youBar.addEventListener('pointercancel', endDrag);
@@ -99,9 +131,9 @@ youBar.addEventListener('keydown', e => {
   e.preventDefault();
   if (e.shiftKey) you.e = Math.max(you.s, Math.min(13, you.s + 9, you.e + step));
   else { const len = you.e - you.s; you.s = Math.max(0, Math.min(13 - len, you.s + step)); you.e = you.s + len; }
-  renderOverlap();
+  renderPlans();
 });
-new ResizeObserver(renderOverlap).observe($('[data-cal]'));
+new ResizeObserver(renderPlans).observe($('[data-cal]'));
 
 // Trips: the arrivals board and boarding pass, as in the app's trip screen.
 const TRAVELERS = [
