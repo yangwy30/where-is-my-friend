@@ -15,6 +15,7 @@
 <img src="https://img.shields.io/badge/SwiftUI-WidgetKit-0E1A13?style=flat-square&logo=swift&logoColor=F05138" alt="SwiftUI 与 WidgetKit">
 <img src="https://img.shields.io/badge/Supabase-Postgres_·_Edge-0E1A13?style=flat-square&logo=supabase&logoColor=3ECF8E" alt="Supabase">
 <img src="https://img.shields.io/badge/Cloudflare-Pages-0E1A13?style=flat-square&logo=cloudflare&logoColor=F38020" alt="Cloudflare Pages">
+<img src="https://img.shields.io/badge/免费-无广告_·_无订阅-A6E677?style=flat-square&labelColor=0E1A13" alt="免费，无广告，无订阅">
 
 <sub><a href="README.md">English</a> · <b>简体中文</b></sub>
 
@@ -117,6 +118,15 @@ Across Us 把朋友的城市、计划和航班放在一起，别让见面的机�
 </table>
 
 完整隐私政策：[acrossus.app/privacy](https://acrossus.app/privacy/)
+
+
+## 免费，也很私人。
+
+我做 Across Us，是为了我和我的朋友：大家散落在不同城市，总在想办法约下一次见面。它完全免费：没有订阅，没有广告，也没有需要解锁的功能。只是一个更安静的方式，让彼此保持联系，再见上一面。
+
+**为了我和我的朋友，也为了你和你的朋友。**
+
+<sub>— Yang，Across Us 的作者</sub>
 
 ---
 

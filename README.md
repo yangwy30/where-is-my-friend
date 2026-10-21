@@ -15,6 +15,7 @@ Friends’ cities, overlapping plans and group trips, in one quiet iPhone app.
 <img src="https://img.shields.io/badge/SwiftUI-WidgetKit-0E1A13?style=flat-square&logo=swift&logoColor=F05138" alt="SwiftUI and WidgetKit">
 <img src="https://img.shields.io/badge/Supabase-Postgres_·_Edge-0E1A13?style=flat-square&logo=supabase&logoColor=3ECF8E" alt="Supabase">
 <img src="https://img.shields.io/badge/Cloudflare-Pages-0E1A13?style=flat-square&logo=cloudflare&logoColor=F38020" alt="Cloudflare Pages">
+<img src="https://img.shields.io/badge/Free-No_ads_·_No_subscription-A6E677?style=flat-square&labelColor=0E1A13" alt="Free, with no ads and no subscription">
 
 <sub><b>English</b> · <a href="README.zh-CN.md">简体中文</a></sub>
 
@@ -117,6 +118,15 @@ Invite friends to a **Trip** and watch every flight land where you’re meeting.
 </table>
 
 Full policy: [acrossus.app/privacy](https://acrossus.app/privacy/)
+
+
+## Free, and personal.
+
+I built Across Us for me and my friends: scattered across cities, always trying to line up the next visit. It’s entirely free. No subscription, no ads, nothing to unlock. Just a quieter way to keep up with each other, and to meet again.
+
+**For me and my friends. For you and yours.**
+
+<sub>— Yang, who made Across Us</sub>
 
 ---
 
