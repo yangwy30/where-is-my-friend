@@ -1,6 +1,6 @@
-# Across Us 1.0.9 (42) — internal TestFlight
+# Across Us 1.0.9 (42) — submitted for App Review
 
-For the user to try the boarding pass on their iPhone Air. Not submitted for review.
+First tried on internal TestFlight, then submitted for App Review on October 20, 2026, at 20:30 PDT. Release type: automatically after approval.
 
 ## What's new since 1.0.9 (41)
 
@@ -25,3 +25,10 @@ All 277 unit tests pass. Trip UI tests pass on iPhone 17 Pro, iOS 27.0, includin
 ## Build
 
 Built from tag `v1.0.9-42` (70b7a17) on `feature/email-google-sign-in`. Signed the same way as 1.0.9 (41): Apple Distribution, `aps-environment` production, `applinks:acrossus.app`, `get-task-allow` false. Uploaded October 20, 2026, 19:22 PDT.
+
+## App Store submission
+
+- Version 1.0.9 with build 42 attached, now Waiting for Review.
+- The listing text (promotional text, description, What's New in en-US and zh-Hans) and screenshots come from `docs/app_store_screenshots/2026-10-20/`. Six screenshots per language at 6.3" (1206×2622) and 6.5" (1284×2778).
+- Two en-US 6.3" screenshots stuck at "upload complete" and never processed. Re-uploading `05-moments.png` with the same bytes stuck again; a lossless re-encode (same pixels) went through.
+- Review notes: `review-notes.txt`. Changed from 1.0.8 to mention Google and email sign-in, the trip globe and boarding pass, and a "New in 1.0.9" summary. Kept under the 4,000-character limit (3,967).
