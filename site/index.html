@@ -18,138 +18,14 @@
 <link rel="preload" href="assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/land-dots.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
-<style>
-:root{--night:#07110B;--night-2:#0D1A12;--mist:#EDF9F1;--muted:#9EB5A3;--canvas:#FDFBF2;--ease:cubic-bezier(.2,.7,.2,1)}
-/* Hero: the app's trip globe, in its dark palette */
-.hero{background:radial-gradient(120% 80% at 70% 40%,#13301F 0%,var(--night) 58%);color:var(--mist);overflow:hidden;position:relative}
-.hero .wordmark{color:#fff}
-.hero .nav-links a:not(.pill){color:var(--muted)}
-.hero .nav-links a:not(.pill):hover{color:#fff;opacity:1}
-.pill-lime{background:var(--lime);color:var(--ink)}
-.hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center;gap:24px;min-height:min(880px,calc(100svh - 80px));padding-bottom:40px}
-.hero h1{font-size:clamp(60px,7.4vw,112px);color:#fff}
-.hero h1 span{color:var(--lime)}
-.hero-copy p{font-size:19px;line-height:1.45;color:var(--muted);max-width:400px;margin:28px 0 36px}
-.hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.hero-note{font-size:14px;color:var(--muted)}
-.globe-stage{position:relative;aspect-ratio:1/1.07;width:100%;max-width:720px;justify-self:center}
-.globe-stage canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y;opacity:0;transition:opacity 1.2s var(--ease)}
-.globe-stage canvas.ready{opacity:1}
-.globe-stage canvas:active{cursor:grabbing}
-.globe-caption{position:absolute;left:50%;bottom:0;transform:translateX(-50%);text-align:center;white-space:nowrap;transition:opacity .4s ease;pointer-events:none}
-.globe-caption b{display:block;font-size:22px;font-weight:500;letter-spacing:-.02em;color:#fff}
-.globe-caption span{font-size:14px;color:var(--muted)}
-/* Emblem marquee */
-.marquee{background:var(--canvas);padding-block:72px 64px;overflow:hidden}
-.marquee-label{text-align:center;color:var(--gray);font-size:15px;margin-bottom:28px}
-.marquee-track{display:flex;width:max-content;animation:drift 50s linear infinite}
-.marquee-track img{width:128px;height:128px;margin-inline:20px;flex:none}
-@keyframes drift{to{transform:translateX(-50%)}}
-/* A phone that plays real screen recordings */
-.device{width:min(330px,78vw);aspect-ratio:1206/2622;background:var(--ink);border-radius:54px;padding:10px;box-shadow:0 50px 90px -40px rgba(14,26,19,.55),inset 0 0 0 1.5px rgba(255,255,255,.08);position:relative}
-.device .screen{position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#F4F8EC}
-.device video,.device img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.device video{opacity:0;transition:opacity .5s ease}
-.device video.on{opacity:1}
-/* Story: one pinned phone, steps scroll past it */
-.story{background:var(--canvas);padding-block:40px 120px}
-.story-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px}
-.step{min-height:88vh;display:flex;flex-direction:column;justify-content:center;max-width:470px;opacity:.28;transition:opacity .5s ease}
-.step.on{opacity:1}
-.step h2{font-size:clamp(36px,4.2vw,58px);font-weight:450;line-height:1.02;letter-spacing:-.035em}
-.step p{font-size:19px;line-height:1.5;color:var(--gray);margin-top:20px}
-.step .device{display:none}
-.story-pin{position:sticky;top:calc(50vh - min(359px,46vh));height:min(718px,92vh);display:flex;justify-content:center}
-.story-pin .device{height:100%;width:auto}
-/* Trips, on night */
-.trips{background:var(--night);color:var(--mist);padding-block:136px 120px;overflow:hidden}
-.trips .heading{color:#fff;max-width:880px}
-.trips .heading span{color:var(--muted)}
-.trips-stage{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px;margin-top:80px;align-items:start}
-.trips-stage figure{display:flex;flex-direction:column;align-items:center;gap:28px}
-.trips-stage figure:nth-child(2){margin-top:120px}
-.trips-stage .device{box-shadow:0 60px 120px -50px rgba(166,230,119,.28),inset 0 0 0 1.5px rgba(255,255,255,.1)}
-.trips-stage figcaption{max-width:330px;text-align:center;font-size:17px;line-height:1.45;color:var(--muted)}
-.trips-stage figcaption b{display:block;color:#fff;font-weight:500;font-size:19px;margin-bottom:4px}
-.points{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:104px;border-top:1px solid rgba(237,249,241,.12);padding-top:40px}
-.points h3{font-size:18px;font-weight:500;color:#fff;margin-bottom:6px}
-.points p{font-size:15px;line-height:1.55;color:var(--muted)}
-/* Widgets */
-.widgets{padding-block:128px 112px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:center}
-.widget-pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.widget-pair img{border-radius:28px;filter:drop-shadow(0 30px 40px rgba(14,26,19,.16));transition:transform .6s var(--ease)}
-.widget-pair:hover img:first-child{transform:rotate(-2deg) translateY(-6px)}
-.widget-pair:hover img:last-child{transform:rotate(2deg) translateY(6px)}
-/* Privacy */
-.privacy{background:var(--panel);padding-block:112px}
-.privacy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:56px}
-.privacy-grid h3{font-size:20px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
-.privacy-grid p{font-size:15px;line-height:1.55;color:var(--gray)}
-.privacy-grid div{border-top:2px solid var(--ink);padding-top:20px}
-/* FAQ and closer */
-.faq-section{padding-block:120px}
-.faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:64px}
-.faq{border-top:1px solid var(--line)}
-details{border-bottom:1px solid var(--line)}
-summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font-size:18px;letter-spacing:-.01em}
-summary::-webkit-details-marker{display:none}
-summary::after{content:'+';color:var(--gray);font-size:22px;line-height:1;flex:none;transition:transform .3s var(--ease)}
-details[open] summary::after{transform:rotate(45deg)}
-details p{padding:0 40px 24px 0;color:var(--gray);font-size:16px;line-height:1.6}
-.closer{background:var(--lime);padding-block:96px 104px}
-.closer-row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
-.closer h2{font-size:clamp(64px,10vw,152px);line-height:.92;letter-spacing:-.045em}
-.closer p{font-size:17px;max-width:280px;margin-bottom:24px}
-/* Reveal on scroll */
-.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
-.reveal.in{opacity:1;transform:none}
-@media(max-width:1080px){
- .hero-grid{grid-template-columns:1fr;min-height:0;padding-top:24px;gap:8px}
- .globe-stage{max-width:620px}
- .widgets,.faq-grid{grid-template-columns:1fr;gap:40px}
- .privacy-grid{grid-template-columns:1fr 1fr}
- .points{grid-template-columns:1fr;gap:28px}
-}
-@media(max-width:820px){
- .story-grid{grid-template-columns:1fr}
- .story-pin{display:none}
- .step{min-height:0;opacity:1;padding-block:56px;max-width:none;align-items:center;text-align:center}
- .step .device{display:block;margin-top:40px}
- .trips-stage{grid-template-columns:1fr;gap:72px}
- .trips-stage figure:nth-child(2){margin-top:0}
-}
-@media(max-width:700px){
- .hero h1{font-size:clamp(54px,15vw,76px)}
- .hero-copy p{font-size:17px;margin:20px 0 28px}
- .globe-stage{margin-inline:-20px;width:calc(100% + 40px)}
- .marquee{padding-block:48px}
- .marquee-track img{width:92px;height:92px;margin-inline:12px}
- .story{padding-block:24px 64px}
- .step h2{font-size:clamp(34px,10vw,44px)}
- .step p{font-size:17px}
- .trips{padding-block:88px}
- .trips-stage{margin-top:56px}
- .widgets{padding-block:88px}
- .widget-pair{gap:12px}
- .privacy{padding-block:80px}
- .privacy-grid{grid-template-columns:1fr;gap:24px;margin-top:40px}
- .faq-section{padding-block:80px}
- .closer{padding-block:72px}
- .closer-row{flex-direction:column;align-items:flex-start}
-}
-@media(prefers-reduced-motion:reduce){
- .marquee-track{animation:none}
- .reveal{opacity:1;transform:none;transition:none}
- .step{transition:none}
-}
-</style>
+<link rel="stylesheet" href="assets/home.css?v=20261021f">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="hero">
+<header class="hero" data-spotlight>
  <nav class="wrap nav" aria-label="Main navigation">
   <a class="wordmark" href="./" aria-label="Across Us home">across us</a>
-  <div class="nav-links"><a href="#features">Features</a><a href="#trips">Trips</a><a href="#faq">FAQ</a><a class="pill pill-lime" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_nav_202610&amp;mt=8">Get the app</a></div>
+  <div class="nav-links"><a href="#friends">Friends</a><a href="#trips">Trips</a><a href="#privacy">Privacy</a><a class="pill pill-lime" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_nav_202610&amp;mt=8">Get the app</a></div>
  </nav>
  <div class="wrap hero-grid">
   <div class="hero-copy">
@@ -157,92 +33,156 @@ details p{padding:0 40px 24px 0;color:var(--gray);font-size:16px;line-height:1.6
    <p>Friends’ cities, overlapping plans and group trips, in one quiet iPhone app. Catch each other wherever your paths cross.</p>
    <div class="hero-actions"><a class="pill pill-lime pill-lg" href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&amp;ct=website_hero_202610&amp;mt=8">Download on the App Store</a><span class="hero-note">Free for iPhone</span></div>
   </div>
-  <div class="globe-stage">
-   <canvas id="globe" data-dots="assets/land-dots.json" data-emblems="assets/emblems" aria-hidden="true"></canvas>
-   <p class="globe-caption" aria-hidden="true"><b data-city>Tokyo</b><span data-who>Lin, Hana and David land Oct 24</span></p>
+  <div class="globe-wrap">
+   <div class="globe-stage">
+    <canvas id="globe" data-dots="assets/land-dots.json" data-emblems="assets/emblems" role="img" aria-label="A globe showing friends’ flights landing in one city. Drag to spin it; point at a route to follow one friend."></canvas>
+    <p class="globe-caption" aria-live="polite"><b data-city>Tokyo</b><span data-who>Lin, Hana and David land Oct 24</span></p>
+   </div>
+   <div class="picker" role="group" aria-label="Choose where everyone meets"></div>
+   <p class="globe-hint">Pick a city · drag to spin · point at a route</p>
   </div>
  </div>
 </header>
 <main id="main">
-<section class="marquee" aria-label="City landmarks in Across Us">
- <p class="marquee-label">Every city gets its own landmark.</p>
- <div class="marquee-track" aria-hidden="true">
-  <img src="assets/emblems/new_york.png" alt="" width="128" height="128"><img src="assets/emblems/tokyo.png" alt="" width="128" height="128"><img src="assets/emblems/paris.png" alt="" width="128" height="128"><img src="assets/emblems/san_francisco.png" alt="" width="128" height="128"><img src="assets/emblems/london.png" alt="" width="128" height="128"><img src="assets/emblems/honolulu.png" alt="" width="128" height="128"><img src="assets/emblems/sydney.png" alt="" width="128" height="128"><img src="assets/emblems/zurich.png" alt="" width="128" height="128"><img src="assets/emblems/kyoto.png" alt="" width="128" height="128">
-  <img src="assets/emblems/new_york.png" alt="" width="128" height="128"><img src="assets/emblems/tokyo.png" alt="" width="128" height="128"><img src="assets/emblems/paris.png" alt="" width="128" height="128"><img src="assets/emblems/san_francisco.png" alt="" width="128" height="128"><img src="assets/emblems/london.png" alt="" width="128" height="128"><img src="assets/emblems/honolulu.png" alt="" width="128" height="128"><img src="assets/emblems/sydney.png" alt="" width="128" height="128"><img src="assets/emblems/zurich.png" alt="" width="128" height="128"><img src="assets/emblems/kyoto.png" alt="" width="128" height="128">
- </div>
-</section>
-<section id="features" class="story" aria-label="Features">
- <div class="wrap story-grid">
-  <div class="story-steps">
-   <article class="step" data-clip="here-with-you">
-    <h2>Where are your friends today?</h2>
-    <p>Each friend shares a city, never an exact location. When someone lands in yours, you’ll see it first.</p>
-    <div class="device"><div class="screen"><img src="assets/motion/here-with-you.webp" alt="Friends in New York, Tokyo, Paris and San Francisco; Mia is here too, in New York." loading="lazy"><video muted playsinline preload="none" poster="assets/motion/here-with-you.webp" aria-hidden="true"><source src="assets/motion/here-with-you.mp4" type="video/mp4"></video></div></div>
-   </article>
-   <article class="step" data-clip="together-soon">
-    <h2>Same city. Same dates.</h2>
-    <p>Share where you’re headed next. Together soon finds the days your plans overlap.</p>
-    <div class="device"><div class="screen"><img src="assets/motion/together-soon.webp" alt="Together soon: Tokyo with Lin, four days together, October 24 to 27." loading="lazy"><video muted playsinline preload="none" poster="assets/motion/together-soon.webp" aria-hidden="true"><source src="assets/motion/together-soon.mp4" type="video/mp4"></video></div></div>
-   </article>
-   <article class="step" data-clip="moments">
-    <h2>All the days you shared a city.</h2>
-    <p>Same-city moments keeps your time together, friend by friend.</p>
-    <div class="device"><div class="screen"><img src="assets/motion/moments.webp" alt="Same-city moments: 22 days together with 4 friends in 6 cities." loading="lazy"><video muted playsinline preload="none" poster="assets/motion/moments.webp" aria-hidden="true"><source src="assets/motion/moments.mp4" type="video/mp4"></video></div></div>
-   </article>
-   <article class="step" data-clip="friend-controls">
-    <h2>City-level only. Your call.</h2>
-    <p>Choose who sees your city and who can trigger a same-city alert, one friend at a time.</p>
-    <div class="device"><div class="screen"><img src="assets/motion/friend-controls.webp" alt="Lin Zhao in Tokyo, with switches for Share my city and Same-city alert." loading="lazy"><video muted playsinline preload="none" poster="assets/motion/friend-controls.webp" aria-hidden="true"><source src="assets/motion/friend-controls.mp4" type="video/mp4"></video></div></div>
-   </article>
+
+<section id="friends" class="band band-canvas">
+ <div class="wrap split">
+  <div class="copy reveal">
+   <h2 class="title">Where are your friends today?</h2>
+   <p class="lede">Each friend shares a city, never an exact location. When someone lands in yours, they rise to the top.</p>
+   <p class="control-label" id="here-label">You’re in</p>
+   <div class="segmented" role="radiogroup" aria-labelledby="here-label" data-here>
+    <button role="radio" aria-checked="true" data-city="New York">New York</button>
+    <button role="radio" aria-checked="false" data-city="Tokyo">Tokyo</button>
+    <button role="radio" aria-checked="false" data-city="Paris">Paris</button>
+    <button role="radio" aria-checked="false" data-city="London">London</button>
+   </div>
+   <p class="aside">Tap a friend to see their next stop.</p>
   </div>
-  <div class="story-pin" aria-hidden="true">
-   <div class="device"><div class="screen">
-    <video data-clip="here-with-you" muted playsinline preload="metadata" poster="assets/motion/here-with-you.webp"><source src="assets/motion/here-with-you.mp4" type="video/mp4"></video>
-    <video data-clip="together-soon" muted playsinline preload="none" poster="assets/motion/together-soon.webp"><source src="assets/motion/together-soon.mp4" type="video/mp4"></video>
-    <video data-clip="moments" muted playsinline preload="none" poster="assets/motion/moments.webp"><source src="assets/motion/moments.mp4" type="video/mp4"></video>
-    <video data-clip="friend-controls" muted playsinline preload="none" poster="assets/motion/friend-controls.webp"><source src="assets/motion/friend-controls.mp4" type="video/mp4"></video>
-   </div></div>
+  <div class="app-panel reveal" aria-label="Friends screen">
+   <div class="app-head">
+    <h3>Friends</h3>
+    <p data-here-line>You’re in New York, NY</p>
+    <button class="here-chip" data-chip type="button"><span class="mini-avatar" data-chip-avatar>MC</span><span data-chip-text>Mia is here too</span><span aria-hidden="true">›</span></button>
+   </div>
+   <p class="app-label">Around the world</p>
+   <div class="friend-grid" data-friends></div>
   </div>
  </div>
 </section>
-<section id="trips" class="trips" aria-labelledby="trips-title">
+
+<section class="band band-canvas band-tight">
+ <div class="wrap split split-flip">
+  <div class="copy reveal">
+   <h2 class="title">Same city. Same dates.</h2>
+   <p class="lede">Lin is in Tokyo from October 21 to 28. Drag your trip along the week and Together soon counts the days you overlap.</p>
+   <p class="aside">Drag the bar, or its ends.</p>
+  </div>
+  <div class="app-card overlap reveal" aria-label="Together soon">
+   <div class="overlap-top">
+    <span class="icon-badge" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+    <div><b>Together soon</b><span data-overlap-sub>1 upcoming overlap</span></div>
+   </div>
+   <div class="overlap-city">
+    <div><p class="serif">Tokyo</p><p class="overlap-days" aria-live="polite">with Lin · <span data-overlap-count>4 days together</span></p></div>
+    <img src="assets/emblems/tokyo.png" width="96" height="96" alt="">
+   </div>
+   <p class="app-label">October 2026</p>
+   <div class="cal" data-cal>
+    <div class="cal-days" data-days></div>
+    <div class="cal-track"><span class="track-name">Lin</span><div class="track" data-track="lin"><div class="bar bar-lin" data-bar="lin"></div></div></div>
+    <div class="cal-track"><span class="track-name">You</span><div class="track" data-track="you"><div class="bar bar-you" data-bar="you" tabindex="0" role="slider" aria-label="Your trip dates" aria-valuetext=""><span class="handle" data-handle="start"></span><span class="handle" data-handle="end"></span></div></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="band band-panel">
+ <div class="wrap moments reveal" data-moments>
+  <p class="app-label center">Same-city moments</p>
+  <h2 class="title center"><span data-count-to="22">22</span> days together.</h2>
+  <p class="lede center">With 4 friends in 6 cities. Across Us keeps the days you shared a city, friend by friend.</p>
+  <div class="moment-rows">
+   <div class="moment" style="--days:9"><span class="avatar" style="--c:#9E7424">MC</span><div><b>Mia Chen</b><span class="live">In New York with you now</span></div><div class="moment-bar"><i></i></div><strong>9<small>days</small></strong></div>
+   <div class="moment" style="--days:5"><span class="avatar" style="--c:#2F6F86">LZ</span><div><b>Lin Zhao</b><span>Last together Sep 18 · Tokyo</span></div><div class="moment-bar"><i></i></div><strong>5<small>days</small></strong></div>
+   <div class="moment" style="--days:5"><span class="avatar" style="--c:#9E7424">DK</span><div><b>David Kim</b><span>Last together Aug 20 · 3 cities</span></div><div class="moment-bar"><i></i></div><strong>5<small>days</small></strong></div>
+   <div class="moment" style="--days:3"><span class="avatar" style="--c:#50618F">CM</span><div><b>Chloe Martin</b><span>Last together Jul 23 · Paris</span></div><div class="moment-bar"><i></i></div><strong>3<small>days</small></strong></div>
+  </div>
+ </div>
+</section>
+
+<section id="trips" class="trips" data-spotlight aria-labelledby="trips-title">
  <div class="wrap">
-  <h2 class="heading reveal" id="trips-title">Everyone lands together. <span>Invite friends to a Trip, add your flights, and watch every route fly in to where you’re meeting.</span></h2>
-  <div class="trips-stage">
-   <figure class="reveal">
-    <div class="device"><div class="screen"><img src="assets/motion/trip-globe.webp" alt="Kauai Thanksgiving: flights from Shanghai, New York and Oakland land on Kauai, with a landing timeline." loading="lazy"><video class="autoplay" muted playsinline preload="none" poster="assets/motion/trip-globe.webp" aria-hidden="true"><source src="assets/motion/trip-globe.mp4" type="video/mp4"></video></div></div>
-    <figcaption><b>A globe for every trip</b>Routes draw in, planes fly, and each friend lands on the timeline.</figcaption>
-   </figure>
-   <figure class="reveal">
-    <div class="device"><div class="screen"><img src="assets/motion/boarding-pass.webp" alt="David’s boarding pass: United 1612 from New York JFK to Kauai, with Out and Back tabs." loading="lazy"><video class="autoplay" muted playsinline preload="none" poster="assets/motion/boarding-pass.webp" aria-hidden="true"><source src="assets/motion/boarding-pass.mp4" type="video/mp4"></video></div></div>
-    <figcaption><b>Every flight, one tap away</b>Tap anyone for their boarding pass: local times, terminal and the flight home.</figcaption>
-   </figure>
+  <h2 class="heading reveal" id="trips-title">Everyone lands together. <span>Each friend adds their own flights. Tap anyone for their boarding pass.</span></h2>
+  <div class="trip-stage reveal">
+   <div class="app-card board" aria-label="Kauai Thanksgiving arrivals">
+    <div class="board-head">
+     <img src="assets/emblems/honolulu.png" width="72" height="72" alt="">
+     <div><b>Kauai Thanksgiving</b><span>Kauai · LIH · Nov 26 – Dec 1, 2026</span></div>
+     <p class="countdown"><strong>37</strong> days</p>
+    </div>
+    <div class="landing">
+     <p class="app-label"><span>Landing · Thu, Nov 26</span><span>Kauai time</span></p>
+     <div class="landing-line" data-landing></div>
+     <p class="landing-scale"><span>6 am</span><span>noon</span><span>6 pm</span><span>midnight</span></p>
+    </div>
+    <div class="board-rows" role="listbox" aria-label="Travelers" data-board></div>
+   </div>
+   <div class="pass-wrap" data-tilt>
+    <div class="pass" data-pass aria-live="polite"></div>
+   </div>
   </div>
-  <div class="points reveal">
-   <div><h3>Everyone adds their own</h3><p>Each traveler manages their own flights, so the trip stays current without a group chat.</p></div>
-   <div><h3>A nudge when it helps</h3><p>Choose flight-change alerts and morning reminders. Remind a friend who hasn’t added their flight.</p></div>
-   <div><h3>Room for plans to change</h3><p>Members can leave a Trip. The creator can remove members or delete it.</p></div>
+  <p class="toast" role="status" data-toast></p>
+ </div>
+</section>
+
+<section id="privacy" class="band band-canvas">
+ <div class="wrap split">
+  <div class="copy reveal">
+   <h2 class="title">City-level only. Your call.</h2>
+   <p class="lede">Sharing is set one friend at a time. Try it: change what Lin can see, then send Lin to New York.</p>
+   <div class="app-card settings" aria-label="Between you and Lin">
+    <p class="app-label">Between you two</p>
+    <label class="setting"><span><b>Share my city</b><small>Lin Zhao can see your latest city</small></span><input type="checkbox" class="switch" data-share checked></label>
+    <label class="setting"><span><b>Same-city alert</b><small>Notify me when your cities overlap</small></span><input type="checkbox" class="switch" data-alert checked></label>
+   </div>
+  </div>
+  <div class="lin-view reveal">
+   <div class="banner" data-banner role="status"><span class="banner-icon"><img src="assets/app_icon.png" width="38" height="38" alt=""></span><span><b>Across Us</b><span>Lin Zhao is in New York too.</span></span><small>now</small></div>
+   <p class="app-label">What Lin sees</p>
+   <div class="friend-card you-card" data-you-card>
+    <img src="assets/emblems/new_york.png" width="120" height="120" alt="" data-you-emblem>
+    <b>You</b><span data-you-city>New York, NY</span><small data-you-status>Updated just now</small>
+   </div>
+   <button class="pill pill-dark" type="button" data-arrive>Send Lin to New York</button>
+   <p class="aside" data-arrive-note></p>
+  </div>
+ </div>
+ <div class="wrap privacy-grid reveal">
+  <div><h3>City, not coordinates</h3><p>Precise coordinates never reach our servers, and there’s no GPS trail.</p></div>
+  <div><h3>Both sides agree</h3><p>Friendships are mutual. Pause sharing for everyone or one friend.</p></div>
+  <div><h3>No ads, no tracking</h3><p>No advertising, no cross-app tracking, no selling of personal data.</p></div>
+  <div><h3>Yours to delete</h3><p>Remove a friend, block someone, or delete your account in the app.</p></div>
+ </div>
+</section>
+
+<section class="band band-white">
+ <div class="wrap split">
+  <div class="copy reveal">
+   <h2 class="title">On your Home Screen.</h2>
+   <p class="lede">Widgets keep a few familiar faces close, and tell you when you’re together.</p>
+   <div class="segmented segmented-small" role="radiogroup" aria-label="Widget appearance" data-look>
+    <button role="radio" aria-checked="true" data-look-mode="light">Light</button>
+    <button role="radio" aria-checked="false" data-look-mode="dark">Dark</button>
+   </div>
+  </div>
+  <div class="widget-pair reveal" data-widgets>
+   <figure data-tilt><img src="assets/product/friends-light.webp" data-light="assets/product/friends-light.webp" data-dark="assets/product/friends-dark.webp" width="680" height="710" alt="The Friends widget shows four friends and their shared cities." loading="lazy"></figure>
+   <figure data-tilt><img src="assets/product/here-together-light.webp" data-light="assets/product/here-together-light.webp" data-dark="assets/product/here-together-dark.webp" width="680" height="710" alt="The Here together widget: you and Mia, both in New York." loading="lazy"></figure>
   </div>
  </div>
 </section>
-<section class="wrap widgets" aria-labelledby="widgets-title">
- <h2 class="heading reveal" id="widgets-title">On your Home Screen. <span>Widgets keep a few familiar faces close, and tell you when you’re together.</span></h2>
- <div class="widget-pair reveal">
-  <img src="assets/product/friends-light.webp" width="680" height="710" alt="The Friends widget shows four friends and their shared cities." loading="lazy">
-  <img src="assets/product/here-together-dark.webp" width="680" height="710" alt="The Here together widget: you and Mia, both in New York." loading="lazy">
- </div>
-</section>
-<section class="privacy" aria-labelledby="privacy-title">
- <div class="wrap">
-  <h2 class="heading reveal" id="privacy-title">Private by design. <span>A city is enough to meet up.</span></h2>
-  <div class="privacy-grid reveal">
-   <div><h3>City, not coordinates</h3><p>Precise coordinates never reach our servers, and there’s no GPS trail.</p></div>
-   <div><h3>Both sides agree</h3><p>Friendships are mutual, and sharing is set per friend. Pause any time.</p></div>
-   <div><h3>No ads, no tracking</h3><p>No advertising, no cross-app tracking, no selling of personal data.</p></div>
-   <div><h3>Yours to delete</h3><p>Remove a friend, block someone, or delete your account in the app.</p></div>
-  </div>
- </div>
-</section>
+
 <section id="faq" class="wrap faq-section" aria-labelledby="faq-title">
  <div class="faq-grid">
   <h2 class="heading" id="faq-title">Before you head out.</h2>
@@ -262,49 +202,7 @@ details p{padding:0 40px 24px 0;color:var(--gray);font-size:16px;line-height:1.6
  </div>
 </section>
 </main>
-<footer class="wrap footer"><p>© 2026 Across Us</p><nav aria-label="Footer navigation"><a href="privacy/">Privacy Policy</a><a href="support/">Support</a></nav></footer>
-<script type="module">
-import {startGlobe} from './assets/globe.js?v=20261021b';
-const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-startGlobe(document.getElementById('globe'), document.querySelector('.globe-caption')).catch(() => {});
-
-// Recordings play from the start when they come into view, rest on their last frame, then replay.
-const play = video => {
-  if (still || !video) return;
-  clearTimeout(video._again);
-  video.currentTime = 0;
-  video.play().catch(() => {});
-  video.onended = () => { video._again = setTimeout(() => video.isConnected && video.classList.contains('on') && play(video), 2600); };
-};
-const stop = video => { if (!video) return; clearTimeout(video._again); video.pause(); };
-const reveal = el => { el.classList.add('on'); };
-
-// Small screens: each step and trip phone plays itself when visible.
-const inline = [...document.querySelectorAll('.step .device video, .trips video')];
-const seen = new IntersectionObserver(entries => entries.forEach(({target, isIntersecting}) => {
-  if (isIntersecting) { reveal(target); play(target); } else stop(target);
-}), {threshold: 0.55});
-inline.forEach(v => seen.observe(v));
-
-// Wide screens: the pinned phone shows the clip of whichever step is centered.
-const pin = document.querySelector('.story-pin');
-const clips = Object.fromEntries([...pin.querySelectorAll('video')].map(v => [v.dataset.clip, v]));
-let current = null;
-const steps = new IntersectionObserver(entries => entries.forEach(({target, isIntersecting}) => {
-  if (!isIntersecting || getComputedStyle(pin).display === 'none') return;
-  document.querySelectorAll('.step').forEach(s => s.classList.toggle('on', s === target));
-  const next = clips[target.dataset.clip];
-  if (next === current) return;
-  Object.values(clips).forEach(v => { v.classList.toggle('on', v === next); if (v !== next) stop(v); });
-  current = next; play(next);
-}), {rootMargin: '-45% 0px -45% 0px'});
-document.querySelectorAll('.step').forEach(s => steps.observe(s));
-if (still) Object.values(clips)[0].classList.add('on');
-
-const reveals = new IntersectionObserver(entries => entries.forEach(({target, isIntersecting}) => {
-  if (isIntersecting) { target.classList.add('in'); reveals.unobserve(target); }
-}), {threshold: 0.15});
-document.querySelectorAll('.reveal').forEach(el => reveals.observe(el));
-</script>
+<footer class="wrap footer"><p>© 2026 Across Us · Names and trips on this page are examples.</p><nav aria-label="Footer navigation"><a href="privacy/">Privacy Policy</a><a href="support/">Support</a></nav></footer>
+<script type="module" src="assets/home.js?v=20261021f"></script>
 </body>
 </html>
