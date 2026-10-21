@@ -1073,7 +1073,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
         ruisi.press(forDuration: 0.15)
         XCTAssertEqual(ruisi.value as? String, "Details expanded")
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "UA 1612")).firstMatch.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "UNITED 1612")).firstMatch.waitForExistence(timeout: 3))
         app.scrollViews["fullTripArrivalBoard"].swipeUp()
         Thread.sleep(forTimeInterval: 2)
         capture("\(prefix)-selected")

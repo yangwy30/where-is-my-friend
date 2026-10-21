@@ -594,6 +594,9 @@ struct TripBoardingPass: View {
 
     /// The opened row's background; the pass's notches are cut in this color.
     static var wash: Color { WIFTheme.freshSurface.opacity(0.32) }
+    /// Every pass wears the app's jade, whoever it belongs to; a person's own color stays on their avatar,
+    /// so the screen keeps one signature color instead of a different band per traveler.
+    static let band = WIFPersonPalette.fills[0]
 
     private var shown: TripDirection { face ?? leg }
     private var flight: TripFlight? { traveler.flight(shown) }
@@ -647,19 +650,23 @@ struct TripBoardingPass: View {
             .background(.white.opacity(0.18), in: Capsule())
         }
         .padding(.leading, 16).padding(.trailing, 10).padding(.vertical, 10)
-        .background(traveler.color)
+        .background(Self.band)
     }
 
     private var bandTitle: String {
         guard let flight else { return shown == .outbound ? String(localized: "Flight in") : String(localized: "Flight home") }
+        // "Southwest Airlines" + "WN 1289" reads as "SOUTHWEST 1289", as on a printed pass.
         let airline = flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")
-        return "\(airline) · \(flight.flightNumber)".uppercased()
+        let parts = flight.flightNumber.split(separator: " ")
+        let number = parts.count == 2 && parts[0].allSatisfy(\.isLetter) == false ? flight.flightNumber
+            : (parts.count == 2 ? String(parts[1]) : flight.flightNumber)
+        return airline == "Not verified" ? flight.flightNumber : "\(airline) \(number)".uppercased()
     }
 
     private func legButton(_ value: TripDirection, _ title: String, id: String) -> some View {
         Button(title) { leg = value }
             .font(.footnote.weight(.semibold))
-            .foregroundStyle(leg == value ? traveler.color : .white)
+            .foregroundStyle(leg == value ? Self.band : .white)
             .padding(.horizontal, 12).frame(minHeight: 30)
             .background(leg == value ? AnyShapeStyle(.white) : AnyShapeStyle(.clear), in: Capsule())
             .buttonStyle(.plain)
