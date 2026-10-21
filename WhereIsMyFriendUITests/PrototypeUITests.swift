@@ -1044,6 +1044,74 @@ final class PrototypeUITests: XCTestCase {
         capture("F07-no-current-session")
     }
 
+    /// Raw captures for the 1.0.9 App Store set, English and Chinese, light mode, demo data only.
+    func testCaptureStore109() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let base = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale,
+                        "-AppleInterfaceStyle", "Light"]
+            let app = XCUIApplication()
+
+            // Friends, then one friend's sharing controls.
+            app.launchArguments = base
+            app.launch()
+            if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+            let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+            XCTAssertTrue(lin.waitForExistence(timeout: 8))
+            Thread.sleep(forTimeInterval: 1)
+            capture("store-\(language)-friends")
+            lin.press(forDuration: 0.15)
+            XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 1.5)
+            capture("store-\(language)-friend-detail")
+            app.terminate()
+
+            // Together soon.
+            app.launchArguments = base + ["-marketingOverlap"]
+            app.launch()
+            XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+            app.buttons["friendPlansLink"].tap()
+            XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(app.buttons["upcomingTogetherToggle"].waitForExistence(timeout: 8))
+            openOverlapDetail(in: app)
+            capture("store-\(language)-together-soon")
+            app.terminate()
+
+            // The trip globe once everyone has landed, then David's boarding pass.
+            app.launchArguments = base + ["-seedTripExamples", "-previewKauaiTrip", "-previewTrips", "-tripTestNamespace=\(UUID().uuidString)"]
+            app.launch()
+            let card = app.buttons["tripCard-example-kauai"]
+            XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 8))
+            for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+            card.press(forDuration: 0.15)
+            XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 7)
+            capture("store-\(language)-trip-globe")
+            let david = app.buttons["flightCard-kauai-david-out"]
+            XCTAssertTrue(david.waitForExistence(timeout: 4))
+            david.press(forDuration: 0.15)
+            XCTAssertTrue(app.buttons["passLegBack"].waitForExistence(timeout: 4))
+            app.scrollViews["fullTripArrivalBoard"].swipeUp()
+            Thread.sleep(forTimeInterval: 2)
+            capture("store-\(language)-boarding-pass")
+            app.terminate()
+
+            // Same-city moments, by friend.
+            app.launchArguments = base + ["-previewMomentsHistory"]
+            app.launch()
+            XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+            selectAppTab(2, in: app)
+            let moments = app.buttons["sameCityMomentsLink"]
+            for _ in 0..<5 where !moments.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            moments.tap()
+            XCTAssertTrue(app.scrollViews["notificationHistoryScreen"].waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 1.5)
+            capture("store-\(language)-moments")
+            app.terminate()
+        }
+    }
+
     /// Walks the trip globe for review and screen recording: landings, one traveler's legs, then departures.
     func testTripGlobeWalkthrough() {
         tripGlobeWalkthrough(extra: [], prefix: "trip-globe")
@@ -1058,7 +1126,7 @@ final class PrototypeUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-seedTripExamples", "-previewKauaiTrip", "-previewTrips",
-                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"] + extra
+                               "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"] + extra
         app.launch()
         if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
         let card = app.buttons["tripCard-example-kauai"]
@@ -1069,7 +1137,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 6)
         capture("\(prefix)-arrive")
-        let ruisi = app.buttons["flightCard-kauai-ruisi-out"]
+        let ruisi = app.buttons["flightCard-kauai-david-out"]
         XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
         ruisi.press(forDuration: 0.15)
         XCTAssertEqual(ruisi.value as? String, "Details expanded")

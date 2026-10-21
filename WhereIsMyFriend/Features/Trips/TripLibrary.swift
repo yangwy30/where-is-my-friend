@@ -711,12 +711,12 @@ final class TripLibrary: ObservableObject {
 
 #if DEBUG
 extension TripPlan {
-    /// The user's Kauai trip shape for screen recordings. Only the Oakland flight is real;
-    /// the Shanghai and New York legs are examples so several routes show at once.
+    /// A Kauai trip for screen recordings and App Store captures, with the demo friends' fictional
+    /// names. Its Oakland flight matches the user's real one; the Shanghai and New York legs are examples.
     static func kauaiPreview(owner: TripParticipant) -> TripPlan {
-        let yayuan = TripParticipant(id: "example-yayuan", name: "王雅源")
-        let ruisi = TripParticipant(id: "example-ruisi", name: "Wang Ruisi")
-        let qiuer = TripParticipant(id: "example-qiuer", name: "Qiuer Chen")
+        let yayuan = TripParticipant(id: "example-kauai-lin", name: "Lin Zhao")
+        let ruisi = TripParticipant(id: "example-kauai-david", name: "David Kim")
+        let qiuer = TripParticipant(id: "example-kauai-mia", name: "Mia Chen")
         func flight(_ id: String, _ person: TripParticipant, _ number: String, _ airline: String, _ from: String, _ to: String,
                     _ dep: String, _ arr: String, _ day: String, _ offset: Int, _ direction: TripDirection, _ terminal: String) -> TripFlight {
             var flight = TripFlight(id: id, traveler: person.name, flightNumber: number, airline: airline, origin: from, destination: to,
@@ -730,10 +730,10 @@ extension TripPlan {
                             startDay: TripDay(value: "2026-11-26"), endDay: TripDay(value: "2026-12-01"),
                             participants: [owner, yayuan, ruisi, qiuer], flights: [
                                 flight("kauai-you-out", owner, "WN 1289", "Southwest Airlines", "OAK", "LIH", "12:30", "15:46", "2026-11-26", 0, .outbound, "Terminal 1"),
-                                flight("kauai-yayuan-out", yayuan, "HA 862", "Hawaiian Airlines", "PVG", "LIH", "22:10", "09:30", "2026-11-25", 1, .outbound, "Terminal 2"),
-                                flight("kauai-ruisi-out", ruisi, "UA 1612", "United Airlines", "JFK", "LIH", "08:15", "20:05", "2026-11-26", 0, .outbound, "Terminal 7"),
-                                flight("kauai-yayuan-back", yayuan, "HA 863", "Hawaiian Airlines", "LIH", "PVG", "13:05", "19:40", "2026-12-01", 1, .inbound, "Terminal 1"),
-                                flight("kauai-ruisi-back", ruisi, "UA 1611", "United Airlines", "LIH", "JFK", "21:40", "13:55", "2026-12-01", 1, .inbound, "Terminal 1")
+                                flight("kauai-lin-out", yayuan, "HA 862", "Hawaiian Airlines", "PVG", "LIH", "22:10", "09:30", "2026-11-25", 1, .outbound, "Terminal 2"),
+                                flight("kauai-david-out", ruisi, "UA 1612", "United Airlines", "JFK", "LIH", "08:15", "20:05", "2026-11-26", 0, .outbound, "Terminal 7"),
+                                flight("kauai-lin-back", yayuan, "HA 863", "Hawaiian Airlines", "LIH", "PVG", "13:05", "19:40", "2026-12-01", 1, .inbound, "Terminal 1"),
+                                flight("kauai-david-back", ruisi, "UA 1611", "United Airlines", "LIH", "JFK", "21:40", "13:55", "2026-12-01", 1, .inbound, "Terminal 1")
                             ], isExample: true)
         trip.creatorUserID = owner.userID
         return trip
