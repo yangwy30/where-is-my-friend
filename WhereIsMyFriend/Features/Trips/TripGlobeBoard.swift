@@ -430,7 +430,7 @@ struct TripGlobeStrip: View {
 }
 
 /// One traveler: name and time on the first line, route and their other leg on the second.
-/// Tapping opens both legs as a small ticket.
+/// Tapping opens their boarding pass.
 struct TripGlobeBoardRow: View {
     @ObservedObject var library: TripLibrary
     let trip: TripPlan
@@ -443,6 +443,8 @@ struct TripGlobeBoardRow: View {
     let onAddFlight: () -> Void
     let onEditFlight: (TripFlight) -> Void
     let onDeleteFlight: (TripFlight) -> Void
+    /// Which leg the open pass shows; starts on the direction on screen.
+    @State private var passLeg: TripDirection = .outbound
 
     private var flight: TripFlight? { traveler.flight(direction) }
     private var other: TripFlight? { traveler.flight(direction == .outbound ? .inbound : .outbound) }
@@ -451,35 +453,40 @@ struct TripGlobeBoardRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let flight {
-                Button(action: onToggle) { line(flight: flight) }
-                    .buttonStyle(.plain)
-                    .accessibilityElement(children: .combine)
-                    .accessibilityValue(isSelected ? "Details expanded" : "Details collapsed")
-                    .accessibilityIdentifier("flightCard-\(flight.id)")
+                HStack(spacing: 8) {
+                    Button(action: onToggle) { line(flight: flight) }
+                        .buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityLabel(rowLabel(flight))
+                        .accessibilityValue(isSelected ? "Details expanded" : "Details collapsed")
+                        .accessibilityIdentifier("flightCard-\(flight.id)")
+                    if isSelected, isSelf, trip.cancelledAt == nil, let shown = traveler.flight(passLeg) {
+                        Menu {
+                            Button("Edit my flight", systemImage: "pencil") { onEditFlight(shown) }
+                                .accessibilityIdentifier("editMyTripFlightButton")
+                            Button("Delete", systemImage: "trash", role: .destructive) { onDeleteFlight(shown) }
+                                .accessibilityIdentifier("deleteMyTripFlightButton")
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                                .frame(width: 36, height: 36)
+                                .background(WIFTheme.primaryText.opacity(0.06), in: Circle())
+                                .frame(minWidth: 44, minHeight: 44)
+                        }
+                        .accessibilityLabel("Flight options")
+                        .accessibilityIdentifier("tripFlightMenu")
+                    }
+                }
             } else {
                 missingLine
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier("missingTraveler-\(traveler.id)")
             }
-            if isSelected, let flight {
-                TripGlobeJourney(trip: trip, traveler: traveler, direction: direction)
-                    .padding(.top, 2)
-                    .padding(.bottom, isSelf && trip.cancelledAt == nil ? 4 : 16)
-                    .transition(.opacity)
-                if isSelf, trip.cancelledAt == nil {
-                    HStack(spacing: 22) {
-                        Button("Edit my flight", systemImage: "pencil") { onEditFlight(flight) }
-                            .foregroundStyle(WIFTheme.fresh)
-                            .accessibilityIdentifier("editMyTripFlightButton")
-                        Button("Delete", systemImage: "trash", role: .destructive) { onDeleteFlight(flight) }
-                            .foregroundStyle(WIFTheme.destructive)
-                            .accessibilityIdentifier("deleteMyTripFlightButton")
-                        Spacer(minLength: 0)
-                    }
-                    .font(.subheadline.weight(.medium)).buttonStyle(.plain)
-                    .padding(.leading, 46).padding(.top, 6).padding(.bottom, 16)
-                    .transition(.opacity)
-                }
+            if isSelected, flight != nil {
+                TripBoardingPass(trip: trip, traveler: traveler, leg: $passLeg, isSelf: isSelf, onAddFlight: onAddFlight)
+                    .padding(.top, 2).padding(.bottom, 14)
+                    .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .top)))
             }
             if !isSelected {
                 Divider().overlay(WIFTheme.border.opacity(0.6)).padding(.leading, 46)
@@ -487,13 +494,22 @@ struct TripGlobeBoardRow: View {
         }
         .background {
             if isSelected {
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(WIFTheme.freshSurface.opacity(0.32))
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(TripBoardingPass.wash)
                     .padding(.horizontal, -12)
             }
         }
         .padding(.vertical, isSelected ? 4 : 0)
         .opacity(isDimmed ? 0.4 : 1)
+        .onChange(of: isSelected, initial: true) { _, selected in
+            if selected { passLeg = direction }
+        }
+    }
+
+    private func rowLabel(_ flight: TripFlight) -> String {
+        let from = direction == .outbound ? flight.origin : flight.destination
+        let time = direction == .outbound ? flight.arrivalTime : flight.departureTime
+        return "\(name), \(from), \(flight.flightNumber), \(time)"
     }
 
     // MARK: Lines
@@ -503,29 +519,25 @@ struct TripGlobeBoardRow: View {
         let from = direction == .outbound ? flight.origin : flight.destination
         return HStack(alignment: .center, spacing: 12) {
             TripGlobeAvatar(traveler: traveler, size: 34)
-                // When open, the trip's line grows straight down out of the avatar.
-                .overlay(alignment: .bottom) {
-                    if isSelected {
-                        Rectangle().fill(direction == .outbound ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.45))
-                            .frame(width: 2, height: 20).offset(y: 20)
-                    }
-                }
             VStack(alignment: .leading, spacing: 3) {
                 Text(name).font(.body.weight(.semibold)).foregroundStyle(WIFTheme.primaryText).lineLimit(1)
-                Text("\(from) · \(flight.flightNumber)")
-                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
-                    .accessibilityLabel("\(from), \(flight.flightNumber)")
+                if !isSelected {
+                    Text("\(from) · \(flight.flightNumber)")
+                        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
+                }
             }
             .layoutPriority(1)
             Spacer(minLength: 8)
-            VStack(alignment: .trailing, spacing: 3) {
-                Text(flight.status == .unverified ? "—" : (direction == .outbound ? flight.arrivalTime : flight.departureTime))
-                    .font(.system(.title3, design: .rounded, weight: .semibold)).monospacedDigit()
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .fixedSize()
-                Text(note(for: flight))
-                    .font(.subheadline).lineLimit(1).fixedSize()
-                    .foregroundStyle(flight.status == .unverified || other == nil ? WIFTheme.caution : WIFTheme.secondaryText)
+            if !isSelected {
+                VStack(alignment: .trailing, spacing: 3) {
+                    Text(flight.status == .unverified ? "—" : (direction == .outbound ? flight.arrivalTime : flight.departureTime))
+                        .font(.system(.title3, design: .rounded, weight: .semibold)).monospacedDigit()
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .fixedSize()
+                    Text(note(for: flight))
+                        .font(.subheadline).lineLimit(1).fixedSize()
+                        .foregroundStyle(flight.status == .unverified || other == nil ? WIFTheme.caution : WIFTheme.secondaryText)
+                }
             }
         }
         .padding(.vertical, 12)
@@ -564,178 +576,260 @@ struct TripGlobeBoardRow: View {
     }
 }
 
-/// One traveler's whole trip as a single line: the flight in, the stay, the flight home.
-/// The leg for the direction on screen is jade; the other one is quiet grey.
-struct TripGlobeJourney: View {
+/// One flight as a boarding pass in the traveler's color: big airport codes, the terminal in
+/// the largest cell, and a stub with the date, duration and status. Out and Back flip it over.
+struct TripBoardingPass: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .largeTitle) private var codeSize: CGFloat = 40
+    @ScaledMetric(relativeTo: .title) private var terminalSize: CGFloat = 32
     let trip: TripPlan
     let traveler: TripGlobeTraveler
-    let direction: TripDirection
-    @State private var shown = false
+    @Binding var leg: TripDirection
+    let isSelf: Bool
+    let onAddFlight: () -> Void
+    /// The leg drawn on the pass; it changes halfway through the flip, while the pass is edge-on.
+    @State private var face: TripDirection?
+    @State private var turn: Double = 0
 
-    private enum Rail { case solid(Color), dotted, none }
-    private enum Node { case ring(Color), dot(Color), open }
+    /// The opened row's background; the pass's notches are cut in this color.
+    static var wash: Color { WIFTheme.freshSurface.opacity(0.32) }
 
-    private func color(_ leg: TripDirection) -> Color { leg == direction ? WIFTheme.fresh : WIFTheme.secondaryText.opacity(0.45) }
-    private func ink(_ leg: TripDirection) -> Color { leg == direction ? WIFTheme.primaryText : WIFTheme.secondaryText }
+    private var shown: TripDirection { face ?? leg }
+    private var flight: TripFlight? { traveler.flight(shown) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            let items = rows
-            ForEach(items.indices, id: \.self) { index in
-                items[index]
-                    .opacity(shown ? 1 : 0)
-                    .offset(y: shown ? 0 : -4)
-                    .animation(reduceMotion ? nil : .easeOut(duration: 0.3).delay(Double(index) * 0.06), value: shown)
-            }
-        }
-        .onAppear { shown = true }
-    }
-
-    private var rows: [AnyView] {
-        var rows: [AnyView] = []
-        let destinationCity = trip.destination?.city ?? trip.destinationAirport
-        if let out = traveler.outbound {
-            rows.append(stop(code: out.origin, day: day(out.departureSortDate, airport: out.origin), time: out.departureTime,
-                             node: .ring(color(.outbound)), above: .solid(color(.outbound)), below: .solid(color(.outbound)), leg: .outbound))
-            rows.append(flight(out, leg: .outbound))
-            rows.append(stop(code: out.destination, day: arrivalDay(out), time: out.arrivalTime,
-                             node: .dot(color(.outbound)), above: .solid(color(.outbound)), below: .dotted, leg: .outbound))
-        } else {
-            rows.append(missing(String(localized: "No flight in yet"), above: .dotted, below: .dotted))
-        }
-        rows.append(stay(nights: nights, city: destinationCity))
-        if let back = traveler.inbound {
-            rows.append(stop(code: back.origin, day: day(back.departureSortDate, airport: back.origin), time: back.departureTime,
-                             node: .ring(color(.inbound)), above: .dotted, below: .solid(color(.inbound)), leg: .inbound))
-            rows.append(flight(back, leg: .inbound))
-            rows.append(stop(code: back.destination, day: arrivalDay(back), time: back.arrivalTime,
-                             node: .dot(color(.inbound)), above: .solid(color(.inbound)), below: .none, leg: .inbound))
-        } else {
-            rows.append(missing(String(localized: "No flight home yet"), above: .dotted, below: .none))
-        }
-        return rows
-    }
-
-    // MARK: Pieces
-
-    private func stop(code: String, day: String?, time: String, node: Node, above: Rail, below: Rail, leg: TripDirection) -> AnyView {
-        let city = AirportLocation.location(for: code)?.city
-        return AnyView(HStack(alignment: .top, spacing: 12) {
+        VStack(spacing: 10) {
             VStack(spacing: 0) {
-                line(above).frame(height: 10)
-                nodeView(node)
-                line(below).frame(maxHeight: .infinity)
-            }
-            .frame(width: 34)
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(code).font(.subheadline.weight(.semibold)).foregroundStyle(ink(leg))
-                    if let city, city != code { Text(city).font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1) }
+                band
+                if let flight {
+                    codes(flight)
+                    cells(flight)
+                    perforation
+                    stub(flight)
+                } else {
+                    empty
                 }
-                if let day { Text(day).font(.footnote).foregroundStyle(WIFTheme.secondaryText) }
             }
+            .background(WIFTheme.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .shadow(color: WIFTheme.primaryText.opacity(0.12), radius: 14, y: 8)
+            .rotation3DEffect(.degrees(turn), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
+            stay
+        }
+        .onChange(of: leg) { _, newLeg in flip(to: newLeg) }
+    }
+
+    private func flip(to newLeg: TripDirection) {
+        guard !reduceMotion else { face = newLeg; return }
+        withAnimation(.easeIn(duration: 0.16)) { turn = 90 }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(160))
+            face = newLeg
+            turn = -90
+            withAnimation(.easeOut(duration: 0.22)) { turn = 0 }
+        }
+    }
+
+    // MARK: Parts
+
+    private var band: some View {
+        HStack(spacing: 10) {
+            Text(bandTitle)
+                .font(.footnote.weight(.bold)).tracking(0.6)
+                .foregroundStyle(.white).lineLimit(1).minimumScaleFactor(0.8)
+            Spacer(minLength: 6)
+            HStack(spacing: 2) {
+                legButton(.outbound, String(localized: "Out"), id: "passLegOut")
+                legButton(.inbound, String(localized: "Back"), id: "passLegBack")
+            }
+            .padding(2)
+            .background(.white.opacity(0.18), in: Capsule())
+        }
+        .padding(.leading, 16).padding(.trailing, 10).padding(.vertical, 10)
+        .background(traveler.color)
+    }
+
+    private var bandTitle: String {
+        guard let flight else { return shown == .outbound ? String(localized: "Flight in") : String(localized: "Flight home") }
+        let airline = flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")
+        return "\(airline) · \(flight.flightNumber)".uppercased()
+    }
+
+    private func legButton(_ value: TripDirection, _ title: String, id: String) -> some View {
+        Button(title) { leg = value }
+            .font(.footnote.weight(.semibold))
+            .foregroundStyle(leg == value ? traveler.color : .white)
+            .padding(.horizontal, 12).frame(minHeight: 30)
+            .background(leg == value ? AnyShapeStyle(.white) : AnyShapeStyle(.clear), in: Capsule())
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(leg == value ? .isSelected : [])
+            .accessibilityIdentifier(id)
+    }
+
+    private func codes(_ flight: TripFlight) -> some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            endpoint(flight.origin, alignment: .leading)
+            Spacer(minLength: 4)
+            Image(systemName: "airplane").font(.title3).foregroundStyle(WIFTheme.fresh)
+                .padding(.bottom, 26).accessibilityHidden(true)
+            Spacer(minLength: 4)
+            endpoint(flight.destination, alignment: .trailing)
+        }
+        .padding(.horizontal, 18).padding(.top, 14)
+    }
+
+    private func endpoint(_ code: String, alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: 0) {
+            Text(code)
+                .font(.system(size: codeSize, weight: .heavy)).tracking(-1)
+                .foregroundStyle(WIFTheme.primaryText).lineLimit(1).minimumScaleFactor(0.6)
+            if let city = AirportLocation.location(for: code)?.city {
+                Text(city).font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1)
+            }
+        }
+    }
+
+    private func cells(_ flight: TripFlight) -> some View {
+        let unverified = flight.status == .unverified
+        let items = [
+            cell(String(localized: "Departs"), unverified ? "—" : flight.departureTime),
+            cell(String(localized: "Lands"), unverified ? "—" : flight.arrivalTime,
+                 dayShift: unverified || flight.arrivalDayOffset == 0 ? nil : "+\(flight.arrivalDayOffset)")
+        ]
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 12) {
+                terminalCell(flight).frame(maxWidth: .infinity, alignment: .leading)
+                items[0].frame(maxWidth: .infinity, alignment: .leading)
+                items[1].frame(maxWidth: .infinity, alignment: .leading)
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                terminalCell(flight)
+                HStack(alignment: .top, spacing: 12) { items[0]; Spacer(minLength: 8); items[1] }
+            }
+        }
+        .padding(.horizontal, 18).padding(.top, 14).padding(.bottom, 16)
+    }
+
+    private func label(_ text: String) -> some View {
+        Text(text).font(.caption2.weight(.bold)).tracking(0.8).textCase(.uppercase)
+            .foregroundStyle(WIFTheme.secondaryText)
+    }
+
+    /// A time cell; a landing on a later local day gets a small "+1".
+    private func cell(_ title: String, _ value: String, dayShift: String? = nil) -> AnyView {
+        AnyView(VStack(alignment: .leading, spacing: 2) {
+            label(title)
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(value).font(.title3.weight(.semibold)).monospacedDigit().foregroundStyle(WIFTheme.primaryText)
+                if let dayShift {
+                    Text(dayShift).font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                        .accessibilityLabel(String(localized: "next day"))
+                }
+            }
+            .lineLimit(1).fixedSize()
+        })
+    }
+
+    private func terminalCell(_ flight: TripFlight) -> some View {
+        let terminal = Self.terminal(flight.terminal)
+        return VStack(alignment: .leading, spacing: 2) {
+            label(String(localized: "Terminal"))
+            if terminal.count <= 3 {
+                Text(terminal).font(.system(size: terminalSize, weight: .bold)).foregroundStyle(WIFTheme.fresh)
+                    .lineLimit(1).fixedSize()
+            } else {
+                Text(terminal).font(.headline).foregroundStyle(WIFTheme.fresh).fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    /// "Terminal 2" reads as "2" in the cell; names like "Tom Bradley" stay whole.
+    static func terminal(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != "Not available" else { return "—" }
+        if trimmed.lowercased().hasPrefix("terminal ") { return String(trimmed.dropFirst(9)) }
+        return trimmed
+    }
+
+    private var perforation: some View {
+        ZStack {
+            Line().stroke(WIFTheme.border, style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])).frame(height: 1.5)
+                .padding(.horizontal, 18)
+            HStack {
+                notch.offset(x: -11)
+                Spacer()
+                notch.offset(x: 11)
+            }
+        }
+        .frame(height: 22)
+        .accessibilityHidden(true)
+    }
+
+    private var notch: some View {
+        Circle().fill(WIFTheme.canvas).overlay(Circle().fill(Self.wash)).frame(width: 22, height: 22)
+    }
+
+    private struct Line: Shape {
+        func path(in rect: CGRect) -> Path {
+            var path = Path(); path.move(to: CGPoint(x: 0, y: rect.midY)); path.addLine(to: CGPoint(x: rect.maxX, y: rect.midY)); return path
+        }
+    }
+
+    private func stub(_ flight: TripFlight) -> some View {
+        HStack(spacing: 6) {
+            if let day = departureDay(flight) { Text(day) }
             Spacer(minLength: 8)
-            Text(time).font(.subheadline.weight(.semibold)).monospacedDigit().foregroundStyle(ink(leg))
+            if let duration = duration(flight) { Text(duration).fontWeight(.semibold).foregroundStyle(WIFTheme.primaryText); Text("·") }
+            Text(flight.status.title).foregroundStyle(statusColor(flight.status))
         }
-        .padding(.bottom, 2)
-        .fixedSize(horizontal: false, vertical: true))
+        .font(.subheadline).foregroundStyle(WIFTheme.secondaryText).lineLimit(1).minimumScaleFactor(0.8)
+        .padding(.horizontal, 18).padding(.top, 4).padding(.bottom, 14)
     }
 
-    private func flight(_ flight: TripFlight, leg: TripDirection) -> AnyView {
-        var parts = ["\(flight.airline.replacingOccurrences(of: " Airlines", with: "").replacingOccurrences(of: " Air Lines", with: "")) \(flight.flightNumber)"]
-        if let duration = duration(flight) { parts.append(duration) }
-        if flight.terminal != "Not available", !flight.terminal.isEmpty { parts.append(flight.terminal) }
-        let flagged = [.delayed, .cancelled, .diverted, .unverified, .landed, .airborne, .boarding].contains(flight.status)
-        return AnyView(HStack(alignment: .center, spacing: 12) {
-            VStack(spacing: 3) {
-                line(.solid(color(leg))).frame(maxHeight: .infinity)
-                Image(systemName: "airplane").font(.system(size: 10, weight: .semibold))
-                    .rotationEffect(.degrees(90)).foregroundStyle(color(leg))
-                line(.solid(color(leg))).frame(maxHeight: .infinity)
+    private func statusColor(_ status: TripFlightStatus) -> Color {
+        switch status {
+        case .scheduled, .unknown: WIFTheme.secondaryText
+        default: status.accent
+        }
+    }
+
+    private var empty: some View {
+        VStack(spacing: 8) {
+            Text(shown == .outbound ? String(localized: "No flight in yet") : String(localized: "No flight home yet"))
+                .font(.headline).foregroundStyle(WIFTheme.primaryText)
+            if let home = traveler.home {
+                Text(shown == .outbound ? "\(home) → \(trip.destinationAirport)" : "\(trip.destinationAirport) → \(home)")
+                    .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
             }
-            .frame(width: 34)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(parts.joined(separator: " · ")).font(.footnote).foregroundStyle(WIFTheme.secondaryText)
-                if flagged { Text(flight.status.title).font(.footnote.weight(.medium)).foregroundStyle(flight.status.accent) }
+            if isSelf, trip.cancelledAt == nil {
+                Button(String(localized: "Add flight"), action: onAddFlight)
+                    .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.onFresh)
+                    .padding(.horizontal, 18).frame(minHeight: 40)
+                    .background(WIFTheme.fresh, in: Capsule())
+                    .buttonStyle(.plain).padding(.top, 4)
+                    .accessibilityIdentifier("passAddFlightButton")
             }
-            .padding(.vertical, 10)
-            Spacer(minLength: 0)
         }
-        .fixedSize(horizontal: false, vertical: true))
+        .frame(maxWidth: .infinity).padding(.vertical, 28)
     }
 
-    private func stay(nights: Int?, city: String) -> AnyView {
-        let text: String = {
-            guard let nights, nights > 0 else { return String(localized: "In \(city)") }
-            return nights == 1 ? String(localized: "1 night in \(city)") : String(localized: "\(nights) nights in \(city)")
-        }()
-        return AnyView(HStack(alignment: .center, spacing: 12) {
-            line(.dotted).frame(maxHeight: .infinity).frame(width: 34)
-            Text(text).font(.footnote.weight(.medium)).foregroundStyle(WIFTheme.secondaryText).padding(.vertical, 12)
-            Spacer(minLength: 0)
+    private var stay: some View {
+        HStack(spacing: 10) {
+            Line().stroke(WIFTheme.secondaryText.opacity(0.35), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.5, 5])).frame(height: 2)
+            Text(stayText).font(.subheadline.weight(.medium)).foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize()
+            Line().stroke(WIFTheme.secondaryText.opacity(0.35), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.5, 5])).frame(height: 2)
         }
-        .fixedSize(horizontal: false, vertical: true))
-    }
-
-    private func missing(_ text: String, above: Rail, below: Rail) -> AnyView {
-        AnyView(HStack(alignment: .top, spacing: 12) {
-            VStack(spacing: 0) {
-                line(above).frame(height: 6)
-                nodeView(.open)
-                line(below).frame(maxHeight: .infinity)
-            }
-            .frame(width: 34)
-            Text(text).font(.subheadline).foregroundStyle(WIFTheme.caution)
-            Spacer(minLength: 0)
-        }
-        .padding(.bottom, 2)
-        .fixedSize(horizontal: false, vertical: true))
-    }
-
-    @ViewBuilder
-    private func line(_ rail: Rail) -> some View {
-        switch rail {
-        case .solid(let color): Rectangle().fill(color).frame(width: 2)
-        case .dotted:
-            Path { path in path.move(to: CGPoint(x: 1, y: 0)); path.addLine(to: CGPoint(x: 1, y: 400)) }
-                .stroke(WIFTheme.secondaryText.opacity(0.4), style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [0.5, 5]))
-                .frame(width: 2).clipped()
-        case .none: Color.clear.frame(width: 2)
-        }
-    }
-
-    @ViewBuilder
-    private func nodeView(_ node: Node) -> some View {
-        switch node {
-        case .ring(let color): Circle().strokeBorder(color, lineWidth: 2).frame(width: 11, height: 11)
-        case .dot(let color): Circle().fill(color).frame(width: 11, height: 11)
-        case .open: Circle().strokeBorder(WIFTheme.caution.opacity(0.7), style: StrokeStyle(lineWidth: 1.5, dash: [2, 2])).frame(width: 11, height: 11)
-        }
+        .padding(.horizontal, 6)
     }
 
     // MARK: Values
 
-    private func day(_ date: Date, airport: String) -> String? {
-        guard date != .distantFuture, let zone = AirportLocation.location(for: airport)?.timeZone else { return nil }
-        var style = Date.FormatStyle.dateTime.weekday(.abbreviated).month(.abbreviated).day()
-        style.timeZone = zone
-        return date.formatted(style)
-    }
-
-    /// Only shown when the flight lands on a different local day than it left.
-    private func arrivalDay(_ flight: TripFlight) -> String? {
-        let arrival = day(flight.arrivalSortDate, airport: flight.destination)
-        return arrival == day(flight.departureSortDate, airport: flight.origin) ? nil : arrival
-    }
-
-    private func duration(_ flight: TripFlight) -> String? {
-        let seconds = flight.arrivalSortDate.timeIntervalSince(flight.departureSortDate)
-        guard flight.arrivalSortDate != .distantFuture, flight.departureSortDate != .distantFuture, seconds > 0, seconds < 40 * 3600 else { return nil }
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute]
-        formatter.unitsStyle = .abbreviated
-        return formatter.string(from: seconds)
+    private var stayText: String {
+        let city = trip.destination?.city ?? trip.destinationAirport
+        guard let nights, nights > 0 else { return String(localized: "In \(city)") }
+        return nights == 1 ? String(localized: "1 night in \(city)") : String(localized: "\(nights) nights in \(city)")
     }
 
     private var nights: Int? {
@@ -745,5 +839,23 @@ struct TripGlobeJourney: View {
         let start = traveler.outbound.map(\.arrivalSortDate).flatMap { $0 == .distantFuture ? nil : $0 } ?? trip.startDay.pickerDate
         let end = traveler.inbound.map(\.departureSortDate).flatMap { $0 == .distantFuture ? nil : $0 } ?? trip.endDay.pickerDate
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: start), to: calendar.startOfDay(for: end)).day
+    }
+
+    private func departureDay(_ flight: TripFlight) -> String? {
+        guard flight.departureSortDate != .distantFuture, let zone = AirportLocation.location(for: flight.origin)?.timeZone else {
+            return flight.calendarDay.label
+        }
+        var style = Date.FormatStyle.dateTime.weekday(.abbreviated).month(.abbreviated).day()
+        style.timeZone = zone
+        return flight.departureSortDate.formatted(style)
+    }
+
+    private func duration(_ flight: TripFlight) -> String? {
+        let seconds = flight.arrivalSortDate.timeIntervalSince(flight.departureSortDate)
+        guard flight.arrivalSortDate != .distantFuture, flight.departureSortDate != .distantFuture, seconds > 0, seconds < 40 * 3600 else { return nil }
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter.string(from: seconds)
     }
 }

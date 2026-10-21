@@ -1077,6 +1077,9 @@ final class PrototypeUITests: XCTestCase {
         app.scrollViews["fullTripArrivalBoard"].swipeUp()
         Thread.sleep(forTimeInterval: 2)
         capture("\(prefix)-selected")
+        app.buttons["passLegBack"].tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        capture("\(prefix)-pass-back")
         app.scrollViews["fullTripArrivalBoard"].swipeDown()
         ruisi.press(forDuration: 0.15)
         app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
@@ -2525,7 +2528,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(flight.waitForExistence(timeout: 5))
         flight.tap()
         XCTAssertEqual(flight.value as? String, "Details expanded")
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "British Airways")).firstMatch.waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] %@", "British Airways")).firstMatch.waitForExistence(timeout: 3))
         capture("\(language)-07-flight-details")
     }
 
@@ -2846,16 +2849,23 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(card.waitForExistence(timeout: 3))
         card.tap()
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Unverified")).firstMatch.waitForExistence(timeout: 3))
+        let menu = app.buttons["tripFlightMenu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 3))
+        if !menu.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        menu.tap()
         let edit = app.buttons["editMyTripFlightButton"]
-        if !edit.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        XCTAssertTrue(edit.waitForExistence(timeout: 3))
         capture("Own flight actions")
         edit.tap()
         XCTAssertTrue(number.waitForExistence(timeout: 3))
         number.replaceText(with: "DL 12")
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "flightCard-", "DL 12")).firstMatch.waitForExistence(timeout: 4))
+        XCTAssertTrue(menu.waitForExistence(timeout: 3))
+        if !menu.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        menu.tap()
         let delete = app.buttons["deleteMyTripFlightButton"]
-        if !delete.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        XCTAssertTrue(delete.waitForExistence(timeout: 3))
         delete.tap()
         app.buttons["Delete flight"].tap()
         XCTAssertTrue(app.buttons["tripNeedsHelpCard"].waitForExistence(timeout: 4))
@@ -3029,11 +3039,17 @@ final class PrototypeUITests: XCTestCase {
         let flightCard = app.buttons["flightCard-wang-out"]
         XCTAssertTrue(flightCard.waitForExistence(timeout: 4))
         flightCard.tap()
+        let menu = app.buttons["tripFlightMenu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 4))
+        XCTAssertTrue(app.buttons["passLegBack"].exists)
+        menu.tap()
         let edit = app.buttons["editMyTripFlightButton"]
         XCTAssertTrue(edit.waitForExistence(timeout: 4))
         capture("Trip flight details expanded")
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        XCTAssertTrue(edit.waitForNonExistence(timeout: 3))
         flightCard.tap()
-        XCTAssertFalse(edit.exists)
+        XCTAssertTrue(menu.waitForNonExistence(timeout: 3))
     }
 
     func testCityEmblemFallbackSideBySideVisual() {
