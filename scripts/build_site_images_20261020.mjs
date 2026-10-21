@@ -13,7 +13,6 @@ const shots=[
  ['together-soon','together-soon',{left:40,top:590,width:1126,height:950},900],
  ['moments','moments',{left:30,top:390,width:1146,height:1150},680],
  ['friend-controls','friend-detail',{left:0,top:1300,width:1206,height:920},900],
- ['trip-globe','trip-globe',{left:0,top:345,width:1206,height:1600},1000],
  ['boarding-pass','boarding-pass',{left:24,top:540,width:1158,height:1140},960],
 ];
 for(const [name,file,crop,width] of shots)await sharp(path.join(root,source,`store-en-${file}.png`)).extract(crop).resize({width}).webp({quality:86}).toFile(path.join(output,`${name}.webp`));

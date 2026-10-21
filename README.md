@@ -68,9 +68,9 @@ Across Us keeps their cities, plans and flights in one place, so a chance to mee
 Invite friends to a **Trip** and watch every flight land where you’re meeting.
 
 <p align="center">
-  <img src="site/assets/product/trip-globe.webp" width="48%" alt="Kauai Thanksgiving: flights from Shanghai, New York and Oakland landing on Kauai, with a landing timeline.">
+  <img src="site/assets/motion/trip-globe-preview.webp" width="40%" alt="The trip globe in Across Us: routes draw in from Shanghai, New York and Oakland and each friend lands on Kauai.">
   &nbsp;
-  <img src="site/assets/product/boarding-pass.webp" width="48%" alt="David’s boarding pass: United 1612 from New York JFK to Kauai, leaving from Terminal 7.">
+  <img src="site/assets/product/boarding-pass.webp" width="52%" alt="David’s boarding pass: United 1612 from New York JFK to Kauai, leaving from Terminal 7.">
 </p>
 
 - **Every flight, one tap away.** Tap anyone for their boarding pass: local times, terminal and the flight home. Each traveler manages their own.

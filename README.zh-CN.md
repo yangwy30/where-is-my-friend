@@ -68,9 +68,9 @@ Across Us 把朋友的城市、计划和航班放在一起，别让见面的机�
 邀请朋友加入一个 **Trip**，看每个人的航班飞向你们见面的地方。
 
 <p align="center">
-  <img src="site/assets/product/trip-globe.webp" width="48%" alt="考艾岛感恩节：从上海、纽约和奥克兰出发的航班降落在考艾岛，下方是落地时间线。">
+  <img src="site/assets/motion/trip-globe-preview.webp" width="40%" alt="Across Us 的行程地球：从上海、纽约和奥克兰出发的航线依次画出，朋友们一个个降落在考艾岛。">
   &nbsp;
-  <img src="site/assets/product/boarding-pass.webp" width="48%" alt="David 的登机牌：美联航 1612，从纽约 JFK 7 号航站楼飞往考艾岛。">
+  <img src="site/assets/product/boarding-pass.webp" width="52%" alt="David 的登机牌：美联航 1612，从纽约 JFK 7 号航站楼飞往考艾岛。">
 </p>
 
 - **每趟航班，一点就清楚。** 点开任何人就是一张登机牌：当地时间、航站楼和回程航班。每位旅伴管理自己的航班。
