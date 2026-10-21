@@ -1,100 +1,192 @@
+<div align="center">
+
+<img src="site/assets/app_icon.png" width="104" alt="Across Us app icon">
+
 # Across Us
 
-一个以隐私为先的 iOS 应用：让彼此同意分享的朋友看到对方**最近所在的城市**，并在朋友们来到同一座城市时收到提醒。
+**See you somewhere.**
 
-## 产品承诺
+Friends’ cities, overlapping plans and group trips, in one quiet iPhone app.
 
-> 不追踪实时路线，不默认保存位置历史，只用低功耗方式展示朋友最近所在的城市和更新时间。
+<a href="https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&ct=github_readme&mt=8"><img src="https://img.shields.io/badge/App_Store-Download-0E1A13?style=for-the-badge&logo=apple&logoColor=white" alt="Download on the App Store"></a>
+<a href="https://acrossus.app"><img src="https://img.shields.io/badge/acrossus.app-Website-A6E677?style=for-the-badge&labelColor=0E1A13" alt="acrossus.app"></a>
 
-首个版本计划包含：
+<img src="https://img.shields.io/badge/iOS-18%2B-0E1A13?style=flat-square&logo=apple&logoColor=white" alt="iOS 18+">
+<img src="https://img.shields.io/badge/SwiftUI-WidgetKit-0E1A13?style=flat-square&logo=swift&logoColor=F05138" alt="SwiftUI and WidgetKit">
+<img src="https://img.shields.io/badge/Supabase-Postgres_·_Edge-0E1A13?style=flat-square&logo=supabase&logoColor=3ECF8E" alt="Supabase">
+<img src="https://img.shields.io/badge/Cloudflare-Pages-0E1A13?style=flat-square&logo=cloudflare&logoColor=F38020" alt="Cloudflare Pages">
 
-- 使用 Apple 账号登录
-- 双向确认的好友关系
-- 按好友控制城市共享
-- 低功耗后台城市更新
-- iOS 主应用与桌面 Widget
-- 好友同城通知
-- 暂停共享、移除好友、屏蔽用户与删除账号
+<sub><b>English</b> · <a href="README.zh-CN.md">简体中文</a></sub>
 
-首个版本明确不做：
+<br>
 
-- 秒级实时定位
-- 精确坐标或地图追踪
-- 历史行动轨迹
-- 未经双方同意的位置分享
-- Android、Web 或商业化功能
+<img src="site/assets/product/social-preview.jpg" alt="Across Us: See you somewhere. The Friends screen shows Mia in New York, Lin in Tokyo, Chloe in Paris and David in San Francisco." width="100%">
 
-## 当前状态
+<br><br>
 
-仓库现在包含可完整操作的 SwiftUI MVP，以及第一条真实 PostgreSQL 后端纵切：
+<img src="site/assets/emblems/new_york.png" width="68" alt="New York">
+<img src="site/assets/emblems/tokyo.png" width="68" alt="Tokyo">
+<img src="site/assets/emblems/paris.png" width="68" alt="Paris">
+<img src="site/assets/emblems/london.png" width="68" alt="London">
+<img src="site/assets/emblems/san_francisco.png" width="68" alt="San Francisco">
+<img src="site/assets/emblems/kyoto.png" width="68" alt="Kyoto">
+<img src="site/assets/emblems/sydney.png" width="68" alt="Sydney">
+<img src="site/assets/emblems/zurich.png" width="68" alt="Zurich">
 
-- iOS 18+ SwiftUI App
-- Small、Medium、Large WidgetKit 小组件
-- Onboarding、朋友、好友详情、邀请、共享和隐私设置页面
-- App 与 Widget 共用的 Codable Mock Data 和 App Group 快照存储
-- Light/Dark Mode、Dynamic Type 友好的语义化设计系统
-- 单元测试和 UI 交互测试 targets
+<sub>200+ cities, each with its own emblem.</sub>
 
-- 本地持久化 Demo Repository 与可替换的 `AppRepository` 边界
-- Demo 登录、Sign in with Apple 客户端授权与远端 token 交换接口
-- 好友邀请、接受、拒绝、移除、收藏与逐好友共享设置
-- 手动测试城市、前台定位、Visits、Significant Location Change
-- 同城事件去重、本地通知预览与通知历史
-- App Group Widget 快照、登出清除和真实更新时间
-- Demo Lab 场景模拟、REST API adapter、Keychain session token
-- 资料编辑、邀请 Deep Link、屏蔽与解除屏蔽
-- 城市标准化、同城进入/离开状态与六小时重新进入冷却
-- 离线位置/Push Token 队列、指数退避重试与可见同步状态
-- Widget 三档隐私模式：完整、隐藏姓名、全部隐藏
-- Debug、Staging、Release 分离；非 Debug 构建在无真实 API 时安全关闭
-- Supabase CLI 配置、版本化迁移、最小权限数据库模型与本地 seed
-- Edge REST API：session、好友请求、城市分享、同城事件与通知 outbox
-- Alice/Bob 双模拟器 Debug 登录，以及可独立运行的 PostgreSQL 业务集成测试
-- 远程 Supabase Staging 已连接，三条 migration、受 JWT 保护的业务 API v4 与 push-worker v1 均已部署并处于 ACTIVE
-- APNs token 加密、多安装注册和并发安全逐设备 outbox 已上线 Staging；worker 等待 Apple `.p8` / Key ID 后启用，Cron 当前保持关闭
+</div>
 
-Debug App 默认使用 Local Demo Repository，因此没有 Server 也能完整查看和操作 UI。真实后端使用远程 Supabase Staging：原生 Apple token 与 nonce 换取 Keychain-backed Supabase session，Edge API 从用户 JWT 推导业务身份。Staging 和 Release 不允许回退到 Demo 数据；本地 Docker Supabase 仅作为可选兼容流程保留。
+<br>
 
-App 只会在用户主动点击相关控制后请求位置或通知权限。本地 Demo 模式不会上传任何数据；Sign in with Apple 的真实 token 交换与网络请求仅在配置 Remote API 后启用。
+## Friends move.
 
-完整产品路线图见 [PLAN.md](./PLAN.md)，视觉与交互规范见 [docs/DESIGN_SPEC.md](./docs/DESIGN_SPEC.md)。
+Across Us keeps their cities, plans and flights in one place, so a chance to meet doesn’t slip past. No live map, no GPS trail: just the city each friend chose to share, and when they shared it.
 
-生产接入资料：
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <img src="site/assets/product/same-city.webp" alt="Here with you: New York, with Mia, Lin and Chloe.">
+      <h3>Same city, same time</h3>
+      See who’s in town with you, and choose who can trigger the alert.
+    </td>
+    <td width="33%" valign="top">
+      <img src="site/assets/product/overlap.webp" alt="Tokyo with Lin: four days together, October 19 to 22.">
+      <h3>Plans that line up</h3>
+      When your plans overlap, see the days you’ll both be there.
+    </td>
+    <td width="33%" valign="top">
+      <img src="site/assets/product/plans.webp" alt="Friends’ travel plans: Lin in Tokyo, Chloe in Paris.">
+      <h3>Their next stop</h3>
+      Friends share a city and dates, so you know where they’re headed.
+    </td>
+  </tr>
+</table>
 
-- [客户端架构决策](./docs/ADR-001-CLIENT-BOUNDARY.md)
-- [REST API 合同](./docs/API_CONTRACT.md)
-- [PostgreSQL 参考 schema](./docs/DATABASE_SCHEMA.sql)
-- [真实后端接入清单](./docs/REAL_BACKEND_CHECKLIST.md)
-- [可选：本地 Docker Supabase 双用户运行指南](./docs/LOCAL_BACKEND.md)
-- [远程 Supabase Staging、Apple 登录、APNs 与生产部署详细计划](./docs/SUPABASE_PRODUCTION_PLAN.md)
+## Coming from everywhere.
 
-## 运行原型
+Invite friends to a **Trip** and keep everyone’s flights and arrival times in one place.
 
-1. 使用 Xcode 26 或更新版本打开 `WhereIsMyFriend.xcodeproj`。
-2. 选择 `WhereIsMyFriend` scheme 和任意 iPhone Simulator。
-3. Build & Run。
-4. 完成三步原型 Onboarding 后浏览 App。
-5. 在模拟器桌面添加 `Across Us` Widget，切换三种尺寸查看布局。
+<p align="center">
+  <img src="site/assets/product/routes.webp" width="46%" alt="Flight routes from London, Newark, Seattle and San Francisco converging on Los Angeles.">
+  &nbsp;
+  <img src="site/assets/product/flight-details.webp" width="50%" alt="Flight details: London to Los Angeles on British Airways BA 281.">
+</p>
 
-当前开发 UI 不需要后端。要验证真实账号和持久化数据，请在 Xcode 选择 **WhereIsMyFriend Staging** scheme 并运行到已签名真机；详细步骤见 [远程 Staging 实施计划](./docs/SUPABASE_PRODUCTION_PLAN.md)。如果以后需要完全离线的 Supabase stack，再使用 [可选本地后端指南](./docs/LOCAL_BACKEND.md)。
+- **Every flight, down to the terminal.** Departure and arrival times, airline, terminal and live status. Each traveler manages their own.
+- **A nudge when it helps.** Flight-change alerts, morning reminders, and a tap to remind a friend who hasn’t added their flight.
+- **Room for plans to change.** Members can leave; the creator can remove members or delete the Trip.
 
-命令行构建：
+## On your Home Screen.
 
-```bash
-xcodebuild \
-  -project WhereIsMyFriend.xcodeproj \
-  -scheme WhereIsMyFriend \
-  -sdk iphonesimulator \
-  -destination 'generic/platform=iOS Simulator' \
-  CODE_SIGNING_ALLOWED=NO \
-  build
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/product/friends-dark.webp">
+    <img src="site/assets/product/friends-light.webp" width="44%" alt="Friends widget with four friends and their cities.">
+  </picture>
+  &nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/product/here-together-dark.webp">
+    <img src="site/assets/product/here-together-light.webp" width="44%" alt="Here Together widget: you and Mia, both in New York.">
+  </picture>
+</p>
+
+## Private by design.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🏙️ City, not coordinates</h3>
+      Apple’s location services resolve your city. Precise coordinates never reach our servers, and there is no continuous GPS trail.
+    </td>
+    <td width="50%" valign="top">
+      <h3>🤝 Both sides agree</h3>
+      Friendships are mutual. You choose, per friend, who sees your city and plans, and can pause sharing at any time.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🚫 No ads, no tracking</h3>
+      No advertising, no cross-app tracking, no selling of personal data.
+    </td>
+    <td width="50%" valign="top">
+      <h3>🗑️ Yours to delete</h3>
+      Remove a friend, block someone, or delete your account from inside the app.
+    </td>
+  </tr>
+</table>
+
+Full policy: [acrossus.app/privacy](https://acrossus.app/privacy/)
+
+---
+
+## Under the hood
+
+| Layer | Stack |
+| --- | --- |
+| **App** | SwiftUI · WidgetKit (small, medium, large) · iOS 18+ · English and 简体中文 |
+| **Backend** | Supabase Postgres with versioned migrations · Edge Functions: `api`, `push-worker`, `trip-worker`, `ops-monitor` |
+| **Notifications** | APNs, delivered per device from an outbox with retries |
+| **Flights** | AeroDataBox lookups and status refresh |
+| **Web** | [acrossus.app](https://acrossus.app) on Cloudflare Pages, with Pages Functions for invite links and Universal Links |
+| **CI** | GitHub Actions: backend tests, Debug / Staging / Release builds, unit tests |
+
+```text
+WhereIsMyFriend/          SwiftUI app: App, Core, Features (Friends, Trips, TravelPlans, …)
+WhereIsMyFriendWidget/    WidgetKit extension
+WhereIsMyFriendTests/     Unit tests
+WhereIsMyFriendUITests/   UI tests
+supabase/                 Migrations, Edge Functions, seed, backend tests
+site/  functions/         acrossus.app and its Pages Functions
+docs/                     Design spec, API contract, release notes, reviews
 ```
 
-## 成功标准
+## Run it locally
 
-- 用户能在 5 分钟内完成登录、加好友和共享设置
-- Widget 能清楚显示城市、更新时间和过期状态
-- 城市变化在 iOS 允许的后台机会出现后可靠上传
-- 同城提醒不重复、不泄露精确位置
-- 用户能随时暂停共享并在 App 内发起完整账号删除
-- 真机测试、TestFlight 和 App Review 全部通过后才公开发布
+You’ll need **Xcode 27** (iOS 27 SDK). The app deploys to iOS 18 and later.
+
+1. Open `WhereIsMyFriend.xcodeproj`.
+2. Pick the **WhereIsMyFriend** scheme and any iPhone simulator.
+3. Build and run.
+
+Debug builds run on a local demo repository, so the whole app works without a server. Pass `-useRemoteAPI` to talk to a configured backend instead.
+
+```bash
+npm ci && npm run backend:test
+```
+
+```bash
+xcodebuild -project WhereIsMyFriend.xcodeproj -scheme WhereIsMyFriend \
+  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+  CODE_SIGNING_ALLOWED=NO build
+```
+
+<details>
+<summary><b>Further reading</b></summary>
+
+<br>
+
+- [Design spec](docs/DESIGN_SPEC.md)
+- [Client architecture decision](docs/ADR-001-CLIENT-BOUNDARY.md)
+- [REST API contract](docs/API_CONTRACT.md)
+- [Database schema](docs/DATABASE_SCHEMA.sql)
+- [Supabase production plan](docs/SUPABASE_PRODUCTION_PLAN.md)
+- [Optional local Supabase backend](docs/LOCAL_BACKEND.md)
+- [TestFlight release](docs/TESTFLIGHT_RELEASE.md)
+- [Product plan](PLAN.md)
+
+</details>
+
+<br>
+
+<div align="center">
+
+<img src="site/assets/app_icon.png" width="40" alt="">
+
+**Your friends are out there. Make room for the next hello.**
+
+<sub>[Website](https://acrossus.app) · [App Store](https://apps.apple.com/app/apple-store/id6807634842?pt=128897130&ct=github_readme&mt=8) · [Privacy](https://acrossus.app/privacy/) · [Support](https://acrossus.app/support/)</sub>
+
+<sub>© 2026 Across Us</sub>
+
+</div>
