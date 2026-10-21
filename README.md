@@ -46,34 +46,34 @@ Across Us keeps their cities, plans and flights in one place, so a chance to mee
 <table>
   <tr>
     <td width="33%" valign="top">
-      <img src="site/assets/product/same-city.webp" alt="Here with you: New York, with Mia, Lin and Chloe.">
-      <h3>Same city, same time</h3>
-      See who’s in town with you, and choose who can trigger the alert.
+      <img src="site/assets/product/moments.webp" alt="Same-city moments: 22 days together with 4 friends in 6 cities.">
+      <h3>All the days you shared a city</h3>
+      Your time together, friend by friend, and who’s in town with you now.
     </td>
     <td width="33%" valign="top">
-      <img src="site/assets/product/overlap.webp" alt="Tokyo with Lin: four days together, October 19 to 22.">
-      <h3>Plans that line up</h3>
-      When your plans overlap, see the days you’ll both be there.
+      <img src="site/assets/product/together-soon.webp" alt="Together soon: Tokyo with Lin, four days together, October 24 to 27.">
+      <h3>Same city. Same dates.</h3>
+      Together soon shows the days your plans overlap.
     </td>
     <td width="33%" valign="top">
-      <img src="site/assets/product/plans.webp" alt="Friends’ travel plans: Lin in Tokyo, Chloe in Paris.">
-      <h3>Their next stop</h3>
-      Friends share a city and dates, so you know where they’re headed.
+      <img src="site/assets/product/friend-controls.webp" alt="Lin’s Tokyo plan above switches for Share my city and Same-city alert.">
+      <h3>Their next stop, your call</h3>
+      See a friend’s travel plans, and choose who sees your city and who can trigger an alert.
     </td>
   </tr>
 </table>
 
-## Coming from everywhere.
+## Everyone lands together.
 
-Invite friends to a **Trip** and keep everyone’s flights and arrival times in one place.
+Invite friends to a **Trip** and watch every flight land where you’re meeting.
 
 <p align="center">
-  <img src="site/assets/product/routes.webp" width="46%" alt="Flight routes from London, Newark, Seattle and San Francisco converging on Los Angeles.">
+  <img src="site/assets/product/trip-globe.webp" width="48%" alt="Kauai Thanksgiving: flights from Shanghai, New York and Oakland landing on Kauai, with a landing timeline.">
   &nbsp;
-  <img src="site/assets/product/flight-details.webp" width="50%" alt="Flight details: London to Los Angeles on British Airways BA 281.">
+  <img src="site/assets/product/boarding-pass.webp" width="48%" alt="David’s boarding pass: United 1612 from New York JFK to Kauai, leaving from Terminal 7.">
 </p>
 
-- **Every flight, down to the terminal.** Departure and arrival times, airline, terminal and live status. Each traveler manages their own.
+- **Every flight, one tap away.** Tap anyone for their boarding pass: local times, terminal and the flight home. Each traveler manages their own.
 - **A nudge when it helps.** Flight-change alerts, morning reminders, and a tap to remind a friend who hasn’t added their flight.
 - **Room for plans to change.** Members can leave; the creator can remove members or delete the Trip.
 

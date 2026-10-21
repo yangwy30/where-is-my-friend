@@ -46,34 +46,34 @@ Across Us 把朋友的城市、计划和航班放在一起，别让见面的机�
 <table>
   <tr>
     <td width="33%" valign="top">
-      <img src="site/assets/product/same-city.webp" alt="和你在一起：纽约，有 Mia、Lin 和 Chloe。">
-      <h3>同城同时</h3>
-      看看谁和你在同一座城市，并决定谁可以触发同城提醒。
+      <img src="site/assets/product/moments.webp" alt="同城时刻：和 4 位朋友在 6 座城市一起度过 22 天。">
+      <h3>和朋友同城的每一天</h3>
+      按朋友记下你们在同一座城市的日子，也能看到现在谁和你在同城。
     </td>
     <td width="33%" valign="top">
-      <img src="site/assets/product/overlap.webp" alt="和 Lin 在东京：10 月 19 日至 22 日，共四天。">
-      <h3>计划重叠</h3>
-      计划重叠时，直接看到你们会同时在那里的日子。
+      <img src="site/assets/product/together-soon.webp" alt="即将相聚：和 Lin 在东京，10 月 24 日至 27 日，共四天。">
+      <h3>行程重叠，约上见一面</h3>
+      “即将相聚”提前显示你们会在同一座城市的日子。
     </td>
     <td width="33%" valign="top">
-      <img src="site/assets/product/plans.webp" alt="朋友的出行计划：Lin 去东京，Chloe 去巴黎。">
-      <h3>下一站</h3>
-      朋友分享城市和日期，你就知道他们接下来要去哪。
+      <img src="site/assets/product/friend-controls.webp" alt="Lin 的东京计划，下方是“共享我的城市”和“同城提醒”开关。">
+      <h3>下一站在哪，边界由你定</h3>
+      看到朋友的出行计划，并逐个好友决定谁能看到你的城市、谁能触发同城提醒。
     </td>
   </tr>
 </table>
 
-## 从各地出发，在一处汇合。
+## 从各地出发，一起落地。
 
-邀请朋友加入一个 **Trip**，所有人的航班和到达时间都在一个地方。
+邀请朋友加入一个 **Trip**，看每个人的航班飞向你们见面的地方。
 
 <p align="center">
-  <img src="site/assets/product/routes.webp" width="46%" alt="从伦敦、纽瓦克、西雅图和旧金山飞往洛杉矶的航线。">
+  <img src="site/assets/product/trip-globe.webp" width="48%" alt="考艾岛感恩节：从上海、纽约和奥克兰出发的航班降落在考艾岛，下方是落地时间线。">
   &nbsp;
-  <img src="site/assets/product/flight-details.webp" width="50%" alt="航班详情：英国航空 BA 281，伦敦飞洛杉矶。">
+  <img src="site/assets/product/boarding-pass.webp" width="48%" alt="David 的登机牌：美联航 1612，从纽约 JFK 7 号航站楼飞往考艾岛。">
 </p>
 
-- **每趟航班，细到航站楼。** 起降时间、航空公司、航站楼和实时状态。每位旅伴管理自己的航班。
+- **每趟航班，一点就清楚。** 点开任何人就是一张登机牌：当地时间、航站楼和回程航班。每位旅伴管理自己的航班。
 - **需要时轻轻提醒。** 航班变动提醒、早间提醒，还能一键提醒还没添加航班的朋友。
 - **计划可以改变。** 成员可以退出；创建者可以移除成员或删除 Trip。
 
