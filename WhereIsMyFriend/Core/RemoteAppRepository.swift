@@ -147,7 +147,8 @@ private struct PushTokenRemovalBody: Encodable {
 
 protocol RemoteAuthenticationProviding: Sendable {
     func accessToken() async throws -> String
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> String
+    func sendEmailCode(to email: String) async throws
+    func signIn(_ credential: SignInCredential) async throws -> String
     func refreshAccessToken() async throws -> String
     func signOut() async throws
 }
@@ -178,20 +179,69 @@ private actor SupabaseRemoteAuthentication: RemoteAuthenticationProviding {
         }
     }
 
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> String {
-        let session = try await client.auth.signInWithIdToken(
-            credentials: OpenIDConnectCredentials(
-                provider: .apple,
-                idToken: payload.identityToken,
-                nonce: payload.nonce
+    func sendEmailCode(to email: String) async throws {
+        do {
+            try await client.auth.signInWithOTP(email: email, shouldCreateUser: true)
+        } catch {
+            throw Self.emailCodeError(error)
+        }
+    }
+
+    func signIn(_ credential: SignInCredential) async throws -> String {
+        let session: Session
+        switch credential {
+        case .apple(let payload):
+            session = try await client.auth.signInWithIdToken(
+                credentials: OpenIDConnectCredentials(
+                    provider: .apple,
+                    idToken: payload.identityToken,
+                    nonce: payload.nonce
+                )
             )
-        )
-        if let displayName = payload.displayName {
-            _ = try? await client.auth.update(
-                user: UserAttributes(data: ["full_name": .string(displayName)])
+            // Apple returns the name only on the first authorization and never
+            // puts it in the identity token, so keep it in Auth metadata.
+            if let displayName = payload.displayName {
+                _ = try? await client.auth.update(
+                    user: UserAttributes(data: ["full_name": .string(displayName)])
+                )
+            }
+        case .google(let payload):
+            session = try await client.auth.signInWithIdToken(
+                credentials: OpenIDConnectCredentials(
+                    provider: .google,
+                    idToken: payload.identityToken,
+                    accessToken: payload.accessToken,
+                    nonce: payload.nonce
+                )
             )
+        case .emailCode(let email, let code):
+            let response: AuthResponse
+            do {
+                response = try await client.auth.verifyOTP(email: email, token: code, type: .email)
+            } catch {
+                throw Self.emailCodeError(error)
+            }
+            guard case .session(let verified) = response else { throw RepositoryError.invalidServerResponse }
+            session = verified
         }
         return session.accessToken
+    }
+
+    private static func emailCodeError(_ error: Error) -> Error {
+        if let auth = error as? AuthError {
+            switch auth.errorCode {
+            case .otpExpired:
+                return RepositoryError.message(String(localized: "That code is wrong or has expired. Check the latest email or send a new code."))
+            case .overEmailSendRateLimit, .overRequestRateLimit:
+                return RepositoryError.message(String(localized: "Too many codes were requested. Please wait a minute and try again."))
+            case .validationFailed:
+                return RepositoryError.message(String(localized: "Enter a valid email address."))
+            default:
+                break
+            }
+        }
+        if let network = error as? URLError, network.code != .cancelled { return RepositoryError.message(String(localized: "You appear to be offline. Check your connection and try again.")) }
+        return error
     }
 
     func refreshAccessToken() async throws -> String {
@@ -317,7 +367,12 @@ actor RemoteAppRepository: AppRepository {
         throw RepositoryError.unsupportedInCurrentMode
     }
 
-    func signInWithApple(_ payload: AppleSignInPayload) async throws -> AppSnapshot {
+    func sendEmailSignInCode(to email: String) async throws {
+        guard !authenticationTransition else { throw CancellationError() }
+        try await authentication.sendEmailCode(to: email)
+    }
+
+    func signIn(_ credential: SignInCredential) async throws -> AppSnapshot {
         guard !authenticationTransition else { throw CancellationError() }
         sessionGeneration += 1
         authenticationTransition = true
@@ -325,11 +380,11 @@ actor RemoteAppRepository: AppRepository {
         await client.resetDiagnostics()
         defer { authenticationTransition = false }
         do {
-            _ = try await authentication.signInWithApple(payload)
+            _ = try await authentication.signIn(credential)
             let snapshot: AppSnapshot = try await authorizedRequest(
                 path: "/v1/auth/bootstrap",
                 method: "POST",
-                body: BootstrapBody(displayName: payload.displayName), allowsAuthTransition: true
+                body: BootstrapBody(displayName: credential.displayName), allowsAuthTransition: true
             )
             let previousUserID = cachedSnapshot()?.currentUser.id
             sessionOwnerID = snapshot.currentUser.id

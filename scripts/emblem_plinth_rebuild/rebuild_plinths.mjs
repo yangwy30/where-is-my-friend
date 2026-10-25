@@ -40,7 +40,184 @@ const ARCHETYPE_NAMES = new Set([
   "archetype_silicon_valley",
 ]);
 
+function findRawFile(dir, name) {
+  for (const prefix of [`City_${name}`, name]) {
+    for (const ext of [".png", ".jpg", ".jpeg", ".webp"]) {
+      const p = path.join(dir, `${prefix}${ext}`);
+      if (fs.existsSync(p)) return p;
+    }
+  }
+  return null;
+}
+
+async function prepareRawOpaqueRender(inputBuf) {
+  const { data, info } = await sharp(inputBuf)
+    .resize(512, 512, { kernel: sharp.kernel.lanczos3 })
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const w = info.width, h = info.height;
+  // Check if corners are opaque white studio background
+  const cornerIdx = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
+  const isOpaqueBg = cornerIdx.every((i) => data[i + 3] > 200 && data[i] > 215 && data[i + 1] > 215 && data[i + 2] > 215);
+  if (!isOpaqueBg) return { data, wasOpaqueRaw: false };
+
+  // Border-seeded BFS flood-fill background removal
+  const visited = new Uint8Array(w * h);
+  const queue = new Int32Array(w * h);
+  let qHead = 0, qTail = 0;
+
+  const push = (x, y) => {
+    const k = y * w + x;
+    if (!visited[k]) {
+      visited[k] = 1;
+      queue[qTail++] = k;
+    }
+  };
+
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+  for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+
+  while (qHead < qTail) {
+    const k = queue[qHead++];
+    const cx = k % w, cy = (k - cx) / w;
+    const i = k * 4;
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const maxC = Math.max(r, g, b), minC = Math.min(r, g, b), diff = maxC - minC;
+    // Studio background:
+    // - Left studio floor shadow (cx < 110, cy >= 245): neutral grey-white down to minC >= 216 (diff <= 8)
+    // - Right studio floor shadow above plinth (cx > 402, 245 <= cy <= 306): neutral grey-white down to minC >= 236 (diff <= 6)
+    // - Bottom studio floor shadow (cy >= 355): minC >= 224 (diff <= 26), except protect bright right plinth rim at cx > 395, 335 <= cy <= 362
+    // - Sky / landmark region: minC >= 244 (or 238 when strictly neutral diff <= 4)
+    let thresh = 244;
+    let maxDiff = 10;
+    if (cx < 110 && cy >= 245 && cy < 355) {
+      thresh = 216;
+      maxDiff = 8;
+    } else if (cx > 402 && cy >= 245 && cy <= 306) {
+      thresh = 236;
+      maxDiff = 6;
+    } else if (cy >= 355 && !(cx > 395 && cy <= 362)) {
+      thresh = 238;
+      maxDiff = 8;
+    } else if (diff <= 4) {
+      thresh = 238;
+      maxDiff = 4;
+    }
+
+    if (minC >= thresh && diff <= maxDiff) {
+      data[i] = 255; data[i + 1] = 255; data[i + 2] = 255; data[i + 3] = 0;
+      if (cx + 1 < w) push(cx + 1, cy);
+      if (cx - 1 >= 0) push(cx - 1, cy);
+      if (cy + 1 < h) push(cx, cy + 1);
+      if (cy - 1 >= 0) push(cx, cy - 1);
+    } else if (minC >= thresh - 12 && diff <= maxDiff + 4) {
+      const alphaVal = Math.round(255 * (1.0 - (minC - (thresh - 12)) / 12.0));
+      data[i + 3] = Math.max(0, Math.min(255, alphaVal));
+    }
+  }
+
+  // Also clear enclosed pure-#FFFFFF background pockets inside open steel trusses / cables / bridge arches
+  // (e.g. Oakland crane, Wichita/Toledo bridge cables, Spokane pavilion lattice, Sioux Falls tower)
+  const pocketVisited = new Uint8Array(w * h);
+  for (let y0 = 55; y0 < 345; y0++) {
+    for (let x0 = 55; x0 < 455; x0++) {
+      const k0 = y0 * w + x0;
+      if (pocketVisited[k0] || data[k0 * 4 + 3] === 0) continue;
+      const r0 = data[k0 * 4], g0 = data[k0 * 4 + 1], b0 = data[k0 * 4 + 2];
+      if (Math.min(r0, g0, b0) < 246 || Math.max(r0, g0, b0) - Math.min(r0, g0, b0) > 6) continue;
+      const comp = [k0];
+      pocketVisited[k0] = 1;
+      for (let idx = 0; idx < comp.length; idx++) {
+        const k = comp[idx], cx = k % w, cy = (k - cx) / w;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = cx + dx, ny = cy + dy;
+          if (nx < 50 || nx >= 462 || ny < 50 || ny >= 350) continue;
+          const nk = ny * w + nx;
+          if (pocketVisited[nk] || data[nk * 4 + 3] === 0) continue;
+          const nr = data[nk * 4], ng = data[nk * 4 + 1], nb = data[nk * 4 + 2];
+          if (Math.min(nr, ng, nb) >= 238 && Math.max(nr, ng, nb) - Math.min(nr, ng, nb) <= 8) {
+            pocketVisited[nk] = 1;
+            comp.push(nk);
+          }
+        }
+      }
+      if (comp.length >= 4 && comp.length <= 2500) {
+        for (const k of comp) {
+          data[k * 4 + 3] = 0;
+        }
+        // Soft anti-alias 1px rim around cleared truss pockets
+        for (const k of comp) {
+          const cx = k % w, cy = (k - cx) / w;
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const nx = cx + dx, ny = cy + dy;
+            if (nx < 50 || nx >= 462 || ny < 50 || ny >= 350) continue;
+            const nk = ny * w + nx, ni = nk * 4;
+            if (data[ni + 3] === 0) continue;
+            const minC = Math.min(data[ni], data[ni + 1], data[ni + 2]);
+            const diff = Math.max(data[ni], data[ni + 1], data[ni + 2]) - minC;
+            if (minC >= 224 && diff <= 12) {
+              data[ni + 3] = Math.min(data[ni + 3], Math.round(255 * Math.max(0, (238 - minC) / 14.0)));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Pre-frame to 88% of 512x512 so the V-curve plinth scanner sees the complete plinth with margin
+  let minX = w, minY = h, maxX = -1, maxY = -1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (data[(y * w + x) * 4 + 3] > 16) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX <= minX || maxY <= minY) return { data, wasOpaqueRaw: true };
+
+  const bw = maxX - minX + 1, bh = maxY - minY + 1;
+  const scale = (512 * 0.88) / Math.max(bw, bh);
+  const nw = Math.max(1, Math.round(bw * scale));
+  const nh = Math.max(1, Math.round(bh * scale));
+  const resized = await sharp(data, { raw: { width: w, height: h, channels: 4 } })
+    .extract({ left: minX, top: minY, width: bw, height: bh })
+    .resize(nw, nh, { kernel: sharp.kernel.lanczos3 })
+    .raw()
+    .toBuffer();
+
+  const canvas = Buffer.alloc(w * h * 4, 0);
+  const ox = Math.floor((w - nw) / 2);
+  const oy = Math.min(Math.floor((h - nh) / 2), 472 - nh);
+  for (let y = 0; y < nh; y++) {
+    const dy = oy + y;
+    if (dy < 0 || dy >= h) continue;
+    for (let x = 0; x < nw; x++) {
+      const dx = ox + x;
+      if (dx < 0 || dx >= w) continue;
+      const si = (y * nw + x) * 4, di = (dy * w + dx) * 4;
+      canvas[di] = resized[si];
+      canvas[di + 1] = resized[si + 1];
+      canvas[di + 2] = resized[si + 2];
+      canvas[di + 3] = resized[si + 3];
+    }
+  }
+  return { data: canvas, wasOpaqueRaw: true };
+}
+
 function loadRawMasterBuffer(name, origDir) {
+  if (origDir) {
+    const found = findRawFile(origDir, name);
+    if (found) return fs.readFileSync(found);
+  }
+  const bundledMaster = findRawFile(path.join(__dirname, "masters"), name);
+  if (bundledMaster) {
+    return fs.readFileSync(bundledMaster);
+  }
   if (name === "fukuoka" && fs.existsSync(FUKUOKA_MASTER)) {
     return fs.readFileSync(FUKUOKA_MASTER);
   }
@@ -50,18 +227,27 @@ function loadRawMasterBuffer(name, origDir) {
       { cwd: REPO_ROOT, maxBuffer: 20 * 1024 * 1024 }
     );
   }
-  if (origDir) {
-    const p = path.join(origDir, `City_${name}.png`);
-    if (fs.existsSync(p)) return fs.readFileSync(p);
-  }
   return execSync(
     `git show 728cbe3:WhereIsMyFriend/Resources/Assets.xcassets/CityEmblems/City_${name}.imageset/City_${name}@3x.png`,
     { cwd: REPO_ROOT, maxBuffer: 20 * 1024 * 1024 }
   );
 }
 
-async function writeImagesetScales(setPath, finalBuf) {
-  const contents = JSON.parse(fs.readFileSync(path.join(setPath, "Contents.json"), "utf8"));
+async function writeImagesetScales(setPath, name, finalBuf) {
+  fs.mkdirSync(setPath, { recursive: true });
+  const contentsPath = path.join(setPath, "Contents.json");
+  if (!fs.existsSync(contentsPath)) {
+    const defaultContents = {
+      images: [
+        { idiom: "universal", scale: "1x", filename: `City_${name}.png` },
+        { idiom: "universal", scale: "2x", filename: `City_${name}@2x.png` },
+        { idiom: "universal", scale: "3x", filename: `City_${name}@3x.png` },
+      ],
+      info: { author: "xcode", version: 1 },
+    };
+    fs.writeFileSync(contentsPath, JSON.stringify(defaultContents, null, 2) + "\n");
+  }
+  const contents = JSON.parse(fs.readFileSync(contentsPath, "utf8"));
   for (const img of contents.images || []) {
     if (!img.filename) continue;
     const targetPath = path.join(setPath, img.filename);
@@ -141,7 +327,7 @@ async function cleanArchetypeCity(name, origDir) {
     }
   }
 
-  await writeImagesetScales(setPath, finalBuf);
+  await writeImagesetScales(setPath, name, finalBuf);
 }
 
 async function cleanCity(name, origDir) {
@@ -151,7 +337,7 @@ async function cleanCity(name, origDir) {
 
   const setPath = path.join(ASSETS_ROOT, `City_${name}.imageset`);
   const rawPng = loadRawMasterBuffer(name, origDir);
-  const orig = await sharp(rawPng).ensureAlpha().raw().toBuffer();
+  const { data: orig, wasOpaqueRaw } = await prepareRawOpaqueRender(rawPng);
   const w = 512, h = 512, n = w * h, W0 = 250.0;
   const L = new Float32Array(n), C = new Float32Array(n), A = new Float32Array(n);
 
@@ -371,11 +557,17 @@ async function cleanCity(name, origDir) {
   const topPlinthY = new Int32Array(w);
   for (let x = xL; x <= xR; x++) {
     const yb = Math.round(yBound[x]);
-    let highY = yb - 28;
-    for (let y = Math.max(220, yb - 52); y <= yb - 2; y++) {
-      if (A[y * w + x] >= 180) { highY = y; break; }
+    if (wasOpaqueRaw) {
+      let y = yb - 2;
+      while (y >= Math.max(220, yb - 28) && A[y * w + x] >= 180) y--;
+      topPlinthY[x] = y + 1;
+    } else {
+      let highY = yb - 28;
+      for (let y = Math.max(220, yb - 52); y <= yb - 2; y++) {
+        if (A[y * w + x] >= 180) { highY = y; break; }
+      }
+      topPlinthY[x] = highY;
     }
-    topPlinthY[x] = highY;
   }
 
   // 4. Reconstruct frosted-acrylic / light plinth walls and remove shadow-ink streaks (e.g. tel_aviv)
@@ -561,7 +753,7 @@ async function cleanCity(name, origDir) {
     }
   }
 
-  await writeImagesetScales(setPath, finalBuf);
+  await writeImagesetScales(setPath, name, finalBuf);
 }
 
 async function main() {
@@ -571,7 +763,7 @@ async function main() {
   const targets = [];
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--orig-dir" && args[i + 1]) {
+    if ((args[i] === "--orig-dir" || args[i] === "--raw-dir") && args[i + 1]) {
       origDir = path.resolve(args[++i]);
     } else if (args[i] === "--extract-728cbe3" && args[i + 1]) {
       extractDir = path.resolve(args[++i]);

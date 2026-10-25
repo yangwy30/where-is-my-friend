@@ -1,115 +1,32 @@
 import SwiftUI
 
+/// Same-city history, one card per friend. Trips live one level down so the list
+/// reads as who you've shared cities with, not a log of every match.
 struct NotificationHistoryView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var referenceDate = Date()
 
-    private var currentCity: String? {
-        store.currentCity
-    }
-
-    private struct ActiveStayInfo: Identifiable {
-        let friend: FriendPresence
-        let city: String
-        let countryCode: String?
-        let startDate: Date?
-        let durationText: String
-        let sinceText: String
-
-        var id: UUID { friend.id }
-    }
-
-    private var activeStays: [ActiveStayInfo] {
-        guard let myCity = currentCity, !myCity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              store.snapshot.sharingPreferences.citySharingEnabled else {
-            return []
-        }
-
-        let matchingFriends = store.friends.filter { friend in
-            friend.sharingState == .active
-                && store.preference(for: friend.id).sharesMyCity
-                && PresenceMatchPolicy.matches(store.snapshot.currentPresence, friend, at: referenceDate)
-        }
-
-        let currentKey = CityIdentity.presenceKey(city: myCity, countryCode: store.snapshot.currentPresence.countryCode,
-            administrativeArea: store.snapshot.currentPresence.administrativeArea)
-        return matchingFriends.map { friend in
-            let startDate = ColocationHistoryPolicy.currentStart(friendID: friend.id, cityKey: currentKey,
-                sessions: store.snapshot.colocationSessions, at: referenceDate)
-            let durationText = startDate.map { currentStayDuration(since: $0) }
-                ?? String(localized: "Recent city match")
-            let sinceText: String
-            if let startDate {
-                sinceText = String(format: String(localized: "Since %@"),
-                    startDate.formatted(date: .abbreviated, time: .omitted))
-            } else {
-                // Updates establish a recent match, not when a stay began.
-                let observation = ([store.snapshot.currentPresence.updatedAt, friend.updatedAt]
-                    .compactMap { $0 } + [referenceDate]).min() ?? referenceDate
-                let formatter = RelativeDateTimeFormatter()
-                formatter.unitsStyle = .full
-                sinceText = String(localized: "Updated \(formatter.localizedString(for: observation, relativeTo: referenceDate))")
-            }
-
-            return ActiveStayInfo(
-                friend: friend,
-                city: myCity,
-                countryCode: store.snapshot.currentPresence.countryCode,
-                startDate: startDate,
-                durationText: durationText,
-                sinceText: sinceText
-            )
-        }
-    }
-
-    /// Past completed events, excluding events belonging to the current active stay
-    private var pastEvents: [ColocationEvent] {
-        let starts = Dictionary(uniqueKeysWithValues: activeStays.compactMap { stay in
-            stay.startDate.map { (stay.friend.id, $0) }
-        })
-        return ColocationHistoryPolicy.pastEvents(store.snapshot.colocationEvents,
-            currentCityKey: CityIdentity.presenceKey(city: currentCity,
-                countryCode: store.snapshot.currentPresence.countryCode,
-                administrativeArea: store.snapshot.currentPresence.administrativeArea),
-            currentStarts: starts, at: referenceDate)
-    }
-
-    private func currentStayDuration(since start: Date) -> String {
-        let interval = max(0, referenceDate.timeIntervalSince(start))
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
-        var calendar = Calendar.current
-        calendar.locale = .current
-        formatter.calendar = calendar
-        let components: DateComponents
-        if interval >= 86400 {
-            formatter.allowedUnits = [.day]
-            components = DateComponents(day: Int(interval / 86400))
-        } else if interval >= 3600 {
-            formatter.allowedUnits = [.hour]
-            components = DateComponents(hour: Int(interval / 3600))
-        } else {
-            formatter.allowedUnits = [.minute]
-            components = DateComponents(minute: max(1, Int(interval / 60)))
-        }
-        guard let duration = formatter.string(from: components) else { return String(localized: "Recent city match") }
-        return String(localized: "Same city for \(duration)")
+    private var summary: SameCityMomentsPolicy.Summary {
+        SameCityMomentsPolicy.summary(in: store.snapshot, at: referenceDate)
     }
 
     var body: some View {
+        let summary = summary
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                if activeStays.isEmpty && pastEvents.isEmpty {
+            VStack(alignment: .leading, spacing: 14) {
+                if summary.friends.isEmpty {
                     emptyState
                 } else {
-                    if !activeStays.isEmpty {
-                        activeSection
-                    }
-
-                    if !pastEvents.isEmpty {
-                        historySection
+                    header(summary)
+                    ForEach(summary.friends) { history in
+                        NavigationLink {
+                            SameCityFriendHistoryView(friendID: history.id)
+                        } label: {
+                            SameCityFriendCard(history: history, referenceDate: referenceDate)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("momentsFriend-\(history.id)")
                     }
                 }
             }
@@ -120,16 +37,24 @@ struct NotificationHistoryView: View {
         .navigationTitle("Same-city moments")
         .navigationBarTitleDisplayMode(.inline)
         .accessibilityIdentifier("notificationHistoryScreen")
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { referenceDate = Date() }
+        .sameCityClock($referenceDate, scenePhase: scenePhase)
+    }
+
+    private func header(_ summary: SameCityMomentsPolicy.Summary) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(SameCityMomentsText.daysTogether(summary.days))
+                .font(.system(size: 34, weight: .semibold))
+                .tracking(-0.8)
+                .foregroundStyle(WIFTheme.primaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("momentsTotalDays")
+            Text(SameCityMomentsText.friendsAndCities(friends: summary.friends.count, cities: summary.cityCount))
+                .font(.subheadline)
+                .foregroundStyle(WIFTheme.secondaryText)
         }
-        .task {
-            referenceDate = Date()
-            while !Task.isCancelled {
-                do { try await Task.sleep(for: .seconds(60)) } catch { return }
-                if scenePhase == .active { referenceDate = Date() }
-            }
-        }
+        .padding(.horizontal, 4)
+        .padding(.bottom, 10)
+        .accessibilityElement(children: .combine)
     }
 
     private var emptyState: some View {
@@ -145,123 +70,259 @@ struct NotificationHistoryView: View {
             in: RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous)
         )
     }
+}
 
-    private var activeSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(WIFTheme.fresh)
-                    .frame(width: 8, height: 8)
-                Text("Active now")
-                    .font(.caption.weight(.bold))
-                    .textCase(.uppercase)
-                    .tracking(1.2)
-                    .foregroundStyle(WIFTheme.fresh)
+private struct SameCityFriendCard: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    let history: SameCityMomentsPolicy.FriendHistory
+    let referenceDate: Date
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 14) {
+                if !dynamicTypeSize.isAccessibilitySize { FriendAvatarView(friend: history.friend, size: 48) }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(history.friend.displayName)
+                        .font(.headline)
+                        .foregroundStyle(WIFTheme.primaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityIdentifier("momentsFriendName-\(history.id)")
+                    SameCityFriendStatus(history: history, referenceDate: referenceDate)
+                }
+                Spacer(minLength: 8)
+                if !history.days.isEmpty {
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text(history.days.count, format: .number)
+                            .font(.system(size: 24, weight: .semibold, design: .rounded))
+                            .foregroundStyle(WIFTheme.primaryText)
+                        Text(SameCityMomentsText.dayUnit(history.days.count))
+                            .font(.caption)
+                            .foregroundStyle(WIFTheme.secondaryText)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("momentsDays-\(history.id)")
+                }
             }
-            .padding(.leading, 4)
 
-            ForEach(activeStays) { stay in
-                activeMomentCard(stay: stay)
+            let cities = history.cities
+            if !cities.isEmpty {
+                HStack(spacing: 10) {
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        HStack(spacing: -10) {
+                            ForEach(cities.prefix(4), id: \.stop.cityKey) { city in
+                                CityEmblemView(city: city.stop.name, countryCode: city.stop.countryCode,
+                                               administrativeArea: city.stop.region, size: 38)
+                            }
+                        }
+                        .accessibilityHidden(true)
+                    }
+                    Text(SameCityMomentsText.cityList(cities))
+                        .font(.footnote)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                }
+                .padding(.leading, 2)
             }
         }
+        .wifSettingsGlassCard(tint: history.isHereNow ? WIFTheme.fresh.opacity(0.10) : WIFTheme.surface.opacity(0.08))
+        .contentShape(RoundedRectangle(cornerRadius: WIFTheme.largeRadius, style: .continuous))
     }
+}
 
-    private func activeMomentCard(stay: ActiveStayInfo) -> some View {
-        HStack(spacing: 14) {
-            if !dynamicTypeSize.isAccessibilitySize {
-            ZStack(alignment: .bottomTrailing) {
-                CityEmblemView(
-                    city: stay.city,
-                    countryCode: stay.countryCode,
-                    size: 58
-                )
+private struct SameCityFriendStatus: View {
+    let history: SameCityMomentsPolicy.FriendHistory
+    let referenceDate: Date
 
-                FriendAvatarView(friend: stay.friend, size: 28)
-                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                    .offset(x: 4, y: 4)
-            }
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Together in \(stay.city)")
-                    .accessibilityIdentifier("activeStayCity-\(stay.id)")
-                    .font(.headline)
-                    .foregroundStyle(WIFTheme.primaryText)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text("You and \(stay.friend.displayName)")
-                    .accessibilityIdentifier("activeStayFriend-\(stay.id)")
+    var body: some View {
+        Group {
+            if history.isHereNow {
+                HStack(spacing: 6) {
+                    Circle().fill(WIFTheme.fresh).frame(width: 7, height: 7).accessibilityHidden(true)
+                    Text(history.currentCity.map { String(localized: "In \($0) with you now") }
+                         ?? String(localized: "Here with you"))
+                }
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(WIFTheme.fresh)
+            } else if let last = history.lastTogether {
+                Text(String(localized: "Last together \(SameCityMomentsText.day(last, relativeTo: referenceDate))"))
                     .font(.subheadline)
                     .foregroundStyle(WIFTheme.secondaryText)
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityIdentifier("momentsStatus-\(history.id)")
+    }
+}
+
+/// Every trip with one friend, newest first. Re-reads the store so a removed or
+/// blocked friend drops out instead of leaving stale history on screen.
+struct SameCityFriendHistoryView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    let friendID: UUID
+    @State private var referenceDate = Date()
+
+    private var history: SameCityMomentsPolicy.FriendHistory? {
+        SameCityMomentsPolicy.summary(in: store.snapshot, at: referenceDate).friends.first { $0.id == friendID }
+    }
+
+    var body: some View {
+        ScrollView {
+            if let history {
+                VStack(alignment: .leading, spacing: 14) {
+                    header(history)
+                    if !history.trips.isEmpty {
+                        VStack(spacing: 0) {
+                            ForEach(Array(history.trips.enumerated()), id: \.element.id) { index, trip in
+                                if index > 0 { Divider().overlay(WIFTheme.border).padding(.leading, 74) }
+                                row(trip)
+                            }
+                        }
+                        .wifSettingsGlassCard()
+                    }
+                }
+                .padding(WIFTheme.screenInset)
+            }
+        }
+        .scrollIndicators(.hidden)
+        .wifAmbientBackground()
+        .navigationTitle("Same-city moments")
+        .navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier("friendMomentsScreen")
+        .sameCityClock($referenceDate, scenePhase: scenePhase)
+    }
+
+    private func header(_ history: SameCityMomentsPolicy.FriendHistory) -> some View {
+        HStack(spacing: 16) {
+            if !dynamicTypeSize.isAccessibilitySize { FriendAvatarView(friend: history.friend, size: 64) }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(history.friend.displayName)
+                    .font(.system(size: 28, weight: .semibold))
+                    .tracking(-0.6)
+                    .foregroundStyle(WIFTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(stay.durationText)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(WIFTheme.fresh)
-                        .accessibilityIdentifier("sameCityDuration-\(stay.id)")
-
-                    Text(stay.sinceText)
-                        .font(.caption)
-                        .foregroundStyle(WIFTheme.secondaryText)
-                }
-            }
-
-            Spacer(minLength: 0)
-        }
-        .padding(.vertical, 4)
-        .wifSettingsGlassCard(tint: WIFTheme.fresh.opacity(0.14))
-    }
-
-    private var historySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Past moments")
-                .font(.caption.weight(.bold))
-                .textCase(.uppercase)
-                .tracking(1.2)
-                .foregroundStyle(WIFTheme.secondaryText)
-                .padding(.leading, 4)
-                .padding(.top, activeStays.isEmpty ? 0 : 8)
-
-            VStack(spacing: 10) {
-                ForEach(pastEvents) { event in
-                    historyMomentCard(event: event)
+                if history.isHereNow || !history.days.isEmpty {
+                    Text(SameCityMomentsText.friendDetail(history))
+                        .font(.subheadline)
+                        .foregroundStyle(history.isHereNow && history.trips.isEmpty ? WIFTheme.fresh : WIFTheme.secondaryText)
                 }
             }
         }
+        .padding(.horizontal, 4)
+        .padding(.bottom, 10)
+        .accessibilityElement(children: .combine)
     }
 
-    private func historyMomentCard(event: ColocationEvent) -> some View {
+    private func row(_ trip: SameCityMomentsPolicy.Trip) -> some View {
         HStack(spacing: 14) {
             if !dynamicTypeSize.isAccessibilitySize {
-            CityEmblemView(
-                city: event.city,
-                countryCode: nil,
-                size: 44
-            )
+                ZStack {
+                    let stops = Array(trip.stops.prefix(3))
+                    ForEach(Array(stops.enumerated().reversed()), id: \.element.cityKey) { index, stop in
+                        CityEmblemView(city: stop.name, countryCode: stop.countryCode, administrativeArea: stop.region,
+                                       size: stops.count > 1 ? 40 : 58)
+                            .offset(x: stops.count > 1 ? CGFloat(index) * 9 - 9 : 0,
+                                    y: stops.count > 1 ? CGFloat(index) * -6 + 6 : 0)
+                    }
+                }
+                .frame(width: 60, height: 60)
+                .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(event.title)
-                    .font(.body.weight(.semibold))
+                Text(SameCityMomentsText.route(trip))
+                    .font(.headline)
                     .foregroundStyle(WIFTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
-
-                Text("You and \(event.friendNames.formatted(.list(type: .and)))")
-                    .font(.caption)
-                    .foregroundStyle(WIFTheme.secondaryText)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(event.createdAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption2)
-                    .foregroundStyle(WIFTheme.secondaryText.opacity(0.8))
+                if trip.stops.count > 2 {
+                    Text(String(localized: "Via \(trip.stops.dropFirst().dropLast().map(\.name).formatted(.list(type: .and)))"))
+                        .font(.subheadline)
+                        .foregroundStyle(WIFTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Text(SameCityMomentsText.dates(trip, relativeTo: referenceDate))
+                    .font(.subheadline)
+                    .foregroundStyle(trip.isActive ? WIFTheme.fresh : WIFTheme.secondaryText)
             }
-
-            Spacer(minLength: 0)
+            Spacer(minLength: 8)
+            Text(SameCityMomentsText.dayCount(trip.days.count))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(WIFTheme.fresh)
         }
-        .padding(.vertical, 2)
-        .wifSettingsGlassCard(tint: WIFTheme.surface.opacity(0.08))
-        .accessibilityIdentifier("pastMoment-\(event.id)")
+        .padding(.vertical, 10)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("momentsTrip-\(trip.id)")
+    }
+}
+
+enum SameCityMomentsText {
+    static func daysTogether(_ days: Int) -> String {
+        days == 1 ? String(localized: "1 day together") : String(localized: "\(days) days together")
+    }
+
+    static func dayUnit(_ days: Int) -> String {
+        days == 1 ? String(localized: "day") : String(localized: "days")
+    }
+
+    static func dayCount(_ days: Int) -> String {
+        days == 1 ? String(localized: "1 day") : String(localized: "\(days) days")
+    }
+
+    static func cityCount(_ cities: Int) -> String {
+        cities == 1 ? String(localized: "1 city") : String(localized: "\(cities) cities")
+    }
+
+    static func friendsAndCities(friends: Int, cities: Int) -> String {
+        let people = friends == 1 ? String(localized: "1 friend") : String(localized: "\(friends) friends")
+        return String(localized: "With \(people) in \(cityCount(cities))")
+    }
+
+    static func friendDetail(_ history: SameCityMomentsPolicy.FriendHistory) -> String {
+        guard !history.days.isEmpty else { return String(localized: "Here with you") }
+        return "\(daysTogether(history.days.count)) · \(cityCount(history.cities.count))"
+    }
+
+    static func cityList(_ cities: [(stop: SameCityMomentsPolicy.Stop, trips: Int)]) -> String {
+        guard cities.count <= 2 else { return cityCount(cities.count) }
+        return cities.map { $0.trips > 1 ? "\($0.stop.name) ×\($0.trips)" : $0.stop.name }.formatted(.list(type: .and))
+    }
+
+    static func route(_ trip: SameCityMomentsPolicy.Trip) -> String {
+        guard let first = trip.stops.first, let last = trip.stops.last, trip.stops.count > 1 else {
+            return trip.stops.first?.name ?? ""
+        }
+        return String(localized: "\(first.name) to \(last.name)")
+    }
+
+    static func day(_ date: Date, relativeTo now: Date) -> String {
+        let sameYear = Calendar.current.isDate(date, equalTo: now, toGranularity: .year)
+        return date.formatted(sameYear ? .dateTime.month(.abbreviated).day() : .dateTime.month(.abbreviated).day().year())
+    }
+
+    static func dates(_ trip: SameCityMomentsPolicy.Trip, relativeTo now: Date) -> String {
+        if trip.isActive { return String(format: String(localized: "Since %@"), day(trip.start, relativeTo: now)) }
+        if Calendar.current.isDate(trip.start, inSameDayAs: trip.end) { return day(trip.start, relativeTo: now) }
+        let sameYear = Calendar.current.isDate(trip.start, equalTo: now, toGranularity: .year)
+        let style: Date.IntervalFormatStyle = sameYear ? .interval.month(.abbreviated).day() : .interval.month(.abbreviated).day().year()
+        return (trip.start..<trip.end).formatted(style)
+    }
+}
+
+private extension View {
+    /// Keeps "now" honest while the screen stays open: an ongoing stay grows, an ended one moves to history.
+    func sameCityClock(_ referenceDate: Binding<Date>, scenePhase: ScenePhase) -> some View {
+        onChange(of: scenePhase) { _, phase in
+            if phase == .active { referenceDate.wrappedValue = Date() }
+        }
+        .task {
+            referenceDate.wrappedValue = Date()
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+                if scenePhase == .active { referenceDate.wrappedValue = Date() }
+            }
+        }
     }
 }
 

@@ -11,7 +11,11 @@ enum AppleSignInFailurePolicy {
 struct AuthenticationView: View {
     @EnvironmentObject private var store: AppStore
     @State private var isProcessingAppleSignIn = false
+    @State private var isProcessingGoogleSignIn = false
     @State private var currentNonce: String?
+    @State private var showsEmailSignIn = false
+    @State private var googleSignIn = GoogleSignInController()
+    private let googleConfiguration = GoogleSignInConfiguration.fromBundle()
 
     var body: some View {
         ZStack {
@@ -61,6 +65,40 @@ struct AuthenticationView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 14))
                 .accessibilityIdentifier("appleSignInButton")
 
+                if let googleConfiguration {
+                    Button {
+                        Task { await signInWithGoogle(googleConfiguration) }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image("GoogleLogo")
+                                .resizable()
+                                .frame(width: 18, height: 18)
+                                .accessibilityHidden(true)
+                            Text("Continue with Google")
+                        }
+                        .authenticationOptionLabel()
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isProcessingGoogleSignIn)
+                    .accessibilityIdentifier("googleSignInButton")
+                    .padding(.top, 12)
+                }
+
+                Button {
+                    showsEmailSignIn = true
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "envelope")
+                            .font(.system(size: 17, weight: .medium))
+                            .accessibilityHidden(true)
+                        Text("Continue with email")
+                    }
+                    .authenticationOptionLabel()
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("emailSignInButton")
+                .padding(.top, 12)
+
                 if showsDebugSignIn {
                     Button {
                         Task { await store.signInDemo() }
@@ -86,8 +124,12 @@ struct AuthenticationView: View {
             .padding(.horizontal, WIFTheme.screenInset)
             .padding(.bottom, 24)
         }
+        .sheet(isPresented: $showsEmailSignIn) {
+            EmailCodeSignInView()
+                .environmentObject(store)
+        }
         .overlay {
-            if isProcessingAppleSignIn || store.isWorking {
+            if isProcessingAppleSignIn || isProcessingGoogleSignIn || (store.isWorking && !showsEmailSignIn) {
                 ProgressView()
                     .padding(18)
                     .wifGlassSurface(
@@ -104,6 +146,20 @@ struct AuthenticationView: View {
 
     private var debugSignInLabel: String {
         "Continue with local demo"
+    }
+
+    private func signInWithGoogle(_ configuration: GoogleSignInConfiguration) async {
+        isProcessingGoogleSignIn = true
+        defer { isProcessingGoogleSignIn = false }
+        do {
+            guard let payload = try await googleSignIn.signIn(configuration: configuration) else { return }
+            await store.signIn(.google(payload))
+        } catch {
+            store.notice = AppNotice(
+                title: String(localized: "Google sign-in failed"),
+                message: error.localizedDescription
+            )
+        }
     }
 
     private func handleAppleResult(_ result: Result<ASAuthorization, Error>) {
@@ -126,14 +182,14 @@ struct AuthenticationView: View {
             }
             let name = PersonNameComponentsFormatter().string(from: credential.fullName ?? PersonNameComponents())
             Task {
-                await store.signInWithApple(
+                await store.signIn(.apple(
                     AppleSignInPayload(
                         appleUserID: credential.user,
                         identityToken: identityToken,
                         nonce: nonce,
                         displayName: name.isEmpty ? nil : name
                     )
-                )
+                ))
             }
         case .failure(let error):
             guard !AppleSignInFailurePolicy.isUserCancellation(error) else { return }
@@ -142,6 +198,22 @@ struct AuthenticationView: View {
                 message: error.localizedDescription
             )
         }
+    }
+}
+
+private extension View {
+    /// Secondary sign-in options sit under the Apple button at the same size,
+    /// as quiet outlined rows so Sign in with Apple stays the lead option.
+    func authenticationOptionLabel() -> some View {
+        font(.system(size: 19, weight: .medium))
+            .foregroundStyle(WIFTheme.primaryText)
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(WIFTheme.border, lineWidth: 1)
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 

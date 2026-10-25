@@ -76,7 +76,10 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.buttons["sameCityFriend-chloe"].exists)
         XCTAssertFalse(app.staticTexts["Same city. Good company."].exists)
         capture("AUDIT-header-three-sheet-en")
-        friend.tap()
+        // A scroll view waits briefly to tell a tap from a drag, so an instant synthesized
+        // tap is dropped; press about as long as a finger does.
+        Thread.sleep(forTimeInterval: 1)
+        friend.press(forDuration: 0.15)
         XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
     }
 
@@ -213,6 +216,31 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(signIn.isHittable)
         XCTAssertLessThanOrEqual(signIn.frame.maxY, app.frame.maxY)
         XCTAssertGreaterThanOrEqual(signIn.frame.minY, 0)
+    }
+
+    func testEmailCodeSignInFlow() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testSignedOut", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        let emailOption = app.buttons["emailSignInButton"]
+        XCTAssertTrue(emailOption.waitForExistence(timeout: 8))
+        emailOption.tap()
+
+        let address = app.textFields["emailSignInAddressField"]
+        XCTAssertTrue(address.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["emailSignInSendButton"].isEnabled)
+        address.typeText("Mia@Example.com")
+        capture("AUTH-email-address-zh")
+        app.buttons["emailSignInSendButton"].tap()
+
+        let code = app.textFields["emailSignInCodeField"]
+        XCTAssertTrue(code.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["验证码已发送至 mia@example.com。"].exists)
+        capture("AUTH-email-code-zh")
+        code.typeText("123456")
+
+        XCTAssertTrue(app.buttons["appleSignInButton"].waitForNonExistence(timeout: 8))
     }
 
     func testAuditSharingControlsComeFirstAtLargestText() {
@@ -521,20 +549,31 @@ final class PrototypeUITests: XCTestCase {
         let field = app.textFields["friendUsernameField"]
         XCTAssertTrue(field.waitForExistence(timeout: 5)); field.tap(); field.typeText("leo\n")
         let withdrawal = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "withdrawFriendRequest-")).firstMatch
-        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        // Asking a missing element for hittability is an error on iOS 26, so wait for it first.
         XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
+        // A tap while the list is still decelerating only stops the scroll.
+        Thread.sleep(forTimeInterval: 1)
         let oldID = withdrawal.identifier
         withdrawal.tap()
         XCTAssertTrue(app.alerts["Withdraw invitation?"].waitForExistence(timeout: 3))
         capture("W2-F11-withdraw-confirmation")
         app.alerts.buttons["Keep invitation"].tap()
+        // iOS 26 ignores taps while an alert or sheet is still animating in or out.
+        XCTAssertTrue(app.alerts.firstMatch.waitForNonExistence(timeout: 3))
+        Thread.sleep(forTimeInterval: 1)
         XCTAssertTrue(app.buttons[oldID].exists)
-        app.buttons[oldID].tap(); app.alerts.buttons["Withdraw invitation"].tap()
+        app.buttons[oldID].tap()
+        let confirm = app.alerts.buttons["Withdraw invitation"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 3))
+        Thread.sleep(forTimeInterval: 1)
+        confirm.tap()
         XCTAssertTrue(app.buttons[oldID].waitForNonExistence(timeout: 5))
         for _ in 0..<7 where !field.isHittable { app.scrollViews["addFriendScreen"].swipeDown() }
+        Thread.sleep(forTimeInterval: 1)
         field.tap(); field.typeText("leo\n")
-        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
         XCTAssertTrue(withdrawal.waitForExistence(timeout: 5))
+        for _ in 0..<7 where !withdrawal.isHittable { app.scrollViews["addFriendScreen"].swipeUp() }
         XCTAssertNotEqual(withdrawal.identifier, oldID)
         capture("W2-F11-invite-again")
     }
@@ -655,25 +694,26 @@ final class PrototypeUITests: XCTestCase {
         let history = app.buttons["sameCityMomentsLink"]
         for _ in 0..<6 where !history.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         history.tap()
-        let friend = app.staticTexts["activeStayFriend-10000000-0000-0000-0000-000000000001"]
+        let friend = app.staticTexts["momentsFriendName-10000000-0000-0000-0000-000000000001"]
         XCTAssertTrue(friend.waitForExistence(timeout: 5))
         for _ in 0..<5 where !friend.isHittable { app.scrollViews["notificationHistoryScreen"].swipeUp() }
         XCTAssertTrue(friend.label.contains("Alexandra Catherine Montgomery-Williams"))
         XCTAssertGreaterThan(friend.frame.height, 60)
         XCTAssertLessThanOrEqual(friend.frame.maxX, app.frame.maxX)
         capture("W2-F26-long-history")
-        try auditRelevantControls(app, prefixes: ["activeStayFriend-", "activeStayCity-", "sameCityDuration-"], name: "F26-history-text")
+        try auditRelevantControls(app, prefixes: ["momentsFriendName-", "momentsStatus-", "momentsDays-"], name: "F26-history-text")
     }
 
-    func testSameCityHistoryUpdatesWhileScreenRemainsOpen() {
+    func testSameCityHistoryShowsOngoingStayAsTheNewestTrip() {
         continueAfterFailure = false
         let app = historyApp(extra: "-testHistoryRevisit", language: "en", locale: "en_US", additional: ["-testHistoryClock"])
-        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-        XCTAssertTrue(duration.waitForExistence(timeout: 5))
-        XCTAssertTrue(duration.label.contains("1 minute"), duration.label)
-        let update = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "2 minutes"), object: duration)
-        XCTAssertEqual(XCTWaiter.wait(for: [update], timeout: 75), .completed)
-        capture("W2-F26-live-time-update")
+        let mia = app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(mia.waitForExistence(timeout: 5)); mia.tap()
+        XCTAssertTrue(app.scrollViews["friendMomentsScreen"].waitForExistence(timeout: 5))
+        let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+        XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(trips.element(boundBy: 0).label.contains("Since"), trips.element(boundBy: 0).label)
+        capture("W2-F26-ongoing-stay")
     }
 
     func testEmptyHomeHighlightsFirstInvitationAndUsernameAlternative() {
@@ -916,8 +956,11 @@ final class PrototypeUITests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
             selectAppTab(2, in: app)
+            let privacySettings = app.buttons["privacySettingsLink"]
+            for _ in 0..<5 where !privacySettings.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            privacySettings.tap()
             let privacy = app.buttons["privacyDataLink"]
-            for _ in 0..<5 where !privacy.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            XCTAssertTrue(privacy.waitForExistence(timeout: 3))
             privacy.tap()
             XCTAssertTrue(app.scrollViews["privacyDataScreen"].waitForExistence(timeout: 5))
             for (id, text) in [("privacyTravelSummary", travel), ("privacyMomentsSummary", moments),
@@ -974,29 +1017,172 @@ final class PrototypeUITests: XCTestCase {
 
     func testSameCityHistoryKeepsPreviousVisitSeparateFromCurrentStay() {
         continueAfterFailure = false
-        for (language, locale, unit) in [("en", "en_US", "1 hour"), ("zh-Hans", "zh_CN", "1小时")] {
+        for (language, locale, here) in [("en", "en_US", "with you now"), ("zh-Hans", "zh_CN", "正和你一起在")] {
             let app = historyApp(extra: "-testHistoryRevisit", language: language, locale: locale)
-            let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-            XCTAssertTrue(duration.waitForExistence(timeout: 5))
-            XCTAssertTrue(duration.label.replacingOccurrences(of: " ", with: "").contains(unit.replacingOccurrences(of: " ", with: "")), duration.label)
-            XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
-            XCTAssertFalse(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000002"].exists)
+            let status = app.staticTexts["momentsStatus-10000000-0000-0000-0000-000000000001"]
+            XCTAssertTrue(status.waitForExistence(timeout: 5))
+            XCTAssertTrue(status.label.contains(here), status.label)
+            app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"].tap()
+            let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+            XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+            XCTAssertEqual(trips.count, 2)
             capture("F07-repeated-visit-\(language)")
             app.terminate()
         }
     }
 
-    func testSameCityHistoryWithoutSessionShowsRecentMatchInsteadOfDuration() {
+    func testSameCityHistoryWithoutSessionStillShowsFriendHereNow() {
         continueAfterFailure = false
         let app = historyApp(extra: "-testHistoryMissingSession", language: "en", locale: "en_US")
-        let duration = app.staticTexts["sameCityDuration-10000000-0000-0000-0000-000000000001"]
-        XCTAssertTrue(duration.waitForExistence(timeout: 5))
-        XCTAssertEqual(duration.label, "Recent city match")
-        XCTAssertTrue(app.descendants(matching: .any)["pastMoment-07000000-0000-4000-8000-000000000001"].exists)
+        let status = app.staticTexts["momentsStatus-10000000-0000-0000-0000-000000000001"]
+        XCTAssertTrue(status.waitForExistence(timeout: 5))
+        XCTAssertTrue(status.label.contains("with you now"), status.label)
+        app.buttons["momentsFriend-10000000-0000-0000-0000-000000000001"].tap()
+        let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+        XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+        XCTAssertEqual(trips.count, 1)
         capture("F07-no-current-session")
     }
 
-    func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensFriend() {
+    /// Raw captures for the 1.0.9 App Store set, English and Chinese, light mode, demo data only.
+    func testCaptureStore109() {
+        continueAfterFailure = false
+        for (language, locale) in [("en", "en_US"), ("zh-Hans", "zh_CN")] {
+            let base = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(\(language))", "-AppleLocale", locale,
+                        "-AppleInterfaceStyle", "Light"]
+            let app = XCUIApplication()
+
+            // Friends, then one friend's sharing controls.
+            app.launchArguments = base
+            app.launch()
+            if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+            let lin = app.buttons["friendCard-10000000-0000-0000-0000-000000000002"]
+            XCTAssertTrue(lin.waitForExistence(timeout: 8))
+            Thread.sleep(forTimeInterval: 1)
+            capture("store-\(language)-friends")
+            lin.press(forDuration: 0.15)
+            XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 1.5)
+            capture("store-\(language)-friend-detail")
+            app.terminate()
+
+            // Together soon.
+            app.launchArguments = base + ["-marketingOverlap"]
+            app.launch()
+            XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 8))
+            app.buttons["friendPlansLink"].tap()
+            XCTAssertTrue(app.buttons["friendPlan-A7150000-0000-0000-0000-000000000001"].waitForExistence(timeout: 8))
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+            XCTAssertTrue(app.buttons["upcomingTogetherToggle"].waitForExistence(timeout: 8))
+            openOverlapDetail(in: app)
+            capture("store-\(language)-together-soon")
+            app.terminate()
+
+            // The trip globe once everyone has landed, then David's boarding pass.
+            app.launchArguments = base + ["-seedTripExamples", "-previewKauaiTrip", "-previewTrips", "-tripTestNamespace=\(UUID().uuidString)"]
+            app.launch()
+            let card = app.buttons["tripCard-example-kauai"]
+            XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 8))
+            for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+            card.press(forDuration: 0.15)
+            XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 7)
+            capture("store-\(language)-trip-globe")
+            let david = app.buttons["flightCard-kauai-david-out"]
+            XCTAssertTrue(david.waitForExistence(timeout: 4))
+            david.press(forDuration: 0.15)
+            XCTAssertTrue(app.buttons["passLegBack"].waitForExistence(timeout: 4))
+            app.scrollViews["fullTripArrivalBoard"].swipeUp()
+            Thread.sleep(forTimeInterval: 2)
+            capture("store-\(language)-boarding-pass")
+            app.terminate()
+
+            // Same-city moments, by friend.
+            app.launchArguments = base + ["-previewMomentsHistory"]
+            app.launch()
+            XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 8))
+            selectAppTab(2, in: app)
+            let moments = app.buttons["sameCityMomentsLink"]
+            for _ in 0..<5 where !moments.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+            moments.tap()
+            XCTAssertTrue(app.scrollViews["notificationHistoryScreen"].waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 1.5)
+            capture("store-\(language)-moments")
+            app.terminate()
+        }
+    }
+
+    /// Walks the trip globe for review and screen recording: landings, one traveler's legs, then departures.
+    func testTripGlobeWalkthrough() {
+        tripGlobeWalkthrough(extra: [], prefix: "trip-globe")
+    }
+
+    /// The same walk at a larger text size, where the board rows and ticket must not wrap or clip.
+    func testTripGlobeWalkthroughAtLargeText() {
+        tripGlobeWalkthrough(extra: ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryXXL"], prefix: "trip-globe-xxl")
+    }
+
+    private func tripGlobeWalkthrough(extra: [String], prefix: String) {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-seedTripExamples", "-previewKauaiTrip", "-previewTrips",
+                               "-tripTestNamespace=\(UUID().uuidString)", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"] + extra
+        app.launch()
+        if app.buttons["Not now"].waitForExistence(timeout: 2) { app.buttons["Not now"].tap() }
+        let card = app.buttons["tripCard-example-kauai"]
+        XCTAssertTrue(app.scrollViews["tripsScreen"].waitForExistence(timeout: 8))
+        for _ in 0..<5 where !card.isHittable { app.scrollViews["tripsScreen"].swipeUp() }
+        XCTAssertTrue(card.isHittable)
+        card.press(forDuration: 0.15)
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        Thread.sleep(forTimeInterval: 6)
+        capture("\(prefix)-arrive")
+        let ruisi = app.buttons["flightCard-kauai-david-out"]
+        XCTAssertTrue(ruisi.waitForExistence(timeout: 4))
+        ruisi.press(forDuration: 0.15)
+        XCTAssertEqual(ruisi.value as? String, "Details expanded")
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "UNITED 1612")).firstMatch.waitForExistence(timeout: 3))
+        app.scrollViews["fullTripArrivalBoard"].swipeUp()
+        Thread.sleep(forTimeInterval: 2)
+        capture("\(prefix)-selected")
+        app.buttons["passLegBack"].tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        capture("\(prefix)-pass-back")
+        app.scrollViews["fullTripArrivalBoard"].swipeDown()
+        ruisi.press(forDuration: 0.15)
+        app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
+        Thread.sleep(forTimeInterval: 6)
+        capture("\(prefix)-depart")
+        app.segmentedControls["tripDirectionPicker"].buttons["Arrive"].tap()
+        Thread.sleep(forTimeInterval: 4)
+    }
+
+    func testSameCityMomentsGroupTripsByFriend() {
+        continueAfterFailure = false
+        for (language, locale, style) in [("en", "en_US", "Light"), ("en", "en_US", "Dark"), ("zh-Hans", "zh_CN", "Light")] {
+            let app = historyApp(extra: "-previewMomentsHistory", language: language, locale: locale,
+                                 additional: ["-AppleInterfaceStyle", style])
+            let david = app.buttons["momentsFriend-10000000-0000-0000-0000-000000000004"]
+            XCTAssertTrue(david.waitForExistence(timeout: 5))
+            // A half-hour match is a blip, not a moment.
+            XCTAssertFalse(app.buttons["momentsFriend-10000000-0000-0000-0000-000000000005"].exists)
+            capture("moments-list-\(language)-\(style)")
+            david.tap()
+            let trips = app.descendants(matching: .any).matching(NSPredicate(format: "identifier BEGINSWITH 'momentsTrip-'"))
+            XCTAssertTrue(trips.firstMatch.waitForExistence(timeout: 5))
+            XCTAssertEqual(trips.count, 1)
+            if language == "en" {
+                let label = trips.element(boundBy: 0).label
+                XCTAssertTrue(label.contains("Los Angeles to San Francisco"), label)
+                XCTAssertTrue(label.contains("Via Santa Barbara"), label)
+                XCTAssertFalse(label.contains("San Luis Obispo"), label)
+            }
+            capture("moments-roadtrip-\(language)-\(style)")
+            app.terminate()
+        }
+    }
+
+    func testHomeCityStatusDoesNotOpenSettingsAndSameCityChipOpensCard() {
         continueAfterFailure = false
         for (language, locale, prefix, summary) in [
             ("en", "en_US", "You’re in ", "Mia is here too"),
@@ -1017,8 +1203,16 @@ final class PrototypeUITests: XCTestCase {
             XCTAssertEqual(sameCity.label, summary)
             capture("F01-home-\(language)")
             sameCity.tap()
-            XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
+            // Even one friend opens the same-city card first.
+            let row = app.buttons["sameCityFriend-mia"]
+            XCTAssertTrue(row.waitForExistence(timeout: 4))
             XCTAssertFalse(app.descendants(matching: .any)["citySharingSheet"].exists)
+            capture("F01-same-city-card-\(language)")
+            // Picking a friend closes the card and opens them on the Friends stack.
+            Thread.sleep(forTimeInterval: 1)
+            row.press(forDuration: 0.15)
+            XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+            XCTAssertFalse(row.exists)
             capture("F01-same-city-friend-\(language)")
             app.navigationBars["Mia"].buttons.element(boundBy: 0).tap()
             XCTAssertTrue(sameCity.waitForExistence(timeout: 4))
@@ -1195,6 +1389,36 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(app.scrollViews["friendsScreen"].waitForExistence(timeout: 5))
         XCTAssertFalse(settingsAction.exists)
         XCTAssertEqual(springboard.alerts.count, 0)
+        app.resetAuthorizationStatus(for: .location)
+    }
+
+    func testSetupChecklistClosesForTheRestOfTheDayInChinese() {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.resetAuthorizationStatus(for: .location)
+        app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-testSetupChecklist",
+                               "-setupChecklistNamespace=\(UUID().uuidString)",
+                               "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 10))
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        let checklist = app.otherElements["setupChecklist"]
+        XCTAssertTrue(checklist.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["完成设置"].exists)
+        XCTAssertTrue(app.staticTexts["位置：始终"].exists)
+        XCTAssertTrue(app.buttons["setupChecklist-location"].exists)
+        capture("Setup checklist Chinese")
+        app.buttons["setupChecklistClose"].tap()
+        XCTAssertTrue(checklist.waitForNonExistence(timeout: 3))
+        XCTAssertTrue(app.buttons["profileCitySharingButton"].exists)
+
+        // Relaunching the same day keeps it closed.
+        app.terminate()
+        app.launch()
+        XCTAssertTrue(app.buttons["friendPlansLink"].waitForExistence(timeout: 10))
+        app.tabBars.buttons.element(boundBy: 2).tap()
+        XCTAssertTrue(app.buttons["profileCitySharingButton"].waitForExistence(timeout: 5))
+        XCTAssertFalse(checklist.exists)
         app.resetAuthorizationStatus(for: .location)
     }
 
@@ -1636,8 +1860,11 @@ final class PrototypeUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 5))
         selectAppTab(2, in: app)
+        let privacy = app.buttons["privacySettingsLink"]
+        for _ in 0..<6 where !privacy.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        privacy.tap()
         let button = app.buttons["Delete account"]
-        for _ in 0..<12 where !button.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
+        XCTAssertTrue(button.waitForExistence(timeout: 3))
         XCTAssertTrue(button.isHittable)
         button.tap()
         let confirm = app.sheets.buttons["Delete account"]
@@ -1856,7 +2083,7 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertFalse(app.buttons["upcomingTogetherToggle"].exists)
     }
 
-    func testSameCityChipOpensOneFriendOrTheFriendList() {
+    func testSameCityChipOpensTheCardForOneFriendOrMany() {
         continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-skipOnboarding", "-resetDemoData", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
@@ -1866,8 +2093,13 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(chip.waitForExistence(timeout: 5))
         XCTAssertEqual(chip.label, "Mia is here too")
         chip.tap()
-        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 4))
-        XCTAssertFalse(app.buttons["sameCityFriend-mia"].exists)
+        // Even one friend opens the same-city card first; picking them closes it.
+        let row = app.buttons["sameCityFriend-mia"]
+        XCTAssertTrue(row.waitForExistence(timeout: 4))
+        Thread.sleep(forTimeInterval: 1)
+        row.press(forDuration: 0.15)
+        XCTAssertTrue(app.navigationBars["Mia"].waitForExistence(timeout: 5))
+        XCTAssertFalse(row.exists)
         app.terminate()
 
         app.launchArguments += ["-previewSameCityCount", "3"]
@@ -2172,7 +2404,8 @@ final class PrototypeUITests: XCTestCase {
         username.replaceText(with: "new_username")
         app.buttons["saveProfileButton"].tap()
         XCTAssertTrue(app.staticTexts["New Name"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.staticTexts["@new_username"].exists)
+        // The redesigned header shows the handle and city on one line ("@name · City").
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "@new_username")).firstMatch.exists)
 
         let privacySettings = app.buttons["widgetPrivacySettingsLink"]
         if !privacySettings.isHittable {
@@ -2363,22 +2596,16 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertTrue(flight.waitForExistence(timeout: 5))
         flight.tap()
         XCTAssertEqual(flight.value as? String, "Details expanded")
-        XCTAssertTrue(app.staticTexts["British Airways"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] %@", "British Airways")).firstMatch.waitForExistence(timeout: 3))
         capture("\(language)-07-flight-details")
     }
 
     private func captureMarketingFlightMap(_ app: XCUIApplication, language: String) {
-        let expand = app.buttons["expandTripMapButton"]
-        XCTAssertTrue(expand.waitForExistence(timeout: 5))
-        for _ in 0..<4 {
-            if expand.isHittable { break }
-            app.scrollViews["fullTripArrivalBoard"].swipeUp()
-        }
-        expand.tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["mapTraveler-all"].exists)
-        // Let MapKit finish loading tiles and the entry route reveal before capture.
-        sleep(4)
+        let board = app.scrollViews["fullTripArrivalBoard"]
+        XCTAssertTrue(board.waitForExistence(timeout: 5))
+        for _ in 0..<4 where !app.segmentedControls["tripDirectionPicker"].isHittable { board.swipeDown() }
+        // Let every route draw in and land on the globe before capture.
+        sleep(6)
         capture("\(language)-06-arrivals")
     }
 
@@ -2627,7 +2854,7 @@ final class PrototypeUITests: XCTestCase {
         discardChangesIfOffered(in: app)
 
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["flightCard-mia-out"].waitForExistence(timeout: 5))
         capture("Trip board")
 
         let miaFlight = app.buttons["flightCard-mia-out"]
@@ -2642,29 +2869,12 @@ final class PrototypeUITests: XCTestCase {
         XCTAssertEqual(miaFlight.value as? String, "Details collapsed")
 
         for _ in 0..<4 {
-            if app.buttons["expandTripMapButton"].isHittable { break }
-            scroll.swipeUp()
-        }
-        app.buttons["expandTripMapButton"].tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 4))
-        let immersive = app.otherElements["immersiveTripMap"]
-        immersive.buttons["mapTraveler-mia-out"].tap()
-        XCTAssertEqual(immersive.buttons["mapTraveler-mia-out"].value as? String, "Selected")
-        capture("Immersive selected route")
-        app.buttons["resetTripMapButton"].tap()
-        XCTAssertEqual(immersive.buttons["mapTraveler-all"].value as? String, "Selected")
-        capture("Immersive all routes")
-        app.buttons["closeTripMapButton"].tap()
-
-        for _ in 0..<4 {
             if app.segmentedControls["tripDirectionPicker"].isHittable { break }
             scroll.swipeDown()
         }
-        app.segmentedControls["tripDirectionPicker"].buttons["Return"].tap()
-        // Return legs leave together from the trip airport, so the board reads in its departure time.
-        XCTAssertTrue(app.staticTexts["Departing Los Angeles time"].exists)
-        XCTAssertFalse(app.buttons["mapTraveler-mia-out"].exists)
-        XCTAssertTrue(app.buttons["flightCard-mia-in"].exists)
+        app.segmentedControls["tripDirectionPicker"].buttons["Depart"].tap()
+        XCTAssertFalse(app.buttons["flightCard-mia-out"].exists)
+        XCTAssertTrue(app.buttons["flightCard-mia-in"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "4 of 5 flights added")).firstMatch.exists)
         capture("Return routes")
     }
@@ -2699,23 +2909,31 @@ final class PrototypeUITests: XCTestCase {
         number.typeText("UA 353")
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 3))
-        XCTAssertFalse(app.buttons["tripNeedsHelpCard"].exists)
+        // Saving is asynchronous; the prompt leaves once the board shows the new flight.
+        XCTAssertTrue(app.buttons["tripNeedsHelpCard"].waitForNonExistence(timeout: 4))
         capture("Awaiting friend flight compact status")
         app.scrollViews["fullTripArrivalBoard"].swipeUp()
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Unverified")).firstMatch.exists)
         let card = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "flightCard-")).firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 3))
         card.tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Unverified")).firstMatch.waitForExistence(timeout: 3))
+        let menu = app.buttons["tripFlightMenu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 3))
+        if !menu.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        menu.tap()
         let edit = app.buttons["editMyTripFlightButton"]
-        if !edit.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        XCTAssertTrue(edit.waitForExistence(timeout: 3))
         capture("Own flight actions")
         edit.tap()
         XCTAssertTrue(number.waitForExistence(timeout: 3))
         number.replaceText(with: "DL 12")
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "flightCard-", "DL 12")).firstMatch.waitForExistence(timeout: 4))
+        XCTAssertTrue(menu.waitForExistence(timeout: 3))
+        if !menu.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        menu.tap()
         let delete = app.buttons["deleteMyTripFlightButton"]
-        if !delete.isHittable { app.scrollViews["fullTripArrivalBoard"].swipeUp() }
+        XCTAssertTrue(delete.waitForExistence(timeout: 3))
         delete.tap()
         app.buttons["Delete flight"].tap()
         XCTAssertTrue(app.buttons["tripNeedsHelpCard"].waitForExistence(timeout: 4))
@@ -2748,7 +2966,7 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["confirmAddTripFlightButton"].tap()
         XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 4))
         XCTAssertFalse(app.buttons["tripNeedsHelpCard"].exists)
-        XCTAssertTrue(app.staticTexts["Local arrival times"].exists)
+        XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'flightCard-'")).firstMatch.exists)
         capture("Trip board with verified flight")
     }
 
@@ -2785,12 +3003,10 @@ final class PrototypeUITests: XCTestCase {
         app.buttons["appearanceDoneButton"].tap()
         selectAppTab(1, in: app)
         app.buttons["tripCard-example-west"].tap()
-        XCTAssertTrue(app.buttons["expandTripMapButton"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 5))
+        sleep(6)
         capture("Night Jade routes")
-        app.buttons["expandTripMapButton"].tap()
-        XCTAssertTrue(app.buttons["closeTripMapButton"].waitForExistence(timeout: 4))
-        capture("Night Jade immersive map")
-        app.buttons["closeTripMapButton"].tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
         selectAppTab(2, in: app)
         if !appearance.isHittable { app.scrollViews["profileSettingsScreen"].swipeUp() }
         appearance.tap()
@@ -2887,15 +3103,21 @@ final class PrototypeUITests: XCTestCase {
         let app = tripsApp()
         XCTAssertTrue(app.buttons["tripCard-example-west"].waitForExistence(timeout: 8))
         app.buttons["tripCard-example-west"].tap()
-        XCTAssertTrue(app.staticTexts["Arrivals"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.scrollViews["fullTripArrivalBoard"].waitForExistence(timeout: 4))
         let flightCard = app.buttons["flightCard-wang-out"]
         XCTAssertTrue(flightCard.waitForExistence(timeout: 4))
         flightCard.tap()
+        let menu = app.buttons["tripFlightMenu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: 4))
+        XCTAssertTrue(app.buttons["passLegBack"].exists)
+        menu.tap()
         let edit = app.buttons["editMyTripFlightButton"]
         XCTAssertTrue(edit.waitForExistence(timeout: 4))
         capture("Trip flight details expanded")
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        XCTAssertTrue(edit.waitForNonExistence(timeout: 3))
         flightCard.tap()
-        XCTAssertFalse(edit.exists)
+        XCTAssertTrue(menu.waitForNonExistence(timeout: 3))
     }
 
     func testCityEmblemFallbackSideBySideVisual() {
@@ -2979,8 +3201,9 @@ final class PrototypeUITests: XCTestCase {
     private func openCitySharingFromProfile(in app: XCUIApplication) {
         selectAppTab(2, in: app)
         let sharing = app.buttons["profileCitySharingButton"]
-        for _ in 0..<5 where !sharing.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
+        // Wait for the You tab before scrolling it; querying a missing view fails on iOS 26.
         XCTAssertTrue(sharing.waitForExistence(timeout: 4))
+        for _ in 0..<5 where !sharing.isHittable { app.scrollViews["profileSettingsScreen"].swipeDown() }
         sharing.tap()
         XCTAssertTrue(app.switches["citySharingToggle"].waitForExistence(timeout: 4))
     }

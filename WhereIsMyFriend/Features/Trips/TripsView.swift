@@ -370,6 +370,8 @@ private struct TripDetailView: View {
                                                 travelerID: person.id)
                         }
                         flight.departureDay = TripDay(date).value
+                        flight.departureTerminal = candidate?.departureTerminal
+                        flight.arrivalTerminal = candidate?.arrivalTerminal
                         flight.revision = request.existing?.revision
                         return await library.saveFlight(flight, tripID: tripID, editing: request.existing != nil, candidateID: candidate?.id)
                     }
@@ -471,75 +473,55 @@ private struct FullTripArrivalBoard: View {
     let onDeleteFlight: (TripFlight) -> Void
     let onPeople: () -> Void
     @State private var direction: TripDirection = .outbound
-    @State private var selectedFlightID: String?
-    @State private var showsMap = false
+    @State private var selectedTravelerID: String?
+    @State private var sceneStart = Date()
 
-    private var visibleFlights: [TripFlight] {
-        let flights = trip.flights.filter { $0.direction == direction }
-        return direction == .inbound
-            ? flights.sorted { $0.departureSortDate < $1.departureSortDate }
-            : flights.sorted { $0.arrivalSortDate < $1.arrivalSortDate }
-    }
-
-    private var missingPeople: [TripParticipant] {
-        trip.participants.filter { person in !visibleFlights.contains { $0.travelerID == person.id } }
+    /// Booked travelers in the order they land (or leave), then everyone still to book.
+    private func ordered(_ travelers: [TripGlobeTraveler]) -> [TripGlobeTraveler] {
+        let booked = travelers.filter { $0.flight(direction) != nil }.sorted {
+            let a = $0.flight(direction)!, b = $1.flight(direction)!
+            return direction == .outbound ? a.arrivalSortDate < b.arrivalSortDate : a.departureSortDate < b.departureSortDate
+        }
+        return booked + travelers.filter { $0.flight(direction) == nil }
     }
 
     var body: some View {
+        let travelers = TripGlobeTraveler.all(in: trip)
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                header
-                if trip.cancelledAt != nil {
-                    Label("Trip cancelled · Read-only", systemImage: "xmark.circle")
-                        .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
-                        .accessibilityIdentifier("cancelledTripStatus")
-                } else if selfParticipant == nil {
-                    Label("Read-only trip", systemImage: "lock.shield")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                }
-                Picker("Journey", selection: $direction) {
-                    ForEach(TripDirection.allCases) { Text($0.title).tag($0) }
-                }
-                .pickerStyle(.segmented).accessibilityIdentifier("tripDirectionPicker")
-
-                TimelineView(.periodic(from: .now, by: 60)) { context in
-                    overview(at: context.date)
-                }
-                arrivalList
-
-                if visibleFlights.isEmpty, library.canEdit(trip) {
-                    Button(action: onPeople) {
-                        Label("Invite friends", systemImage: "person.badge.plus")
-                            .font(.subheadline.weight(.medium)).frame(minHeight: 44)
+            VStack(spacing: 0) {
+                TimelineView(.animation(paused: reduceMotion)) { timeline in
+                    let elapsed = reduceMotion ? 1_000 : timeline.date.timeIntervalSince(sceneStart)
+                    VStack(spacing: 0) {
+                        if let destination = trip.destination {
+                            TripGlobeHero(destination: destination, travelers: travelers, direction: direction,
+                                          elapsed: elapsed, selectedID: $selectedTravelerID)
+                                .frame(height: dynamicTypeSize.isAccessibilitySize ? 340 : 470)
+                        } else {
+                            Color.clear.frame(height: 110)
+                        }
+                        header(travelers: travelers, elapsed: elapsed)
                     }
-                    .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
-                    .accessibilityIdentifier("inviteFriendsButton")
-                } else {
-                    TripRouteMapView(flights: visibleFlights, selectedFlightID: $selectedFlightID,
-                                     direction: direction, destinationCode: trip.destinationAirport,
-                                     onExpand: { showsMap = true })
                 }
-                if trip.isExample {
-                    Text("Example itinerary")
-                        .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                if trip.phase() != .past {
-                    TripDatesToPersonalPlanButton(trip: trip)
-                }
+                board(travelers: travelers)
+                    .padding(.horizontal, WIFTheme.screenInset)
+                    .background(WIFTheme.canvas)
             }
-            .foregroundStyle(WIFTheme.primaryText)
-            .frame(maxWidth: 780)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, WIFTheme.screenInset)
-            .padding(.top, 8).padding(.bottom, 32)
         }
-        .wifAmbientBackground()
+        .ignoresSafeArea(edges: .top)
+        .background(WIFTheme.canvas.ignoresSafeArea())
         .navigationTitle("").navigationBarTitleDisplayMode(.inline)
         .toolbar(.visible, for: .navigationBar)
-        .wifNavigationSurface()
+        .toolbarBackground(.hidden, for: .navigationBar)
         .wifPersistentTripNavigation()
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Picker("Journey", selection: $direction) {
+                    Text("Arrive").tag(TripDirection.outbound)
+                    Text("Depart").tag(TripDirection.inbound)
+                }
+                .pickerStyle(.segmented).fixedSize()
+                .accessibilityIdentifier("tripDirectionPicker")
+            }
             ToolbarItem(placement: WIFToolbarPlacement.primary) {
                 if selfParticipant != nil, trip.cancelledAt == nil {
                     Button { onAddFlight(direction) } label: {
@@ -551,33 +533,72 @@ private struct FullTripArrivalBoard: View {
                 }
             }
         }
-        .onChange(of: direction) { _, _ in selectedFlightID = nil }
-        .fullScreenCover(isPresented: $showsMap) {
-            TripImmersiveMap(flights: visibleFlights, selectedFlightID: $selectedFlightID,
-                             direction: direction, tripName: trip.name, destinationCode: trip.destinationAirport)
+        .onChange(of: direction) { _, _ in
+            selectedTravelerID = nil
+            sceneStart = Date()
         }
         .accessibilityIdentifier("fullTripArrivalBoard")
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text(trip.name)
-                .font(.system(.title2, design: .rounded, weight: .bold)).tracking(-0.5)
-                .fixedSize(horizontal: false, vertical: true)
-            Text("\(trip.destinationName) · \(trip.destinationAirport)")
-                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 12) {
-                    Text(trip.dateLabel).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                        .fixedSize()
-                    Spacer(minLength: 0)
-                    peopleButton.fixedSize()
-                }
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(trip.dateLabel).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    peopleButton
-                }
+    private func header(travelers: [TripGlobeTraveler], elapsed: Double) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .lastTextBaseline, spacing: 12) {
+                Text(trip.name)
+                    .font(.system(size: 26, weight: .bold)).tracking(-0.6)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                countdown
             }
+            HStack(alignment: .center, spacing: 6) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 0) {
+                        Text("\(trip.destinationName) · \(trip.destinationAirport)")
+                        Text(" · \(trip.dateLabel)")
+                    }
+                    .lineLimit(2)
+                    TimelineView(.periodic(from: .now, by: 60)) { context in
+                        let summary = trip.arrivalOverview(direction: direction, at: context.date)
+                        Text(summary.title)
+                            .accessibilityLabel("\(summary.title). \(summary.detail)")
+                            .accessibilityIdentifier("tripArrivalSummary")
+                    }
+                }
+                .font(.subheadline).foregroundStyle(WIFTheme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 4)
+                peopleButton
+            }
+            .padding(.top, -8)
+            if trip.cancelledAt != nil {
+                Label("Trip cancelled · Read-only", systemImage: "xmark.circle")
+                    .font(.subheadline.weight(.semibold)).foregroundStyle(WIFTheme.secondaryText)
+                    .accessibilityIdentifier("cancelledTripStatus")
+            } else if selfParticipant == nil {
+                Label("Read-only trip", systemImage: "lock.shield")
+                    .font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }
+            if let destination = trip.destination {
+                TripGlobeStrip(destination: destination, travelers: travelers, direction: direction, elapsed: elapsed)
+            }
+        }
+        .foregroundStyle(WIFTheme.primaryText)
+        .frame(maxWidth: 780, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, WIFTheme.screenInset).padding(.top, 22).padding(.bottom, 6)
+        .background(WIFTheme.canvas, in: UnevenRoundedRectangle(topLeadingRadius: 28, topTrailingRadius: 28, style: .continuous))
+        .padding(.top, trip.destination == nil ? 0 : -34)
+    }
+
+    @ViewBuilder
+    private var countdown: some View {
+        let today = Calendar.current.startOfDay(for: Date())
+        let days = Calendar.current.dateComponents([.day], from: today, to: Calendar.current.startOfDay(for: trip.startDay.pickerDate)).day ?? 0
+        if trip.cancelledAt == nil, trip.phase() == .upcoming, days > 0 {
+            HStack(alignment: .lastTextBaseline, spacing: 3) {
+                Text(days, format: .number).font(.system(size: 32, weight: .semibold, design: .rounded)).monospacedDigit()
+                Text(days == 1 ? String(localized: "day") : String(localized: "days")).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+            }
+            .accessibilityElement(children: .combine)
         }
     }
 
@@ -590,116 +611,44 @@ private struct FullTripArrivalBoard: View {
         .accessibilityIdentifier("tripPeopleButton")
     }
 
-    private func overview(at now: Date) -> some View {
-        let summary = trip.arrivalOverview(direction: direction, at: now)
-        return HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(summary.title).font(.subheadline.weight(.semibold))
-                Text(summary.detail).font(.caption).foregroundStyle(WIFTheme.secondaryText)
+    private func board(travelers: [TripGlobeTraveler]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Divider().overlay(WIFTheme.border.opacity(0.6)).padding(.top, 10)
+            ForEach(ordered(travelers)) { traveler in
+                TripGlobeBoardRow(library: library, trip: trip, traveler: traveler, direction: direction,
+                                  isSelf: traveler.id == selfParticipant?.id,
+                                  isSelected: selectedTravelerID == traveler.id,
+                                  isDimmed: selectedTravelerID != nil && selectedTravelerID != traveler.id,
+                                  onToggle: {
+                                      withAnimation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.88)) {
+                                          selectedTravelerID = selectedTravelerID == traveler.id ? nil : traveler.id
+                                      }
+                                  },
+                                  onAddFlight: { onAddFlight(direction) },
+                                  onEditFlight: onEditFlight, onDeleteFlight: onDeleteFlight)
             }
-            .fixedSize(horizontal: false, vertical: true)
-            Spacer(minLength: 0)
-            if !dynamicTypeSize.isAccessibilitySize, trip.participants.count <= 8 {
-                HStack(spacing: 5) {
-                    ForEach(0..<trip.participants.count, id: \.self) { index in
-                        Circle().fill(index < summary.progressCount ? WIFTheme.fresh : WIFTheme.border.opacity(0.4))
-                            .frame(width: 7, height: 7)
-                    }
+            if trip.flights.isEmpty, library.canEdit(trip) {
+                Button(action: onPeople) {
+                    Label("Invite friends", systemImage: "person.badge.plus")
+                        .font(.subheadline.weight(.medium)).frame(minHeight: 44)
                 }
-                .accessibilityHidden(true)
+                .buttonStyle(.plain).foregroundStyle(WIFTheme.fresh)
+                .accessibilityIdentifier("inviteFriendsButton")
+                .padding(.top, 8)
             }
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("tripArrivalSummary")
-    }
-
-    private var arrivalList: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ViewThatFits(in: .horizontal) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(direction == .outbound ? String(localized: "Arrivals") : String(localized: "Heading home")).font(.headline)
-                    Spacer(minLength: 8)
-                    arrivalTimeCaption.fixedSize()
-                }
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(direction == .outbound ? String(localized: "Arrivals") : String(localized: "Heading home")).font(.headline)
-                    arrivalTimeCaption
-                }
-            }
-            VStack(spacing: 0) {
-                ForEach(Array(visibleFlights.enumerated()), id: \.element.id) { index, flight in
-                    TripFlightCard(flight: flight, isExpanded: selectedFlightID == flight.id,
-                                   isCurrentUser: flight.travelerID == selfParticipant?.id && selfParticipant != nil,
-                                   showsArrivalTimeZone: flight.destination != trip.destinationAirport,
-                                   showsDeparture: direction == .inbound,
-                                   showsDepartureTimeZone: flight.origin != trip.destinationAirport) {
-                        withAnimation(reduceMotion ? nil : .spring(response: 0.36, dampingFraction: 0.88)) {
-                            selectedFlightID = selectedFlightID == flight.id ? nil : flight.id
-                        }
-                    }
-                    if trip.cancelledAt == nil, selectedFlightID == flight.id, let selfParticipant, flight.travelerID == selfParticipant.id {
-                        HStack(spacing: 20) {
-                            Button("Edit my flight", systemImage: "pencil") { onEditFlight(flight) }
-                                .accessibilityIdentifier("editMyTripFlightButton")
-                            Spacer(minLength: 0)
-                            Button("Delete", systemImage: "trash", role: .destructive) { onDeleteFlight(flight) }
-                                .accessibilityIdentifier("deleteMyTripFlightButton")
-                        }
-                        .font(.subheadline).buttonStyle(.plain).frame(minHeight: 44).padding(.bottom, 8)
-                    }
-                    if index < visibleFlights.count - 1 || !missingPeople.isEmpty { Divider().opacity(0.45) }
-                }
-                ForEach(Array(missingPeople.enumerated()), id: \.element.id) { index, person in
-                    missingTraveler(person)
-                    if index < missingPeople.count - 1 { Divider().opacity(0.45) }
-                }
-            }
-            .padding(.horizontal, 14)
-            .background(WIFTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-        }
-    }
-
-    private var arrivalTimeCaption: some View {
-        let caption: String
-        if direction == .inbound {
-            caption = visibleFlights.allSatisfy { $0.origin == trip.destinationAirport }
-                ? String(localized: "Departing \(trip.destinationName) time")
-                : String(localized: "Local departure times")
-        } else {
-            caption = visibleFlights.allSatisfy { $0.destination == trip.destinationAirport }
-                ? String(localized: "\(trip.destinationName) time")
-                : String(localized: "Local arrival times")
-        }
-        return Text(caption).font(.caption).foregroundStyle(WIFTheme.secondaryText)
-    }
-
-    private func missingTraveler(_ person: TripParticipant) -> some View {
-        HStack(spacing: 11) {
-            TripTravelerAvatar(name: person.name, color: WIFTheme.secondaryText.opacity(0.5), size: 34)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(person.name).font(.subheadline.weight(.medium))
-                Text(person.id == selfParticipant?.id
-                     ? (direction == .outbound ? String(localized: "Add your outbound flight") : String(localized: "Add your return flight"))
-                     : String(localized: "Flight not added yet"))
+            if trip.isExample {
+                Text("Example itinerary")
                     .font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 12)
             }
-            Spacer(minLength: 4)
-            if person.id == selfParticipant?.id, trip.cancelledAt == nil {
-                Button("Add flight") { onAddFlight(direction) }
-                    .font(.caption.weight(.semibold)).foregroundStyle(WIFTheme.fresh)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .accessibilityIdentifier("tripNeedsHelpCard")
-            } else if direction == .outbound, library.canRemind(person, in: trip) {
-                TripReminderButton(library: library, trip: trip, person: person)
-            } else {
-                Image(systemName: "clock").font(.caption).foregroundStyle(WIFTheme.secondaryText)
-                    .accessibilityHidden(true)
+            if trip.phase() != .past {
+                TripDatesToPersonalPlanButton(trip: trip).padding(.top, 14)
             }
         }
-        .padding(.vertical, 12)
-        .accessibilityElement(children: .contain)
-        .accessibilityIdentifier("missingTraveler-\(person.id)")
+        .foregroundStyle(WIFTheme.primaryText)
+        .frame(maxWidth: 780)
+        .frame(maxWidth: .infinity)
+        .padding(.bottom, 32)
     }
 }
 
@@ -1819,6 +1768,10 @@ struct TripFlight: Identifiable, Codable {
     // Additive cache field. Old archives still decode; new data retains the departure
     // airport's calendar date instead of reinterpreting an instant in the device zone.
     var departureDay: String? = nil
+    /// Which airport a terminal belongs to. Older cached flights only have `terminal`,
+    /// which prefers the arrival terminal but doesn't say so.
+    var departureTerminal: String? = nil
+    var arrivalTerminal: String? = nil
     var calendarDay: TripDay { resolvedDepartureDay() }
 
     func resolvedDepartureDay(fallbackTimeZone: TimeZone = .current) -> TripDay {

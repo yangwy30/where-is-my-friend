@@ -375,6 +375,9 @@ final class TripLibrary: ObservableObject {
         guard !isCloud, trips.isEmpty, let currentUserID, owner.userID == currentUserID else { return }
         var examples = TripPlan.examples(owner: owner)
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-previewKauaiTrip") {
+            examples.insert(TripPlan.kauaiPreview(owner: owner), at: 0)
+        }
         if ProcessInfo.processInfo.arguments.contains("-previewTripMember") {
             for index in examples.indices where ["example-west", "example-tokyo"].contains(examples[index].id) {
                 examples[index].creatorUserID = "example-other-owner"
@@ -705,3 +708,35 @@ final class TripLibrary: ObservableObject {
         return true
     }
 }
+
+#if DEBUG
+extension TripPlan {
+    /// A Kauai trip for screen recordings and App Store captures, with the demo friends' fictional
+    /// names. Its Oakland flight matches the user's real one; the Shanghai and New York legs are examples.
+    static func kauaiPreview(owner: TripParticipant) -> TripPlan {
+        let yayuan = TripParticipant(id: "example-kauai-lin", name: "Lin Zhao")
+        let ruisi = TripParticipant(id: "example-kauai-david", name: "David Kim")
+        let qiuer = TripParticipant(id: "example-kauai-mia", name: "Mia Chen")
+        func flight(_ id: String, _ person: TripParticipant, _ number: String, _ airline: String, _ from: String, _ to: String,
+                    _ dep: String, _ arr: String, _ day: String, _ offset: Int, _ direction: TripDirection, _ terminal: String) -> TripFlight {
+            var flight = TripFlight(id: id, traveler: person.name, flightNumber: number, airline: airline, origin: from, destination: to,
+                                    departureTime: dep, arrivalTime: arr, date: TripDay(value: day).pickerDate, terminal: terminal,
+                                    status: .scheduled, direction: direction, arrivalDayOffset: offset, travelerID: person.id)
+            flight.departureDay = day
+            flight.departureTerminal = terminal
+            return flight
+        }
+        var trip = TripPlan(id: "example-kauai", name: "Kauai Thanksgiving", destinationAirport: "LIH",
+                            startDay: TripDay(value: "2026-11-26"), endDay: TripDay(value: "2026-12-01"),
+                            participants: [owner, yayuan, ruisi, qiuer], flights: [
+                                flight("kauai-you-out", owner, "WN 1289", "Southwest Airlines", "OAK", "LIH", "12:30", "15:46", "2026-11-26", 0, .outbound, "Terminal 1"),
+                                flight("kauai-lin-out", yayuan, "HA 862", "Hawaiian Airlines", "PVG", "LIH", "22:10", "09:30", "2026-11-25", 1, .outbound, "Terminal 2"),
+                                flight("kauai-david-out", ruisi, "UA 1612", "United Airlines", "JFK", "LIH", "08:15", "20:05", "2026-11-26", 0, .outbound, "Terminal 7"),
+                                flight("kauai-lin-back", yayuan, "HA 863", "Hawaiian Airlines", "LIH", "PVG", "13:05", "19:40", "2026-12-01", 1, .inbound, "Terminal 1"),
+                                flight("kauai-david-back", ruisi, "UA 1611", "United Airlines", "LIH", "JFK", "21:40", "13:55", "2026-12-01", 1, .inbound, "Terminal 1")
+                            ], isExample: true)
+        trip.creatorUserID = owner.userID
+        return trip
+    }
+}
+#endif
